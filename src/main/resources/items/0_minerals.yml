@@ -1,0 +1,11 @@
+namespace: empire_items
+yml_items:
+  ender_scrap:
+    display_name: §dЭндерняковый скрап
+    lore:
+      - '&7Необычайно редкий предмет'
+    permission: empireitems.ender_scrap
+    material: IRON_INGOT
+    enabled: true
+    texture_path: item/minerals/ender_scrap
+    custom_model_data: 70
