@@ -37,7 +37,7 @@ class LavaWalker : Listener {
         if (!itemMeta.persistentDataContainer
                 .has(plugin.empireConstants.LAVA_WALKER_ENCHANT, PersistentDataType.DOUBLE)
         ) return
-        val onToBlock = e.to.block.getRelative(BlockFace.DOWN)
+        val onToBlock = e.to?.block?.getRelative(BlockFace.DOWN)?:return
         if (onToBlock.type == Material.LAVA) {
             createBlocks(onToBlock)
         }

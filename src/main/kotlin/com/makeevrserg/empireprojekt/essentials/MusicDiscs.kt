@@ -1,4 +1,4 @@
-package com.makeevrserg.empireprojekt.events.empireevents
+package com.makeevrserg.empireprojekt.essentials
 
 import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.plugin
 import com.makeevrserg.empireprojekt.util.EmpireUtils
@@ -33,7 +33,7 @@ class MusicDiscs : Listener {
         }
     }
 
-    data class CompanionDisc(val musicSoundKey: Key, val id: String, val players: List<Player>)
+    data class CompanionDisc(val musicSoundKey: String, val id: String, val players: List<Player>)
 
 
     private fun startPlaying(item: ItemStack, location: Location): Boolean {
@@ -44,16 +44,21 @@ class MusicDiscs : Listener {
         item.amount -= 1
         val musicDisc = musicDiscs[musicDiscID] ?: return false
 
-        val key = Key.key(musicDisc.song)
-        activDiscs[location] = CompanionDisc(key, musicDiscID, getPlayerInDistance(location, 16 * 4))
-        val sound = Sound.sound(key, Sound.Source.RECORD, 4.0f, 1.0f)
-        location.world.playSound(sound)
+        //val key = Key.key(musicDisc.song)
+        activDiscs[location] = CompanionDisc(musicDisc.song, musicDiscID, getPlayerInDistance(location, 16 * 4))
+        //val sound = Sound.sound(key, Sound.Source.RECORD, 4.0f, 1.0f)
+
+        for (player in getPlayerInDistance(location,16*4))
+            player.playSound(location,musicDisc.song,SoundCategory.RECORDS,4.0f,1.0f)
+
+
+        //location.world?.playSound(location,musicDisc.song,4.0f,4.0f)?:return false
         return true
     }
 
     private fun getPlayerInDistance(location: Location, dist: Int): MutableList<Player> {
         val list = mutableListOf<Player>()
-        for (p in location.world.players)
+        for (p in location.world?.players?:return mutableListOf())
             if (p.location.distance(location) <= dist)
                 list.add(p)
         return list
@@ -65,10 +70,10 @@ class MusicDiscs : Listener {
         activDiscs.remove(location)
         for (p in disc.players)
             if (p.isOnline)
-                p.stopSound(disc.musicSoundKey.asString(), SoundCategory.RECORDS)
+                p.stopSound(disc.musicSoundKey, SoundCategory.RECORDS)
 
-        location.world.dropItem(location.add(0.0, 1.0, 0.0), plugin.empireItems.empireItems[disc.id] ?: return false)
-        location.world.playSound(location, org.bukkit.Sound.ENTITY_ITEM_PICKUP, 1.0f, 1.0f)
+        location.world?.dropItem(location.add(0.0, 1.0, 0.0), plugin.empireItems.empireItems[disc.id] ?: return false)?:return false
+        location.world?.playSound(location, org.bukkit.Sound.ENTITY_ITEM_PICKUP, 1.0f, 1.0f)?:return false
         return true
     }
 

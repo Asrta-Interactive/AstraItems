@@ -1,7 +1,7 @@
 package com.makeevrserg.empireprojekt.commands
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
-import com.makeevrserg.empireprojekt.events.sit.SitEvent
+import com.makeevrserg.empireprojekt.essentials.sit.SitEvent
 import com.makeevrserg.empireprojekt.menumanager.PlayerMenuUtility
 import com.makeevrserg.empireprojekt.menumanager.menu.EmpireCategoriesMenu
 import com.makeevrserg.empireprojekt.menumanager.menu.EmpireSoundsMenu
@@ -119,27 +119,32 @@ class CommandManager() : CommandExecutor {
 
             if (sender is Player) {
 
-                val book = ItemStack(Material.WRITTEN_BOOK)
-                val meta = book.itemMeta as BookMeta
-                meta.title = EmpireUtils.HEXPattern("&fЭмодзи")
-                meta.author = "RomaRoman"
+
                 var list = ""
-                val pages: MutableList<String> = mutableListOf()
-                var count = 0
                 for (emoji in plugin.empireFontImages.fontsInfo.keys) {
                     if (plugin.empireFontImages.fontsInfo[emoji]?.sendBlocked ?: continue)
                         continue
-
-                    count++
-                    list += "$emoji&r\n&f${plugin.empireFontImages.fontsInfo[emoji]}&r\n"
-                    if (count % 7 == 0) {
-                        pages.add(list)
-                        list = ""
-                    }
+                    list += EmpireUtils.HEXPattern("&r${emoji}\n&r&f${plugin.empireFontImages.fontsInfo[emoji]!!.chars}&r\n")
                 }
-                pages.add(list)
-                meta.pages = EmpireUtils.HEXPattern(pages)
-                book.itemMeta = meta
+
+                val book = EmpireUtils.getBook("RomaRoman", EmpireUtils.HEXPattern("&fЭмодзи"), mutableListOf(list),false)
+
+
+//                var list = ""
+//                val pages: MutableList<String> = mutableListOf()
+//                var count = 0
+//                for (emoji in plugin.empireFontImages.fontsInfo.keys) {
+//                    if (plugin.empireFontImages.fontsInfo[emoji]?.sendBlocked ?: continue)
+//                        continue
+//
+//                    count++
+//                    list += "$emoji&r\n&f${plugin.empireFontImages.fontsInfo[emoji]}&r\n"
+//                    if (count % 7 == 0) {
+//                        pages.add(list)
+//                        list = ""
+//                    }
+//                }
+//                pages.add(list)
                 //sender.inventory.addItem(book)
                 sender.openBook(book)
             }

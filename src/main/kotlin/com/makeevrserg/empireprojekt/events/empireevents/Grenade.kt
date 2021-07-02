@@ -53,7 +53,7 @@ class Grenade : Listener {
 
         fun generateExplosion(location: Location, power: Double) {
 
-            location.createExplosion(power.toFloat())
+            location.world?.createExplosion(location,power.toFloat())?:return
         }
     }
 }

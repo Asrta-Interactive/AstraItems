@@ -179,6 +179,9 @@ class Gun : Listener {
             yawPacket.float.write(1, p.location.pitch - recoil.toFloat())
             protocolManager?.sendServerPacket(p, yawPacket) ?: return
         }
+        if (recoil==0.0)
+            return
+
         if (player.location.block.getRelative(BlockFace.DOWN).getRelative(BlockFace.DOWN).type == Material.AIR)
             return
         if (plugin.server.pluginManager.isPluginEnabled("protocollib")) {
@@ -257,13 +260,13 @@ class Gun : Listener {
                 .extra(0.06)
                 .data(null)
                 .color(rgbToColor(empGun.bulletColor))
-                .location(l.world, l.x, l.y, l.z)
+                .location(l.world?:return, l.x, l.y, l.z)
                 .spawn()
 
             l =
                 l.add(l.direction.x, l.direction.y - i / (empGun.gunLength * empGun.gunBulletWeight), l.direction.z)
 
-            if (l.block.isSolid)
+            if (!l.block.isPassable)
                 break
 
             for (ent: Entity in getEntityByLocation(l, r))
@@ -281,7 +284,8 @@ class Gun : Listener {
 
     private fun getEntityByLocation(loc: Location, r: Double): MutableList<Entity> {
         val entities: MutableList<Entity> = mutableListOf()
-        for (e in loc.world.entities)
+        loc.world?:return mutableListOf()
+        for (e in loc.world!!.entities)
             if (e.location.distanceSquared(loc) <= r)
                 entities.add(e)
         return entities

@@ -15,7 +15,7 @@ class EmpireCategoryMenu(
     val slot: Int,
     override var page: Int
 
-) : PaginatedMenu(translations, playerMenuUtility) {
+) : PaginatedMenu(playerMenuUtility) {
     private var maxPage: Int
 
     val guiConfigFile = plugin.empireFiles.guiFile.getConfig()

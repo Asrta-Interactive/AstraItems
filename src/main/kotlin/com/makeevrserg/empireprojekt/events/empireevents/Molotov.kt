@@ -36,9 +36,9 @@ class Molotov : Listener {
                 ?: return
 
 
-        if (allowFire(plugin,e.hitBlock?.location?:return)) {
-            return
-        }
+//        if (!allowFire(plugin,e.hitBlock?.location?:return)) {
+//            return
+//        }
         Igniter(plugin,e.hitBlock ?: return, molotovPower.toInt(), player)
         //e.entity.world.spawnParticle(Particle.SMOKE_LARGE, e.entity.location, 300, 0.0, 0.0, 0.0, 0.2)
         //mapBlocks[player] = mutableListOf()
@@ -62,7 +62,7 @@ class Molotov : Listener {
         private val listLocations: MutableList<Location> = mutableListOf()
 
         init {
-            block.location.world.spawnParticle(Particle.SMOKE_LARGE, block.location, 300, 0.0, 0.0, 0.0, 0.2)
+            block.location.world?.spawnParticle(Particle.SMOKE_LARGE, block.location, 300, 0.0, 0.0, 0.0, 0.2)
             setFire(block, radius, player)
         }
 
@@ -88,7 +88,7 @@ class Molotov : Listener {
         }
 
         private fun setFire(block: Block, radius: Int, player: Player) {
-            if (allowFire(plugin,block.location))
+            if (!allowFire(plugin,block.location))
                 return
             if (radius == 0)
                 return

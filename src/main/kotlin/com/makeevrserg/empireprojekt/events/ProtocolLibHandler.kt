@@ -86,12 +86,12 @@ class ProtocolLibHandler:Listener {
                     return listComponent
                 }
                 val packet = event.packet
-
+                //println(packet.type)
                 for (i in 0 until packet.chatComponents.size()) {
                     chatCompToEmoji(packet, i)
                     for (j in 0 until packet.modifier.size()) {
                         val obj = packet.modifier.read(j) ?: continue
-
+                        //println(obj)
                         if (obj is TranslatableComponent)
                             packet.modifier.write(j,obj.args(getListComponent(obj)))
 

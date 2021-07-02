@@ -52,7 +52,7 @@ class ItemInteractListener : Listener {
     @EventHandler
     fun onSignEvent(e: SignChangeEvent) {
 
-        for (i in 0 until e.lines().size)
+        for (i in e.lines.indices)
             e.setLine(
                 i,
                 EmpireUtils.HEXPattern(EmpireUtils.emojiPattern(e.getLine(i) ?: continue))

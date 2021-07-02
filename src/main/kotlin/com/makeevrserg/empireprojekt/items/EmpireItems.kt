@@ -2,7 +2,7 @@ package com.makeevrserg.empireprojekt.items
 
 import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.plugin
 import com.makeevrserg.empireprojekt.events.empireevents.Gun
-import com.makeevrserg.empireprojekt.events.empireevents.MusicDiscs
+import com.makeevrserg.empireprojekt.essentials.MusicDiscs
 import com.makeevrserg.empireprojekt.events.genericlisteners.EmpireCommandEvent
 import com.makeevrserg.empireprojekt.events.genericlisteners.EmpireEvent
 import com.makeevrserg.empireprojekt.events.genericlisteners.EmpireParticleEvent
@@ -26,6 +26,7 @@ import java.util.*
 
 class EmpireItems {
     private var _empireItems: MutableMap<String, ItemStack> = mutableMapOf()
+    public var _empireBlocks:MutableMap<String,ItemStack> = mutableMapOf()
     private var _itemsInfo: MutableList<ItemInfo> = mutableListOf()
     private var _empireEvents: MutableMap<String, List<EmpireEvent>> = mutableMapOf()
 
@@ -70,7 +71,7 @@ class EmpireItems {
                 val material: Material? = Material.getMaterial(itemConfig.getString("material")!!)
                 material ?: continue
                 val itemStack = ItemStack(material)
-                var itemMeta: ItemMeta = itemStack.itemMeta
+                var itemMeta: ItemMeta = itemStack.itemMeta!!
                 itemMeta.setDisplayName(EmpireUtils.HEXPattern(itemConfig.getString("display_name") ?: continue))
                 itemMeta.lore = EmpireUtils.HEXPattern(itemConfig.getStringList("lore"))
                 val customModelData: Int = itemConfig.getInt("custom_model_data")
@@ -130,7 +131,8 @@ class EmpireItems {
                     itemMeta = potionMeta
                 }
                 itemStack.itemMeta = itemMeta
-
+                if (itemConfig.contains("block"))
+                    _empireBlocks[itemID] = itemStack
 
                 _empireItems[itemID] = itemStack
                 _itemsInfo.add(

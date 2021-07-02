@@ -1,0 +1,8 @@
+resourcePack: "https://empireprojekt.ru/files/EmpireProjektPack_Light_2.zip"
+downloadResourcePackOnJoin: false
+tab_prefix: "%vault_prefix%"
+isUpgradeEnabled: true
+vampirismMultiplier: 0.05
+upgradeCostMultiplier: 1.0
+onJoinResourcePackTimeStay: 100
+sha_1: "null"

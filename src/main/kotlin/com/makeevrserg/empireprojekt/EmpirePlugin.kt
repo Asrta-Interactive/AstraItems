@@ -1,6 +1,7 @@
 package com.makeevrserg.empireprojekt
 
 import com.makeevrserg.empireprojekt.commands.CommandManager
+import com.makeevrserg.empireprojekt.essentials.homes.EssentialsHandler
 import com.makeevrserg.empireprojekt.events.GenericListener
 import com.makeevrserg.empireprojekt.events.genericlisteners.ItemDropListener
 import com.makeevrserg.empireprojekt.items.EmpireItems
@@ -13,7 +14,6 @@ import org.bukkit.inventory.Recipe
 import org.bukkit.inventory.ShapedRecipe
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.plugin.java.JavaPlugin
-import java.awt.Shape
 
 class EmpirePlugin : JavaPlugin() {
 
@@ -29,6 +29,7 @@ class EmpirePlugin : JavaPlugin() {
     lateinit var config: EmpireConfig
     lateinit var empireFontImages: EmpireFontImages
     private lateinit var commandManager: CommandManager
+    private lateinit var empHomes: EssentialsHandler
     lateinit var genericListener: GenericListener
     lateinit var categoryItems: MutableMap<String, CategoryItems.CategorySection>
     lateinit var getEveryDrop: MutableMap<String, MutableList<ItemDropListener.ItemDrop>>
@@ -47,6 +48,7 @@ class EmpirePlugin : JavaPlugin() {
         empireItems = EmpireItems()
         genericListener = GenericListener()
         commandManager = CommandManager()
+        empHomes = EssentialsHandler()
         categoryItems =
             CategoryItems(
                 empireFiles.guiFile.getConfig()?.getConfigurationSection("categories")

@@ -79,12 +79,12 @@ class ItemDropListener : Listener {
         for (drop: ItemDrop in list) {
             if (drop.chance > Random.nextInt(0, 100))
                 for (i in 0 until Random.nextInt(drop.minAmount, drop.maxAmount + 1))
-                    l.world.dropItem(
+                    l.world?.dropItem(
                         l,
                         plugin.empireItems.empireItems[drop.item] ?: ItemStack(
                             Material.getMaterial(drop.item) ?: continue
                         )
-                    )
+                    )?:return
         }
     }
 

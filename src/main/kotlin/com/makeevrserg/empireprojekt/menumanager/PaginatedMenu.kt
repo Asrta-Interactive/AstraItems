@@ -5,12 +5,13 @@ import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import com.makeevrserg.empireprojekt.util.Translations
+import com.makeevrserg.empireprojekt.util.Translations.Companion.translations
 
 
-abstract class PaginatedMenu(val translations:Translations,playerMenuUtility: PlayerMenuUtility?) : Menu(playerMenuUtility!!) {
+abstract class PaginatedMenu(playerMenuUtility: PlayerMenuUtility?) : Menu(playerMenuUtility!!) {
     val plugin: EmpirePlugin = EmpirePlugin.plugin
     open var page = 0
-    protected var maxItemsPerPage = 45
+    open var maxItemsPerPage = 45
     var maxPages: Int = 1
     protected var index = 0
 
@@ -43,7 +44,7 @@ abstract class PaginatedMenu(val translations:Translations,playerMenuUtility: Pl
 
         id ?: return ItemStack(Material.PAPER)
         val itemStack = items[id] ?: ItemStack(Material.PAPER)
-        val itemMeta = itemStack.itemMeta
+        val itemMeta = itemStack.itemMeta?:return itemStack
         itemMeta.setDisplayName(page)
         itemStack.itemMeta = itemMeta
 
@@ -55,7 +56,7 @@ abstract class PaginatedMenu(val translations:Translations,playerMenuUtility: Pl
     fun addManageButtons() {
         if (page >= 1)
             inventory.setItem(
-                45,
+                maxItemsPerPage,
                 setItem(
                     ChatColor.GREEN.toString() + "<- Пред. страница",
                     plugin.empireItems.empireItems,
@@ -64,7 +65,7 @@ abstract class PaginatedMenu(val translations:Translations,playerMenuUtility: Pl
             )
 
         inventory.setItem(
-            49,
+            maxItemsPerPage+4,
             setItem(
                 ChatColor.GREEN.toString() + "Назад",
                 plugin.empireItems.empireItems,
@@ -73,7 +74,7 @@ abstract class PaginatedMenu(val translations:Translations,playerMenuUtility: Pl
         )
         if (page < maxPages)
             inventory.setItem(
-                53,
+                maxItemsPerPage+8,
                 setItem(
                     ChatColor.GREEN.toString() + "След. страница ->",
                     plugin.empireItems.empireItems,

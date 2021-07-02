@@ -2,7 +2,9 @@ package com.makeevrserg.empireprojekt.util
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import net.md_5.bungee.api.ChatColor
+import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.meta.BookMeta
 import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.persistence.PersistentDataType
 import java.util.regex.Matcher
@@ -27,6 +29,30 @@ class EmpireUtils {
             return getEmpireID(item.itemMeta)
         }
 
+        fun getBook(author: String, title: String, lines: List<String>,useHex:Boolean=true): ItemStack {
+
+            val book = ItemStack(Material.WRITTEN_BOOK)
+            val meta = book.itemMeta as BookMeta
+
+            meta.author = author
+            meta.title = title
+
+            val pages = mutableListOf<String>()
+            for (line in lines) {
+                var hexLine = if (useHex) EmpireUtils.emojiPattern(EmpireUtils.HEXPattern(line)) else line
+                while (hexLine.length>19*14) {
+                    pages.add(hexLine.substring(0,19*14))
+                    hexLine = hexLine.substring(19*14)
+                }
+                pages.add(hexLine)
+            }
+
+
+            meta.pages = pages
+
+            book.itemMeta = meta
+            return book
+        }
 
         private val emojiPattern = Pattern.compile(":([a-zA-Z0-9_]*):")
 
@@ -36,11 +62,11 @@ class EmpireUtils {
             var line = _line
             while (matcher.find()) {
                 val emoji: String = line.substring(matcher.start(), matcher.end())
-                val toReplace: String = map[emoji].toString()
+                val toReplace: String = map[emoji]?:emoji.replace(":","<<>>")
                 line = line.replace(emoji, toReplace + "")
                 matcher = emojiPattern.matcher(line)
             }
-            return line
+            return line.replace("<<>>",":")
         }
 
         fun HEXPattern(list: MutableList<String>?): List<String> {

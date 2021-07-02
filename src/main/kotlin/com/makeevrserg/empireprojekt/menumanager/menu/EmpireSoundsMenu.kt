@@ -10,7 +10,7 @@ import com.makeevrserg.empireprojekt.util.EmpireUtils
 import com.makeevrserg.empireprojekt.util.Translations.Companion.translations
 
 class EmpireSoundsMenu(playerMenuUtility: PlayerMenuUtility?) :
-    PaginatedMenu(translations, playerMenuUtility) {
+    PaginatedMenu(playerMenuUtility) {
     override var menuName: String = EmpireUtils.HEXPattern(
         plugin.empireFiles.guiFile.getConfig()?.getString("settings.sounds_text", "Звуки")!!
     )
@@ -57,7 +57,7 @@ class EmpireSoundsMenu(playerMenuUtility: PlayerMenuUtility?) :
             index = super.maxItemsPerPage * page + i
             if (index < sounds.size) {
                 val itemStack = ItemStack(Material.PAPER)
-                val itemMeta = itemStack.itemMeta
+                val itemMeta = itemStack.itemMeta!!
                 itemMeta.setDisplayName(sounds.elementAt(index))
                 itemStack.itemMeta = itemMeta
                 inventory.setItem(i,itemStack)

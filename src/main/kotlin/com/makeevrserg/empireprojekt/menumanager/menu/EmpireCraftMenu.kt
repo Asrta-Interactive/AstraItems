@@ -25,7 +25,7 @@ class EmpireCraftMenu(
     private val categoryPage: Int,
     private val item: String,
     override var page: Int
-) : PaginatedMenu(translations, playerMenuUtility) {
+) : PaginatedMenu(playerMenuUtility) {
 
     val guiConfigFile = plugin.empireFiles.guiFile.getConfig()
     var recipePage = 0
@@ -233,7 +233,7 @@ class EmpireCraftMenu(
         val itemStack = getItemStack("settings.drop_btn")
         val itemMeta = itemStack.itemMeta
         val upgrades: List<ItemUpgradeEvent.ItemUpgrade> = plugin.genericListener._itemUpgradeEvent.upgradesMap[item] ?: return null
-        itemMeta.setDisplayName(plugin.translations.ITEM_INFO_IMPROVING)
+        itemMeta!!.setDisplayName(plugin.translations.ITEM_INFO_IMPROVING)
         val lore = itemMeta.lore ?: mutableListOf()
         for (upgrade: ItemUpgradeEvent.ItemUpgrade in upgrades) {
             if (!containValue(ItemUpgradeEvent.attrMap[upgrade.attr] ?: continue, lore))
@@ -252,7 +252,7 @@ class EmpireCraftMenu(
         val itemStack = getItemStack("settings.drop_btn")
         val itemMeta = itemStack.itemMeta
 
-        itemMeta.setDisplayName(plugin.translations.ITEM_INFO_DROP)
+        itemMeta!!.setDisplayName(plugin.translations.ITEM_INFO_DROP)
         val everyDropByItem: MutableMap<String, MutableList<ItemDropListener.ItemDrop>> = plugin.getEveryDrop
         everyDropByItem[item] ?: return null
         val lore = itemMeta.lore ?: mutableListOf()

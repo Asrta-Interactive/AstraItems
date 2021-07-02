@@ -1,4 +1,4 @@
-package com.makeevrserg.empireprojekt.events.sit
+package com.makeevrserg.empireprojekt.essentials.sit
 
 import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.plugin
 import com.makeevrserg.empireprojekt.util.Translations
@@ -10,6 +10,7 @@ import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import org.bukkit.event.block.Action
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerQuitEvent
@@ -36,7 +37,7 @@ class SitEvent : Listener {
         }
 
 
-        val chair = location.world.spawnEntity(location.add(0.5, -1.6, 0.5), EntityType.ARMOR_STAND) as ArmorStand
+        val chair = location.world?.spawnEntity(location.add(0.5, -1.6, 0.5), EntityType.ARMOR_STAND) as ArmorStand
         chair.setGravity(false)
         chair.isVisible = false
         chair.isInvulnerable = false
@@ -64,14 +65,17 @@ class SitEvent : Listener {
 
     @EventHandler
     fun playerInteractEvent(e: PlayerInteractEvent) {
-        val player = e.player
-        val block = e.clickedBlock ?: return
-        val blockName = block.type.name.toLowerCase()
-        when {
-            blockName.contains("slab") -> sitPlayer(player, block.location.add(0.0,0.4,0.0))
-            blockName.contains("stairs") -> sitPlayer(player, block.location.add(0.0,0.5,0.0))
-            blockName.contains("carpet") -> sitPlayer(player, block.location)
-        }
+        if (e.action!=Action.RIGHT_CLICK_BLOCK)
+            return
+//        val player = e.player
+//        val block = e.clickedBlock ?: return
+//        val blockName = block.type.name.toLowerCase()
+//
+//        when {
+//            blockName.contains("slab") -> sitPlayer(player, block.location.add(0.0,0.4,0.0))
+//            blockName.contains("stairs") -> sitPlayer(player, block.location.add(0.0,0.5,0.0))
+//            blockName.contains("carpet") -> sitPlayer(player, block.location)
+//        }
     }
 
     @EventHandler

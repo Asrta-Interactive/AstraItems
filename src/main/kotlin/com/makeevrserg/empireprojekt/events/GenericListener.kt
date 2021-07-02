@@ -1,12 +1,15 @@
 package com.makeevrserg.empireprojekt.events
 
 import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.plugin
+import com.makeevrserg.empireprojekt.essentials.AutoBlockChange
+import com.makeevrserg.empireprojekt.essentials.LoreBooks
+import com.makeevrserg.empireprojekt.essentials.MusicDiscs
 import com.makeevrserg.empireprojekt.events.blocks.EmpireBlocks
 import com.makeevrserg.empireprojekt.events.empireevents.*
 import com.makeevrserg.empireprojekt.events.genericlisteners.ExperienceRepairEvent
 import com.makeevrserg.empireprojekt.events.genericlisteners.ItemDropListener
 import com.makeevrserg.empireprojekt.events.genericlisteners.ItemInteractListener
-import com.makeevrserg.empireprojekt.events.sit.SitEvent
+import com.makeevrserg.empireprojekt.essentials.sit.SitEvent
 import com.makeevrserg.empireprojekt.menumanager.MenuListener
 
 
@@ -28,9 +31,10 @@ class GenericListener {
     private var _gun: Gun = Gun()
     private var _empireBlocks = EmpireBlocks()
     private var _sitEvent: SitEvent = SitEvent()
+    private var _autoBlockChange = AutoBlockChange()
     var _craftEvent = CraftEvent()
     private var _empireMusicDiscs = MusicDiscs()
-    //private var _empireMobs = EmpireMobs()
+    private var _loreBooks = LoreBooks()
     fun onDisable() {
         _itemInteractListener.onDisable()
         _itemDropListener.onDisable()
@@ -51,6 +55,7 @@ class GenericListener {
         _craftEvent.onDisable()
         _empireMusicDiscs.onDisable()
         _sitEvent.onDisable()
-        //_empireMobs.onDisable()
+        _autoBlockChange.onDisable()
+        _loreBooks.onDisable()
     }
 }

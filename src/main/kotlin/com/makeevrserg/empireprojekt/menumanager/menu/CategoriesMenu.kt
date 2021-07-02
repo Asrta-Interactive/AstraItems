@@ -12,7 +12,7 @@ import com.makeevrserg.empireprojekt.util.EmpireUtils
 import org.bukkit.Sound
 
 class EmpireCategoriesMenu(playerMenuUtility: PlayerMenuUtility?) :
-    PaginatedMenu(plugin.translations, playerMenuUtility) {
+    PaginatedMenu(playerMenuUtility) {
     private val guiConfigFile = plugin.empireFiles.guiFile.getConfig()
     override var menuName: String = EmpireUtils.HEXPattern(
         guiConfigFile?.getString("settings.categories_text", "Категории")!!
@@ -67,7 +67,7 @@ class EmpireCategoriesMenu(playerMenuUtility: PlayerMenuUtility?) :
                 val itemStack: ItemStack = plugin.empireItems.empireItems[menuItem]?.clone() ?: (ItemStack(
                     Material.getMaterial(menuItem) ?: Material.PAPER
                 ))
-                val itemMeta: ItemMeta = itemStack.itemMeta
+                val itemMeta: ItemMeta = itemStack.itemMeta?:continue
                 itemMeta.setDisplayName(EmpireUtils.HEXPattern(categoryItem.name))
                 itemMeta.lore = EmpireUtils.HEXPattern(categoryItem.lore)
                 itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES)

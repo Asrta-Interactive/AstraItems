@@ -1,0 +1,141 @@
+namespace: empire_items
+
+sounds:
+
+  music_disc_josuke_theme:
+    id: "music_disc.josuke_theme"
+    sounds:
+      - "music_disc/josuke_theme"
+  music_disc_kira_yoshikage_theme:
+    id: "music_disc.kira_yoshikage_theme"
+    sounds:
+      - "music_disc/kira_yoshikage_theme"
+
+  music_disc_megastructure:
+    id: "music_disc.megastructure"
+    sounds:
+      - "music_disc/megastructure"
+
+  music_disc_dont_starve_main:
+    id: "music_disc.dont_starve_main"
+    sounds:
+      - "music_disc/dont_starve_main"
+
+  music_disc_yaccattanaa:
+    id: "music_disc.yaccattanaa"
+    sounds:
+      - "music_disc/yaccattanaa"
+
+
+  music_disc_huggin_shop:
+    id: "music_disc.huggin_shop"
+    sounds:
+      - "music_disc/huggin_shop"
+
+
+  music_disc_gintama_3:
+    id: "music_disc.gintama_3"
+    sounds:
+      - "music_disc/gintama_3"
+
+  music_disc_from_outer_space:
+    id: "music_disc.from_outer_space"
+    sounds:
+      - "music_disc/from_outer_space"
+
+  music_disc_hellsing_19:
+    id: "music_disc.hellsing_19"
+    sounds:
+      - "music_disc/hellsing_19"
+
+  music_disc_hellsing_3:
+    id: "music_disc.hellsing_3"
+    sounds:
+      - "music_disc/hellsing_3"
+
+  music_disc_battleblock_theater:
+    id: "music_disc.battleblock_theater"
+    sounds:
+      - "music_disc/battleblock_theater"
+
+  music_disc_dorohedoro:
+    id: "music_disc.dorohedoro"
+    sounds:
+      - "music_disc/dorohedoro"
+
+  music_disc_into_asgard:
+    id: "music_disc.into_asgard"
+    sounds:
+      - "music_disc/bonetrousle"
+
+  music_disc_megalovania:
+    id: "music_disc.megalovania"
+    sounds:
+      - "music_disc/megalovania"
+
+  music_disc_coffin_dance:
+    id: "music_disc.coffin_dance"
+    sounds:
+      - "music_disc/coffin_dance"
+
+  music_disc_music_disc_klk_harime:
+    id: "music_disc.music_disc_klk_harime"
+    sounds:
+      - "music_disc/kill_la_kill_harime_nui_theme"
+
+  music_disc_music_disc_dorohedoro_otd:
+    id: "music_disc.music_disc_dorohedoro_otd"
+    sounds:
+      - "music_disc/dorohedoro_open_the_door"
+
+  music_disc_music_disc_bellum_beyond_fear:
+    id: "music_disc.music_disc_bellum_beyond_fear"
+    sounds:
+      - "empire_items:music_disc/bellum_beyond_fear"
+
+  music_disc_music_disc_baldurs_gate_mind_flayer:
+    id: "music_disc.music_disc_baldurs_gate_mind_flayer"
+    sounds:
+      - "baldurs_gate_3_mind_flayers_theme"
+
+
+  music_disc_music_disc_baldurs_gate_goblins_theme:
+    id: "music_disc.music_disc_baldurs_gate_goblins_theme"
+    sounds:
+      - "baldurs_gate_3_goblins_battle_theme"
+
+
+  music_disc_music_disc_baldurs_battle_music:
+    id: "music_disc.music_disc_baldurs_battle_music"
+    sounds:
+      - "music_disc/baldurs_gate_3_battle_music"
+
+
+  music_disc_music_disc_dmc5_nico:
+    id: "music_disc.music_disc_dmc5_nico"
+    sounds:
+      - "music_disc/dmc_5_nico_theme"
+
+
+  item_guitar_play:
+    id: "item.guitar.play"
+    sounds:
+      - "item/guitar/play1"
+      - "item/guitar/play2"
+      - "item/guitar/play4"
+      - "item/guitar/play5"
+      - "item/guitar/play6"
+      - "item/guitar/play7"
+      - "item/guitar/play8"
+
+  ambient_angelic:
+    id: "ambient.angelic"
+    sounds:
+      - "ambient/angelic"
+
+  ambient_creepy:
+    id: "ambient.creepy"
+    sounds:
+      - "ambient/creepy1"
+      - "ambient/creepy2"
+      - "ambient/creepy3"

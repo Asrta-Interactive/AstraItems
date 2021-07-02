@@ -51,7 +51,16 @@ public class Files() {
             plugin,
             "config" + File.separator + "mobs.yml"
         )
-
+    val mechanicsFile: FileManager =
+        FileManager(
+            plugin,
+            "config" + File.separator + "mechanics.yml"
+        )
+    val loreBooks: FileManager =
+        FileManager(
+            plugin,
+            "config" + File.separator + "lore_books.yml"
+        )
     val empireItemsFiles: MutableList<FileManager> = mutableListOf()
 
 
