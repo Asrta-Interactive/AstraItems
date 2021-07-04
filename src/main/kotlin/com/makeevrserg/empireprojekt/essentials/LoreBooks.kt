@@ -23,7 +23,6 @@ class LoreBooks : Listener {
     init {
         if (initBooks())
             plugin.server.pluginManager.registerEvents(this, EmpirePlugin.plugin)
-
     }
 
     fun onDisable() {

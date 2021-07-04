@@ -4,7 +4,6 @@ import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.plugin
 import com.makeevrserg.empireprojekt.essentials.AutoBlockChange
 import com.makeevrserg.empireprojekt.essentials.LoreBooks
 import com.makeevrserg.empireprojekt.essentials.MusicDiscs
-import com.makeevrserg.empireprojekt.events.blocks.EmpireBlocks
 import com.makeevrserg.empireprojekt.events.empireevents.*
 import com.makeevrserg.empireprojekt.events.genericlisteners.ExperienceRepairEvent
 import com.makeevrserg.empireprojekt.events.genericlisteners.ItemDropListener
@@ -29,7 +28,6 @@ class GenericListener {
     private var _protocolLibHandler: ProtocolLibHandler = ProtocolLibHandler()
     private var _vampirismEnchant: Vampirism = Vampirism()
     private var _gun: Gun = Gun()
-    private var _empireBlocks = EmpireBlocks()
     private var _sitEvent: SitEvent = SitEvent()
     private var _autoBlockChange = AutoBlockChange()
     var _craftEvent = CraftEvent()
@@ -51,7 +49,6 @@ class GenericListener {
         _vampirismEnchant.onDisable()
         _molotov.onDisable()
         _gun.onDisable()
-        _empireBlocks.onDisable()
         _craftEvent.onDisable()
         _empireMusicDiscs.onDisable()
         _sitEvent.onDisable()
