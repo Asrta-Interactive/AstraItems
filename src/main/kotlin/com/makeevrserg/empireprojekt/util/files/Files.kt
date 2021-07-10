@@ -2,65 +2,34 @@ package com.makeevrserg.empireprojekt.util.files
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.google.common.io.Files
-import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.plugin
+import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.instance
 import java.io.File
 import java.util.*
 
 public class Files() {
 
     val configFile: FileManager =
-        FileManager(
-            plugin,
-            "config" + File.separator + "config.yml"
-        )
+        FileManager("config" + File.separator + "config.yml")
     val guiFile: FileManager =
-        FileManager(
-            plugin,
-            "config" + File.separator + "gui.yml"
-        )
+        FileManager("config" + File.separator + "gui.yml")
     val dropsFile: FileManager =
-        FileManager(
-            plugin,
-            "config" + File.separator + "drops.yml"
-        )
+        FileManager("config" + File.separator + "drops.yml")
     val upgradesFile: FileManager =
-        FileManager(
-            plugin,
-            "config" + File.separator + "upgrades.yml"
-        )
+        FileManager("config" + File.separator + "upgrades.yml")
     val fontImagesFile: FileManager =
-        FileManager(
-            plugin,
-            "config" + File.separator + "fonts.yml"
-        )
+        FileManager("config" + File.separator + "fonts.yml")
     val blocksFile: FileManager =
-        FileManager(
-            plugin,
-            "config" + File.separator + "blocks.yml"
-        )
-
+        FileManager("config" + File.separator + "blocks.yml")
     val craftingFile: FileManager =
-        FileManager(
-            plugin,
-            "config" + File.separator + "crafting.yml"
-        )
-
-
+        FileManager("config" + File.separator + "crafting.yml")
     val mobsFile: FileManager =
-        FileManager(
-            plugin,
-            "config" + File.separator + "mobs.yml"
-        )
+        FileManager("config" + File.separator + "mobs.yml")
     val mechanicsFile: FileManager =
-        FileManager(
-            plugin,
-            "config" + File.separator + "mechanics.yml"
-        )
+        FileManager("config" + File.separator + "mechanics.yml")
     val loreBooks: FileManager =
-        FileManager(
-            plugin,
-            "config" + File.separator + "lore_books.yml"
-        )
+        FileManager("config" + File.separator + "lore_books.yml")
+    val npcs: FileManager =
+        FileManager("config" + File.separator + "npcs.yml")
     val empireItemsFiles: MutableList<FileManager> = mutableListOf()
 
 
@@ -70,13 +39,13 @@ public class Files() {
 
 
     private fun getFilesList() = File(
-        plugin.dataFolder.toString() + File.separator + "items" + File.separator
+        instance.dataFolder.toString() + File.separator + "items" + File.separator
     ).listFiles()
 
     private fun isYml(fileEntry: File) = Files.getFileExtension(fileEntry.toString()).equals("yml", ignoreCase = true)
 
     private fun getCustomItems() {
-        if (plugin.dataFolder.listFiles() != null) {
+        if (instance.dataFolder.listFiles() != null) {
 
             val files = getFilesList()
 
@@ -84,10 +53,9 @@ public class Files() {
                 Arrays.sort(files)
                 for (fileEntry in files)
                     if (isYml(fileEntry)) {
-                        println(plugin.translations.LOADING_FILE +" "+ plugin.dataFolder + File.separator + "items" + File.separator + fileEntry.name)
+                        println(EmpirePlugin.translations.LOADING_FILE + " " + instance.dataFolder + File.separator + "items" + File.separator + fileEntry.name)
                         empireItemsFiles.add(
                             FileManager(
-                                plugin,
                                 "items" + File.separator + fileEntry.name
                             )
                         )

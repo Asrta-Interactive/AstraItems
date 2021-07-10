@@ -1,9 +1,9 @@
 package com.makeevrserg.empireprojekt.events.genericlisteners
 
-import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.plugin
+import com.makeevrserg.empireprojekt.EmpirePlugin
+import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.instance
 import com.makeevrserg.empireprojekt.util.EmpireUtils
 import me.clip.placeholderapi.PlaceholderAPI
-import net.kyori.adventure.text.Component
 import org.bukkit.Particle
 import org.bukkit.entity.HumanEntity
 import org.bukkit.entity.Player
@@ -21,10 +21,8 @@ import org.bukkit.potion.PotionEffectType
 class ItemInteractListener : Listener {
 
     init {
-        plugin.server.pluginManager.registerEvents(this, plugin)
+        instance.server.pluginManager.registerEvents(this, instance)
     }
-
-
 
 
     @EventHandler
@@ -80,26 +78,29 @@ class ItemInteractListener : Listener {
 
 
     private fun initEventByHandler(p: Player, eventName: String) {
-        val itemStack = p.inventory.itemInMainHand
-        val itemMeta = itemStack.itemMeta ?: return
-        val id: String = itemMeta.persistentDataContainer
-            .get(plugin.empireConstants.empireID, PersistentDataType.STRING) ?: return
-        handleEvent(id, p, eventName)
+
+        val idMainHand = EmpireUtils.getEmpireID(p.inventory.itemInMainHand)
+
+        val idOffHand = EmpireUtils.getEmpireID(p.inventory.itemInOffHand)
+        if (idMainHand != null)
+            handleEvent(idMainHand, p, eventName)
+        if (idOffHand != null)
+            handleEvent(idOffHand, p, eventName)
     }
 
     private fun handleEvent(id: String, p: Player, actionName: String) {
         fun manageCommand(empireCommands: List<EmpireCommandEvent>) {
             for (command: EmpireCommandEvent in empireCommands)
                 if (command.asConsole)
-                    if (plugin.server.pluginManager.getPlugin("placeholderapi") != null)
-                        plugin.server.dispatchCommand(
-                            plugin.server.consoleSender,
+                    if (instance.server.pluginManager.getPlugin("placeholderapi") != null)
+                        instance.server.dispatchCommand(
+                            instance.server.consoleSender,
                             PlaceholderAPI.setPlaceholders(p, command.command)
                         )
                     else
-                        plugin.server.dispatchCommand(plugin.server.consoleSender, command.command)
+                        instance.server.dispatchCommand(instance.server.consoleSender, command.command)
                 else
-                    if (plugin.server.pluginManager.getPlugin("placeholderapi") != null)
+                    if (instance.server.pluginManager.getPlugin("placeholderapi") != null)
                         p.performCommand(PlaceholderAPI.setPlaceholders(p, command.command))
                     else
                         p.performCommand(command.command)
@@ -132,7 +133,7 @@ class ItemInteractListener : Listener {
         val humanEntity = p as HumanEntity
         if (humanEntity.hasCooldown(p.inventory.itemInMainHand.type))
             return
-        for (event: EmpireEvent in plugin.empireItems.empireEvents[id] ?: return) {
+        for (event: EmpireEvent in EmpirePlugin.empireItems.empireEvents[id] ?: return) {
             if (actionName !in event.eventName)
                 continue
             if (event.cooldown > 0)

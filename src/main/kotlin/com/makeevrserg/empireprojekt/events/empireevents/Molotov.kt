@@ -1,7 +1,7 @@
 package com.makeevrserg.empireprojekt.events.empireevents
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
-import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.plugin
+import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.instance
 import com.sk89q.worldedit.bukkit.BukkitAdapter
 import com.sk89q.worldguard.WorldGuard
 import com.sk89q.worldguard.protection.flags.Flags
@@ -20,7 +20,7 @@ import org.bukkit.persistence.PersistentDataType
 class Molotov : Listener {
 
     init {
-        plugin.server.pluginManager.registerEvents(this, plugin)
+        instance.server.pluginManager.registerEvents(this, instance)
     }
 
 
@@ -29,21 +29,15 @@ class Molotov : Listener {
     fun onProjectileHit(e: ProjectileHitEvent) {
         if (e.entity.shooter !is Player) return
         val player = e.entity.shooter as Player
+        println("Player ${player.name} threw molotov at blockLocation=${e.hitBlock?.location} playerLocation=${player.location}")
         val itemStack = player.inventory.itemInMainHand
         val meta = itemStack.itemMeta ?: return
         val molotovPower =
-            meta.persistentDataContainer.get(plugin.empireConstants.MOLOTOV, PersistentDataType.DOUBLE)
+            meta.persistentDataContainer.get(EmpirePlugin.empireConstants.MOLOTOV, PersistentDataType.DOUBLE)
                 ?: return
 
 
-//        if (!allowFire(plugin,e.hitBlock?.location?:return)) {
-//            return
-//        }
-        Igniter(plugin,e.hitBlock ?: return, molotovPower.toInt(), player)
-        //e.entity.world.spawnParticle(Particle.SMOKE_LARGE, e.entity.location, 300, 0.0, 0.0, 0.0, 0.2)
-        //mapBlocks[player] = mutableListOf()
-        //setFire(e.hitBlock ?: return, molotovPower.toInt(), player)
-        //mapBlocks.remove(player)
+        Igniter(instance,e.hitBlock ?: return, molotovPower.toInt(), player)
     }
 
     companion object{
@@ -51,8 +45,7 @@ class Molotov : Listener {
             if (plugin.server.pluginManager.getPlugin("WorldGuard") != null) {
                 val query: RegionQuery = WorldGuard.getInstance().platform.regionContainer.createQuery()
                 val loc: com.sk89q.worldedit.util.Location = BukkitAdapter.adapt(location)
-                if (query.testState(loc, null, Flags.FIRE_SPREAD))
-                    return false
+                return (query.testState(loc, null, Flags.FIRE_SPREAD))
             }
             return true
         }

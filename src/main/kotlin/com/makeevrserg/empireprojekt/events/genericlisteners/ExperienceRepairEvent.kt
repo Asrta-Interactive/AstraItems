@@ -1,6 +1,7 @@
 package com.makeevrserg.empireprojekt.events.genericlisteners
 
-import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.plugin
+import com.makeevrserg.empireprojekt.EmpirePlugin
+import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.instance
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.PrepareAnvilEvent
@@ -13,7 +14,7 @@ import org.bukkit.persistence.PersistentDataType
 class ExperienceRepairEvent : Listener {
 
     init {
-        plugin.server.pluginManager.registerEvents(this, plugin)
+        instance.server.pluginManager.registerEvents(this, instance)
     }
 
     @EventHandler
@@ -32,14 +33,14 @@ class ExperienceRepairEvent : Listener {
         val itemMeta: ItemMeta = itemStack.itemMeta ?: return
 
         val maxCustomDurability: Int = itemMeta.persistentDataContainer.get(
-            plugin.empireConstants.MAX_CUSTOM_DURABILITY,
+            EmpirePlugin.empireConstants.MAX_CUSTOM_DURABILITY,
             PersistentDataType.INTEGER
         ) ?: return
 
         val damage: Short = itemStack.durability
         val empireDurability = maxCustomDurability - damage * maxCustomDurability / itemStack.type.maxDurability
         itemMeta.persistentDataContainer.set(
-            plugin.empireConstants.EMPIRE_DURABILITY,
+            EmpirePlugin.empireConstants.EMPIRE_DURABILITY,
             PersistentDataType.INTEGER,
             empireDurability
         )
@@ -53,12 +54,12 @@ class ExperienceRepairEvent : Listener {
         itemStack ?: return
         val itemMeta: ItemMeta = itemStack.itemMeta ?: return
         val maxCustomDurability: Int = itemMeta.persistentDataContainer.get(
-            plugin.empireConstants.MAX_CUSTOM_DURABILITY,
+            EmpirePlugin.empireConstants.MAX_CUSTOM_DURABILITY,
             PersistentDataType.INTEGER
         ) ?: return
 
         var empireDurability: Int = itemMeta.persistentDataContainer.get(
-            plugin.empireConstants.EMPIRE_DURABILITY,
+            EmpirePlugin.empireConstants.EMPIRE_DURABILITY,
             PersistentDataType.INTEGER
         ) ?: return
 
@@ -74,7 +75,7 @@ class ExperienceRepairEvent : Listener {
         }
 
         itemMeta.persistentDataContainer.set(
-            plugin.empireConstants.EMPIRE_DURABILITY,
+            EmpirePlugin.empireConstants.EMPIRE_DURABILITY,
             PersistentDataType.INTEGER,
             empireDurability
         )

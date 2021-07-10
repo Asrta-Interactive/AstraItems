@@ -5,10 +5,9 @@ import com.makeevrserg.empireprojekt.util.files.FileManager
 import java.io.File
 
 class EmpireSounds {
-    val plugin: EmpirePlugin = EmpirePlugin.plugin
+    val plugin: EmpirePlugin = EmpirePlugin.instance
     private val _soundsFile: FileManager =
         FileManager(
-            plugin,
             "config" + File.separator + "sounds.yml"
         )
 

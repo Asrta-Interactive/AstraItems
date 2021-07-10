@@ -4,31 +4,26 @@ import com.comphenix.protocol.PacketType
 import com.comphenix.protocol.ProtocolLibrary
 import com.comphenix.protocol.ProtocolManager
 import com.comphenix.protocol.events.*
-import com.comphenix.protocol.wrappers.WrappedChatComponent
 import com.makeevrserg.empireprojekt.EmpirePlugin
-import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.plugin
+
 import com.makeevrserg.empireprojekt.util.EmpireUtils
 import me.clip.placeholderapi.PlaceholderAPI
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
-import net.kyori.adventure.text.TextReplacementConfig
 import net.kyori.adventure.text.TranslatableComponent
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
-import org.bukkit.scheduler.BukkitTask
 import org.jetbrains.annotations.NotNull
-import java.util.*
 
 class ProtocolLibHandler:Listener {
     private lateinit var protocolManager: ProtocolManager
     private lateinit var packetListener: PacketListener
-    private val empirePlugin = plugin
     private fun changePlayerTabName(player:Player){
-        var format: String = empirePlugin.config.tabPrefix + player.name
-        if (empirePlugin.server.pluginManager.getPlugin("placeholderapi") != null)
+        var format: String = EmpirePlugin.config.tabPrefix + player.name
+        if (EmpirePlugin.instance.server.pluginManager.getPlugin("placeholderapi") != null)
             format = PlaceholderAPI.setPlaceholders(player, format)
 
         format = EmpireUtils.HEXPattern(format)
@@ -37,7 +32,7 @@ class ProtocolLibHandler:Listener {
     }
 
     @EventHandler
-    public fun onPlayerJoinEvent(e:PlayerJoinEvent){
+    fun onPlayerJoinEvent(e:PlayerJoinEvent){
         val player = e.player
         changePlayerTabName(player)
     }
@@ -47,7 +42,7 @@ class ProtocolLibHandler:Listener {
 
 
         packetListener = object : PacketAdapter(
-            empirePlugin,
+            EmpirePlugin.instance,
             ListenerPriority.HIGHEST,
             PacketType.Play.Server.SCOREBOARD_OBJECTIVE,
             PacketType.Play.Server.SCOREBOARD_TEAM,
@@ -61,7 +56,7 @@ class ProtocolLibHandler:Listener {
 
         ) {
             override fun onPacketReceiving(event: PacketEvent) {
-                val packet = event.packet
+                //val packet = event.packet
                 //println("Packet Receiving: " + packet.getType().name());
             }
 
@@ -114,10 +109,10 @@ class ProtocolLibHandler:Listener {
     }
 
     init {
-        empirePlugin.server.pluginManager.getPlugin("protocollib")?.let {
+        EmpirePlugin.instance.server.pluginManager.getPlugin("protocollib")?.let {
             protocolManager = ProtocolLibrary.getProtocolManager()
             initPackerListener()
-            plugin.server.pluginManager.registerEvents(this, plugin)
+            EmpirePlugin.instance.server.pluginManager.registerEvents(this, EmpirePlugin.instance)
         }
     }
 }

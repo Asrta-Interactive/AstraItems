@@ -19,7 +19,10 @@ commands:
   emnbt:
   emrepair:
   empack:
+  emess:
   sit:
+  emnpc:
+  skin:
   empireitems:
     usage: |
       /ereload - Перезагружает плагин

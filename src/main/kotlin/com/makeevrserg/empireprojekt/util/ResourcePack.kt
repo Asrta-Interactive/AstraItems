@@ -1,6 +1,5 @@
 package com.makeevrserg.empireprojekt.util
 
-import com.google.common.io.Files
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
@@ -16,7 +15,7 @@ import java.util.zip.ZipOutputStream
 
 class ResourcePack {
 
-    private val plugin = EmpirePlugin.plugin
+    private val plugin = EmpirePlugin.instance
     private fun setPrettyString(file: JsonObject): String {
         return GsonBuilder().setPrettyPrinting().create().toJson(file)
     }
@@ -65,7 +64,7 @@ class ResourcePack {
         fun generateMinecraftStandartModel(itemInfo: EmpireItems.ItemInfo) {
             val minecraftModelPath = getMinecraftModelPath(itemInfo.material)
             if (!File(minecraftModelPath).exists()) {
-                println("${plugin.translations.NOT_EXIST_FILE} ${itemInfo.material.toLowerCase()}")
+                println("${EmpirePlugin.translations.NOT_EXIST_FILE} ${itemInfo.material.toLowerCase()}")
                 return
             }
             val mModelJsonObject =
@@ -239,9 +238,9 @@ class ResourcePack {
 
         val defaultJson = JsonParser().parse(file.reader()).asJsonObject
         val defaultJsonArray = defaultJson.getAsJsonArray("providers")
-        for (font in plugin.empireFontImages.fontsInfo.keys) {
+        for (font in EmpirePlugin.empireFontImages.fontsInfo.keys) {
             val jsonFont = JsonObject()
-            val fontInfo = plugin.empireFontImages.fontsInfo[font]!!
+            val fontInfo = EmpirePlugin.empireFontImages.fontsInfo[font]!!
             jsonFont.addProperty("file", "${fontInfo.namespace}:${fontInfo.path}")
             val tempArray = JsonArray()
 
@@ -258,8 +257,8 @@ class ResourcePack {
     }
 
     private fun generateSounds() {
-        val map = plugin.empireSounds.getSounds()
-        val namespace = plugin.empireSounds.getNamespace()
+        val map = EmpirePlugin.empireSounds.getSounds()
+        val namespace = EmpirePlugin.empireSounds.getNamespace()
         val file = File(
             plugin.dataFolder,
             "pack${File.separator}assets${File.separator}${namespace}${File.separator}sounds.json"
@@ -302,12 +301,12 @@ class ResourcePack {
 //    }
 
     init {
-        println(plugin.translations.ZIP_ITEMS)
+        println(EmpirePlugin.translations.ZIP_ITEMS)
         clearItems()
-        generateItems(plugin.empireItems.itemsInfo)
-        println(plugin.translations.ZIP_FONTS)
+        generateItems(EmpirePlugin.empireItems.itemsInfo)
+        println(EmpirePlugin.translations.ZIP_FONTS)
         generateFont()
-        println(plugin.translations.ZIP_SOUND)
+        println(EmpirePlugin.translations.ZIP_SOUND)
         generateSounds()
         //fixCustomModelDataOrder()
     }

@@ -1,6 +1,7 @@
 package com.makeevrserg.empireprojekt.events
 
-import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.plugin
+import com.makeevrserg.empireprojekt.EmpirePlugin
+import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.instance
 import org.bukkit.attribute.Attribute
 import org.bukkit.attribute.AttributeModifier
 import org.bukkit.configuration.ConfigurationSection
@@ -30,7 +31,7 @@ class ItemUpgradeEvent : Listener {
         get() = _upgradesMap
 
     private fun initList() {
-        val section: ConfigurationSection = plugin.empireFiles.upgradesFile.getConfig() ?: return
+        val section: ConfigurationSection = EmpirePlugin.empireFiles.upgradesFile.getConfig() ?: return
         for (itemID in section.getKeys(false)) {
             val upgradesList: MutableList<ItemUpgrade> = mutableListOf()
             for (attribute in section.getConfigurationSection(itemID)!!.getKeys(false)) {
@@ -63,7 +64,7 @@ class ItemUpgradeEvent : Listener {
     }
 
     init {
-        plugin.server.pluginManager.registerEvents(this, plugin)
+        instance.server.pluginManager.registerEvents(this, instance)
         initList()
     }
 
@@ -72,7 +73,7 @@ class ItemUpgradeEvent : Listener {
 
         if (amount != null)
             println(amount)
-        lore.add(EmpireUtils.HEXPattern("${plugin.translations.ITEM_UPGRADE_NAME_COLOR}${attrMap[attr] ?: attr}: ${plugin.translations.ITEM_UPGRADE_AMOUNT_COLOR}${amount ?: "&kAAA"}"))
+        lore.add(EmpireUtils.HEXPattern("${EmpirePlugin.translations.ITEM_UPGRADE_NAME_COLOR}${attrMap[attr] ?: attr}: ${EmpirePlugin.translations.ITEM_UPGRADE_AMOUNT_COLOR}${amount ?: "&kAAA"}"))
         for (i in 0 until lore.size - 1)
             if (lore[i].contains(attrMap[attr] ?: attr)) {
                 lore.removeAt(i)
@@ -99,7 +100,7 @@ class ItemUpgradeEvent : Listener {
 
         val ingrMeta: ItemMeta = ingredient.itemMeta ?: return
         val ingrID: String =
-            ingrMeta.persistentDataContainer.get(plugin.empireConstants.empireID, PersistentDataType.STRING) ?: return
+            ingrMeta.persistentDataContainer.get(EmpirePlugin.empireConstants.empireID, PersistentDataType.STRING) ?: return
         if (!_upgradesMap.containsKey(ingrID))
             return
         val itemResult = itemBefore.clone()
@@ -144,7 +145,7 @@ class ItemUpgradeEvent : Listener {
                 continue
 
             var attrAmount = resultMeta.persistentDataContainer.get(
-                plugin.empireConstants.getUpgradesMap()[itemUpgrade.attr] ?: continue,
+                EmpirePlugin.empireConstants.getUpgradesMap()[itemUpgrade.attr] ?: continue,
                 PersistentDataType.DOUBLE
             ) ?: 0.0
             isUpgraded = true
@@ -166,7 +167,7 @@ class ItemUpgradeEvent : Listener {
 
             if (resultMeta.getAttributeModifiers(Attribute.valueOf(itemUpgrade.attr)) != null) {
                 resultMeta.persistentDataContainer.set(
-                    plugin.empireConstants.getUpgradesMap()[itemUpgrade.attr] ?: continue,
+                    EmpirePlugin.empireConstants.getUpgradesMap()[itemUpgrade.attr] ?: continue,
                     PersistentDataType.DOUBLE, attrAmount
                 )
 
@@ -201,16 +202,16 @@ class ItemUpgradeEvent : Listener {
         val itemMeta: ItemMeta = itemStack.itemMeta ?: return
 
 
-        for (key in plugin.empireConstants.getUpgradesMap().keys) {
+        for (key in EmpirePlugin.empireConstants.getUpgradesMap().keys) {
             if (!itemMeta.persistentDataContainer.has(
-                    plugin.empireConstants.getUpgradesMap()[key] ?: continue,
+                    EmpirePlugin.empireConstants.getUpgradesMap()[key] ?: continue,
                     PersistentDataType.DOUBLE
                 )
             )
                 continue
             itemMeta.lore = setAttrLore(
                 itemMeta, key, itemMeta.persistentDataContainer.get(
-                    plugin.empireConstants.getUpgradesMap()[key] ?: continue,
+                    EmpirePlugin.empireConstants.getUpgradesMap()[key] ?: continue,
                     PersistentDataType.DOUBLE
                 )?.round(2)
             )

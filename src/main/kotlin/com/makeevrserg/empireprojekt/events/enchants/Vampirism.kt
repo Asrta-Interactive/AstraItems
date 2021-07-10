@@ -1,6 +1,7 @@
-package com.makeevrserg.empireprojekt.events.empireevents
+package com.makeevrserg.empireprojekt.events.enchants
 
-import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.plugin
+import com.makeevrserg.empireprojekt.EmpirePlugin
+import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.instance
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -10,7 +11,7 @@ import org.bukkit.persistence.PersistentDataType
 class Vampirism : Listener {
 
     init {
-        plugin.server.pluginManager.registerEvents(this,plugin)
+        instance.server.pluginManager.registerEvents(this,instance)
     }
     fun onDisable(){
         EntityDamageByEntityEvent.getHandlerList().unregister(this)
@@ -22,12 +23,12 @@ class Vampirism : Listener {
         val itemStack = p.inventory.itemInMainHand
         val itemMeta = itemStack.itemMeta ?: return
         val vampSize = itemMeta.persistentDataContainer
-            .get(plugin.empireConstants.VAMPIRISM_ENCHANT, PersistentDataType.INTEGER)
+            .get(EmpirePlugin.empireConstants.VAMPIRISM_ENCHANT, PersistentDataType.INTEGER)
             ?: return
         val damage = e.finalDamage
         val playerHealth = p.health
         val playerMaxHealth = p.maxHealth
-        val toAddHealth: Double = damage * plugin.config.vampirismMultiplier + vampSize
+        val toAddHealth: Double = damage * EmpirePlugin.config.vampirismMultiplier + vampSize
         p.health = Math.min(toAddHealth + playerHealth, playerMaxHealth)
     }
 

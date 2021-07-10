@@ -6,7 +6,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
 
 class MenuListener() : Listener {
-    val plugin: EmpirePlugin = EmpirePlugin.plugin
+    val plugin: EmpirePlugin = EmpirePlugin.instance
     @EventHandler
     fun onMenuClick(e: InventoryClickEvent) {
 

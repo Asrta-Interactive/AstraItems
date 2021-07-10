@@ -1,22 +1,22 @@
 package com.makeevrserg.empireprojekt.menumanager.menu
 
 
+import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.menumanager.PaginatedMenu
 import com.makeevrserg.empireprojekt.menumanager.PlayerMenuUtility
 import org.bukkit.Material
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
 import com.makeevrserg.empireprojekt.util.EmpireUtils
-import com.makeevrserg.empireprojekt.util.Translations.Companion.translations
 
 class EmpireSoundsMenu(playerMenuUtility: PlayerMenuUtility?) :
     PaginatedMenu(playerMenuUtility) {
     override var menuName: String = EmpireUtils.HEXPattern(
-        plugin.empireFiles.guiFile.getConfig()?.getString("settings.sounds_text", "Звуки")!!
+        EmpirePlugin.empireFiles.guiFile.getConfig()?.getString("settings.sounds_text", "Звуки")!!
     )
 
-    val sounds = plugin.empireSounds.getSounds().keys
-    val namespace = plugin.empireSounds.getNamespace()
+    val sounds = EmpirePlugin.empireSounds.getSounds().keys
+    val namespace = EmpirePlugin.empireSounds.getNamespace()
     override val slots: Int
         get() {
             return 54
@@ -44,7 +44,7 @@ class EmpireSoundsMenu(playerMenuUtility: PlayerMenuUtility?) :
 
 
     private fun _getMaxPages(): Int {
-        val size: Int = plugin.empireSounds.getSounds().keys.size
+        val size: Int = EmpirePlugin.empireSounds.getSounds().keys.size
         var mP: Int = size / maxItemsPerPage
         mP += if ((size % maxItemsPerPage > 0)) 1 else 0
         return mP - 1

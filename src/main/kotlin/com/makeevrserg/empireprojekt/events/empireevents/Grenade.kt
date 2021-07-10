@@ -1,7 +1,7 @@
 package com.makeevrserg.empireprojekt.events.empireevents
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
-import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.plugin
+import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.instance
 import com.sk89q.worldedit.bukkit.BukkitAdapter
 import com.sk89q.worldguard.WorldGuard
 import com.sk89q.worldguard.protection.flags.Flags
@@ -17,19 +17,21 @@ import org.bukkit.persistence.PersistentDataType
 class Grenade : Listener {
 
     init {
-        plugin.server.pluginManager.registerEvents(this, plugin)
+        instance.server.pluginManager.registerEvents(this, instance)
     }
 
     @EventHandler
     fun onProjectileHit(e: ProjectileHitEvent) {
         if (e.entity.shooter !is Player) return
         val player = e.entity.shooter as Player
+
+        println("Player ${player.name} threw grenade at blockLocation=${e.hitBlock?.location} playerLocation=${player.location}")
         val itemStack = player.inventory.itemInMainHand
         val meta = itemStack.itemMeta ?: return
         val explosionPower =
-            meta.persistentDataContainer.get(plugin.empireConstants.GRENADE_EXPLOSION_POWER, PersistentDataType.DOUBLE)
+            meta.persistentDataContainer.get(EmpirePlugin.empireConstants.GRENADE_EXPLOSION_POWER, PersistentDataType.DOUBLE)
                 ?: return
-        if (denyExplosion(plugin, e.entity.location)) {
+        if (!allowExplosion(instance, e.entity.location)) {
             return
         }
         generateExplosion(e.entity.location, explosionPower)
@@ -41,14 +43,13 @@ class Grenade : Listener {
     }
 
     companion object {
-        fun denyExplosion(plugin: EmpirePlugin, location: Location): Boolean {
+        fun allowExplosion(plugin: EmpirePlugin, location: Location): Boolean {
             if (plugin.server.pluginManager.getPlugin("WorldGuard") != null) {
                 val query: RegionQuery = WorldGuard.getInstance().platform.regionContainer.createQuery()
                 val loc: com.sk89q.worldedit.util.Location = BukkitAdapter.adapt(location)
-                return !query.testState(loc, null, Flags.OTHER_EXPLOSION)
-
+                return (query.testState(loc, null, Flags.CREEPER_EXPLOSION))
             }
-            return false
+            return true
         }
 
         fun generateExplosion(location: Location, power: Double) {

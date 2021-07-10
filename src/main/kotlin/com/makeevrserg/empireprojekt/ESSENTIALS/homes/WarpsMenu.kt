@@ -1,4 +1,4 @@
-package com.makeevrserg.empireprojekt.essentials.homes
+package com.makeevrserg.empireprojekt.ESSENTIALS.homes
 
 import com.makeevrserg.empireprojekt.menumanager.PaginatedMenu
 import com.makeevrserg.empireprojekt.menumanager.PlayerMenuUtility

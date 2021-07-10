@@ -1,6 +1,7 @@
 package com.makeevrserg.empireprojekt.events.empireevents
 
-import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.plugin
+import com.makeevrserg.empireprojekt.EmpirePlugin
+import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.instance
 import com.sk89q.worldedit.bukkit.BukkitAdapter
 import com.sk89q.worldedit.world.World
 import com.sk89q.worldguard.WorldGuard
@@ -21,7 +22,7 @@ class Hammer : Listener {
     private val blockFace: MutableMap<Player, Int> = mutableMapOf()
 
     init {
-        plugin.server.pluginManager.registerEvents(this, plugin)
+        instance.server.pluginManager.registerEvents(this, instance)
     }
 
     fun onDisable() {
@@ -47,7 +48,7 @@ class Hammer : Listener {
     fun playerBreakEvent(e: BlockBreakEvent) {
         val p = e.player
         val b = e.block
-        if (plugin.server.pluginManager.getPlugin("WorldGuard") != null) {
+        if (instance.server.pluginManager.getPlugin("WorldGuard") != null) {
             val query: RegionQuery = WorldGuard.getInstance().platform.regionContainer.createQuery()
             val loc: com.sk89q.worldedit.util.Location = BukkitAdapter.adapt(b.location)
             val world: World = BukkitAdapter.adapt(b.world)
@@ -59,7 +60,7 @@ class Hammer : Listener {
         val itemStack = e.player.inventory.itemInMainHand
         val itemMeta = itemStack.itemMeta ?: return
         if (!itemMeta.persistentDataContainer
-                .has(plugin.empireConstants.HAMMER_ENCHANT, PersistentDataType.DOUBLE)
+                .has(EmpirePlugin.empireConstants.HAMMER_ENCHANT, PersistentDataType.DOUBLE)
         ) return
         val side = blockFace[e.player]
         blockFace.remove(e.player)

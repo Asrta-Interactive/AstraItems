@@ -1,4 +1,4 @@
-package com.makeevrserg.empireprojekt.essentials
+package com.makeevrserg.empireprojekt.ESSENTIALS
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import org.bukkit.Material
@@ -17,7 +17,7 @@ class AutoBlockChange : Listener {
 
 
         val player = e.player
-        val blockPlaced = e.blockPlaced?:return
+        val blockPlaced = e.blockPlaced
         val itemInHand = player.inventory.itemInMainHand
         if (blockPlaced.type!=itemInHand.type)
             return
@@ -67,7 +67,7 @@ class AutoBlockChange : Listener {
     }
 
     init {
-        EmpirePlugin.plugin.server.pluginManager.registerEvents(this, EmpirePlugin.plugin)
+        EmpirePlugin.instance.server.pluginManager.registerEvents(this, EmpirePlugin.instance)
     }
 
     fun onDisable() {

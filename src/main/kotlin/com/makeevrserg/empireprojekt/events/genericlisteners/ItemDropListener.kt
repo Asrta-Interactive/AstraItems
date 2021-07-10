@@ -1,6 +1,7 @@
 package com.makeevrserg.empireprojekt.events.genericlisteners
 
-import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.plugin
+import com.makeevrserg.empireprojekt.EmpirePlugin
+import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.instance
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.Block
@@ -69,23 +70,27 @@ class ItemDropListener : Listener {
     }
 
     init {
-        itemDrops = initDrop(plugin.empireFiles.dropsFile.getConfig()?.getConfigurationSection("loot.blocks"))
-        mobDrops = initDrop(plugin.empireFiles.dropsFile.getConfig()?.getConfigurationSection("loot.mobs"))
+        itemDrops = initDrop(EmpirePlugin.empireFiles.dropsFile.getConfig()?.getConfigurationSection("loot.blocks"))
+        mobDrops = initDrop(EmpirePlugin.empireFiles.dropsFile.getConfig()?.getConfigurationSection("loot.mobs"))
         initEveryDrop()
-        plugin.server.pluginManager.registerEvents(this, plugin)
+        instance.server.pluginManager.registerEvents(this, instance)
     }
 
-    private fun dropItem(list: List<ItemDrop>, l: Location) {
+    private fun dropItem(list: List<ItemDrop>, l: Location): Boolean {
         for (drop: ItemDrop in list) {
-            if (drop.chance > Random.nextInt(0, 100))
+            if (drop.chance > Random.nextInt(0, 100)) {
                 for (i in 0 until Random.nextInt(drop.minAmount, drop.maxAmount + 1))
                     l.world?.dropItem(
                         l,
-                        plugin.empireItems.empireItems[drop.item] ?: ItemStack(
+                        EmpirePlugin.empireItems.empireItems[drop.item] ?: ItemStack(
                             Material.getMaterial(drop.item) ?: continue
                         )
-                    )?:return
+                    ) ?: return false
+                return true
+
+            }
         }
+        return false
     }
 
 
@@ -101,7 +106,9 @@ class ItemDropListener : Listener {
 
 
         val listDrop: List<ItemDrop> = itemDrops[block.blockData.material.name] ?: return
-        dropItem(listDrop, block.location)
+        if (dropItem(listDrop, block.location))
+            e.isDropItems = false
+
     }
 
 

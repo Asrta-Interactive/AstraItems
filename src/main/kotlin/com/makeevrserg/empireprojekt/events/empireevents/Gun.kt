@@ -4,7 +4,8 @@ import com.comphenix.protocol.PacketType
 import com.comphenix.protocol.ProtocolLibrary
 import com.comphenix.protocol.ProtocolManager
 import com.destroystokyo.paper.ParticleBuilder
-import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.plugin
+import com.makeevrserg.empireprojekt.EmpirePlugin
+import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.instance
 import org.bukkit.*
 import org.bukkit.block.BlockFace
 import org.bukkit.configuration.ConfigurationSection
@@ -29,14 +30,14 @@ class Gun : Listener {
     private var protocolManager: ProtocolManager? = null
 
     init {
-        if (plugin.server.pluginManager.isPluginEnabled("protocollib"))
+        if (instance.server.pluginManager.isPluginEnabled("protocollib"))
             protocolManager = ProtocolLibrary.getProtocolManager()
-        plugin.server.pluginManager.registerEvents(this, plugin)
+        instance.server.pluginManager.registerEvents(this, instance)
 
     }
 
     private fun getEmpireID(itemMeta: ItemMeta?): String? {
-        return itemMeta?.persistentDataContainer?.get(plugin.empireConstants.empireID, PersistentDataType.STRING)
+        return itemMeta?.persistentDataContainer?.get(EmpirePlugin.empireConstants.empireID, PersistentDataType.STRING)
     }
     private fun isAllowedToShoot(player: Player, cd: Double): Boolean {
         if (!lastShoot.containsKey(player)) {
@@ -56,7 +57,7 @@ class Gun : Listener {
         val idMainHand = getEmpireID(p.inventory.itemInMainHand.itemMeta)
         val idOffHand = getEmpireID(p.inventory.itemInOffHand.itemMeta)
         val dropItem = getEmpireID(item?.itemMeta)
-        plugin.empireItems.empireGuns[idMainHand] ?: plugin.empireItems.empireGuns[idOffHand] ?:plugin.empireItems.empireGuns[dropItem]?: return false
+        EmpirePlugin.empireItems.empireGuns[idMainHand] ?: EmpirePlugin.empireItems.empireGuns[idOffHand] ?:EmpirePlugin.empireItems.empireGuns[dropItem]?: return false
         if (p.isSneaking)
             return true
         return false
@@ -88,20 +89,20 @@ class Gun : Listener {
         val offHandID = getEmpireID(p.inventory.itemInOffHand.itemMeta)
 
         val empGun: EmpireGun =
-            plugin.empireItems.empireGuns[mainHandID] ?: plugin.empireItems.empireGuns[offHandID] ?: return
+            EmpirePlugin.empireItems.empireGuns[mainHandID] ?: EmpirePlugin.empireItems.empireGuns[offHandID] ?: return
 
         if (e.isSneaking && !p.hasPotionEffect(PotionEffectType.SLOW)) {
             p.addPotionEffect(PotionEffect(PotionEffectType.SLOW, 10000, 255, true))
             if (p.inventory.itemInOffHand.type == Material.AIR) {
-                val aimItem = plugin.empireItems.empireItems[empGun.crosshair ?: return] ?: return
+                val aimItem = EmpirePlugin.empireItems.empireItems[empGun.crosshair ?: return] ?: return
                 p.inventory.setItemInOffHand(mainHandItem)
                 p.inventory.setItemInMainHand(aimItem)
             }
         } else if (!e.isSneaking && p.hasPotionEffect(PotionEffectType.SLOW) && p.getPotionEffect(PotionEffectType.SLOW)!!.amplifier == 255) {
             p.removePotionEffect(PotionEffectType.SLOW)
-            val offHandGun = plugin.empireItems.empireGuns[offHandID] ?: return
+            val offHandGun = EmpirePlugin.empireItems.empireGuns[offHandID] ?: return
             offHandGun.crosshair ?: return
-            if (mainHandItem != plugin.empireItems.empireItems[offHandGun.crosshair!!] ?: return)
+            if (mainHandItem != EmpirePlugin.empireItems.empireItems[offHandGun.crosshair!!] ?: return)
                 return
 
             p.inventory.setItemInMainHand(p.inventory.itemInOffHand)
@@ -151,17 +152,17 @@ class Gun : Listener {
 
     private fun reloadGun(player: Player, dataContainer: PersistentDataContainer, gun: EmpireGun) {
         val currentClipSize =
-            dataContainer.get(plugin.empireConstants.EMPIRE_GUN_CURRENT_CLIP_SIZE, PersistentDataType.INTEGER)
+            dataContainer.get(EmpirePlugin.empireConstants.EMPIRE_GUN_CURRENT_CLIP_SIZE, PersistentDataType.INTEGER)
         if (currentClipSize == gun.clipSize) {
             player.world.playSound(player.location, gun.reloadSound, 1.0f, 1.0f)
             return
         }
-        if (player.inventory.containsAtLeast(plugin.empireItems.empireItems[gun.reloadBy], 1)) {
+        if (player.inventory.containsAtLeast(EmpirePlugin.empireItems.empireItems[gun.reloadBy], 1)) {
 
-            player.inventory.removeItem(plugin.empireItems.empireItems[gun.reloadBy]!!)
+            player.inventory.removeItem(EmpirePlugin.empireItems.empireItems[gun.reloadBy]!!)
             player.world.playSound(player.location, gun.reloadSound, 1.0f, 1.0f)
             dataContainer.set(
-                plugin.empireConstants.EMPIRE_GUN_CURRENT_CLIP_SIZE,
+                EmpirePlugin.empireConstants.EMPIRE_GUN_CURRENT_CLIP_SIZE,
                 PersistentDataType.INTEGER,
                 gun.clipSize
             )
@@ -184,7 +185,7 @@ class Gun : Listener {
 
         if (player.location.block.getRelative(BlockFace.DOWN).getRelative(BlockFace.DOWN).type == Material.AIR)
             return
-        if (plugin.server.pluginManager.isPluginEnabled("protocollib")) {
+        if (instance.server.pluginManager.isPluginEnabled("protocollib")) {
             setProtocolPitch(player, recoil)
             return
         }
@@ -212,9 +213,9 @@ class Gun : Listener {
         val itemStack = e.item ?: return
         val itemMeta = itemStack.itemMeta ?: return
         val id =
-            itemMeta.persistentDataContainer.get(plugin.empireConstants.empireID, PersistentDataType.STRING)
+            itemMeta.persistentDataContainer.get(EmpirePlugin.empireConstants.empireID, PersistentDataType.STRING)
                 ?: return
-        val empGun: EmpireGun = plugin.empireItems.empireGuns[id] ?: return
+        val empGun: EmpireGun = EmpirePlugin.empireItems.empireGuns[id] ?: return
         val player = e.player
         if (e.action == Action.LEFT_CLICK_AIR || e.action == Action.LEFT_CLICK_BLOCK) {
             reloadGun(player, itemMeta.persistentDataContainer, empGun)
@@ -225,7 +226,7 @@ class Gun : Listener {
 
         val currentClipSize =
             itemMeta.persistentDataContainer.get(
-                plugin.empireConstants.EMPIRE_GUN_CURRENT_CLIP_SIZE,
+                EmpirePlugin.empireConstants.EMPIRE_GUN_CURRENT_CLIP_SIZE,
                 PersistentDataType.INTEGER
             ) ?: return
         if (currentClipSize == 0) {
@@ -237,7 +238,7 @@ class Gun : Listener {
             return
         player.world.playSound(player.location, empGun.shootSound, 1.0f, 1.0f)
         itemMeta.persistentDataContainer.set(
-            plugin.empireConstants.EMPIRE_GUN_CURRENT_CLIP_SIZE,
+            EmpirePlugin.empireConstants.EMPIRE_GUN_CURRENT_CLIP_SIZE,
             PersistentDataType.INTEGER,
             currentClipSize - 1
         )
@@ -277,7 +278,7 @@ class Gun : Listener {
 
 
         }
-        if (empGun.generateExplosion != null && !Grenade.denyExplosion(plugin, l))
+        if (empGun.generateExplosion != null && Grenade.allowExplosion(instance, l))
             Grenade.generateExplosion(l, empGun.generateExplosion!!.toDouble())
 
     }

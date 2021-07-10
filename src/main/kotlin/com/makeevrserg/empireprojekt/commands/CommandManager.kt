@@ -1,18 +1,15 @@
 package com.makeevrserg.empireprojekt.commands
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
-import com.makeevrserg.empireprojekt.essentials.sit.SitEvent
+import com.makeevrserg.empireprojekt.ESSENTIALS.sit.SitEvent
 import com.makeevrserg.empireprojekt.menumanager.PlayerMenuUtility
 import com.makeevrserg.empireprojekt.menumanager.menu.EmpireCategoriesMenu
 import com.makeevrserg.empireprojekt.menumanager.menu.EmpireSoundsMenu
 import org.bukkit.Bukkit
-import org.bukkit.Material
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.meta.BookMeta
 import org.bukkit.persistence.PersistentDataType
 import com.makeevrserg.empireprojekt.util.EmpirePermissions
 import com.makeevrserg.empireprojekt.util.EmpireUtils
@@ -21,11 +18,12 @@ import java.io.File
 
 class CommandManager() : CommandExecutor {
 
-    private var plugin: EmpirePlugin = EmpirePlugin.plugin
-    private var tabCompletion: EmpireTabCompleter = EmpireTabCompleter(plugin.empireItems.empireItems.keys.toList())
+    private var plugin: EmpirePlugin = EmpirePlugin.instance
+    private var tabCompletion: EmpireTabCompleter = EmpireTabCompleter()
 
     init {
         plugin.getCommand("emp")!!.tabCompleter = tabCompletion
+        plugin.getCommand("emnpc")!!.tabCompleter = tabCompletion
         plugin.getCommand("ereload")!!.setExecutor(this)
         plugin.getCommand("ezip")!!.setExecutor(this)
         plugin.getCommand("emgui")!!.setExecutor(this)
@@ -40,19 +38,20 @@ class CommandManager() : CommandExecutor {
         plugin.getCommand("ezip")!!.setExecutor(this)
         plugin.getCommand("empack")!!.setExecutor(this)
         plugin.getCommand("sit")!!.setExecutor(this)
+        plugin.getCommand("skin")!!.setExecutor(this)
     }
 
 
     private fun empGive(sender: CommandSender, playerName: String, item: String, count: Int) {
-        if (plugin.empireItems.empireItems.containsKey(item)) {
+        if (EmpirePlugin.empireItems.empireItems.containsKey(item)) {
             val player: Player = Bukkit.getPlayer(playerName) ?: return
-            player.sendMessage(plugin.translations.ITEM_GAINED + "$count $item")
-            sender.sendMessage(plugin.translations.ITEM_GIVE + " $item:$count -> $playerName")
-            val itemStack = plugin.empireItems.empireItems[item]?.clone() ?: return
+            player.sendMessage(EmpirePlugin.translations.ITEM_GAINED + "$count $item")
+            sender.sendMessage(EmpirePlugin.translations.ITEM_GIVE + " $item:$count -> $playerName")
+            val itemStack = EmpirePlugin.empireItems.empireItems[item]?.clone() ?: return
             itemStack.amount = count
             player.inventory.addItem(itemStack)
         } else
-            sender.sendMessage(plugin.translations.ITEM_NOT_FOUND + item)
+            sender.sendMessage(EmpirePlugin.translations.ITEM_NOT_FOUND + item)
 
     }
 
@@ -65,13 +64,14 @@ class CommandManager() : CommandExecutor {
                     val count: Int = if (args.size > 3) args[3].toInt() else 1
                     empGive(sender, args[1], args[2], count)
                 } catch (e: NumberFormatException) {
-                    sender.sendMessage(plugin.translations.WRONG_NUMBER)
+                    sender.sendMessage(EmpirePlugin.translations.WRONG_NUMBER)
                 }
             }
 
+
         if (label.equals("sit", ignoreCase = true)) {
             if (sender is Player)
-                SitEvent.instance.sitPlayer(sender as Player)
+                SitEvent.instance.sitPlayer(sender)
         }
         if (label.equals("emgui", ignoreCase = true)) {
             EmpireCategoriesMenu(PlayerMenuUtility(sender as Player)).open()
@@ -82,19 +82,20 @@ class CommandManager() : CommandExecutor {
         if (label.equals("empack", ignoreCase = true)) {
             if (sender is Player) {
 
-                sender.setResourcePack(plugin.config.resourcePackRef)
+                sender.setResourcePack(EmpirePlugin.config.resourcePackRef)
             }
         }
         if (label.equals("emreplace", ignoreCase = true)) {
             fun emreplace(sender: Player): Boolean {
                 var item = sender.inventory.itemInMainHand
                 val meta = item.itemMeta ?: return false
-                val id = meta.persistentDataContainer.get(plugin.empireConstants.empireID, PersistentDataType.STRING)
+                val id = meta.persistentDataContainer.get(EmpirePlugin.empireConstants.empireID, PersistentDataType.STRING)
                     ?: return false
 
                 val amount = item.amount
+
                 val durability = item.durability
-                item = plugin.empireItems.empireItems[id]!!
+                item = EmpirePlugin.empireItems.empireItems[id]!!
                 val newMeta = item.itemMeta ?: return true
 
                 for (ench in meta.enchants)
@@ -109,9 +110,9 @@ class CommandManager() : CommandExecutor {
             }
             if (sender is Player) {
                 if (emreplace(sender))
-                    sender.sendMessage(plugin.translations.ITEM_REPLACED)
+                    sender.sendMessage(EmpirePlugin.translations.ITEM_REPLACED)
                 else
-                    sender.sendMessage(plugin.translations.ITEM_REPLACE_WRONG)
+                    sender.sendMessage(EmpirePlugin.translations.ITEM_REPLACE_WRONG)
 
             }
         }
@@ -121,13 +122,14 @@ class CommandManager() : CommandExecutor {
 
 
                 var list = ""
-                for (emoji in plugin.empireFontImages.fontsInfo.keys) {
-                    if (plugin.empireFontImages.fontsInfo[emoji]?.sendBlocked ?: continue)
+                for (emoji in EmpirePlugin.empireFontImages.fontsInfo.keys) {
+                    if (EmpirePlugin.empireFontImages.fontsInfo[emoji]?.sendBlocked ?: continue)
                         continue
-                    list += EmpireUtils.HEXPattern("&r${emoji}\n&r&f${plugin.empireFontImages.fontsInfo[emoji]!!.chars}&r\n")
+                    list += EmpireUtils.HEXPattern("&r${emoji}\n&r&f${EmpirePlugin.empireFontImages.fontsInfo[emoji]!!.chars}&r\n")
                 }
 
-                val book = EmpireUtils.getBook("RomaRoman", EmpireUtils.HEXPattern("&fЭмодзи"), mutableListOf(list),false)
+                val book =
+                    EmpireUtils.getBook("RomaRoman", EmpireUtils.HEXPattern("&fЭмодзи"), mutableListOf(list), false)
 
 
 //                var list = ""
@@ -152,7 +154,7 @@ class CommandManager() : CommandExecutor {
 
 
         if (label.equals("ezip", ignoreCase = true) && sender.hasPermission(EmpirePermissions.EZIP)) {
-            sender.sendMessage(plugin.translations.ZIP_START)
+            sender.sendMessage(EmpirePlugin.translations.ZIP_START)
             ResourcePack()
             if (ResourcePack.zipAll(
                     plugin.dataFolder.toString() + File.separator + "pack",
@@ -161,17 +163,17 @@ class CommandManager() : CommandExecutor {
             ) {
 
 
-                sender.sendMessage(plugin.translations.ZIP_SUCCESS)
+                sender.sendMessage(EmpirePlugin.translations.ZIP_SUCCESS)
             } else
-                sender.sendMessage(plugin.translations.ZIP_ERROR)
+                sender.sendMessage(EmpirePlugin.translations.ZIP_ERROR)
 
         }
 
         if (label.equals("ereload", ignoreCase = true) && sender.hasPermission(EmpirePermissions.RELOAD)) {
-            sender.sendMessage(plugin.translations.RELOAD)
+            sender.sendMessage(EmpirePlugin.translations.RELOAD)
             plugin.disablePlugin()
             plugin.initPlugin()
-            sender.sendMessage(plugin.translations.RELOAD_COMPLETE)
+            sender.sendMessage(EmpirePlugin.translations.RELOAD_COMPLETE)
         }
         return false
     }

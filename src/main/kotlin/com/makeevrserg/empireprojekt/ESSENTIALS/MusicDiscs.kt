@@ -1,9 +1,8 @@
-package com.makeevrserg.empireprojekt.essentials
+package com.makeevrserg.empireprojekt.ESSENTIALS
 
-import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.plugin
+import com.makeevrserg.empireprojekt.EmpirePlugin
+import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.instance
 import com.makeevrserg.empireprojekt.util.EmpireUtils
-import net.kyori.adventure.key.Key
-import net.kyori.adventure.sound.Sound
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Material
@@ -21,7 +20,7 @@ import org.bukkit.inventory.ItemStack
 
 class MusicDiscs : Listener {
 
-    private val musicDiscs = plugin.empireItems.empireDiscs
+    private val musicDiscs = EmpirePlugin.empireItems.empireDiscs
     private val activDiscs = mutableMapOf<Location, CompanionDisc>()
 
 
@@ -72,7 +71,7 @@ class MusicDiscs : Listener {
             if (p.isOnline)
                 p.stopSound(disc.musicSoundKey, SoundCategory.RECORDS)
 
-        location.world?.dropItem(location.add(0.0, 1.0, 0.0), plugin.empireItems.empireItems[disc.id] ?: return false)?:return false
+        location.world?.dropItem(location.add(0.0, 1.0, 0.0), EmpirePlugin.empireItems.empireItems[disc.id] ?: return false)?:return false
         location.world?.playSound(location, org.bukkit.Sound.ENTITY_ITEM_PICKUP, 1.0f, 1.0f)?:return false
         return true
     }
@@ -132,7 +131,7 @@ class MusicDiscs : Listener {
 
 
     init {
-        plugin.server.pluginManager.registerEvents(this, plugin)
+        instance.server.pluginManager.registerEvents(this, instance)
 
     }
 

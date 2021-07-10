@@ -8,18 +8,10 @@ import java.io.File
 
 class Translations {
 
-    private val plugin = EmpirePlugin.plugin
-
-    companion object {
-        lateinit var translations: Translations
-            private set
-    }
-
+    private val plugin = EmpirePlugin.instance
     private val _translationFile: FileManager =
-        FileManager(
-            plugin,
-            "config" + File.separator + "translations.yml"
-        )
+        FileManager("config" + File.separator + "translations.yml")
+
     private val text = _translationFile.getConfig()!!
     private fun FileConfiguration.getHEXString(path: String, def: String): String {
         return EmpireUtils.HEXPattern(getString(path, def)!!)
@@ -94,11 +86,14 @@ class Translations {
     val LAST_PAGE: String = text.getHEXString("LAST_PAGE", "#f5a742Вы на последней странице")
 
 
-    init {
-        translations = this
-    }
 
-    fun onDisable() {
+    val NPC_CREATED: String = text.getHEXString("NPC_CREATED", "#f5a742NPC Создан")
+    val NPC_NOT_FOUND_RAYCAST: String = text.getHEXString("NOT_FOUND_RAYCAST", "#f5a742Вы не смотрите на NPC")
+    val NPC_FOUND_RAYCAST: String = text.getHEXString("NPC_FOUND_RAYCAST", "#f5a742Выбран NPC")
+    val NPC_NOT_WRITTEN_ID: String = text.getHEXString("NPC_NOT_WRITTEN_ID", "#f5a742Вы не ввели ID /emnpc create NEWID")
 
-    }
+
+    val SKIN_VALUE_NULL: String = text.getHEXString("SKIN_VALUE_NULL", "#f5a742Введите имя игрока для выбора скина")
+
+
 }

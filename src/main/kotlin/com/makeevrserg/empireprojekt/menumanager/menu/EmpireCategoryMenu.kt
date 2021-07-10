@@ -1,9 +1,9 @@
 package com.makeevrserg.empireprojekt.menumanager.menu
 
+import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.menumanager.PaginatedMenu
 import com.makeevrserg.empireprojekt.menumanager.PlayerMenuUtility
 import com.makeevrserg.empireprojekt.util.EmpireUtils
-import com.makeevrserg.empireprojekt.util.Translations.Companion.translations
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.event.inventory.InventoryClickEvent
@@ -18,7 +18,7 @@ class EmpireCategoryMenu(
 ) : PaginatedMenu(playerMenuUtility) {
     private var maxPage: Int
 
-    val guiConfigFile = plugin.empireFiles.guiFile.getConfig()
+    val guiConfigFile = EmpirePlugin.empireFiles.guiFile.getConfig()
 
     private fun playInventorySound() {
 
@@ -89,7 +89,7 @@ class EmpireCategoryMenu(
 
             val menuItem: String = plugin.categoryItems.values.elementAt(slot).items[index]
 
-            val itemStack: ItemStack = plugin.empireItems.empireItems[menuItem]?.clone() ?: (ItemStack(
+            val itemStack: ItemStack = EmpirePlugin.empireItems.empireItems[menuItem]?.clone() ?: (ItemStack(
                 Material.getMaterial(menuItem) ?: Material.PAPER
             ))
 

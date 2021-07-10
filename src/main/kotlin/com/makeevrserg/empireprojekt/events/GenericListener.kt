@@ -1,14 +1,17 @@
 package com.makeevrserg.empireprojekt.events
 
-import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.plugin
-import com.makeevrserg.empireprojekt.essentials.AutoBlockChange
-import com.makeevrserg.empireprojekt.essentials.LoreBooks
-import com.makeevrserg.empireprojekt.essentials.MusicDiscs
+import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.instance
+import com.makeevrserg.empireprojekt.ESSENTIALS.AutoBlockChange
+import com.makeevrserg.empireprojekt.ESSENTIALS.LoreBooks
+import com.makeevrserg.empireprojekt.ESSENTIALS.MusicDiscs
 import com.makeevrserg.empireprojekt.events.empireevents.*
 import com.makeevrserg.empireprojekt.events.genericlisteners.ExperienceRepairEvent
 import com.makeevrserg.empireprojekt.events.genericlisteners.ItemDropListener
 import com.makeevrserg.empireprojekt.events.genericlisteners.ItemInteractListener
-import com.makeevrserg.empireprojekt.essentials.sit.SitEvent
+import com.makeevrserg.empireprojekt.ESSENTIALS.sit.SitEvent
+import com.makeevrserg.empireprojekt.events.blocks.EmpireBlocks
+import com.makeevrserg.empireprojekt.events.enchants.Vampirism
+import com.makeevrserg.empireprojekt.events.mobs.EmpireMobs
 import com.makeevrserg.empireprojekt.menumanager.MenuListener
 
 
@@ -31,8 +34,10 @@ class GenericListener {
     private var _sitEvent: SitEvent = SitEvent()
     private var _autoBlockChange = AutoBlockChange()
     var _craftEvent = CraftEvent()
+    val _empireBlock = EmpireBlocks()
     private var _empireMusicDiscs = MusicDiscs()
     private var _loreBooks = LoreBooks()
+    private var _empireMobs = EmpireMobs()
     fun onDisable() {
         _itemInteractListener.onDisable()
         _itemDropListener.onDisable()
@@ -42,7 +47,7 @@ class GenericListener {
         _resourcePackEvent.onDisable()
         _grenadeEvend.onDisable()
         _hammer.onDisable()
-        plugin.server.pluginManager.getPlugin("protocollib")?.let {
+        instance.server.pluginManager.getPlugin("protocollib")?.let {
             _protocolLibHandler.onDisable()
         }
         _lavaWalker.onDisable()
@@ -54,5 +59,7 @@ class GenericListener {
         _sitEvent.onDisable()
         _autoBlockChange.onDisable()
         _loreBooks.onDisable()
+        _empireMobs.onDisable()
+        _empireBlock.onDisable()
     }
 }

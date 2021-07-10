@@ -1,6 +1,7 @@
-package com.makeevrserg.empireprojekt.essentials.sit
+package com.makeevrserg.empireprojekt.ESSENTIALS.sit
 
-import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.plugin
+import com.makeevrserg.empireprojekt.EmpirePlugin
+import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.translations
 import com.makeevrserg.empireprojekt.util.Translations
 import org.bukkit.Location
 import org.bukkit.Material
@@ -24,15 +25,15 @@ class SitEvent : Listener {
     fun sitPlayer(player: Player, loc: Location? = null) {
         val location = loc ?: player.location
         if (sitPlayers.contains(player)) {
-            player.sendMessage(Translations.translations.SIT_ALREADY)
+            player.sendMessage(translations.SIT_ALREADY)
             return
         }
         if (player.isFlying) {
-            player.sendMessage(Translations.translations.SIT_IN_AIR)
+            player.sendMessage(translations.SIT_IN_AIR)
             return
         }
         if (player.location.block.getRelative(BlockFace.DOWN).type == Material.AIR) {
-            player.sendMessage(Translations.translations.SIT_IN_AIR)
+            player.sendMessage(translations.SIT_IN_AIR)
             return
         }
 
@@ -98,7 +99,9 @@ class SitEvent : Listener {
 
     init {
         instance = this
-        plugin.server.pluginManager.registerEvents(this, plugin)
+        EmpirePlugin.instance.server.pluginManager.registerEvents(this,
+            EmpirePlugin.instance
+        )
     }
 
 

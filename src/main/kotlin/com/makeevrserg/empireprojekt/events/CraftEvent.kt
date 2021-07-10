@@ -1,6 +1,7 @@
 package com.makeevrserg.empireprojekt.events
 
-import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.plugin
+import com.makeevrserg.empireprojekt.EmpirePlugin
+import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.instance
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
@@ -11,7 +12,7 @@ import java.lang.IllegalStateException
 class CraftEvent {
 
 
-    private val fileConfig = plugin.empireFiles.craftingFile.getConfig()
+    private val fileConfig = EmpirePlugin.empireFiles.craftingFile.getConfig()
 
     private var _empireRecipies: MutableMap<String, EmpireRecipe> = mutableMapOf()
 
@@ -30,7 +31,7 @@ class CraftEvent {
         for (key in craftingSection.getKeys(false)) {
             val itemSection = craftingSection.getConfigurationSection(key)!!
             val itemId = itemSection.getString("result") ?: key
-            val resultItem = plugin.empireItems.empireItems[itemId] ?: ItemStack(Material.getMaterial(itemId)?:continue)
+            val resultItem = EmpirePlugin.empireItems.empireItems[itemId] ?: ItemStack(Material.getMaterial(itemId)?:continue)
 
             addRecipe(itemId, createRecipies(resultItem, key, itemSection)?:continue)
         }
@@ -43,15 +44,15 @@ class CraftEvent {
         for (key in craftingSection.getKeys(false)) {
             val itemSection = craftingSection.getConfigurationSection(key)!!
             val itemId = itemSection.getString("result") ?: key
-            val resultItem = plugin.empireItems.empireItems[key] ?: continue
+            val resultItem = EmpirePlugin.empireItems.empireItems[key] ?: continue
             val cookTime = itemSection.getInt("cook_time", 200)
             val exp = itemSection.getInt("exp")
             resultItem.amount = itemSection.getInt("amount", 1)
             val inputID = itemSection.getString("input") ?: continue
             val inputItemStack: ItemStack =
-                plugin.empireItems.empireItems[inputID] ?: ItemStack(Material.getMaterial(inputID) ?: continue)
+                EmpirePlugin.empireItems.empireItems[inputID] ?: ItemStack(Material.getMaterial(inputID) ?: continue)
             val recipe = FurnaceRecipe(
-                NamespacedKey(plugin, plugin.empireConstants.CUSTOM_RECIPE_KEY+key),
+                NamespacedKey(instance, EmpirePlugin.empireConstants.CUSTOM_RECIPE_KEY+key),
                 resultItem,
                 RecipeChoice.ExactChoice(inputItemStack),
                 exp.toFloat(),
@@ -70,7 +71,7 @@ class CraftEvent {
         val ingrMap = mutableMapOf<Char, ItemStack>()
         for (key in itemConfig.getConfigurationSection("ingredients")!!.getKeys(false)) {
             val ingredient = itemConfig.getConfigurationSection("ingredients")!!.getString(key)!!
-            ingrMap[key[0]] = plugin.empireItems.empireItems[ingredient] ?: ItemStack(
+            ingrMap[key[0]] = EmpirePlugin.empireItems.empireItems[ingredient] ?: ItemStack(
                 Material.getMaterial(ingredient) ?: return null
             )
         }
@@ -89,7 +90,7 @@ class CraftEvent {
             colList.add(rowList)
         }
 
-        val key = NamespacedKey(plugin, plugin.empireConstants.CUSTOM_RECIPE_KEY+itemID)
+        val key = NamespacedKey(instance, EmpirePlugin.empireConstants.CUSTOM_RECIPE_KEY+itemID)
         val recipe = ShapedRecipe(key, resultItemStack)
         recipe.shape(pattern[0].toString(), pattern[1].toString(), pattern[2].toString())
         for (recChar in ingrMap.keys) {

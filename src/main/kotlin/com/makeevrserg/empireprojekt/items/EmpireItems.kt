@@ -1,8 +1,8 @@
 package com.makeevrserg.empireprojekt.items
 
-import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.plugin
 import com.makeevrserg.empireprojekt.events.empireevents.Gun
-import com.makeevrserg.empireprojekt.essentials.MusicDiscs
+import com.makeevrserg.empireprojekt.ESSENTIALS.MusicDiscs
+import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.events.genericlisteners.EmpireCommandEvent
 import com.makeevrserg.empireprojekt.events.genericlisteners.EmpireEvent
 import com.makeevrserg.empireprojekt.events.genericlisteners.EmpireParticleEvent
@@ -26,7 +26,7 @@ import java.util.*
 
 class EmpireItems {
     private var _empireItems: MutableMap<String, ItemStack> = mutableMapOf()
-    public var _empireBlocks:MutableMap<String,ItemStack> = mutableMapOf()
+    private var _empireBlocks:MutableMap<String,ItemStack> = mutableMapOf()
     private var _itemsInfo: MutableList<ItemInfo> = mutableListOf()
     private var _empireEvents: MutableMap<String, List<EmpireEvent>> = mutableMapOf()
 
@@ -55,12 +55,12 @@ class EmpireItems {
         var texture_path: String?,
         val model_path: String?
     ) {
-        val permission: String = "empireitems.$id"
+        //val permission: String = "empireitems.$id"
     }
 
 
     init {
-        for (empireFile: FileManager in plugin.empireFiles.empireItemsFiles) {
+        for (empireFile: FileManager in EmpirePlugin.empireFiles.empireItemsFiles) {
             val empireFileConfig = empireFile.getConfig() ?: continue//file.yml
             if (!empireFileConfig.contains("yml_items"))
                 continue
@@ -90,12 +90,12 @@ class EmpireItems {
 
                 if (itemConfig.contains("durability")) {
                     itemMeta.persistentDataContainer.set(
-                        plugin.empireConstants.EMPIRE_DURABILITY,
+                        EmpirePlugin.empireConstants.EMPIRE_DURABILITY,
                         PersistentDataType.INTEGER,
                         itemConfig.getInt("durability")
                     )
                     itemMeta.persistentDataContainer.set(
-                        plugin.empireConstants.MAX_CUSTOM_DURABILITY,
+                        EmpirePlugin.empireConstants.MAX_CUSTOM_DURABILITY,
                         PersistentDataType.INTEGER,
                         itemConfig.getInt("durability")
                     )
@@ -121,7 +121,7 @@ class EmpireItems {
                 if (itemConfig.contains("music_disc"))
                     setEmpireMusicDisc(itemID, itemConfig.getConfigurationSection("music_disc")!!)
                 itemMeta.persistentDataContainer.set(
-                    plugin.empireConstants.empireID,
+                    EmpirePlugin.empireConstants.empireID,
                     PersistentDataType.STRING,
                     itemID
                 )
@@ -158,7 +158,7 @@ class EmpireItems {
     private fun setEmpireGun(itemMeta: ItemMeta, id: String, gunSect: ConfigurationSection) {
         _empireGuns[id] = Gun.EmpireGun().init(gunSect) ?: return
         itemMeta.persistentDataContainer.set(
-            plugin.empireConstants.EMPIRE_GUN_CURRENT_CLIP_SIZE,
+            EmpirePlugin.empireConstants.EMPIRE_GUN_CURRENT_CLIP_SIZE,
             PersistentDataType.INTEGER,
             0
         )
@@ -167,7 +167,7 @@ class EmpireItems {
 
 
     private fun setEmpireEnchant(itemMeta: ItemMeta, enchantSection: ConfigurationSection) {
-        val enchantsMap = plugin.empireConstants.getEnchantsMap()
+        val enchantsMap = EmpirePlugin.empireConstants.getEnchantsMap()
         for (enchant in enchantSection.getKeys(false)) {
             itemMeta.persistentDataContainer.set(
                 enchantsMap[enchant] ?: continue,
@@ -279,7 +279,7 @@ class EmpireItems {
     private fun setEnchantements(enchantementsSection: ConfigurationSection, itemMeta: ItemMeta) {
         for (enchantementName in enchantementsSection.getKeys(false)) {
             val enchantment: Enchantment =
-                Enchantment.getByKey(NamespacedKey.minecraft(enchantementName.toLowerCase())) ?: continue
+                Enchantment.getByKey(NamespacedKey.minecraft(enchantementName.lowercase())) ?: continue
             itemMeta.addEnchant(
                 enchantment,
                 enchantementsSection.getInt(enchantementName),

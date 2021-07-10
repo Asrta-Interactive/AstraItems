@@ -1,25 +1,68 @@
 package com.makeevrserg.empireprojekt.util
 
+import com.google.gson.JsonParser
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import net.md_5.bungee.api.ChatColor
 import org.bukkit.Material
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer
+import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.BookMeta
 import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.persistence.PersistentDataType
+import org.bukkit.scheduler.BukkitRunnable
+import java.io.InputStreamReader
+import java.lang.Exception
+import java.net.URL
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 class EmpireUtils {
+    public class LambdaRunnable(private val function: Runnable) : BukkitRunnable() {
+        override fun run() {
+            function.run()
+        }
+    }
 
     companion object {
+
+        public fun getSkinByPlayerName(player: Player? = null, name: String): Array<String>? {
+            try {
+                val url = URL("https://api.mojang.com/users/profiles/minecraft/$name")
+                val reader = InputStreamReader(url.openStream())
+                val uuid = JsonParser().parse(reader).asJsonObject.get("id").asString
+                val url2 = URL("https://sessionserver.mojang.com/session/minecraft/profile/$uuid?unsigned=false")
+                val reader2 = InputStreamReader(url2.openStream())
+                val property =
+                    JsonParser().parse(reader2).asJsonObject.get("properties").asJsonArray.get(0).asJsonObject
+                val texture = property.get("value").asString
+                val signature = property.get("signature").asString
+                return arrayOf(texture, signature)
+            } catch (e: Exception) {
+                println("Ошибка")
+                try {
+
+
+                    val p = ((player ?: return null) as CraftPlayer).handle
+                    val profile = p.profile
+                    val property = profile.properties.get("textures").iterator().next()
+                    val texture = property.value
+                    val signature = property.signature
+                    return arrayOf(texture, signature)
+                } catch (e: Exception) {
+                    println("Ошибка")
+                    return null
+                }
+
+            }
+        }
 
         private val hexPattern =
             Pattern.compile("#[a-fA-F0-9]{6}|&#[a-fA-F0-9]{6}")
 
         private fun getEmpireID(meta: ItemMeta?): String? {
             return meta?.persistentDataContainer?.get(
-                EmpirePlugin.plugin.empireConstants.empireID,
+                EmpirePlugin.empireConstants.empireID,
                 PersistentDataType.STRING
             )
 
@@ -29,7 +72,7 @@ class EmpireUtils {
             return getEmpireID(item.itemMeta)
         }
 
-        fun getBook(author: String, title: String, lines: List<String>,useHex:Boolean=true): ItemStack {
+        fun getBook(author: String, title: String, lines: List<String>, useHex: Boolean = true): ItemStack {
 
             val book = ItemStack(Material.WRITTEN_BOOK)
             val meta = book.itemMeta as BookMeta
@@ -40,9 +83,9 @@ class EmpireUtils {
             val pages = mutableListOf<String>()
             for (line in lines) {
                 var hexLine = if (useHex) EmpireUtils.emojiPattern(EmpireUtils.HEXPattern(line)) else line
-                while (hexLine.length>19*14) {
-                    pages.add(hexLine.substring(0,19*14))
-                    hexLine = hexLine.substring(19*14)
+                while (hexLine.length > 19 * 14) {
+                    pages.add(hexLine.substring(0, 19 * 14))
+                    hexLine = hexLine.substring(19 * 14)
                 }
                 pages.add(hexLine)
             }
@@ -57,16 +100,16 @@ class EmpireUtils {
         private val emojiPattern = Pattern.compile(":([a-zA-Z0-9_]*):")
 
         fun emojiPattern(_line: String): String {
-            val map = EmpirePlugin.plugin.empireFontImages.fontValueById
+            val map = EmpirePlugin.empireFontImages.fontValueById
             var matcher: Matcher = emojiPattern.matcher(_line)
             var line = _line
             while (matcher.find()) {
                 val emoji: String = line.substring(matcher.start(), matcher.end())
-                val toReplace: String = map[emoji]?:emoji.replace(":","<<>>")
+                val toReplace: String = map[emoji] ?: emoji.replace(":", "<<>>")
                 line = line.replace(emoji, toReplace + "")
                 matcher = emojiPattern.matcher(line)
             }
-            return line.replace("<<>>",":")
+            return line.replace("<<>>", ":")
         }
 
         fun HEXPattern(list: MutableList<String>?): List<String> {

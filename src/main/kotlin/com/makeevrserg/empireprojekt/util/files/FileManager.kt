@@ -3,12 +3,13 @@ package com.makeevrserg.empireprojekt.util.files
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.configuration.file.YamlConfiguration
+import org.yaml.snakeyaml.emitter.Emitable
 import java.io.File
 import java.io.IOException
 import java.io.InputStreamReader
 import java.lang.IllegalArgumentException
 
-public class FileManager(var plugin: EmpirePlugin, var configName:String){
+public class FileManager(var configName:String){
 
     private var configFiles: File? = null
     private var dataConfig: FileConfiguration? = null
@@ -19,9 +20,9 @@ public class FileManager(var plugin: EmpirePlugin, var configName:String){
 
 
     fun reloadConfig() {
-        if (this.configFiles == null) this.configFiles = File(plugin.dataFolder, configName)
+        if (this.configFiles == null) this.configFiles = File(EmpirePlugin.instance.dataFolder, configName)
         dataConfig = YamlConfiguration.loadConfiguration(configFiles!!)
-        val defaultStream = plugin.getResource(configName)
+        val defaultStream = EmpirePlugin.instance.getResource(configName)
         if (defaultStream != null) {
             val defaultConfig = YamlConfiguration.loadConfiguration(InputStreamReader(defaultStream))
             this.dataConfig?.setDefaults(defaultConfig)
@@ -39,7 +40,7 @@ public class FileManager(var plugin: EmpirePlugin, var configName:String){
     }
 
     fun LoadFiles() {
-        configFiles = File(plugin.dataFolder, configName)
+        configFiles = File(EmpirePlugin.instance.dataFolder, configName)
     }
 
     fun updateConfig(conf: FileConfiguration) {
@@ -51,16 +52,16 @@ public class FileManager(var plugin: EmpirePlugin, var configName:String){
         try {
             getConfig()?.save(this.configFiles!!)
         } catch (e: IOException) {
-            println("${plugin.translations.SAVE_ERROR} $configName")
+            println("${EmpirePlugin.translations.SAVE_ERROR} $configName")
         }
     }
 
     fun saveDefaultConfig() {
-        if (this.configFiles == null) this.configFiles = File(plugin.dataFolder, configName)
+        if (this.configFiles == null) this.configFiles = File(EmpirePlugin.instance.dataFolder, configName)
         try {
-            if (!this.configFiles!!.exists()) plugin.saveResource(configName, false)
+            if (!this.configFiles!!.exists()) EmpirePlugin.instance.saveResource(configName, false)
         }catch (e:IllegalArgumentException){
-            println(plugin.translations.NONSTANDART_FILE)
+            println(EmpirePlugin.translations.NONSTANDART_FILE)
         }
     }
 }

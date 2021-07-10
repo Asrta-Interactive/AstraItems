@@ -4,7 +4,7 @@ import com.makeevrserg.empireprojekt.EmpirePlugin
 import org.bukkit.NamespacedKey
 
 class EmpireConstats {
-    val plugin: EmpirePlugin = EmpirePlugin.plugin
+    val plugin: EmpirePlugin = EmpirePlugin.instance
     //public val EMPIRE_GUN:EmpireGun = EmpireGun(plugin)
     val empireID = NamespacedKey(plugin, "id")
     val EMPIRE_ATTACK_DAMAGE = NamespacedKey(plugin, "GENERIC_ATTACK_DAMAGE")
@@ -51,13 +51,5 @@ class EmpireConstats {
     }
 
 
-//    class EmpireGun(plugin:EmpirePlugin){
-//        var EMPIRE_GUN_MAX_CLIP_SIZE: NamespacedKey = NamespacedKey(plugin, "EMPIRE_GUN_MAX_CLIP_SIZE")
-//        var EMPIRE_GUN_CURRENT_CLIP_SIZE: NamespacedKey = NamespacedKey(plugin, "EMPIRE_GUN_CURRENT_CLIP_SIZE")
-//        var EMPIRE_GUN_DAMAGE: NamespacedKey = NamespacedKey(plugin, "EMPIRE_GUN_DAMAGE")
-//        var EMPIRE_GUN_LENGTH: NamespacedKey = NamespacedKey(plugin, "EMPIRE_GUN_LENGTH")
-//        var EMPIRE_GUN_COOLDOWN: NamespacedKey = NamespacedKey(plugin, "EMPIRE_GUN_COOLDOWN")
-//        var RELOAD_BY: NamespacedKey = NamespacedKey(plugin, "RELOAD_BY")
-//    }
 
 }

@@ -1,6 +1,7 @@
 package com.makeevrserg.empireprojekt.events.empireevents
 
-import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.plugin
+import com.makeevrserg.empireprojekt.EmpirePlugin
+import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.instance
 import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
@@ -11,7 +12,7 @@ import org.bukkit.persistence.PersistentDataType
 
 class LavaWalker : Listener {
     init {
-        plugin.server.pluginManager.registerEvents(this, plugin)
+        instance.server.pluginManager.registerEvents(this, instance)
     }
 
     fun onDisable() {
@@ -35,7 +36,7 @@ class LavaWalker : Listener {
         val itemStack = e.player.inventory.boots ?: return
         val itemMeta = itemStack.itemMeta ?: return
         if (!itemMeta.persistentDataContainer
-                .has(plugin.empireConstants.LAVA_WALKER_ENCHANT, PersistentDataType.DOUBLE)
+                .has(EmpirePlugin.empireConstants.LAVA_WALKER_ENCHANT, PersistentDataType.DOUBLE)
         ) return
         val onToBlock = e.to?.block?.getRelative(BlockFace.DOWN)?:return
         if (onToBlock.type == Material.LAVA) {

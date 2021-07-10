@@ -1,15 +1,14 @@
 package com.makeevrserg.empireprojekt.menumanager
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
+import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.translations
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
-import com.makeevrserg.empireprojekt.util.Translations
-import com.makeevrserg.empireprojekt.util.Translations.Companion.translations
 
 
 abstract class PaginatedMenu(playerMenuUtility: PlayerMenuUtility?) : Menu(playerMenuUtility!!) {
-    val plugin: EmpirePlugin = EmpirePlugin.plugin
+    val plugin: EmpirePlugin = EmpirePlugin.instance
     open var page = 0
     open var maxItemsPerPage = 45
     var maxPages: Int = 1
@@ -59,8 +58,8 @@ abstract class PaginatedMenu(playerMenuUtility: PlayerMenuUtility?) : Menu(playe
                 maxItemsPerPage,
                 setItem(
                     ChatColor.GREEN.toString() + "<- Пред. страница",
-                    plugin.empireItems.empireItems,
-                    plugin.empireFiles.guiFile.getConfig()?.getString("settings.prev_btn")
+                    EmpirePlugin.empireItems.empireItems,
+                    EmpirePlugin.empireFiles.guiFile.getConfig()?.getString("settings.prev_btn")
                 )
             )
 
@@ -68,8 +67,8 @@ abstract class PaginatedMenu(playerMenuUtility: PlayerMenuUtility?) : Menu(playe
             maxItemsPerPage+4,
             setItem(
                 ChatColor.GREEN.toString() + "Назад",
-                plugin.empireItems.empireItems,
-                plugin.empireFiles.guiFile.getConfig()?.getString("settings.back_btn")
+                EmpirePlugin.empireItems.empireItems,
+                EmpirePlugin.empireFiles.guiFile.getConfig()?.getString("settings.back_btn")
             )
         )
         if (page < maxPages)
@@ -77,8 +76,8 @@ abstract class PaginatedMenu(playerMenuUtility: PlayerMenuUtility?) : Menu(playe
                 maxItemsPerPage+8,
                 setItem(
                     ChatColor.GREEN.toString() + "След. страница ->",
-                    plugin.empireItems.empireItems,
-                    plugin.empireFiles.guiFile.getConfig()?.getString("settings.next_btn")
+                    EmpirePlugin.empireItems.empireItems,
+                    EmpirePlugin.empireFiles.guiFile.getConfig()?.getString("settings.next_btn")
                 )
             )
 

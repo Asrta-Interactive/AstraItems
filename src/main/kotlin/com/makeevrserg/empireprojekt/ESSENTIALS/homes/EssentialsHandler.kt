@@ -1,7 +1,7 @@
-package com.makeevrserg.empireprojekt.essentials.homes
+package com.makeevrserg.empireprojekt.ESSENTIALS.homes
 
 import com.earth2me.essentials.Essentials
-import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.plugin
+import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.menumanager.PlayerMenuUtility
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
@@ -21,7 +21,7 @@ class EssentialsHandler : CommandExecutor {
         instance = this
         initEssentials()
 
-        plugin.getCommand("emp")!!.setExecutor(this)
+        EmpirePlugin.instance.getCommand("emess")!!.setExecutor(this)
     }
 
     companion object {
@@ -39,8 +39,7 @@ class EssentialsHandler : CommandExecutor {
         if (sender !is Player)
             return false
         ess ?: return false
-        if (!label.equals("emp", ignoreCase = true))
-            return false
+
         if (args[0].equals("homes", ignoreCase = true))
             HomesMenu(PlayerMenuUtility(sender)).open()
         if (args[0].equals("warps", ignoreCase = true))
