@@ -78,7 +78,9 @@ class ItemDropListener : Listener {
 
     private fun dropItem(list: List<ItemDrop>, l: Location): Boolean {
         for (drop: ItemDrop in list) {
-            if (drop.chance > Random.nextInt(0, 100)) {
+            val dropChance = Random.nextDouble(0.0, 100.0)
+            println("ItemDrop=${drop.chance} dropChance=${dropChance}")
+            if (drop.chance > dropChance) {
                 for (i in 0 until Random.nextInt(drop.minAmount, drop.maxAmount + 1))
                     l.world?.dropItem(
                         l,

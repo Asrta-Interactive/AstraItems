@@ -34,10 +34,10 @@ class GenericListener {
     private var _sitEvent: SitEvent = SitEvent()
     private var _autoBlockChange = AutoBlockChange()
     var _craftEvent = CraftEvent()
-    val _empireBlock = EmpireBlocks()
+    //val _empireBlock = EmpireBlocks()
     private var _empireMusicDiscs = MusicDiscs()
-    private var _loreBooks = LoreBooks()
-    private var _empireMobs = EmpireMobs()
+    //private var _loreBooks = LoreBooks()
+    //private var _empireMobs = EmpireMobs()
     fun onDisable() {
         _itemInteractListener.onDisable()
         _itemDropListener.onDisable()
@@ -58,8 +58,8 @@ class GenericListener {
         _empireMusicDiscs.onDisable()
         _sitEvent.onDisable()
         _autoBlockChange.onDisable()
-        _loreBooks.onDisable()
-        _empireMobs.onDisable()
-        _empireBlock.onDisable()
+        //_loreBooks.onDisable()
+        //_empireMobs.onDisable()
+        //_empireBlock.onDisable()
     }
 }

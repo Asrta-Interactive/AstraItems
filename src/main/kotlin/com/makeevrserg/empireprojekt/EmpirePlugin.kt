@@ -86,7 +86,7 @@ class EmpirePlugin : JavaPlugin() {
         empireSounds.getSounds()
 
 
-        //PluginBetaAccessCheck()
+        PluginBetaAccessCheck()
 
     }
 
@@ -116,8 +116,8 @@ class EmpirePlugin : JavaPlugin() {
             fun minuteToMS(m:Int):Long{
                 return m*60*1000L
             }
-            val maxTime: Long = hoursToMS(20)// * 60 * 1000
-            val time: Long = 1625933573482
+            val maxTime: Long = hoursToMS(80)// * 60 * 1000
+            val time: Long = 1626024523239
             val date = getDate(time + maxTime, "dd/MM/yyyy HH:mm:ss")
             EmpirePlugin.instance.server.broadcastMessage("${ChatColor.RED}Используется тестовая версия плагина EmpireItems.")
             EmpirePlugin.instance.server.broadcastMessage("${ChatColor.RED}Плагин будет отключен $date")
