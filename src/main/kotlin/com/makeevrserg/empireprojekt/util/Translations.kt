@@ -2,6 +2,7 @@ package com.makeevrserg.empireprojekt.util
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.util.files.FileManager
+import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.configuration.file.FileConfiguration
 import java.io.File
 
@@ -13,9 +14,13 @@ class Translations {
         FileManager("config" + File.separator + "translations.yml")
 
     private val text = _translationFile.getConfig()!!
-    private fun FileConfiguration.getHEXString(path: String, def: String): String {
+    fun FileConfiguration.getHEXString(path: String, def: String): String {
         return EmpireUtils.HEXPattern(getString(path, def)!!)
     }
+    fun ConfigurationSection.getHEXString(path: String, def: String): String {
+        return EmpireUtils.HEXPattern(getString(path, def)!!)
+    }
+
 
     val PLUGIN_PREFIX: String = text.getHEXString("PLUGIN_PREFIX", "#18dbd1[EmpireItems]")
     val RELOAD: String = text.getHEXString("RELOAD", "#dbbb18Перезагрузка плагина")

@@ -13,7 +13,7 @@ import org.bukkit.entity.Player
 import org.bukkit.persistence.PersistentDataType
 import com.makeevrserg.empireprojekt.util.EmpirePermissions
 import com.makeevrserg.empireprojekt.util.EmpireUtils
-import com.makeevrserg.empireprojekt.util.ResourcePack
+import com.makeevrserg.empireprojekt.util.ResourcePackNew
 import java.io.File
 
 class CommandManager() : CommandExecutor {
@@ -155,8 +155,8 @@ class CommandManager() : CommandExecutor {
 
         if (label.equals("ezip", ignoreCase = true) && sender.hasPermission(EmpirePermissions.EZIP)) {
             sender.sendMessage(EmpirePlugin.translations.ZIP_START)
-            ResourcePack()
-            if (ResourcePack.zipAll(
+            ResourcePackNew()
+            if (ResourcePackNew.zipAll(
                     plugin.dataFolder.toString() + File.separator + "pack",
                     plugin.dataFolder.toString() + File.separator + "pack" + File.separator + "pack.zip"
                 )

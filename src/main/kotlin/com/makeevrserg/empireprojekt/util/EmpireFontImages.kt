@@ -1,5 +1,6 @@
 package com.makeevrserg.empireprojekt.util
 
+import com.google.gson.annotations.JsonAdapter
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.configuration.file.FileConfiguration
 
@@ -46,8 +47,8 @@ class EmpireFontImages(fontFileConfig: FileConfiguration?) {
         val sendBlocked: Boolean,
         val path: String,
         val chars: String,
-        val size: Int,
-        val offset: Int
+        val ascent: Int,
+        val height: Int
     )
 
     init {

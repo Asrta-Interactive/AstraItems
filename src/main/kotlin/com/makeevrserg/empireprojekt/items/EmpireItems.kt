@@ -1,5 +1,6 @@
 package com.makeevrserg.empireprojekt.items
 
+import com.google.gson.Gson
 import com.makeevrserg.empireprojekt.events.empireevents.Gun
 import com.makeevrserg.empireprojekt.ESSENTIALS.MusicDiscs
 import com.makeevrserg.empireprojekt.EmpirePlugin
@@ -20,13 +21,17 @@ import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import com.makeevrserg.empireprojekt.util.EmpireUtils
 import com.makeevrserg.empireprojekt.util.files.FileManager
+import com.sk89q.worldedit.util.YAMLConfiguration
+import org.apache.logging.log4j.core.config.yaml.YamlConfigurationFactory
 import org.bukkit.*
+import org.bukkit.configuration.file.YamlConstructor
+import org.bukkit.configuration.serialization.ConfigurationSerialization
 import org.bukkit.inventory.meta.PotionMeta
 import java.util.*
 
 class EmpireItems {
     private var _empireItems: MutableMap<String, ItemStack> = mutableMapOf()
-    private var _empireBlocks:MutableMap<String,ItemStack> = mutableMapOf()
+    private var _empireBlocks: MutableMap<String, ItemStack> = mutableMapOf()
     private var _itemsInfo: MutableList<ItemInfo> = mutableListOf()
     private var _empireEvents: MutableMap<String, List<EmpireEvent>> = mutableMapOf()
 
@@ -60,14 +65,18 @@ class EmpireItems {
 
 
     init {
+
+
         for (empireFile: FileManager in EmpirePlugin.empireFiles.empireItemsFiles) {
+
+            //println(Gson().toJson(empireFile.getConfig()?.saveToString()))
+
             val empireFileConfig = empireFile.getConfig() ?: continue//file.yml
             if (!empireFileConfig.contains("yml_items"))
                 continue
             for (itemID: String in empireFileConfig.getConfigurationSection("yml_items")!!.getKeys(false)) {
                 val itemConfig: ConfigurationSection =
                     empireFileConfig.getConfigurationSection("yml_items")!!.getConfigurationSection(itemID)!!
-
                 val material: Material? = Material.getMaterial(itemConfig.getString("material")!!)
                 material ?: continue
                 val itemStack = ItemStack(material)

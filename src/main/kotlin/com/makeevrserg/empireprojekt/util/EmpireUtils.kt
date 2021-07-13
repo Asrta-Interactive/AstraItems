@@ -118,6 +118,12 @@ class EmpireUtils {
             return list
         }
 
+        @JvmName("HEXPattern1")
+        fun HEXPattern(line:String?):String?{
+            line?:return line
+            return HEXPattern(line)
+        }
+
         fun HEXPattern(line: String): String {
             var line = line
             var match = hexPattern.matcher(line)

@@ -97,8 +97,10 @@ class ItemInteractListener : Listener {
                             instance.server.consoleSender,
                             PlaceholderAPI.setPlaceholders(p, command.command)
                         )
-                    else
+                    else {
+                        println("Dispatch command ${command.command}")
                         instance.server.dispatchCommand(instance.server.consoleSender, command.command)
+                    }
                 else
                     if (instance.server.pluginManager.getPlugin("placeholderapi") != null)
                         p.performCommand(PlaceholderAPI.setPlaceholders(p, command.command))
