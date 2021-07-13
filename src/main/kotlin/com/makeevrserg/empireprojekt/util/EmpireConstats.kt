@@ -16,6 +16,7 @@ class EmpireConstats {
     val EMPIRE_ARMOR = NamespacedKey(plugin, "GENERIC_ARMOR")
     val ITEM_UPGRADE_COUNT = NamespacedKey(plugin, "ITEM_UPGRADE_COUNT")
 
+    var FIXED_ITEM: NamespacedKey = NamespacedKey(EmpirePlugin.instance, "FIXED_ITEM_2")
     var MAX_CUSTOM_DURABILITY: NamespacedKey = NamespacedKey(plugin, "MAX_CUSTOM_DURABILITY")
     var EMPIRE_DURABILITY: NamespacedKey = NamespacedKey(plugin, "EMPIRE_DURABILITY")
 

@@ -26,8 +26,12 @@ class MusicDiscs : Listener {
 
     class MusicDisc {
         lateinit var song: String
-        fun init(itemSection: ConfigurationSection): MusicDisc? {
+        fun create(itemSection: ConfigurationSection): MusicDisc? {
             song = itemSection.getString("song") ?: return null
+            return this
+        }
+        fun create(song:String?): MusicDisc? {
+            this.song = song ?: return null
             return this
         }
     }

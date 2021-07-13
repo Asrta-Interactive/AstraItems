@@ -6,6 +6,7 @@ import com.comphenix.protocol.ProtocolManager
 import com.destroystokyo.paper.ParticleBuilder
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.instance
+import com.makeevrserg.empireprojekt.items.EmpireGun
 import org.bukkit.*
 import org.bukkit.block.BlockFace
 import org.bukkit.configuration.ConfigurationSection
@@ -86,7 +87,7 @@ class Gun : Listener {
         val p = e.player
         val mainHandItem = p.inventory.itemInMainHand
         val mainHandID = getEmpireID(mainHandItem.itemMeta) ?: return
-        val offHandID = getEmpireID(p.inventory.itemInOffHand.itemMeta)
+        val offHandID = getEmpireID(p.inventory.itemInOffHand.itemMeta)?:return
 
         val empGun: EmpireGun =
             EmpirePlugin.empireItems.empireGuns[mainHandID] ?: EmpirePlugin.empireItems.empireGuns[offHandID] ?: return
@@ -101,6 +102,7 @@ class Gun : Listener {
         } else if (!e.isSneaking && p.hasPotionEffect(PotionEffectType.SLOW) && p.getPotionEffect(PotionEffectType.SLOW)!!.amplifier == 255) {
             p.removePotionEffect(PotionEffectType.SLOW)
             val offHandGun = EmpirePlugin.empireItems.empireGuns[offHandID] ?: return
+
             offHandGun.crosshair ?: return
             if (mainHandItem != EmpirePlugin.empireItems.empireItems[offHandGun.crosshair!!] ?: return)
                 return
@@ -112,40 +114,7 @@ class Gun : Listener {
 
     }
 
-    class EmpireGun {
 
-        var clipSize: Int = 5
-        var gunDamage: Double = 5.0
-        var gunLength: Int = 5
-        var gunCooldown: Double = 0.1
-        var gunRecoil: Double = 1.0
-        var gunBulletWeight: Double = 0.8
-        lateinit var reloadBy: String
-        lateinit var noAmmoSound: String
-        lateinit var shootSound: String
-        lateinit var reloadSound: String
-        var bulletColor: String = "#000000"
-        var generateExplosion: Int? = null
-        var crosshair: String? = null
-        fun init(section: ConfigurationSection): EmpireGun? {
-
-            clipSize = section.getInt("EMPIRE_GUN_CLIP_SIZE", 5)
-            gunDamage = section.getDouble("EMPIRE_GUN_DAMAGE", 5.0)
-            gunLength = section.getInt("EMPIRE_GUN_LENGTH", 5)
-            gunCooldown = section.getDouble("EMPIRE_GUN_COOLDOWN", 0.5)
-            gunRecoil = section.getDouble("EMPIRE_GUN_RECOIL", 1.0)
-            gunBulletWeight = section.getDouble("EMPIRE_GUN_BULLET_WEIGHT", 0.8)
-            bulletColor = section.getString("EMPIRE_GUN_BULLET_COLOR", "#000000") ?: return null
-            reloadBy = section.getString("RELOAD_BY") ?: return null
-
-            noAmmoSound = section.getString("NO_AMMO_SOUND") ?: return null
-            shootSound = section.getString("SHOOT_SOUND") ?: return null
-            reloadSound = section.getString("RELOAD_SOUND") ?: return null
-            generateExplosion = section.getInt("GENERATE_EXPLOSION")
-            crosshair = section.getString("EMPIRE_GUN_AIM")
-            return this
-        }
-    }
 
     private val lastShoot: MutableMap<Player, Long> = mutableMapOf()
 

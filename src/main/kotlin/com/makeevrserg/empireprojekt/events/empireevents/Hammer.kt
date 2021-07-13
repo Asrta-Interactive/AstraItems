@@ -105,6 +105,7 @@ class Hammer : Listener {
                 //pickaxe
                 val keys = listOf(
                     "stone",
+                    "deepslate",
                     "granite",
                     "diorite",
                     "andesite",
