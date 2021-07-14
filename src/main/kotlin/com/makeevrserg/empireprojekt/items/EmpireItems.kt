@@ -3,17 +3,21 @@ package com.makeevrserg.empireprojekt.items
 import com.makeevrserg.empireprojekt.events.empireevents.Gun
 import com.makeevrserg.empireprojekt.ESSENTIALS.MusicDiscs
 import com.makeevrserg.empireprojekt.EmpirePlugin
+import com.makeevrserg.empireprojekt.util.ResourcePackNew
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.persistence.PersistentDataType
 import com.makeevrserg.empireprojekt.util.files.FileManager
 import org.bukkit.Material
+import java.io.File
+import java.lang.NullPointerException
 
 class EmpireItems {
     private var _empireItems: MutableMap<String, ItemStack> = mutableMapOf()
-    private var _empireBlocks: MutableMap<String, ItemStack> = mutableMapOf()
-    private var _itemsInfo: MutableList<ItemInfo> = mutableListOf()
+    public var _empireBlocks: MutableMap<String, Block> = mutableMapOf()
+    public var _empireBlocksByData: MutableMap<Int, String> = mutableMapOf()
+    private var _itemsInfo: MutableList<EmpireItem> = mutableListOf()
     private var _empireEvents: MutableMap<String, List<Event>> = mutableMapOf()
 
     val empireItems: MutableMap<String, ItemStack>
@@ -28,21 +32,21 @@ class EmpireItems {
     val empireDiscs: MutableMap<String, MusicDiscs.MusicDisc>
         get() = _empireDiscs
 
-    val itemsInfo: MutableList<ItemInfo>
+    val itemsInfo: MutableList<EmpireItem>
         get() = _itemsInfo
 
     private var existedCustomModelData: MutableMap<Material, MutableList<Int>> = mutableMapOf()
 
-    data class ItemInfo(
-        val id: String,
-        val namespace: String,
-        val material: String,
-        val customModelData: Int,
-        var texture_path: String?,
-        val model_path: String?
-    ) {
-        //val permission: String = "empireitems.$id"
-    }
+//    data class ItemInfo(
+//        val id: String,
+//        val namespace: String,
+//        val material: String,
+//        val customModelData: Int,
+//        var texture_path: String?,
+//        val model_path: String?
+//    ) {
+//        //val permission: String = "empireitems.$id"
+//    }
 
 
     init {
@@ -51,7 +55,7 @@ class EmpireItems {
         for (empireFile: FileManager in EmpirePlugin.empireFiles.empireItemsFiles) {
 
             //println(Gson().toJson(empireFile.getConfig()?.saveToString()))
-
+            println(EmpirePlugin.translations.LOADING_FILE + " " + EmpirePlugin.instance.dataFolder + File.separator + "items" + File.separator + empireFile.configName)
             val empireFileConfig = empireFile.getConfig() ?: continue//file.yml
             if (!empireFileConfig.contains("yml_items"))
                 continue
@@ -59,34 +63,36 @@ class EmpireItems {
                 val itemConfig: ConfigurationSection =
                     empireFileConfig.getConfigurationSection("yml_items")!!.getConfigurationSection(itemID)!!
 
-                val item = EmpireItem(itemConfig)
+                var item: EmpireItem? = null
+                try {
+                    item = EmpireItem(empireFileConfig.getString("namespace","empire_items")!!,itemConfig)
+                } catch (e: NullPointerException) {
+                    println(EmpirePlugin.translations.PLUGIN_WRONG_SYNTAX_ITEM + " $itemID")
+                    continue
+                }
                 val itemStack = item.getItemStack() ?: continue
 
                 if (existedCustomModelData.containsKey(item.material)) {
                     if (existedCustomModelData[item.material]!!.contains(item.customModelData))
-                        println("Уже существует custommodeldata ${item.material} ${item.customModelData}")
+                        println("${EmpirePlugin.translations.EXISTED_CUSTOM_MODEL_DATA} ${item.material} ${item.customModelData} ${itemID}")
                     existedCustomModelData[item.material]!!.add(item.customModelData)
-                }else
+                } else
                     existedCustomModelData[item.material] = mutableListOf()
+
                 setEmpireMusicDisc(itemID, item.musicDisc)
                 if (item.empireGun != null) {
                     setEmpireGun(itemStack, itemID)
-                    _empireGuns[itemID] = item.empireGun
+                    _empireGuns[itemID] = item.empireGun!!
+                }
+                if (item.empireBlock!=null && item.empireBlock!!.data!=null) {
+                    _empireBlocks[itemID] = item.empireBlock!!
+                    _empireBlocksByData[item.empireBlock!!.data] = itemID
                 }
 
 
                 _empireItems[itemID] = itemStack
                 _empireEvents[itemID] = item.events
-                _itemsInfo.add(
-                    ItemInfo(
-                        itemID,
-                        empireFileConfig.getString("namespace", "empire_items") ?: "empire_items",
-                        itemStack.type.name,
-                        item.customModelData,
-                        itemConfig.getString("texture_path")?.replace(".png", ""),
-                        itemConfig.getString("model_path")?.replace(".png", "")
-                    )
-                )
+                _itemsInfo.add(item)
             }
 
         }

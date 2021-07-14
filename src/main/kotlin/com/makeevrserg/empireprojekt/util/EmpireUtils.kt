@@ -4,6 +4,8 @@ import com.google.gson.JsonParser
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import net.md_5.bungee.api.ChatColor
 import org.bukkit.Material
+import org.bukkit.block.BlockFace
+import org.bukkit.block.data.MultipleFacing
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -57,6 +59,15 @@ class EmpireUtils {
             }
         }
 
+        public fun setBlockFace(blockData: MultipleFacing, state: ResourcePackNew.When): MultipleFacing {
+            blockData.setFace(BlockFace.DOWN, state.down)
+            blockData.setFace(BlockFace.EAST, state.east)
+            blockData.setFace(BlockFace.NORTH, state.north)
+            blockData.setFace(BlockFace.SOUTH, state.south)
+            blockData.setFace(BlockFace.UP, state.up)
+            blockData.setFace(BlockFace.WEST, state.west)
+            return blockData
+        }
         private val hexPattern =
             Pattern.compile("#[a-fA-F0-9]{6}|&#[a-fA-F0-9]{6}")
 

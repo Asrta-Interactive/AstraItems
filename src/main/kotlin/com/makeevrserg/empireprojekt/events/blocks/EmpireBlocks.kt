@@ -1,128 +1,165 @@
 package com.makeevrserg.empireprojekt.events.blocks
 
-import com.comphenix.protocol.PacketType
-import com.comphenix.protocol.ProtocolLibrary
-import com.comphenix.protocol.ProtocolManager
-import com.comphenix.protocol.events.ListenerPriority
-import com.comphenix.protocol.events.PacketAdapter
-import com.comphenix.protocol.events.PacketEvent
-import com.comphenix.protocol.events.PacketListener
 import com.makeevrserg.empireprojekt.EmpirePlugin
+import com.makeevrserg.empireprojekt.util.EmpireUtils
+import com.makeevrserg.empireprojekt.util.ResourcePackNew
 import net.minecraft.core.BlockPosition
+import net.minecraft.network.protocol.game.PacketPlayOutBlockBreakAnimation
 import org.bukkit.Bukkit
+import org.bukkit.Chunk
+import org.bukkit.Location
+import org.bukkit.Material
+import org.bukkit.block.Block
+import org.bukkit.block.BlockFace
+import org.bukkit.block.data.MultipleFacing
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.*
-import kotlin.math.min
+import org.bukkit.event.player.PlayerAnimationEvent
+import org.bukkit.event.world.ChunkEvent
+import org.bukkit.event.world.ChunkLoadEvent
+import org.bukkit.event.world.ChunkPopulateEvent
+import org.bukkit.potion.PotionEffect
+import org.bukkit.potion.PotionEffectType
+import org.bukkit.scheduler.BukkitScheduler
+import java.lang.Math.abs
+import kotlin.random.Random
 
 
 class EmpireBlocks() : Listener {
 
 
-//    private fun setNoteBlock(block: Block): Boolean {
-//        if (block.blockData !is NoteBlock)
-//            return false
-//        val noteBlock = block.blockData as NoteBlock
-//        noteBlock.instrument = Instrument.PIANO
-//        block.blockData = noteBlock
-//        block.state.update(true)
-//        return true
-//    }
-
-
-//    @EventHandler
-//    fun notePlayEvent(e:NotePlayEvent){
-//        val block = e.block.getRelative(BlockFace.DOWN)
-//        val material = block.type
-//        when (block.type){
-//            Material.ACACIA_WOOD,Material.BIRCH_WOOD->{
-//                block.location.world.playN
-//            }
-//            else -> {
-//                return
-//            }
-//        }
-//    }
-//    @EventHandler
-//    fun blockPhysicsEvent(e:BlockPhysicsEvent){
-//        setNoteBlock(e.block)
-//    }
-
-    //    @EventHandler
-//    public fun blockPlaceEvent(e: BlockPlaceEvent) {
-////        val blockPlaced = e.blockPlaced
-////        setNoteBlock(blockPlaced)
-////        val upperBlock = blockPlaced.getRelative(BlockFace.UP)
-////        setNoteBlock(e.block)
-////        setNoteBlock(upperBlock)
-//    }
     @EventHandler
-    public fun BlockDamageEvent(e: BlockDamageEvent) {
-        println("DamageEvent")
-//        Bukkit.getScheduler().runTaskTimerAsynchronously(EmpirePlugin.instance,
-//            Runnable {
-//                println("Timer")
-//                val blockPlaced = e.block
-//                val player = e.player
-//                val minePacket = protocolManager.createPacket(PacketType.Play.Server.BLOCK_BREAK_ANIMATION)
-//                minePacket.blockPositionModifier.write(0, com.comphenix.protocol.wrappers.BlockPosition(blockPlaced.x,blockPlaced.y,blockPlaced.z))
-//                minePacket.integers.write(0, player.entityId)
-//                minePacket.integers.write(1, 0)
-//                protocolManager.sendServerPacket(player, minePacket)
-//                     },0,0)
+    public fun onMushroomPhysics(e: BlockPhysicsEvent) {
+        val block = e.block
+        if (block.blockData !is MultipleFacing)
+            return
+        e.isCancelled = true
+    }
 
+    @EventHandler
+    public fun blockPlaceEvent(e: BlockPlaceEvent) {
+        val item = e.itemInHand
+        val id = EmpireUtils.getEmpireID(item) ?: return
+        val empireBlock = EmpirePlugin.empireItems._empireBlocks[id] ?: return
+
+        e.player.sendBlockBreakPacket(e.block, 0)
+        val block = e.block
+        block.location.world!!.playSound(block.location, empireBlock.place_sound ?: "", 1.0f, 1.0f)
+        val state = ResourcePackNew.generateStateByData(empireBlock.data ?: return)
+        block.type = Material.BROWN_MUSHROOM_BLOCK
+        val data = block.blockData as MultipleFacing
+        block.blockData = EmpireUtils.setBlockFace(data, state)
+    }
+
+    @EventHandler
+    public fun blockBreakEvent(e: BlockBreakEvent) {
+        val block = e.block
+        val id = getCustomBlock(block)
+        val item = EmpirePlugin.empireItems.empireItems[id] ?: return
+        val empireBlock = EmpirePlugin.empireItems._empireBlocks[id] ?: return
+
+        block.location.world!!.playSound(block.location, empireBlock.break_sound ?: "", 1.0f, 1.0f)
+        block.location.world!!.dropItem(block.location, item)
 
     }
 
-//    private lateinit var protocolManager: ProtocolManager
-//    private lateinit var packetListener: PacketListener
-//    private fun initPackerListener() {
-//        packetListener = object : PacketAdapter(
-//            EmpirePlugin.instance,
-//            ListenerPriority.HIGHEST,
-//            PacketType.Play.Server.BLOCK_BREAK,
-//            PacketType.Play.Server.BLOCK_BREAK_ANIMATION,
-//            PacketType.Play.Server.ANIMATION
-//        ) {
-//            override fun onPacketReceiving(event: PacketEvent) {
-//                val packet = event.packet
-//                println("onPacketReceiving: " + event.packet.type.name());
-//
-//            }
-//
-//            override fun onPacketSending(event: PacketEvent) {
-//                println("onPacketSending: " + event.packet.type.name());
-//                val packet = event.packet
-//                val player = event.player
-//
-//                for (i in 0 until packet.integers.size())
-//                    println(packet.integers.read(i))
-////                val minePacket = protocolManager.createPacket(PacketType.Play.Server.BLOCK_BREAK_ANIMATION)
-////                minePacket.blockPositionModifier.write(0, packet.blockPositionModifier.values.elementAt(0))
-////                minePacket.integers.write(0,player.entityId)
-////                minePacket.integers.write(1,0)
-////                protocolManager.sendServerPacket(player, minePacket)
-//
-//
-//            }
-//        }
-//        protocolManager.addPacketListener(packetListener)
-//    }
+    private fun getWhen(set: Set<BlockFace>): ResourcePackNew.When {
+        return ResourcePackNew.When(
+            set.contains((BlockFace.DOWN)) ?: false,
+            set.contains((BlockFace.EAST)) ?: false,
+            set.contains((BlockFace.NORTH)) ?: false,
+            set.contains((BlockFace.SOUTH)) ?: false,
+            set.contains((BlockFace.UP)) ?: false,
+            set.contains((BlockFace.WEST)) ?: false,
+        )
+    }
+
+
+    fun getCustomBlock(block: Block): String? {
+
+        if (block.blockData !is MultipleFacing)
+            return null
+        val data = block.blockData as MultipleFacing
+        val blockIntData = ResourcePackNew.generateDataByState(getWhen(data.faces))
+        val id = EmpirePlugin.empireItems._empireBlocksByData[blockIntData] ?: return null
+        return id
+    }
+
+    val blockDamageMap = mutableMapOf<Player, Long>()
+
+    @EventHandler
+    fun BlockDamageEvent(e: BlockDamageEvent) {
+        if (getCustomBlock(e.block) == null) {
+            blockDamageMap.remove(e.player)
+            return
+        }
+        e.player.sendBlockBreakPacket(e.block, 0)
+        blockDamageMap[e.player] = System.currentTimeMillis()
+    }
+
+    @EventHandler
+    fun BlockBreakEvent(e: BlockBreakEvent) {
+        blockDamageMap.remove(e.player)
+        e.player.sendBlockBreakPacket(e.block, 0)
+
+    }
+
+    private fun Player.sendBlockBreakPacket(block: Block, breakProgress: Int) {
+
+        val packet = PacketPlayOutBlockBreakAnimation(
+            10,
+            BlockPosition(block.x, block.y, block.z),
+            breakProgress
+        )
+        (this as CraftPlayer).handle.b.sendPacket(packet)
+    }
+
+    @EventHandler
+    fun playerBreakingEvent(e: PlayerAnimationEvent) {
+        val block = e.player.getTargetBlock(null, 100)
+        val player = e.player
+        val id = getCustomBlock(block)
+        val item = EmpirePlugin.empireItems.empireItems[id] ?: return
+        val empireBlock = EmpirePlugin.empireItems._empireBlocks[id] ?: return
+        val time = System.currentTimeMillis().minus(blockDamageMap[e.player] ?: return) / 10.0
+
+
+        player.sendBlockBreakPacket(block, (time / empireBlock.hardness.toDouble() * 9).toInt())
+
+
+        if (time > empireBlock.hardness) {
+            player.breakBlock(block)
+            player.sendBlockBreakPacket(block, 0)
+        }
+
+        player.addPotionEffect(
+            PotionEffect(PotionEffectType.SLOW_DIGGING, 5, 200, false, false, false)
+        )
+
+    }
+
+
+    var blockGeneration: BlockGeneration? = null
 
     init {
         EmpirePlugin.instance.server.pluginManager.registerEvents(this, EmpirePlugin.instance)
-
-        EmpirePlugin.instance.server.pluginManager.getPlugin("protocollib")?.let {
-//            protocolManager = ProtocolLibrary.getProtocolManager()
-//            initPackerListener()
-        }
-
+        if (EmpirePlugin.config.generateBlocks)
+            blockGeneration = BlockGeneration()
 
     }
 
     public fun onDisable() {
-//        protocolManager.removePacketListener(packetListener)
+        BlockPlaceEvent.getHandlerList().unregister(this)
+        BlockPhysicsEvent.getHandlerList().unregister(this)
+        BlockBreakEvent.getHandlerList().unregister(this)
         BlockDamageEvent.getHandlerList().unregister(this)
+        PlayerAnimationEvent.getHandlerList().unregister(this)
+        Bukkit.getScheduler().cancelTasks(EmpirePlugin.instance)
+        if (blockGeneration != null)
+            blockGeneration!!.onDisable()
 
     }
 }

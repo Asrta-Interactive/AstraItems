@@ -8,6 +8,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.PrepareAnvilEvent
 import org.bukkit.event.player.PlayerInteractEvent
+import org.bukkit.event.player.PlayerItemDamageEvent
 import org.bukkit.event.player.PlayerItemHeldEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.inventory.ItemStack
@@ -25,13 +26,14 @@ class EmpireItemFixEvent : Listener {
 
         val item = EmpirePlugin.empireItems.empireItems[id]?.clone()?:return toReplace
         for (enchantment in toReplace.enchantments.keys)
-            item.addEnchantment(enchantment,toReplace.enchantments[enchantment]?:continue)
+            item.addUnsafeEnchantment(enchantment,toReplace.enchantments[enchantment]?:continue)
 
         meta.persistentDataContainer.set(EmpirePlugin.empireConstants.FIXED_ITEM,
             PersistentDataType.SHORT,0)
         toReplace.itemMeta = item.itemMeta
         return item
     }
+
 
 
     @EventHandler
@@ -41,6 +43,13 @@ class EmpireItemFixEvent : Listener {
         replaceWrongItem(e.player.inventory.itemInOffHand)
     }
 
+
+    @EventHandler
+    fun PlayerItemDamageEvent(e: PlayerItemDamageEvent) {
+        replaceWrongItem(e.item)
+        replaceWrongItem(e.player.inventory.itemInMainHand)
+        replaceWrongItem(e.player.inventory.itemInOffHand)
+    }
     @EventHandler
     fun PlayerItemHeldEvent(e: PlayerItemHeldEvent) {
         replaceWrongItem(e.player.inventory.itemInMainHand)
@@ -55,5 +64,6 @@ class EmpireItemFixEvent : Listener {
     fun onDisable() {
         PlayerItemHeldEvent.getHandlerList().unregister(this)
         PlayerInteractEvent.getHandlerList().unregister(this)
+        PlayerItemDamageEvent.getHandlerList().unregister(this)
     }
 }

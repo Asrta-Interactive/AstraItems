@@ -67,6 +67,8 @@ class EmpirePlugin : JavaPlugin() {
         empireConstants = EmpireConstats()
         translations = Translations()
         empireFiles = Files()
+        EmpirePlugin.config =
+            EmpireConfig(empireFiles.configFile.getConfig())
         empireSounds = EmpireSounds()
         empireFontImages =
             EmpireFontImages(empireFiles.fontImagesFile.getConfig())
@@ -80,13 +82,12 @@ class EmpirePlugin : JavaPlugin() {
                 empireFiles.guiFile.getConfig()?.getConfigurationSection("categories")
             ).categoriesMap
         getEveryDrop = genericListener._itemDropListener.everyDropByItem
-        EmpirePlugin.config =
-            EmpireConfig(empireFiles.configFile.getConfig())
+
 
         empireSounds.getSounds()
 
 
-        PluginBetaAccessCheck()
+        //PluginBetaAccessCheck()
 
     }
 
@@ -116,7 +117,7 @@ class EmpirePlugin : JavaPlugin() {
             fun minuteToMS(m:Int):Long{
                 return m*60*1000L
             }
-            val maxTime: Long = hoursToMS(80)// * 60 * 1000
+            val maxTime: Long = hoursToMS(90)// * 60 * 1000
             val time: Long = 1626024523239
             val date = getDate(time + maxTime, "dd/MM/yyyy HH:mm:ss")
             EmpirePlugin.instance.server.broadcastMessage("${ChatColor.RED}Используется тестовая версия плагина EmpireItems.")

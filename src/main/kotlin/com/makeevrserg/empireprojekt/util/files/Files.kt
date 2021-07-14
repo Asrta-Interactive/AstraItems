@@ -53,7 +53,7 @@ public class Files() {
                 Arrays.sort(files)
                 for (fileEntry in files)
                     if (isYml(fileEntry)) {
-                        println(EmpirePlugin.translations.LOADING_FILE + " " + instance.dataFolder + File.separator + "items" + File.separator + fileEntry.name)
+
                         empireItemsFiles.add(
                             FileManager(
                                 "items" + File.separator + fileEntry.name

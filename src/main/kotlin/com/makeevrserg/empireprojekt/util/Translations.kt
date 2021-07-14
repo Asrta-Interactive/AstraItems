@@ -32,6 +32,8 @@ class Translations {
         text.getHEXString("LOADING_FILE", "#18dbd1Загрузка файла")
     val NOT_EXIST_FILE: String = text.getHEXString("NOT_EXIST_FILE", "#db2c18Файл не существует")
 
+    val PLUGIN_WRONG_SYNTAX_ITEM: String = text.getHEXString("PLUGIN_WRONG_SYNTAX_ITEM", "#db2c18Ошибка при загрузке файла. Вероятно, указаны неверные параметры предмета.")
+    val EXISTED_CUSTOM_MODEL_DATA: String = text.getHEXString("EXISTED_CUSTOM_MODEL_DATA", "#db2c18Внимание! Введене уже существующая custom_model_data.")
 
     val SIT_IN_AIR: String = text.getHEXString("SIT_IN_AIR", "#dbbb18Вы в воздухе")
     val SIT_ALREADY: String = text.getHEXString("SIT_ALREADY", "#dbbb18Вы уже сидите")
@@ -42,6 +44,9 @@ class Translations {
     val ITEM_NOT_FOUND: String = text.getHEXString("ITEM_NOT_FOUND", "#db2c18Нет предмета")
 
     val WRONG_NUMBER: String = text.getHEXString("WRONG_NUMBER", "#db2c18Количество задано неверно")
+
+    val ITEM_CREATE_WRONG_FLAG: String = text.getHEXString("ITEM_CREATE_WRONG_FLAG", "#db2c18Вы ввели неверный ItemFlag")
+    val ITEM_CREATE_WRONG_ATTRIBUTE: String = text.getHEXString("ITEM_CREATE_WRONG_ATTRIBUTE", "#db2c18Вы ввели неверный Attribute")
 
     val ITEM_REPLACED: String = text.getHEXString("ITEM_REPLACED", "#18db52Предмет заменён")
     val ITEM_REPLACE_WRONG: String =
@@ -55,6 +60,7 @@ class Translations {
     val ZIP_ITEMS: String = text.getHEXString("ZIP_ITEMS", "#42f596Создаются предметы...")
     val ZIP_FONTS: String = text.getHEXString("ZIP_FONTS", "#42f596Создаются фонты...")
     val ZIP_SOUND: String = text.getHEXString("ZIP_SOUND", "#42f596Создаются звуки...")
+    val ZIP_BLOCKS: String = text.getHEXString("ZIP_BLOCKS", "#42f596Создаются блоки...")
 
 
     val ITEM_UPGRADE_NAME_COLOR: String = text.getHEXString("ITEM_UPGRADE_NAME_COLOR", "#4790ad")
@@ -65,6 +71,7 @@ class Translations {
 
     val ITEM_INFO_DROP: String = text.getHEXString("ITEM_INFO_DROP", "Выпадает из")
     val ITEM_INFO_DROP_COLOR: String = text.getHEXString("ITEM_INFO_DROP_COLOR: String", "#47ad5f")
+
 
     val RESOURCE_PACK_DENY: String = text.getHEXString("RESOURCE_PACK_DENY", "#f55442Вы отклонили ресурс-пак")
     val RESOURCE_PACK_DOWNLOAD_SELF: String = text.getHEXString(

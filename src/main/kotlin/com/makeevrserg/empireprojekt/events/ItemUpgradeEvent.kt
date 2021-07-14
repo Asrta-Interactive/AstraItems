@@ -71,8 +71,6 @@ class ItemUpgradeEvent : Listener {
     private fun setAttrLore(itemMeta: ItemMeta, attr: String, amount: Double?): MutableList<String> {
         val lore: MutableList<String> = itemMeta.lore ?: mutableListOf()
 
-        if (amount != null)
-            println(amount)
         lore.add(EmpireUtils.HEXPattern("${EmpirePlugin.translations.ITEM_UPGRADE_NAME_COLOR}${attrMap[attr] ?: attr}: ${EmpirePlugin.translations.ITEM_UPGRADE_AMOUNT_COLOR}${amount ?: "&kAAA"}"))
         for (i in 0 until lore.size - 1)
             if (lore[i].contains(attrMap[attr] ?: attr)) {

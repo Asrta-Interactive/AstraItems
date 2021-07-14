@@ -18,6 +18,7 @@ import org.bukkit.inventory.meta.PotionMeta
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
+import java.lang.IllegalArgumentException
 import java.util.*
 
 fun ConfigurationSection.getHEXString(path: String): String? {
@@ -28,10 +29,20 @@ fun ConfigurationSection.getHEXStringList(path: String): List<String> {
     return EmpireUtils.HEXPattern(getStringList(path))
 }
 
+public fun getItemFlagValueOrNull(flag: String): ItemFlag? {
+    try {
+        return ItemFlag.valueOf(flag)
+    } catch (e: IllegalArgumentException) {
+        println(EmpirePlugin.translations.ITEM_CREATE_WRONG_FLAG + " $flag")
+        return null
+    }
+
+}
+
 private fun getItemFlagList(list: List<String>?): List<ItemFlag> {
     val flags = mutableListOf<ItemFlag>()
     for (flag in list ?: return mutableListOf())
-        flags.add(ItemFlag.valueOf(flag))
+        flags.add(getItemFlagValueOrNull(flag) ?: continue)
     return flags
 }
 
@@ -45,6 +56,16 @@ private fun getEnchantements(section: ConfigurationSection?): Map<Enchantment, I
     return enchantments
 }
 
+public fun getItemAttributeValueOrNull(attr: String): Attribute? {
+    try {
+        return Attribute.valueOf(attr)
+    } catch (e: IllegalArgumentException) {
+        println(EmpirePlugin.translations.ITEM_CREATE_WRONG_ATTRIBUTE + " $attr")
+        return null
+    }
+
+}
+
 private fun getAttributes(section: ConfigurationSection?): Map<Attribute, Int> {
     section ?: return mutableMapOf()
     val map = mutableMapOf<Attribute, Int>()
@@ -52,7 +73,7 @@ private fun getAttributes(section: ConfigurationSection?): Map<Attribute, Int> {
         val sect = section.getConfigurationSection(key) ?: continue
         val name = sect.getString("name") ?: continue
         val amount = sect.getInt("amount")
-        val attribute = Attribute.valueOf(name)
+        val attribute = getItemAttributeValueOrNull(name) ?: continue
         map[attribute] = amount
     }
     return map
@@ -69,16 +90,45 @@ private fun getEvents(section: ConfigurationSection?): List<Event> {
     return events
 }
 
-private fun getEmprieEnchants(section: ConfigurationSection?):Map<String,Double>{
-    section?:return mutableMapOf()
-    val map = mutableMapOf<String,Double>()
-    for (key in section.getKeys(false)){
-        val value = section.getDouble(key)?:continue
+private fun getEmprieEnchants(section: ConfigurationSection?): Map<String, Double> {
+    section ?: return mutableMapOf()
+    val map = mutableMapOf<String, Double>()
+    for (key in section.getKeys(false)) {
+        val value = section.getDouble(key) ?: continue
         map[key] = value
     }
     return map
 }
+
+
+private fun getEmpireGenerateBlock(section: ConfigurationSection?): Generate? {
+    section ?: return null
+    val chunk = section.getDouble("chunk", 100.0)
+    val map = mutableMapOf<Material, Double>()
+    for (blockName in section.getConfigurationSection("replace_blocks")?.getKeys(false) ?: return null)
+        map[Material.getMaterial(blockName) ?: continue] = section.getDouble("replace_blocks.$blockName")
+    return Generate(chunk, true, map,
+        section.getInt("max_per_chunk"),
+        section.getInt("min_y"),
+        section.getInt("max_y"),
+        section.getInt("min_per_deposite"),
+        section.getInt("max_per_deposite"))
+}
+
+private fun getEmprieBlock(section: ConfigurationSection?): Block? {
+    section ?: return null
+    return Block(
+        section.getInt("data"),
+        section.getString("break_particles_material"),
+        section.getString("break_sound"),
+        section.getString("place_sound"),
+        section.getInt("hardness"),
+        getEmpireGenerateBlock(section.getConfigurationSection("generate"))
+    )
+}
+
 data class EmpireItem(
+    val namespace: String,
     val id: String,
     val displayName: String,
     val lore: List<String>,
@@ -92,10 +142,12 @@ data class EmpireItem(
     val attributes: Map<Attribute, Int>,
     val events: List<Event>,
     val musicDisc: String?,
-    val empireGun:EmpireGun?,
-    val empireEnchants:Map<String,Double>
+    val empireGun: EmpireGun?,
+    val empireEnchants: Map<String, Double>,
+    val empireBlock: Block?
 ) {
-    constructor(conf: ConfigurationSection) : this(
+    constructor(namespace: String, conf: ConfigurationSection) : this(
+        namespace,
         conf.name,
         conf.getHEXString("display_name")!!,
         conf.getHEXStringList("lore"),
@@ -110,7 +162,8 @@ data class EmpireItem(
         getEvents(conf.getConfigurationSection("interact")),
         conf.getString("music_disc.song"),
         EmpireGun().init(conf.getConfigurationSection("empire_gun")),
-        getEmprieEnchants(conf.getConfigurationSection("empire_enchants"))
+        getEmprieEnchants(conf.getConfigurationSection("empire_enchants")),
+        getEmprieBlock(conf.getConfigurationSection("block"))
     )
 
     private fun ItemMeta.addItemFlags(flags: List<ItemFlag>) {
@@ -166,19 +219,24 @@ data class EmpireItem(
         return potionMeta
     }
 
-    private fun ItemMeta.addEmpireEnchant(){
-        for (enchantKey in empireEnchants.keys){
-            val value = empireEnchants[enchantKey]?:continue
-            this.persistentDataContainer.set(EmpirePlugin.empireConstants.getEnchantsMap()[enchantKey]?:continue,
-                PersistentDataType.DOUBLE,value)
+    private fun ItemMeta.addEmpireEnchant() {
+        for (enchantKey in empireEnchants.keys) {
+            val value = empireEnchants[enchantKey] ?: continue
+            this.persistentDataContainer.set(
+                EmpirePlugin.empireConstants.getEnchantsMap()[enchantKey] ?: continue,
+                PersistentDataType.DOUBLE, value
+            )
         }
     }
 
-    private fun ItemMeta.setFixedItem(){
-            this.persistentDataContainer.set(EmpirePlugin.empireConstants.FIXED_ITEM,
-                PersistentDataType.SHORT,0)
+    private fun ItemMeta.setFixedItem() {
+        this.persistentDataContainer.set(
+            EmpirePlugin.empireConstants.FIXED_ITEM,
+            PersistentDataType.SHORT, 0
+        )
 
     }
+
     public fun getItemStack(): ItemStack? {
         val itemStack = ItemStack(material)
         var meta = itemStack.itemMeta ?: return null
@@ -199,6 +257,26 @@ data class EmpireItem(
 
     }
 }
+
+data class Block(
+    val data: Int,
+    val break_particles_material: String?,
+    val break_sound: String?,
+    val place_sound: String?,
+    val hardness: Int,
+    val generate: Generate?
+)
+
+data class Generate(
+    val chunk: Double,
+    val onlyNewChunks: Boolean,
+    val replaceBlocks: MutableMap<Material, Double>,
+    val maxPerChunk: Int = 1,
+    val minY: Int = 0,
+    val maxY: Int = 10,
+    val minDeposite: Int = 1,
+    val maxDeposite: Int = 5
+)
 
 private fun getCommands(section: ConfigurationSection?): List<Command> {
     section ?: return mutableListOf()
@@ -252,6 +330,7 @@ private fun getSounds(section: ConfigurationSection?): Sound? {
 
     return Sound(name, volume, pitch)
 }
+
 class EmpireGun {
 
     var clipSize: Int = 5
@@ -268,7 +347,7 @@ class EmpireGun {
     var generateExplosion: Int? = null
     var crosshair: String? = null
     fun init(section: ConfigurationSection?): EmpireGun? {
-        section?:return null
+        section ?: return null
         clipSize = section.getInt("EMPIRE_GUN_CLIP_SIZE", 5)
         gunDamage = section.getDouble("EMPIRE_GUN_DAMAGE", 5.0)
         gunLength = section.getInt("EMPIRE_GUN_LENGTH", 5)

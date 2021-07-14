@@ -25,12 +25,12 @@ class Grenade : Listener {
         if (e.entity.shooter !is Player) return
         val player = e.entity.shooter as Player
 
-        println("Player ${player.name} threw grenade at blockLocation=${e.hitBlock?.location} playerLocation=${player.location}")
         val itemStack = player.inventory.itemInMainHand
         val meta = itemStack.itemMeta ?: return
         val explosionPower =
             meta.persistentDataContainer.get(EmpirePlugin.empireConstants.GRENADE_EXPLOSION_POWER, PersistentDataType.DOUBLE)
                 ?: return
+        println("Player ${player.name} threw grenade at blockLocation=${e.hitBlock?.location} playerLocation=${player.location}")
         if (!allowExplosion(instance, e.entity.location)) {
             return
         }

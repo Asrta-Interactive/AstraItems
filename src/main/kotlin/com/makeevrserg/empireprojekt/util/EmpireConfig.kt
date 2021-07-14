@@ -10,6 +10,10 @@ class EmpireConfig(fileConfig: FileConfiguration?) {
     var vampirismMultiplier: Double = 0.05
     private var upgradeCostMultiplier: Double = 0.05
     private var onJoinResourcePackTimeStay:Int = 200
+    public var generateBlocks:Boolean = false
+
+    public var generatingDebug:Boolean = false
+
     private fun initConfig(fileConfig: FileConfiguration?) {
         fileConfig ?: return
         resourcePackRef = fileConfig.getString("resourcePack") ?: ""
@@ -19,6 +23,8 @@ class EmpireConfig(fileConfig: FileConfiguration?) {
         vampirismMultiplier = fileConfig.getDouble("vampirismMultiplier", 0.05)
         upgradeCostMultiplier = fileConfig.getDouble("upgradeCostMultiplier", 1.0)
         onJoinResourcePackTimeStay = fileConfig.getInt("onJoinResourcePackTimeStay", 200)
+        generateBlocks = fileConfig.getBoolean("generate_blocks", false)
+        generatingDebug = fileConfig.getBoolean("debug_generating", false)
 
 
     }
