@@ -128,7 +128,8 @@ class Hammer : Listener {
                     "basalt"
                 )
                 for (key in keys) if (blockName.contains(key)) {
-                    block.breakNaturally()
+                    p.breakBlock(block)
+                    //block.breakNaturally()
                     break
                 }
             }
