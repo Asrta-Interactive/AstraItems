@@ -99,34 +99,6 @@ private fun getEmprieEnchants(section: ConfigurationSection?): Map<String, Doubl
     }
     return map
 }
-
-
-private fun getEmpireGenerateBlock(section: ConfigurationSection?): Generate? {
-    section ?: return null
-    val chunk = section.getDouble("chunk", 100.0)
-    val map = mutableMapOf<Material, Double>()
-    for (blockName in section.getConfigurationSection("replace_blocks")?.getKeys(false) ?: return null)
-        map[Material.getMaterial(blockName) ?: continue] = section.getDouble("replace_blocks.$blockName")
-    return Generate(chunk, true, map,
-        section.getInt("max_per_chunk"),
-        section.getInt("min_y"),
-        section.getInt("max_y"),
-        section.getInt("min_per_deposite"),
-        section.getInt("max_per_deposite"))
-}
-
-private fun getEmprieBlock(section: ConfigurationSection?): Block? {
-    section ?: return null
-    return Block(
-        section.getInt("data"),
-        section.getString("break_particles_material"),
-        section.getString("break_sound"),
-        section.getString("place_sound"),
-        section.getInt("hardness"),
-        getEmpireGenerateBlock(section.getConfigurationSection("generate"))
-    )
-}
-
 data class EmpireItem(
     val namespace: String,
     val id: String,
@@ -163,7 +135,7 @@ data class EmpireItem(
         conf.getString("music_disc.song"),
         EmpireGun().init(conf.getConfigurationSection("empire_gun")),
         getEmprieEnchants(conf.getConfigurationSection("empire_enchants")),
-        getEmprieBlock(conf.getConfigurationSection("block"))
+        Block.getEmprieBlock(conf.getConfigurationSection("block"))
     )
 
     private fun ItemMeta.addItemFlags(flags: List<ItemFlag>) {
@@ -265,7 +237,26 @@ data class Block(
     val place_sound: String?,
     val hardness: Int,
     val generate: Generate?
-)
+){
+    companion object{
+        public fun getEmprieBlock(section: ConfigurationSection?): Block? {
+            section ?: return null
+            val block = Block(
+                section.getInt("data"),
+                section.getString("break_particles_material"),
+                section.getString("break_sound"),
+                section.getString("place_sound"),
+                section.getInt("hardness"),
+                Generate.getEmpireGenerateBlock(section.getConfigurationSection("generate"))
+            )
+            if (block.data>=192 || block.data<0) {
+                println(EmpirePlugin.translations.CUSTOM_BLOCK_WRONG_VALUE)
+                return null
+            }
+            return block
+        }
+    }
+}
 
 data class Generate(
     val chunk: Double,
@@ -276,7 +267,23 @@ data class Generate(
     val maxY: Int = 10,
     val minDeposite: Int = 1,
     val maxDeposite: Int = 5
-)
+){
+    companion object{
+        public fun getEmpireGenerateBlock(section: ConfigurationSection?): Generate? {
+            section ?: return null
+            val chunk = section.getDouble("chunk", 100.0)
+            val map = mutableMapOf<Material, Double>()
+            for (blockName in section.getConfigurationSection("replace_blocks")?.getKeys(false) ?: return null)
+                map[Material.getMaterial(blockName) ?: continue] = section.getDouble("replace_blocks.$blockName")
+            return Generate(chunk, true, map,
+                section.getInt("max_per_chunk"),
+                section.getInt("min_y"),
+                section.getInt("max_y"),
+                section.getInt("min_per_deposite"),
+                section.getInt("max_per_deposite"))
+        }
+    }
+}
 
 private fun getCommands(section: ConfigurationSection?): List<Command> {
     section ?: return mutableListOf()

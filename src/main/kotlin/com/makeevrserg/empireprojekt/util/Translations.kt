@@ -34,6 +34,7 @@ class Translations {
 
     val PLUGIN_WRONG_SYNTAX_ITEM: String = text.getHEXString("PLUGIN_WRONG_SYNTAX_ITEM", "#db2c18Ошибка при загрузке файла. Вероятно, указаны неверные параметры предмета.")
     val EXISTED_CUSTOM_MODEL_DATA: String = text.getHEXString("EXISTED_CUSTOM_MODEL_DATA", "#db2c18Внимание! Введене уже существующая custom_model_data.")
+    val CUSTOM_BLOCK_WRONG_VALUE: String = text.getHEXString("CUSTOM_BLOCK_WRONG_VALUE", "#db2c18Внимание! Введене неверная data в поле block! Значение data должно находится в отрезке [0,191].")
 
     val SIT_IN_AIR: String = text.getHEXString("SIT_IN_AIR", "#dbbb18Вы в воздухе")
     val SIT_ALREADY: String = text.getHEXString("SIT_ALREADY", "#dbbb18Вы уже сидите")

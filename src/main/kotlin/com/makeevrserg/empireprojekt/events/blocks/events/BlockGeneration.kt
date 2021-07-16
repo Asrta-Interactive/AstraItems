@@ -39,11 +39,13 @@ class BlockGeneration : Listener {
 
 
     private fun replaceBlock(chunkBlock: Block, data: Int) {
-        chunkBlock.type = Material.BROWN_MUSHROOM_BLOCK
-        chunkBlock.blockData = EmpireUtils.setBlockFace(
-            chunkBlock.blockData as MultipleFacing,
-            ResourcePackNew.generateStateByData(data)
-        )
+        val empireBlock = EmpirePlugin.empireItems._empireBlocksByData[data]?:return
+        chunkBlock.type = MushroomBlockApi.getMaterialByData(data)
+        val blockFacing = MushroomBlockApi.getMultipleFacing(chunkBlock)?:return
+        val empireFacing = MushroomBlockApi.getFacingByData(data)
+        for (f in empireFacing.facing)
+            blockFacing.setFace(BlockFace.valueOf(f.key.uppercase()),f.value)
+        chunkBlock.blockData =blockFacing
     }
 
 

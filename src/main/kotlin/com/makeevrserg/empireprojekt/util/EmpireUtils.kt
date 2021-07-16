@@ -15,6 +15,7 @@ import org.bukkit.persistence.PersistentDataType
 import org.bukkit.scheduler.BukkitRunnable
 import java.io.InputStreamReader
 import java.lang.Exception
+import java.lang.NumberFormatException
 import java.net.URL
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -27,6 +28,7 @@ class EmpireUtils {
     }
 
     companion object {
+
 
         public fun getSkinByPlayerName(player: Player? = null, name: String): Array<String>? {
             try {
@@ -59,15 +61,7 @@ class EmpireUtils {
             }
         }
 
-        public fun setBlockFace(blockData: MultipleFacing, state: ResourcePackNew.When): MultipleFacing {
-            blockData.setFace(BlockFace.DOWN, state.down)
-            blockData.setFace(BlockFace.EAST, state.east)
-            blockData.setFace(BlockFace.NORTH, state.north)
-            blockData.setFace(BlockFace.SOUTH, state.south)
-            blockData.setFace(BlockFace.UP, state.up)
-            blockData.setFace(BlockFace.WEST, state.west)
-            return blockData
-        }
+
         private val hexPattern =
             Pattern.compile("#[a-fA-F0-9]{6}|&#[a-fA-F0-9]{6}")
 

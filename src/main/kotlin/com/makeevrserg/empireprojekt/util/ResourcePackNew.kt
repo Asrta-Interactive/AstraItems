@@ -1,12 +1,11 @@
 package com.makeevrserg.empireprojekt.util
 
 import com.google.gson.*
-import com.google.gson.annotations.Expose
-import com.google.gson.annotations.SerializedName
 import com.makeevrserg.empireprojekt.EmpirePlugin
+import com.makeevrserg.empireprojekt.events.blocks.MushroomBlockApi
 import com.makeevrserg.empireprojekt.items.EmpireItem
 import org.apache.commons.lang.StringEscapeUtils
-import org.bukkit.Material
+import org.bukkit.Instrument
 import java.io.*
 import java.lang.NumberFormatException
 import java.util.zip.ZipEntry
@@ -293,63 +292,6 @@ class ResourcePackNew {
         }
     }
 
-    data class BlockJson(
-        val multipart: List<Multipart>?
-    )
-
-    data class Multipart(
-        @SerializedName("when")
-        val _when: When? = When(),
-        val apply: Apply?
-    )
-
-    data class Apply(
-        val model: String
-    )
-
-
-    data class When(
-        var down: Boolean = false,
-        var east: Boolean = false,
-        var north: Boolean = false,
-        var south: Boolean = false,
-        var up: Boolean = false,
-        var west: Boolean = false
-
-    ) {
-        private fun String.toEmpireBool(): Boolean {
-            return try {
-                val int = Integer.parseInt(this)
-                int == 1
-            } catch (e: NumberFormatException) {
-                false
-            }
-
-        }
-
-        public fun set(index: Int, value: Boolean) {
-            when (index) {
-                0 -> down = value
-                1 -> east = value
-                2 -> north = value
-                3 -> south = value
-                4 -> up = value
-                5 -> west = value
-            }
-        }
-
-        public fun set(index: Int, value: String) {
-            val bool = value.toEmpireBool()
-            when (index) {
-                0 -> down = bool
-                1 -> east = bool
-                2 -> north = bool
-                3 -> south = bool
-                4 -> up = bool
-                5 -> west = bool
-            }
-        }
-    }
 
     private fun String.toEmpireBool(): Boolean {
         return try {
@@ -360,45 +302,67 @@ class ResourcePackNew {
         }
     }
 
+    val map: Map<Instrument, String> = mapOf(
+        Instrument.BANJO to Instrument.BANJO.name.lowercase(),
+        Instrument.BASS_DRUM to "basedrum",
+        Instrument.BASS_GUITAR to "bass",
+        Instrument.BELL to Instrument.BELL.name.lowercase(),
+        Instrument.BIT to Instrument.BIT.name.lowercase(),
+        Instrument.CHIME to Instrument.CHIME.name.lowercase(),
+        Instrument.COW_BELL to Instrument.COW_BELL.name.lowercase(),
+        Instrument.DIDGERIDOO to Instrument.DIDGERIDOO.name.lowercase(),
+        Instrument.FLUTE to Instrument.FLUTE.name.lowercase(),
+        Instrument.GUITAR to "bass",
+        Instrument.IRON_XYLOPHONE to Instrument.IRON_XYLOPHONE.name.lowercase(),
+        Instrument.PIANO to "harp",
+        Instrument.PLING to Instrument.PLING.name.lowercase(),
+        Instrument.SNARE_DRUM to "snare",
+        Instrument.STICKS to "hat",
+        Instrument.XYLOPHONE to Instrument.XYLOPHONE.name.lowercase()
+    )
+
+    private data class MushroomBlockClassJson(val multipart: MutableList<MushroomBlockApi.Multipart>)
+
+    private fun clearBlockStates() {
+        fun getMultiparts(block: String): MutableList<MushroomBlockApi.Multipart> {
+            val list = mutableListOf<MushroomBlockApi.Multipart>()
+            for (i in 0..63) {
+                val multipart = MushroomBlockApi.getFacingByData(i)
+                multipart.apply = MushroomBlockApi.Apply("block/original/${block}_true")
+                list.add(multipart)
+            }
+            return list
+        }
+        File(getMinecraftPath() + "blockstates").mkdir()
+        for (blockName in listOf<String>("brown_mushroom_block", "mushroom_stem", "red_mushroom_block"))
+            File(getMinecraftPath() + "blockstates" + File.separator + "${blockName}.json").writeText(
+                setPrettyString(Gson().toJson(MushroomBlockClassJson(getMultiparts(blockName))))
+            )
+    }
 
     private fun generateBlocks() {
+        clearBlockStates()
 
-        //File(getMinecraftBlockModelsPath()).writeText(InputStreamReader(plugin.getResource("block/base/block_real.json")!!).readText())
 
-        val items = EmpirePlugin.empireItems.itemsInfo
 
-        File(getMinecraftPath() + "blockstates").mkdir()
-        val file = File(getMinecraftPath() + "blockstates" + File.separator + "brown_mushroom_block.json")
+        for (item in EmpirePlugin.empireItems.itemsInfo) {
+            val id = item.id
+            val empireBlock = EmpirePlugin.empireItems._empireBlocks[id] ?: continue
+            val multipart = MushroomBlockApi.getFacingByData(empireBlock.data) ?: continue
+            multipart.apply = MushroomBlockApi.Apply("${item.namespace}:${item.modelPath ?: "auto_generated/${id}"}")
 
-        val whenList = mutableListOf<Multipart>()
-        val dataList = mutableListOf<Int>()
-        for (item in items) {
-            item.empireBlock?.data ?: continue
-            val filePath = getMinecraftItemModelPath(item.material.name)
-            val minecraftModelFile = File(filePath)
-            if (!minecraftModelFile.exists()) {
-                println(EmpirePlugin.translations.NOT_EXIST_FILE + " ${item.material.name.lowercase()}.json")
-                continue
-            }
-            val fileText = InputStreamReader(minecraftModelFile.inputStream()).readText()
-            val jsonObject = JsonParser().parse(fileText).asJsonObject
-            val model: Model = Gson().fromJson(jsonObject, Model::class.java)
-            val _when = generateStateByData(item.empireBlock.data)
-            val multipart = Multipart(_when, Apply("${item.namespace}:${item.modelPath?:"auto_generated/"+item.id}"))
-            whenList.add(multipart)
-            dataList.add(item.empireBlock.data)
+
+            val materialName = MushroomBlockApi.getMaterialByData(empireBlock.data).name.lowercase()
+            val file = File(getMinecraftPath() + "blockstates" + File.separator + "${materialName}.json")
+            val multipartList = Gson().fromJson(JsonParser().parse(file.reader()).asJsonObject,MushroomBlockClassJson::class.java)
+            println(MushroomBlockApi.Multipart(multipart.facing,MushroomBlockApi.Apply("block/original/${materialName}_true")))
+            multipartList.multipart.remove(MushroomBlockApi.Multipart(multipart.facing,MushroomBlockApi.Apply("block/original/${materialName}_true")))
+            multipartList.multipart.add(multipart)
+            file.writeText(setPrettyString(Gson().toJson(multipartList)))
+
         }
-        for (i in 0..63)
-            if (!dataList.contains(i)) {
-                val _when = generateStateByData(i)
-                val multipart = Multipart(_when, Apply("block/original/brown_mushroom_block_true"))
-                whenList.add(multipart)
-            }
 
-        val blockJson = BlockJson(whenList)
-        val json = Gson().toJson(blockJson)
-        file.createNewFile()
-        file.writeText(setPrettyString(json))
+
     }
 
     private fun fixCustomModelDataOrder() {
@@ -427,33 +391,7 @@ class ResourcePackNew {
 
 
     companion object {
-        public fun generateStateByData(d: Int): When {
-            val _when = When()
-            var data = d
-            if (data >= 64) {
-                data -= 64
-            }
-            val byteString = Integer.toBinaryString(data)
-            for (index in byteString.indices)
-                _when.set(5 - index, byteString[byteString.length - 1 - index].toString())
-            return _when
-        }
 
-        private fun Boolean.toInt(): Int {
-            return if (this) 1 else 0
-
-        }
-
-        public fun generateDataByState(state: When): Int {
-            val int =
-                "${state.down.toInt()}${state.east.toInt()}${state.north.toInt()}${state.south.toInt()}${state.up.toInt()}${state.west.toInt()}"
-            return try {
-                Integer.parseInt(int, 2)
-            } catch (e: NumberFormatException) {
-                -1
-            }
-
-        }
 
         fun zipAll(folderPath: String, outputFilePath: String): Boolean {
             val fos = FileOutputStream(outputFilePath)
