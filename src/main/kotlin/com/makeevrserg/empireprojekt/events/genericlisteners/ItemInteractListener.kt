@@ -157,6 +157,7 @@ class ItemInteractListener : Listener {
             managePotionAdd(event.potionEffectsAdd)
             managePotionRemove(event.potionEffectsRemove)
             manageDurability(p.inventory.itemInMainHand)
+            manageDurability(p.inventory.itemInOffHand)
         }
     }
 

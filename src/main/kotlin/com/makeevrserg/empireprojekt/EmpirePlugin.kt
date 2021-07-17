@@ -87,7 +87,7 @@ class EmpirePlugin : JavaPlugin() {
         empireSounds.getSounds()
 
 
-        PluginBetaAccessCheck()
+        //PluginBetaAccessCheck()
 
     }
 
