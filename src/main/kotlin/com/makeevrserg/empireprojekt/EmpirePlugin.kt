@@ -1,6 +1,7 @@
 package com.makeevrserg.empireprojekt
 
 import com.makeevrserg.empireprojekt.ESSENTIALS.homes.EssentialsHandler
+import com.makeevrserg.empireprojekt.NPCS.NPCManager
 import com.makeevrserg.empireprojekt.commands.CommandManager
 import com.makeevrserg.empireprojekt.events.CraftEvent
 import com.makeevrserg.empireprojekt.events.GenericListener
@@ -28,10 +29,8 @@ class EmpirePlugin : JavaPlugin() {
     companion object {
         lateinit var instance: EmpirePlugin
             private set
-
         lateinit var empireFiles: Files
             private set
-
         lateinit var empireItems: EmpireItems
             private set
         lateinit var translations: Translations
@@ -43,6 +42,8 @@ class EmpirePlugin : JavaPlugin() {
         lateinit var empireConstants: EmpireConstats
             private set
         lateinit var empireSounds: EmpireSounds
+            private set
+        var npcManager: NPCManager? = null
             private set
     }
 
@@ -86,6 +87,10 @@ class EmpirePlugin : JavaPlugin() {
 
         empireSounds.getSounds()
 
+        if (server.pluginManager.getPlugin("ProtocolLib") != null) {
+            npcManager = NPCManager()
+        } else
+            println(translations.PLUGIN_PROTOCOLLIB_NOT_INSTALLED)
 
         //PluginBetaAccessCheck()
 
@@ -111,12 +116,14 @@ class EmpirePlugin : JavaPlugin() {
         }
 
         fun checkTime(): Boolean {
-            fun hoursToMS(h:Int): Long {
-                return h*60*60*1000L
+            fun hoursToMS(h: Int): Long {
+                return h * 60 * 60 * 1000L
             }
-            fun minuteToMS(m:Int):Long{
-                return m*60*1000L
+
+            fun minuteToMS(m: Int): Long {
+                return m * 60 * 1000L
             }
+
             val maxTime: Long = hoursToMS(170)// * 60 * 1000
             val time: Long = 1626024523239
             val date = getDate(time + maxTime, "dd/MM/yyyy HH:mm:ss")
@@ -171,6 +178,8 @@ class EmpirePlugin : JavaPlugin() {
         }
 
 
+        if (npcManager != null)
+            npcManager!!.onDisable()
         genericListener.onDisable()
         //npcManager.onDisable()
         server.scheduler.cancelTasks(this)

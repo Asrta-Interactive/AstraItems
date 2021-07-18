@@ -1,6 +1,6 @@
-package com.makeevrserg.empireprojekt.ESSENTIALS.NPCS.interact
+package com.makeevrserg.empireprojekt.NPCS.interact
 
-import com.makeevrserg.empireprojekt.ESSENTIALS.NPCS.NPCManager
+import com.makeevrserg.empireprojekt.NPCS.NPCManager
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.instance
 import me.clip.placeholderapi.PlaceholderAPI
@@ -10,14 +10,20 @@ import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.player.PlayerQuitEvent
+import kotlin.random.Random
 
 class ClickNPC : Listener {
 
     @EventHandler
     fun onClickNPC(e: RightClickNPC) {
         val player = e.player
-        for (command in NPCManager.commands[e.npc.name] ?: return) {
-            if (command.asConsole)
+
+        val phrases = e.npc.phrases
+        val phrase = phrases[Random.nextInt(phrases.size)]
+        e.player.sendMessage(phrase)
+
+        for (command in e.npc.commands) {
+            if (command.as_console)
                 if (instance.server.pluginManager.getPlugin("placeholderapi") != null)
                     instance.server.dispatchCommand(
                         instance.server.consoleSender,

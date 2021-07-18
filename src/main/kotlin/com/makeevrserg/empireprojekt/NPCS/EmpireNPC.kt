@@ -1,7 +1,5 @@
-package com.makeevrserg.empireprojekt.ESSENTIALS.NPCS
+package com.makeevrserg.empireprojekt.NPCS
 
-import com.comphenix.protocol.PacketType
-import com.comphenix.protocol.events.PacketContainer
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.util.EmpireUtils
 import com.mojang.authlib.GameProfile
@@ -11,17 +9,15 @@ import net.minecraft.network.protocol.game.*
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.level.EntityPlayer
 import net.minecraft.server.network.PlayerConnection
-import net.minecraft.world.entity.EntityLiving
+import net.minecraft.world.entity.EntityTypes
+import net.minecraft.world.entity.decoration.EntityArmorStand
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.craftbukkit.v1_17_R1.CraftServer
 import org.bukkit.craftbukkit.v1_17_R1.CraftWorld
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer
-import org.bukkit.entity.ArmorStand
-import org.bukkit.entity.Entity
-import org.bukkit.entity.EntityType
+import org.bukkit.craftbukkit.v1_17_R1.util.CraftChatMessage
 import org.bukkit.entity.Player
 import org.bukkit.scoreboard.NameTagVisibility
 import org.bukkit.scoreboard.Team
@@ -30,24 +26,23 @@ import java.util.*
 
 class EmpireNPC {
 
+    data class Command(val command: String, val as_console: Boolean)
+
     lateinit var npc: EntityPlayer
-    var npcArmorStands = mutableListOf<ArmorStand>()
+    var npcArmorStands = mutableListOf<EntityArmorStand>()
     val name: String
         get() = npc.name
     val id: Int
         get() = npc.id
-
     val location: Location
         get() = Location(npc)
+    var phrases: List<String> = mutableListOf()
+    var commands: MutableList<Command> = mutableListOf()
+
 
     private fun Location(npc: EntityPlayer): Location {
         return Location(npc.world.world, npc.locX(), npc.locY(), npc.locZ(), npc.xRot, npc.yRot)
     }
-
-    public fun setLocation(l: Location) {
-        npc.setLocation(l)
-    }
-
     public fun Create(player: Player, id: String, skinName: String? = null) {
         val profile = GameProfile(UUID.randomUUID(), id)//No more than 16 chars
         setNPCSkin(player, true, skinName ?: "Notch", profile)
@@ -55,23 +50,39 @@ class EmpireNPC {
         saveLocation(player.location)
     }
 
-    private fun setArmorStands(location: Location,list:List<String>){
-        for (line in list){
-            val armorStand = location.world!!.spawnEntity(location, EntityType.ARMOR_STAND) as ArmorStand
-            armorStand.customName = EmpireUtils.HEXPattern(line)
+    private fun setArmorStands(location: Location, list: List<String>) {
+        for (line in list) {
+            val armorStand = EntityArmorStand(EntityTypes.c, (location.world as CraftWorld).handle.minecraftWorld)
+            armorStand.setLocation(
+                location.x,
+                location.y,
+                location.z,
+                location.yaw,
+                location.pitch
+            )
+            armorStand.customName = CraftChatMessage.fromStringOrNull(EmpireUtils.HEXPattern(line))
+            armorStand.customNameVisible = true
             armorStand.isInvisible = true
-            armorStand.isCustomNameVisible = true
+            armorStand.setArms(true)
             npcArmorStands.add(armorStand)
         }
     }
 
-    public fun Create(section: ConfigurationSection) {
+    public fun load(section: ConfigurationSection) {
         val id = section.name
         val location = section.getLocation("location") ?: return
         val profile = GameProfile(UUID.randomUUID(), id)//No more than 16 chars
+        phrases = EmpireUtils.HEXPattern(section.getStringList("phrases"))
         setNPCSkin(section.getConfigurationSection("skin"), profile)
+        for (cmdKey in section.getConfigurationSection("commands")?.getKeys(false) ?: mutableSetOf())
+            commands.add(
+                Command(
+                    section.getString("commands.$cmdKey.command") ?: continue,
+                    section.getBoolean("commands.$cmdKey.as_console")
+                )
+            )
 
-        setArmorStands(location,section.getStringList("lines"))
+        setArmorStands(location, section.getStringList("lines"))
         spawnNPC(location, profile)
     }
 
@@ -83,27 +94,27 @@ class EmpireNPC {
 
     private fun clearArmorStands() {
         for (stand in npcArmorStands)
-            stand.remove()
+            stand.killEntity()
     }
-    private fun showArmorStand(player:Player) {
+    private fun showArmorStandsToPlayer(player: Player) {
         val connection = player.connection()
         for (stand in npcArmorStands) {
-            val entity = stand as CraftEntity
-
-            connection.sendPacket(PacketPlayOutSpawnEntity(entity.handle))
-        }
-    }
-    private fun hideArmorStands(player:Player) {
-        val connection = player.connection()
-        for (stand in npcArmorStands) {
-            val entity = stand as CraftEntity
-
-            connection.sendPacket(PacketPlayOutEntityDestroy(entity.handle.id))
+            val packetPlayOutSpawnEntity = PacketPlayOutSpawnEntity(stand);
+            val metadata = PacketPlayOutEntityMetadata(stand.id, stand.dataWatcher, true);
+            connection.sendPacket(packetPlayOutSpawnEntity)
+            connection.sendPacket(metadata)
         }
     }
 
+    private fun hideArmorStandsForPlayer(player: Player) {
+        val connection = player.connection()
+        for (stand in npcArmorStands) {
+            connection.sendPacket(PacketPlayOutEntityDestroy(stand.id))
+        }
+    }
 
-    fun spawnNPC(location: Location, profile: GameProfile) {
+
+    private fun spawnNPC(location: Location, profile: GameProfile) {
         val server: MinecraftServer = (Bukkit.getServer() as CraftServer).server
         val world = (location.world as CraftWorld).handle
         npc = EntityPlayer(server, world, profile)
@@ -137,7 +148,7 @@ class EmpireNPC {
             )
         )//WARNING EnumPlayerInfoAction.a==EnumPlayerInfoAction.ADD_PLAYER
         connection.sendPacket(PacketPlayOutNamedEntitySpawn(npc))
-        showArmorStand(player)
+        showArmorStandsToPlayer(player)
 
 
     }
@@ -152,7 +163,7 @@ class EmpireNPC {
             )
         )//WARNING EnumPlayerInfoAction.e==EnumPlayerInfoAction.REMOVE_PLAYER
         connection.sendPacket(PacketPlayOutEntityDestroy(npc.id))
-        hideArmorStands(player)
+        hideArmorStandsForPlayer(player)
     }
 
     private fun Float.toAngle(): Byte {
@@ -195,12 +206,9 @@ class EmpireNPC {
     fun relocateNPC(p: Player) {
         hideNPCFromOnlinePlayers()
         npc.setLocation(p.location)
-        val oldStand = npcArmorStands.toList()
-        npcArmorStands.clear()
-        for (stand in oldStand){
-            stand.teleport(p.location)
-            npcArmorStands.add(stand)
-        }
+//        for (stand in npcArmorStands)
+//            stand.teleport(p.location)
+
         NPCManager.changeNPC(this)
         showNPCToOnlinePlayers()
         saveLocation(p.location)

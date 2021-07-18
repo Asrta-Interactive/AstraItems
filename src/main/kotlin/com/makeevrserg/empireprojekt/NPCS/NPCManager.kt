@@ -1,14 +1,10 @@
-package com.makeevrserg.empireprojekt.ESSENTIALS.NPCS
+package com.makeevrserg.empireprojekt.NPCS
 
 import com.comphenix.protocol.ProtocolLibrary
-import com.makeevrserg.empireprojekt.ESSENTIALS.NPCS.NPCManager.Companion.hideNPC
-import com.makeevrserg.empireprojekt.ESSENTIALS.NPCS.NPCManager.Companion.showNPC
-import com.makeevrserg.empireprojekt.ESSENTIALS.NPCS.NPCManager.Companion.trackNPC
-import com.makeevrserg.empireprojekt.ESSENTIALS.NPCS.interact.ClickNPC
-import com.makeevrserg.empireprojekt.ESSENTIALS.NPCS.interact.ProtocolLibPacketListener
+import com.makeevrserg.empireprojekt.NPCS.interact.ClickNPC
+import com.makeevrserg.empireprojekt.NPCS.interact.ProtocolLibPacketListener
 import com.makeevrserg.empireprojekt.EmpirePlugin
-import com.makeevrserg.empireprojekt.events.genericlisteners.EmpireCommandEvent
-import net.minecraft.server.level.EntityPlayer
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
 class NPCManager {
@@ -16,14 +12,13 @@ class NPCManager {
     companion object {
         lateinit var instance: NPCManager
             private set
-        var commands: MutableMap<String, List<EmpireCommandEvent>> = mutableMapOf()
-            private set
         var selectedNPC: MutableMap<Player, EmpireNPC> = mutableMapOf()
             private set
 
         val protocolManager = ProtocolLibrary.getProtocolManager()
 
         public val playerSpawnedNPCS: MutableMap<Player, MutableList<EmpireNPC>> = mutableMapOf()
+
 
         public val NPC: MutableList<EmpireNPC> = mutableListOf()
         public val NPCMap: MutableMap<String, EmpireNPC> = mutableMapOf()
@@ -114,31 +109,13 @@ class NPCManager {
 
     }
 
-    fun initNPCSCommands() {
-        val npcsSection = EmpirePlugin.empireFiles.npcs.getConfig()!!.getConfigurationSection("npcs") ?: return
-        for (npcID in npcsSection.getKeys(false)) {
-            val commandsList = mutableListOf<EmpireCommandEvent>()
-            for (commandNum in npcsSection.getConfigurationSection("$npcID.interact.commands")?.getKeys(false)
-                ?: continue) {
-                val commandSection =
-                    npcsSection.getConfigurationSection("$npcID.interact.commands.$commandNum") ?: continue
-                val commandEvent = EmpireCommandEvent(
-                    commandSection.getString("command") ?: continue,
-                    commandSection.getBoolean("as_console", false)
-                )
-                commandsList.add(commandEvent)
-            }
-            commands[npcID] = commandsList
-        }
-
-    }
 
 
     private fun loadNPCS() {
         val fileConfig = EmpirePlugin.empireFiles.npcs.getConfig()?.getConfigurationSection("npcs") ?: return
         for (key in fileConfig.getKeys(false)) {
             val npc = EmpireNPC()
-            npc.Create(fileConfig.getConfigurationSection(key)!!)
+            npc.load(fileConfig.getConfigurationSection(key)!!)
 
             addNPC(npc)
         }
@@ -147,8 +124,10 @@ class NPCManager {
 
     init {
         instance = this
-        initNPCSCommands()
         loadNPCS()
+        for (player in Bukkit.getOnlinePlayers()) {
+            playerSpawnedNPCS[player] = mutableListOf()
+        }
     }
 
 

@@ -1,4 +1,4 @@
-package com.makeevrserg.empireprojekt.ESSENTIALS.NPCS
+package com.makeevrserg.empireprojekt.NPCS
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.instance

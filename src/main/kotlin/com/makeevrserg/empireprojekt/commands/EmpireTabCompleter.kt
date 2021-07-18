@@ -1,6 +1,6 @@
 package com.makeevrserg.empireprojekt.commands
 
-import com.makeevrserg.empireprojekt.ESSENTIALS.NPCS.NPCManager
+import com.makeevrserg.empireprojekt.NPCS.NPCManager
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender

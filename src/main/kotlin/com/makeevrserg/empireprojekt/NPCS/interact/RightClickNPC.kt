@@ -1,7 +1,6 @@
-package com.makeevrserg.empireprojekt.ESSENTIALS.NPCS.interact
+package com.makeevrserg.empireprojekt.NPCS.interact
 
-import com.makeevrserg.empireprojekt.ESSENTIALS.NPCS.EmpireNPC
-import net.minecraft.server.level.EntityPlayer
+import com.makeevrserg.empireprojekt.NPCS.EmpireNPC
 import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
 import org.bukkit.event.Event
