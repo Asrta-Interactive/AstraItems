@@ -40,7 +40,8 @@ class NPCManager {
             if (playerSpawnedNPCS[this]!!.contains(npc))
                 return
             playerSpawnedNPCS[this]?.add(npc)
-            npc.showNPC(this, npc.npc)
+
+            npc.showNPC(this)
         }
 
         private fun Player.trackNPC(npc: EmpireNPC) {
@@ -48,6 +49,8 @@ class NPCManager {
         }
 
         public fun playerJoinEvent(player: Player) {
+            for (npc in NPC)
+                npc.showNPC(player)
             playerSpawnedNPCS[player] = mutableListOf()
         }
 
@@ -57,10 +60,10 @@ class NPCManager {
 
         public fun playerMoveEvent(p: Player) {
             for (npc in NPC) {
-                if (p.location.distance(npc.location) > 10)
+                if (p.location.distance(npc.location) > 70)
                     p.hideNPC(npc)
                 else {
-                        p.showNPC(npc)
+                    p.showNPC(npc)
                     p.trackNPC(npc)
                 }
 
@@ -108,7 +111,6 @@ class NPCManager {
         }
 
     }
-
 
 
     private fun loadNPCS() {

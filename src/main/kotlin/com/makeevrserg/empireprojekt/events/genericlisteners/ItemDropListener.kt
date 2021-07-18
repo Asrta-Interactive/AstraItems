@@ -77,21 +77,21 @@ class ItemDropListener : Listener {
     }
 
     private fun dropItem(list: List<ItemDrop>, l: Location): Boolean {
+        var isDropped = false
         for (drop: ItemDrop in list) {
             val dropChance = Random.nextDouble(0.0, 100.0)
             if (drop.chance > dropChance) {
+                isDropped = true
                 for (i in 0 until Random.nextInt(drop.minAmount, drop.maxAmount + 1))
                     l.world?.dropItem(
                         l,
                         EmpirePlugin.empireItems.empireItems[drop.item] ?: ItemStack(
                             Material.getMaterial(drop.item) ?: continue
                         )
-                    ) ?: return false
-                return true
-
+                    ) ?: return isDropped
             }
         }
-        return false
+        return isDropped
     }
 
 

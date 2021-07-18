@@ -4,6 +4,8 @@ import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.util.EmpireUtils
 import com.mojang.authlib.GameProfile
 import com.mojang.authlib.properties.Property
+import net.minecraft.core.BaseBlockPosition
+import net.minecraft.core.BlockPosition
 import net.minecraft.network.chat.IChatBaseComponent
 import net.minecraft.network.protocol.game.*
 import net.minecraft.server.MinecraftServer
@@ -51,15 +53,17 @@ class EmpireNPC {
     }
 
     private fun setArmorStands(location: Location, list: List<String>) {
+        var amount = 0.0
         for (line in list) {
             val armorStand = EntityArmorStand(EntityTypes.c, (location.world as CraftWorld).handle.minecraftWorld)
             armorStand.setLocation(
                 location.x,
-                location.y,
+                location.y+amount,
                 location.z,
                 location.yaw,
                 location.pitch
             )
+            amount+=0.2
             armorStand.customName = CraftChatMessage.fromStringOrNull(EmpireUtils.HEXPattern(line))
             armorStand.customNameVisible = true
             armorStand.isInvisible = true
@@ -139,16 +143,31 @@ class EmpireNPC {
         return (this as CraftPlayer).handle.b
     }
 
-    public fun showNPC(player: Player, npc: EntityPlayer) {
-        val connection = player.connection()//WARNING handle.b==handle.playerConnection
+
+
+    private fun spawnNPCPacket(connection: PlayerConnection){
         connection.sendPacket(
             PacketPlayOutPlayerInfo(
                 PacketPlayOutPlayerInfo.EnumPlayerInfoAction.a,
                 npc
             )
         )//WARNING EnumPlayerInfoAction.a==EnumPlayerInfoAction.ADD_PLAYER
+        Bukkit.getScheduler().runTaskLaterAsynchronously(EmpirePlugin.instance,
+            Runnable {
+                connection.sendPacket(
+                    PacketPlayOutPlayerInfo(
+                        PacketPlayOutPlayerInfo.EnumPlayerInfoAction.e,
+                        npc
+                    ))
+            },100)
+    }
+
+    public fun showNPC(player: Player) {
+        val connection = player.connection()//WARNING handle.b==handle.playerConnection
+        spawnNPCPacket(connection)
         connection.sendPacket(PacketPlayOutNamedEntitySpawn(npc))
         showArmorStandsToPlayer(player)
+
 
 
     }
@@ -206,9 +225,6 @@ class EmpireNPC {
     fun relocateNPC(p: Player) {
         hideNPCFromOnlinePlayers()
         npc.setLocation(p.location)
-//        for (stand in npcArmorStands)
-//            stand.teleport(p.location)
-
         NPCManager.changeNPC(this)
         showNPCToOnlinePlayers()
         saveLocation(p.location)
@@ -226,12 +242,16 @@ class EmpireNPC {
                 false
             )
         )
+        Bukkit.getScheduler().runTaskLaterAsynchronously(EmpirePlugin.instance,
+            Runnable {
+                spawnNPCPacket(connection)
+            },500)
         connection.sendPacket(PacketPlayOutEntityHeadRotation(npc, newLoc.yaw.toAngle()))
     }
 
     fun showNPCToOnlinePlayers() {
         for (p in Bukkit.getOnlinePlayers())
-            showNPC(p, npc)
+            showNPC(p)
 
     }
 

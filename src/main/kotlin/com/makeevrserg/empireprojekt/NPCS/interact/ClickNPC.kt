@@ -18,9 +18,11 @@ class ClickNPC : Listener {
     fun onClickNPC(e: RightClickNPC) {
         val player = e.player
 
-        val phrases = e.npc.phrases
-        val phrase = phrases[Random.nextInt(phrases.size)]
-        e.player.sendMessage(phrase)
+        if (e.npc.phrases.isNotEmpty()) {
+            val phrases = e.npc.phrases
+            val phrase = phrases[Random.nextInt(phrases.size)]
+            e.player.sendMessage(phrase)
+        }
 
         for (command in e.npc.commands) {
             if (command.as_console)
