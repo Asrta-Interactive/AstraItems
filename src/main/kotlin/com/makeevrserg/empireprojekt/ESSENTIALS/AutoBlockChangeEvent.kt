@@ -30,6 +30,7 @@ class AutoBlockChangeEvent : Listener {
             return
         else
             itemInHand.amount -= 1
+
         if (!player.inventory.contains(material))
             return
 

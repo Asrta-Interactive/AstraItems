@@ -1,6 +1,8 @@
 package com.makeevrserg.empireprojekt.NPCS
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
+import com.makeevrserg.empireprojekt.items.Command
+import com.makeevrserg.empireprojekt.items.EmpireItem
 import com.makeevrserg.empireprojekt.util.EmpireUtils
 import com.mojang.authlib.GameProfile
 import com.mojang.authlib.properties.Property
@@ -28,7 +30,7 @@ import java.util.*
 
 class EmpireNPC {
 
-    data class Command(val command: String, val as_console: Boolean)
+
 
     lateinit var npc: EntityPlayer
     var npcArmorStands = mutableListOf<EntityArmorStand>()

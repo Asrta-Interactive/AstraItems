@@ -3,6 +3,7 @@ package com.makeevrserg.empireprojekt.NPCS.interact
 import com.makeevrserg.empireprojekt.NPCS.NPCManager
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.instance
+import com.makeevrserg.empireprojekt.events.genericevents.GenericEventHandler
 import me.clip.placeholderapi.PlaceholderAPI
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -23,22 +24,7 @@ class ClickNPC : Listener {
             val phrase = phrases[Random.nextInt(phrases.size)]
             e.player.sendMessage(phrase)
         }
-
-        for (command in e.npc.commands) {
-            if (command.as_console)
-                if (instance.server.pluginManager.getPlugin("placeholderapi") != null)
-                    instance.server.dispatchCommand(
-                        instance.server.consoleSender,
-                        PlaceholderAPI.setPlaceholders(player, command.command)
-                    )
-                else
-                    instance.server.dispatchCommand(instance.server.consoleSender, command.command)
-            else
-                if (instance.server.pluginManager.getPlugin("placeholderapi") != null)
-                    player.performCommand(PlaceholderAPI.setPlaceholders(player, command.command))
-                else
-                    player.performCommand(command.command)
-        }
+        GenericEventHandler.manageCommand(player,e.npc.commands)
     }
 
 
@@ -46,8 +32,6 @@ class ClickNPC : Listener {
     @EventHandler
     fun onPlayerMove(e: PlayerMoveEvent) {
         val player = e.player
-//        if (System.currentTimeMillis()-eventTimer<NPCManager.config.npcTrackTime)
-//            return
         eventTimer = System.currentTimeMillis()
         NPCManager.playerMoveEvent(player)
     }

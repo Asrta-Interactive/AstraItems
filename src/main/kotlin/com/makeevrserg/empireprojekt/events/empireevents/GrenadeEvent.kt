@@ -19,6 +19,9 @@ class GrenadeEvent : Listener {
     init {
         instance.server.pluginManager.registerEvents(this, instance)
     }
+    fun onDisable() {
+        ProjectileHitEvent.getHandlerList().unregister(this)
+    }
 
     @EventHandler
     fun onProjectileHit(e: ProjectileHitEvent) {
@@ -31,16 +34,12 @@ class GrenadeEvent : Listener {
             meta.persistentDataContainer.get(EmpirePlugin.empireConstants.GRENADE_EXPLOSION_POWER, PersistentDataType.DOUBLE)
                 ?: return
         println("Player ${player.name} threw grenade at blockLocation=${e.hitBlock?.location} playerLocation=${player.location}")
-        if (!allowExplosion(instance, e.entity.location)) {
+        if (!allowExplosion(instance, e.entity.location))
             return
-        }
         generateExplosion(e.entity.location, explosionPower)
         e.entity.world.spawnParticle(Particle.SMOKE_LARGE, e.entity.location, 300, 0.0, 0.0, 0.0, 0.2)
     }
 
-    fun onDisable() {
-        ProjectileHitEvent.getHandlerList().unregister(this)
-    }
 
     companion object {
         fun allowExplosion(plugin: EmpirePlugin, location: Location): Boolean {
@@ -53,7 +52,6 @@ class GrenadeEvent : Listener {
         }
 
         fun generateExplosion(location: Location, power: Double) {
-
             location.world?.createExplosion(location,power.toFloat())?:return
         }
     }

@@ -399,8 +399,4 @@ data class Sound(
     val volume: Double,
     val pitch: Double
 )
-
-data class Command(
-    val command: String,
-    val asConsole: Boolean
-)
+data class Command(val command: String, val asConsole: Boolean)

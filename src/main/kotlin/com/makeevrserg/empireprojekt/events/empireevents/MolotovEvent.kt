@@ -2,10 +2,12 @@ package com.makeevrserg.empireprojekt.events.empireevents
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.instance
+import com.makeevrserg.empireprojekt.util.EmpireUtils
 import com.sk89q.worldedit.bukkit.BukkitAdapter
 import com.sk89q.worldguard.WorldGuard
 import com.sk89q.worldguard.protection.flags.Flags
 import com.sk89q.worldguard.protection.regions.RegionQuery
+import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.Particle
@@ -23,8 +25,6 @@ class MolotovEvent : Listener {
         instance.server.pluginManager.registerEvents(this, instance)
     }
 
-
-
     @EventHandler
     fun onProjectileHit(e: ProjectileHitEvent) {
         if (e.entity.shooter !is Player) return
@@ -34,13 +34,11 @@ class MolotovEvent : Listener {
         val molotovPower =
             meta.persistentDataContainer.get(EmpirePlugin.empireConstants.MOLOTOV, PersistentDataType.DOUBLE)
                 ?: return
-
-
         println("Player ${player.name} threw molotov at blockLocation=${e.hitBlock?.location} playerLocation=${player.location}")
-        Igniter(instance,e.hitBlock ?: return, molotovPower.toInt(), player)
+        Igniter(instance, e.hitBlock ?: return, molotovPower.toInt(), player)
     }
 
-    companion object{
+    companion object {
         fun allowFire(plugin: EmpirePlugin, location: Location): Boolean {
             if (plugin.server.pluginManager.getPlugin("WorldGuard") != null) {
                 val query: RegionQuery = WorldGuard.getInstance().platform.regionContainer.createQuery()
@@ -56,32 +54,48 @@ class MolotovEvent : Listener {
 
         init {
             block.location.world?.spawnParticle(Particle.SMOKE_LARGE, block.location, 300, 0.0, 0.0, 0.0, 0.2)
-            setFire(block, radius, player)
+
+
+                setFire(block, radius, player)
+
+
+
+
         }
 
 
         private fun checkOnlyAir(block: Block): Boolean {
-            return (block.getRelative(BlockFace.DOWN).type == Material.AIR &&
-                    block.getRelative(BlockFace.UP).type == Material.AIR &&
-                    block.getRelative(BlockFace.EAST).type == Material.AIR &&
-                    block.getRelative(BlockFace.WEST).type == Material.AIR &&
-                    block.getRelative(BlockFace.NORTH).type == Material.AIR &&
-                    block.getRelative(BlockFace.SOUTH).type == Material.AIR
-                    )
+            val faces = listOf<BlockFace>(
+                BlockFace.DOWN,
+                BlockFace.UP,
+                BlockFace.EAST,
+                BlockFace.WEST,
+                BlockFace.NORTH,
+                BlockFace.SOUTH
+            )
+            for (face in faces)
+                if (block.getRelative(face).type != Material.AIR)
+                    return false
+            return true
         }
 
         private fun checkOnlyBlock(block: Block): Boolean {
-            return (block.getRelative(BlockFace.DOWN).type != Material.AIR &&
-                    block.getRelative(BlockFace.UP).type != Material.AIR &&
-                    block.getRelative(BlockFace.EAST).type != Material.AIR &&
-                    block.getRelative(BlockFace.WEST).type != Material.AIR &&
-                    block.getRelative(BlockFace.NORTH).type != Material.AIR &&
-                    block.getRelative(BlockFace.SOUTH).type != Material.AIR
-                    )
+            val faces = listOf<BlockFace>(
+                BlockFace.DOWN,
+                BlockFace.UP,
+                BlockFace.EAST,
+                BlockFace.WEST,
+                BlockFace.NORTH,
+                BlockFace.SOUTH
+            )
+            for (face in faces)
+                if (block.getRelative(face).type == Material.AIR)
+                    return false
+            return true
         }
 
         private fun setFire(block: Block, radius: Int, player: Player) {
-            if (!allowFire(plugin,block.location))
+            if (!allowFire(plugin, block.location))
                 return
             if (radius == 0)
                 return
@@ -89,16 +103,12 @@ class MolotovEvent : Listener {
                 return
             if (checkOnlyBlock(block))
                 return
-
             if (block.location in listLocations)
                 return
             else
                 listLocations.add(block.location)
-
             if (block.type == Material.AIR)
                 block.type = Material.FIRE
-
-
             for (blockFace in BlockFace.values())
                 setFire(block.getRelative(blockFace), radius - 1, player)
 

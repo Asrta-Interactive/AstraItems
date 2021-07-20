@@ -34,7 +34,6 @@ public class Files() {
 
     val _soundsFile: FileManager = FileManager("config" + File.separator + "sounds.yml")
 
-    val _translationFile: FileManager = FileManager("config" + File.separator + "translations.yml")
 
     init {
         getCustomItems()

@@ -4,14 +4,17 @@ import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.util.files.FileManager
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.configuration.file.FileConfiguration
+import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
 
 
 class Translations {
 
     private val plugin = EmpirePlugin.instance
-    private val text = EmpirePlugin.empireFiles._translationFile.getConfig()!!
+    val _translationFile: FileManager = FileManager("config" + File.separator + "translations.yml")
+    private val text = _translationFile.getConfig()!!
     private fun FileConfiguration.getHEXString(path: String, def: String): String {
+
         return EmpireUtils.HEXPattern(getString(path, def)!!)
     }
     fun ConfigurationSection.getHEXString(path: String, def: String): String {

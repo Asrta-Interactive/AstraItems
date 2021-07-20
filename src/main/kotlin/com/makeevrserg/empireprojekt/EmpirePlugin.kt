@@ -56,7 +56,8 @@ class EmpirePlugin : JavaPlugin() {
     }
 
 
-    var _craftEvent = CraftEvent()
+    lateinit var _craftEvent :CraftEvent
+
     //Command manager for plugin
     private lateinit var commandManager: CommandManager
     //Handler for new home and warp mechanic
@@ -96,7 +97,7 @@ class EmpirePlugin : JavaPlugin() {
             ).categoriesMap
         getEveryDrop = genericListener._itemDropListener.everyDropByItem
 
-
+        _craftEvent = CraftEvent()
         empireSounds.getSounds()
 
         if (server.pluginManager.getPlugin("ProtocolLib") != null) {

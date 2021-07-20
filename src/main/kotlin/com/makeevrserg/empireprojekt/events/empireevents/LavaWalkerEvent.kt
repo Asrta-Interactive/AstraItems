@@ -2,6 +2,7 @@ package com.makeevrserg.empireprojekt.events.empireevents
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.instance
+import com.makeevrserg.empireprojekt.util.EmpireUtils
 import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
@@ -75,9 +76,9 @@ class LavaWalkerEvent : Listener {
         val itemMeta = itemStack.itemMeta ?: return
         if (!hasLaveWalker(itemMeta)) return
         val onToBlock = e.to?.block?.getRelative(BlockFace.DOWN) ?: return
-        if (allMagmaSet(e.player.equipment?.armorContents?:return))
-        if (onToBlock.type == Material.LAVA)
-            createBlocks(onToBlock)
+        if (allMagmaSet(e.player.equipment?.armorContents ?: return))
+            if (onToBlock.type == Material.LAVA)
+                createBlocks(onToBlock)
 
     }
 

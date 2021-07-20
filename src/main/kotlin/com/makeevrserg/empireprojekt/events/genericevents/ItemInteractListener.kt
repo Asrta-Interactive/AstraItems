@@ -85,78 +85,10 @@ class ItemInteractListener : Listener {
         val idMainHand = EmpireUtils.getEmpireID(p.inventory.itemInMainHand)
 
         val idOffHand = EmpireUtils.getEmpireID(p.inventory.itemInOffHand)
-        if (idMainHand != null)
-            handleEvent(idMainHand, p, eventName)
-        if (idOffHand != null)
-            handleEvent(idOffHand, p, eventName)
+            GenericEventHandler.handleEvent(idMainHand, p, eventName)
+            GenericEventHandler.handleEvent(idOffHand, p, eventName)
     }
 
-    private fun handleEvent(id: String, p: Player, actionName: String) {
-        fun manageCommand(empireCommands: List<Command>) {
-            for (command in empireCommands)
-                if (command.asConsole)
-                    if (instance.server.pluginManager.getPlugin("placeholderapi") != null)
-                        instance.server.dispatchCommand(
-                            instance.server.consoleSender,
-                            PlaceholderAPI.setPlaceholders(p, command.command)
-                        )
-                    else {
-                        instance.server.dispatchCommand(instance.server.consoleSender, command.command)
-                    }
-                else
-                    if (instance.server.pluginManager.getPlugin("placeholderapi") != null)
-                        p.performCommand(PlaceholderAPI.setPlaceholders(p, command.command))
-                    else
-                        p.performCommand(command.command)
-        }
-
-        fun manageSound(empireSound: Sound?) {
-            empireSound ?: return
-            p.world.playSound(p.location, empireSound.name, empireSound.volume.toFloat(), empireSound.pitch.toFloat())
-
-        }
-
-        fun manageParticle(empireParticle: ParticleBuilder?) {
-            empireParticle ?: return
-            empireParticle.location(p.location).spawn()
-        }
-
-        fun managePotionAdd(effects: List<PotionEffect>) {
-            p.addPotionEffects(effects)
-        }
-
-        fun managePotionRemove(effects: List<PotionEffectType>) {
-            for (effect: PotionEffectType in effects)
-                p.removePotionEffect(effect)
-        }
-        fun manageDurability(item:ItemStack){
-            var durability = item.itemMeta?.persistentDataContainer?.get(EmpirePlugin.empireConstants.EMPIRE_DURABILITY,
-                PersistentDataType.INTEGER)?:return
-            durability-=1
-            item.itemMeta?.persistentDataContainer?.set(EmpirePlugin.empireConstants.EMPIRE_DURABILITY,
-                PersistentDataType.INTEGER,durability)?:return
-            if (durability<=0)
-                item.amount-=1
-
-        }
-
-        val humanEntity = p as HumanEntity
-        if (humanEntity.hasCooldown(p.inventory.itemInMainHand.type))
-            return
-        for (event in EmpirePlugin.empireItems.empireEvents[id] ?: return) {
-            if (actionName !in event.eventNames)
-                continue
-            if (event.cooldown > 0)
-                humanEntity.setCooldown(p.inventory.itemInMainHand.type, event.cooldown)
-            manageCommand(event.commands)
-            manageSound(event.soundsPlay)
-            manageParticle(event.particlePlay)
-            managePotionAdd(event.potionEffectsAdd)
-            managePotionRemove(event.potionEffectsRemove)
-            manageDurability(p.inventory.itemInMainHand)
-            manageDurability(p.inventory.itemInOffHand)
-        }
-    }
 
 
     fun onDisable() {
