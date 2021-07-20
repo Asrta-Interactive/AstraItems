@@ -6,6 +6,7 @@ import com.sk89q.worldedit.bukkit.BukkitAdapter
 import com.sk89q.worldedit.world.World
 import com.sk89q.worldguard.WorldGuard
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin
+import com.sk89q.worldguard.protection.flags.Flag
 import com.sk89q.worldguard.protection.flags.Flags
 import com.sk89q.worldguard.protection.regions.RegionQuery
 import org.bukkit.block.Block
@@ -18,7 +19,7 @@ import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.persistence.PersistentDataType
 import java.util.*
 
-class Hammer : Listener {
+class HammerEvent : Listener {
     private val blockFace: MutableMap<Player, Int> = mutableMapOf()
 
     init {
@@ -55,7 +56,7 @@ class Hammer : Listener {
             if (!WorldGuard.getInstance().platform.sessionManager
                     .hasBypass(WorldGuardPlugin.inst().wrapPlayer(p), world)
             )
-                if (!query.testState(loc, WorldGuardPlugin.inst().wrapPlayer(p), Flags.BUILD)) return
+                if (!query.testState(loc, WorldGuardPlugin.inst().wrapPlayer(p), Flags.BUILD,Flags.BLOCK_BREAK)) return
         }
         val itemStack = e.player.inventory.itemInMainHand
         val itemMeta = itemStack.itemMeta ?: return

@@ -11,7 +11,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.loot.Lootable
 import kotlin.random.Random
 
-class LoreBooks : Listener {
+class LoreBooksEvent : Listener {
     private val books: MutableList<ItemStack> = mutableListOf()
 
     init {

@@ -6,13 +6,9 @@ import java.io.File
 
 class EmpireSounds {
     val plugin: EmpirePlugin = EmpirePlugin.instance
-    private val _soundsFile: FileManager =
-        FileManager(
-            "config" + File.separator + "sounds.yml"
-        )
 
     fun getSounds(): Map<String, List<String>> {
-        val soundsFileConfig = _soundsFile.getConfig()?.getConfigurationSection("sounds")
+        val soundsFileConfig = EmpirePlugin.empireFiles._soundsFile.getConfig()?.getConfigurationSection("sounds")
         soundsFileConfig ?: return mutableMapOf()
         val map: MutableMap<String, List<String>> = mutableMapOf()
 
@@ -26,6 +22,6 @@ class EmpireSounds {
         return map
     }
     fun getNamespace(): String {
-        return _soundsFile.getConfig()?.getString("namespace")?:return "empire_items"
+        return EmpirePlugin.empireFiles._soundsFile.getConfig()?.getString("namespace")?:return "empire_items"
     }
 }

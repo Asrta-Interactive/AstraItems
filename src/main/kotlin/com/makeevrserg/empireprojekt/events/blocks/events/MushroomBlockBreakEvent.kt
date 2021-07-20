@@ -7,7 +7,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPlaceEvent
 
-class MushroomBlockBreak:Listener {
+class MushroomBlockBreakEvent:Listener {
 
     init {
         EmpirePlugin.instance.server.pluginManager.registerEvents(this, EmpirePlugin.instance)

@@ -42,9 +42,13 @@ class ClickNPC : Listener {
     }
 
 
+    var eventTimer = System.currentTimeMillis()
     @EventHandler
     fun onPlayerMove(e: PlayerMoveEvent) {
         val player = e.player
+//        if (System.currentTimeMillis()-eventTimer<NPCManager.config.npcTrackTime)
+//            return
+        eventTimer = System.currentTimeMillis()
         NPCManager.playerMoveEvent(player)
     }
 

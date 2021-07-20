@@ -10,7 +10,7 @@ import org.bukkit.event.block.Action
 import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.player.PlayerInteractEvent
 
-class AutoBlockChange : Listener {
+class AutoBlockChangeEvent : Listener {
 
 
     @EventHandler

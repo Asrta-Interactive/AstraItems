@@ -1,4 +1,4 @@
-package com.makeevrserg.empireprojekt.events.genericlisteners
+package com.makeevrserg.empireprojekt.events.genericevents
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.instance

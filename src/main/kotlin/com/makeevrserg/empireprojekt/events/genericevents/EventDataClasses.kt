@@ -1,4 +1,4 @@
-package com.makeevrserg.empireprojekt.events.genericlisteners
+package com.makeevrserg.empireprojekt.events.genericevents
 
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType

@@ -18,9 +18,9 @@ import org.bukkit.event.block.BlockExplodeEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.ItemStack
 
-class MusicDiscs : Listener {
+class MusicDiscsEvent : Listener {
 
-    private val musicDiscs = EmpirePlugin.empireItems.empireDiscs
+    private val musicDiscs = EmpirePlugin.empireItems.empireDiscsEvent
     private val activDiscs = mutableMapOf<Location, CompanionDisc>()
 
 

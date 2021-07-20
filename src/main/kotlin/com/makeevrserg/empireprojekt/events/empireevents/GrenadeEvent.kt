@@ -14,7 +14,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.entity.ProjectileHitEvent
 import org.bukkit.persistence.PersistentDataType
 
-class Grenade : Listener {
+class GrenadeEvent : Listener {
 
     init {
         instance.server.pluginManager.registerEvents(this, instance)

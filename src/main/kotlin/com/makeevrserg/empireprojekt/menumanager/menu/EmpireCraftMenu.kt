@@ -2,8 +2,8 @@ package com.makeevrserg.empireprojekt.menumanager.menu
 
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
-import com.makeevrserg.empireprojekt.events.CraftEvent
-import com.makeevrserg.empireprojekt.events.genericlisteners.ItemDropListener
+import com.makeevrserg.empireprojekt.util.CraftEvent
+import com.makeevrserg.empireprojekt.events.genericevents.ItemDropListener
 import com.makeevrserg.empireprojekt.events.ItemUpgradeEvent
 import com.makeevrserg.empireprojekt.menumanager.PaginatedMenu
 import com.makeevrserg.empireprojekt.menumanager.PlayerMenuUtility

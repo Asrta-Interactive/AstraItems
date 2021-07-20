@@ -1,19 +1,19 @@
 package com.makeevrserg.empireprojekt.events.blocks.events
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
-import com.makeevrserg.empireprojekt.events.blocks.BlockGeneration
+import com.makeevrserg.empireprojekt.events.blocks.BlockGenerationEvent
 
 class MushroomBlockEventHandler {
 
-    val blockPlace = MushroomBlockPlace()
+    val blockPlace = MushroomBlockPlaceEvent()
     val mushroomCancelEvent = MushroomCancelEvent()
-    val mushroomBreakEvent = MushroomBlockBreak()
+    val mushroomBreakEvent = MushroomBlockBreakEvent()
     val hardnessEvent = BlockHardnessEvent()
-    var blockGeneration: BlockGeneration? = null
+    var blockGenerationEvent: BlockGenerationEvent? = null
 
     init {
         if (EmpirePlugin.config.generateBlocks)
-            blockGeneration = BlockGeneration()
+            blockGenerationEvent = BlockGenerationEvent()
 
     }
 
@@ -22,8 +22,8 @@ class MushroomBlockEventHandler {
         mushroomCancelEvent.onDisable()
         mushroomBreakEvent.onDisable()
         hardnessEvent.onDisable()
-        if (blockGeneration != null)
-            blockGeneration!!.onDisable()
+        if (blockGenerationEvent != null)
+            blockGenerationEvent!!.onDisable()
 
     }
 }

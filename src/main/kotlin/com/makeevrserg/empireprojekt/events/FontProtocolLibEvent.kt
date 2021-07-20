@@ -12,16 +12,18 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
 import net.kyori.adventure.text.TranslatableComponent
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 import org.jetbrains.annotations.NotNull
 
-class ProtocolLibHandler:Listener {
+class FontProtocolLibEvent:Listener {
     private lateinit var protocolManager: ProtocolManager
     private lateinit var packetListener: PacketListener
-    private fun changePlayerTabName(player:Player){
+    private fun changePlayerTabName(player:Player?){
+        player?:return
         var format: String = EmpirePlugin.config.tabPrefix + player.name
         if (EmpirePlugin.instance.server.pluginManager.getPlugin("placeholderapi") != null)
             format = PlaceholderAPI.setPlaceholders(player, format)
@@ -34,7 +36,11 @@ class ProtocolLibHandler:Listener {
     @EventHandler
     fun onPlayerJoinEvent(e:PlayerJoinEvent){
         val player = e.player
-        changePlayerTabName(player)
+        Bukkit.getScheduler().runTaskAsynchronously(EmpirePlugin.instance, Runnable {
+            val p = player
+            changePlayerTabName(p)
+        })
+
     }
 
 

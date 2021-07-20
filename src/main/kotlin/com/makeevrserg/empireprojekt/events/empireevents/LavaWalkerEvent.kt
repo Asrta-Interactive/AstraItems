@@ -14,7 +14,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.persistence.PersistentDataType
 
-class LavaWalker : Listener {
+class LavaWalkerEvent : Listener {
     init {
         instance.server.pluginManager.registerEvents(this, instance)
     }
@@ -42,7 +42,6 @@ class LavaWalker : Listener {
             return
         if (e.entity !is Player)
             return
-
         val player = e.entity as Player
         val equipment = player.equipment ?: return
         if (allMagmaSet(equipment.armorContents)) {

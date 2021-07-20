@@ -1,4 +1,4 @@
-package com.makeevrserg.empireprojekt.events.genericlisteners
+package com.makeevrserg.empireprojekt.events.genericevents
 
 import com.destroystokyo.paper.ParticleBuilder
 import com.makeevrserg.empireprojekt.EmpirePlugin
@@ -7,7 +7,6 @@ import com.makeevrserg.empireprojekt.items.Command
 import com.makeevrserg.empireprojekt.items.Sound
 import com.makeevrserg.empireprojekt.util.EmpireUtils
 import me.clip.placeholderapi.PlaceholderAPI
-import org.bukkit.Particle
 import org.bukkit.entity.HumanEntity
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -102,7 +101,6 @@ class ItemInteractListener : Listener {
                             PlaceholderAPI.setPlaceholders(p, command.command)
                         )
                     else {
-                        println("Dispatch command ${command.command}")
                         instance.server.dispatchCommand(instance.server.consoleSender, command.command)
                     }
                 else
@@ -135,7 +133,6 @@ class ItemInteractListener : Listener {
             var durability = item.itemMeta?.persistentDataContainer?.get(EmpirePlugin.empireConstants.EMPIRE_DURABILITY,
                 PersistentDataType.INTEGER)?:return
             durability-=1
-            println("Dura ${durability}")
             item.itemMeta?.persistentDataContainer?.set(EmpirePlugin.empireConstants.EMPIRE_DURABILITY,
                 PersistentDataType.INTEGER,durability)?:return
             if (durability<=0)

@@ -1,12 +1,9 @@
 package com.makeevrserg.empireprojekt.items
 
-import com.makeevrserg.empireprojekt.events.empireevents.Gun
-import com.makeevrserg.empireprojekt.ESSENTIALS.MusicDiscs
+import com.makeevrserg.empireprojekt.ESSENTIALS.MusicDiscsEvent
 import com.makeevrserg.empireprojekt.EmpirePlugin
-import com.makeevrserg.empireprojekt.util.ResourcePackNew
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.persistence.PersistentDataType
 import com.makeevrserg.empireprojekt.util.files.FileManager
 import org.bukkit.Material
@@ -20,6 +17,7 @@ class EmpireItems {
     private var _itemsInfo: MutableList<EmpireItem> = mutableListOf()
     private var _empireEvents: MutableMap<String, List<Event>> = mutableMapOf()
 
+
     val empireItems: MutableMap<String, ItemStack>
         get() = _empireItems
     val empireEvents: MutableMap<String, List<Event>>
@@ -28,9 +26,9 @@ class EmpireItems {
     val empireGuns: MutableMap<String, EmpireGun>
         get() = _empireGuns
 
-    private val _empireDiscs: MutableMap<String, MusicDiscs.MusicDisc> = mutableMapOf()
-    val empireDiscs: MutableMap<String, MusicDiscs.MusicDisc>
-        get() = _empireDiscs
+    private val _empireDiscsEvent: MutableMap<String, MusicDiscsEvent.MusicDisc> = mutableMapOf()
+    val empireDiscsEvent: MutableMap<String, MusicDiscsEvent.MusicDisc>
+        get() = _empireDiscsEvent
 
     val itemsInfo: MutableList<EmpireItem>
         get() = _itemsInfo
@@ -99,7 +97,7 @@ class EmpireItems {
     }
 
     private fun setEmpireMusicDisc(id: String, musicDisc: String?) {
-        _empireDiscs[id] = MusicDiscs.MusicDisc().create(musicDisc) ?: return
+        _empireDiscsEvent[id] = MusicDiscsEvent.MusicDisc().create(musicDisc) ?: return
     }
 
     private fun setEmpireGun(itemStack: ItemStack, id: String) {

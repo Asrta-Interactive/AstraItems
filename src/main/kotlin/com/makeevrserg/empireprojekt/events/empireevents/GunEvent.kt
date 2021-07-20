@@ -9,7 +9,6 @@ import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.instance
 import com.makeevrserg.empireprojekt.items.EmpireGun
 import org.bukkit.*
 import org.bukkit.block.BlockFace
-import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.entity.Entity
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
@@ -26,7 +25,7 @@ import org.bukkit.potion.PotionEffectType
 import java.lang.IllegalArgumentException
 import java.lang.NumberFormatException
 
-class Gun : Listener {
+class GunEvent : Listener {
 
     private var protocolManager: ProtocolManager? = null
 
@@ -247,8 +246,8 @@ class Gun : Listener {
 
 
         }
-        if (empGun.generateExplosion != null && Grenade.allowExplosion(instance, l))
-            Grenade.generateExplosion(l, empGun.generateExplosion!!.toDouble())
+        if (empGun.generateExplosion != null && GrenadeEvent.allowExplosion(instance, l))
+            GrenadeEvent.generateExplosion(l, empGun.generateExplosion!!.toDouble())
 
     }
 

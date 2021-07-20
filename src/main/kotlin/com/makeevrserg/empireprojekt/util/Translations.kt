@@ -10,11 +10,8 @@ import java.io.File
 class Translations {
 
     private val plugin = EmpirePlugin.instance
-    private val _translationFile: FileManager =
-        FileManager("config" + File.separator + "translations.yml")
-
-    private val text = _translationFile.getConfig()!!
-    fun FileConfiguration.getHEXString(path: String, def: String): String {
+    private val text = EmpirePlugin.empireFiles._translationFile.getConfig()!!
+    private fun FileConfiguration.getHEXString(path: String, def: String): String {
         return EmpireUtils.HEXPattern(getString(path, def)!!)
     }
     fun ConfigurationSection.getHEXString(path: String, def: String): String {

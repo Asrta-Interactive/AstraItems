@@ -1,18 +1,20 @@
 package com.makeevrserg.empireprojekt.events
 
 import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.instance
-import com.makeevrserg.empireprojekt.ESSENTIALS.AutoBlockChange
-import com.makeevrserg.empireprojekt.ESSENTIALS.MusicDiscs
+import com.makeevrserg.empireprojekt.ESSENTIALS.AutoBlockChangeEvent
+import com.makeevrserg.empireprojekt.ESSENTIALS.MusicDiscsEvent
 import com.makeevrserg.empireprojekt.events.empireevents.*
-import com.makeevrserg.empireprojekt.events.genericlisteners.ExperienceRepairEvent
-import com.makeevrserg.empireprojekt.events.genericlisteners.ItemDropListener
-import com.makeevrserg.empireprojekt.events.genericlisteners.ItemInteractListener
+import com.makeevrserg.empireprojekt.events.genericevents.ExperienceRepairEvent
+import com.makeevrserg.empireprojekt.events.genericevents.ItemDropListener
+import com.makeevrserg.empireprojekt.events.genericevents.ItemInteractListener
 import com.makeevrserg.empireprojekt.ESSENTIALS.sit.SitEvent
 import com.makeevrserg.empireprojekt.events.blocks.events.MushroomBlockEventHandler
 import com.makeevrserg.empireprojekt.events.enchants.Vampirism
 import com.makeevrserg.empireprojekt.menumanager.MenuListener
 
 
+
+//Mananger for all of events
 class GenericListener {
 
 
@@ -22,18 +24,17 @@ class GenericListener {
     private var _menuListener: MenuListener = MenuListener()
     private var _experienceRepairEvent: ExperienceRepairEvent = ExperienceRepairEvent()
     private var _resourcePackEvent: ResourcePackEvent = ResourcePackEvent()
-    private var _grenadeEvend: Grenade = Grenade()
-    private var _molotov: Molotov = Molotov()
-    private var _hammer: Hammer = Hammer()
-    private var _lavaWalker: LavaWalker = LavaWalker()
-    private var _protocolLibHandler: ProtocolLibHandler = ProtocolLibHandler()
+    private var _grenadeEventEvend: GrenadeEvent = GrenadeEvent()
+    private var _molotovEvent: MolotovEvent = MolotovEvent()
+    private var _hammerEvent: HammerEvent = HammerEvent()
+    private var _lavaWalkerEvent: LavaWalkerEvent = LavaWalkerEvent()
+    private var _Font_protocolLibEvent: FontProtocolLibEvent = FontProtocolLibEvent()
     private var _vampirismEnchant: Vampirism = Vampirism()
-    private var _gun: Gun = Gun()
+    private var _gunEvent: GunEvent = GunEvent()
     private var _sitEvent: SitEvent = SitEvent()
-    private var _autoBlockChange = AutoBlockChange()
-    var _craftEvent = CraftEvent()
+    private var _autoBlockChange = AutoBlockChangeEvent()
     val mushroomBlockEventHandler = MushroomBlockEventHandler()
-    private var _empireMusicDiscs = MusicDiscs()
+    private var _empireMusicDiscs = MusicDiscsEvent()
     //private var _loreBooks = LoreBooks()
     //private var _empireMobs = EmpireMobs()
     private var empireFixEvent = EmpireItemFixEvent()
@@ -44,16 +45,15 @@ class GenericListener {
         _menuListener.onDisable()
         _experienceRepairEvent.onDisable()
         _resourcePackEvent.onDisable()
-        _grenadeEvend.onDisable()
-        _hammer.onDisable()
+        _grenadeEventEvend.onDisable()
+        _hammerEvent.onDisable()
         instance.server.pluginManager.getPlugin("protocollib")?.let {
-            _protocolLibHandler.onDisable()
+            _Font_protocolLibEvent.onDisable()
         }
-        _lavaWalker.onDisable()
+        _lavaWalkerEvent.onDisable()
         _vampirismEnchant.onDisable()
-        _molotov.onDisable()
-        _gun.onDisable()
-        _craftEvent.onDisable()
+        _molotovEvent.onDisable()
+        _gunEvent.onDisable()
         _empireMusicDiscs.onDisable()
         _sitEvent.onDisable()
         _autoBlockChange.onDisable()

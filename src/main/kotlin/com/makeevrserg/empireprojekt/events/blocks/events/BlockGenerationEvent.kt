@@ -16,7 +16,7 @@ import org.bukkit.event.world.ChunkLoadEvent
 import org.bukkit.scheduler.BukkitTask
 import kotlin.random.Random
 
-class BlockGeneration : Listener {
+class BlockGenerationEvent : Listener {
 
 
     val chunkList = mutableListOf<Chunk>()

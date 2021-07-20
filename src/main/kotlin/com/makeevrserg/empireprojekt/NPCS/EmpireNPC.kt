@@ -145,7 +145,11 @@ class EmpireNPC {
 
 
 
+    private val playerSpawnedList:MutableList<PlayerConnection> = mutableListOf()
     private fun spawnNPCPacket(connection: PlayerConnection){
+//        if (playerSpawnedList.contains(connection))
+//            return
+//        playerSpawnedList.add(connection)
         connection.sendPacket(
             PacketPlayOutPlayerInfo(
                 PacketPlayOutPlayerInfo.EnumPlayerInfoAction.a,
@@ -159,7 +163,8 @@ class EmpireNPC {
                         PacketPlayOutPlayerInfo.EnumPlayerInfoAction.e,
                         npc
                     ))
-            },100)
+//                playerSpawnedList.remove(connection)
+            },NPCManager.config.npcRemoveListTime)
     }
 
     public fun showNPC(player: Player) {
@@ -245,7 +250,7 @@ class EmpireNPC {
         Bukkit.getScheduler().runTaskLaterAsynchronously(EmpirePlugin.instance,
             Runnable {
                 spawnNPCPacket(connection)
-            },500)
+            },NPCManager.config.spawnNPCPacketTime)
         connection.sendPacket(PacketPlayOutEntityHeadRotation(npc, newLoc.yaw.toAngle()))
     }
 

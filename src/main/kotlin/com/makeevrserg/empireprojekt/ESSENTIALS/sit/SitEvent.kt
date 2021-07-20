@@ -38,7 +38,8 @@ class SitEvent : Listener {
         }
 
 
-        val chair = location.world?.spawnEntity(location.add(0.5, -1.6, 0.5), EntityType.ARMOR_STAND) as ArmorStand
+//        val chair = location.world?.spawnEntity(location.add(0.5, -1.6, 0.5), EntityType.ARMOR_STAND) as ArmorStand
+        val chair = location.world?.spawnEntity(location.add(0.0, -1.6, 0.0), EntityType.ARMOR_STAND) as ArmorStand
         chair.setGravity(false)
         chair.isVisible = false
         chair.isInvulnerable = false
@@ -52,6 +53,7 @@ class SitEvent : Listener {
         val armorStand = sitPlayers[player] ?: return
         armorStand.remove()
         sitPlayers.remove(player)
+        player.teleport(player.location.add(0.0,1.6,0.0))
     }
     @EventHandler
     fun onDeathEvent(e:PlayerDeathEvent){

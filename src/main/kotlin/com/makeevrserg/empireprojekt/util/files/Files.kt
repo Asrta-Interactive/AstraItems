@@ -32,6 +32,9 @@ public class Files() {
         FileManager("config" + File.separator + "npcs.yml")
     val empireItemsFiles: MutableList<FileManager> = mutableListOf()
 
+    val _soundsFile: FileManager = FileManager("config" + File.separator + "sounds.yml")
+
+    val _translationFile: FileManager = FileManager("config" + File.separator + "translations.yml")
 
     init {
         getCustomItems()

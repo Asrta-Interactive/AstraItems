@@ -36,6 +36,7 @@ class ProtocolLibPacketListener {
                         else
                             npcID = packet.integers.read(j)
                     npcID ?: return
+
                     for (npc in NPCManager.NPC)
                         if (npc.id == npcID)
                             Bukkit.getScheduler().scheduleSyncDelayedTask(EmpirePlugin.instance) {
@@ -46,7 +47,7 @@ class ProtocolLibPacketListener {
             }
 
             override fun onPacketSending(event: PacketEvent) {
-                println("Packet Sending: " + event.packet.getType().name());
+                //println("Packet Sending: " + event.packet.getType().name());
             }
         }
         protocolManager.addPacketListener(packetListener)

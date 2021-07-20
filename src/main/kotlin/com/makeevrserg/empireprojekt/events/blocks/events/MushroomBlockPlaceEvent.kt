@@ -11,7 +11,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPlaceEvent
 
-class MushroomBlockPlace:Listener {
+class MushroomBlockPlaceEvent:Listener {
 
 
 
@@ -29,11 +29,9 @@ class MushroomBlockPlace:Listener {
         val player = e.player
         val block = e.block
         val id = EmpireUtils.getEmpireID(player.inventory.itemInMainHand)
-        println(id)
         val empireBlock = EmpirePlugin.empireItems._empireBlocks[id]?:return
         val empireFacings = MushroomBlockApi.getFacingByData(empireBlock.data)?:return
         block.type = MushroomBlockApi.getMaterialByData(empireBlock.data)
-        println(block.type)
         val facing = block.blockData as MultipleFacing
         for (f in empireFacings.facing)
             facing.setFace(BlockFace.valueOf(f.key.uppercase()),f.value)

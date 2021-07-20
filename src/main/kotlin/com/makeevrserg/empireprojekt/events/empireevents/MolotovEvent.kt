@@ -17,7 +17,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.entity.ProjectileHitEvent
 import org.bukkit.persistence.PersistentDataType
 
-class Molotov : Listener {
+class MolotovEvent : Listener {
 
     init {
         instance.server.pluginManager.registerEvents(this, instance)
