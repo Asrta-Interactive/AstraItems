@@ -35,6 +35,30 @@ class EmpireUtils {
     }
 
     companion object {
+
+        public fun manageWithEmpireDurability(itemStack:ItemStack): ItemStack {
+
+            val itemMeta = itemStack.itemMeta?:return itemStack
+            val damage: Short = itemStack.durability
+
+            val maxCustomDurability: Int = itemMeta.persistentDataContainer.get(
+                EmpirePlugin.empireConstants.MAX_CUSTOM_DURABILITY,
+                PersistentDataType.INTEGER
+            ) ?: return itemStack
+
+            val empireDurability = maxCustomDurability - damage * maxCustomDurability / itemStack.type.maxDurability
+            itemMeta.persistentDataContainer.set(
+                EmpirePlugin.empireConstants.EMPIRE_DURABILITY,
+                PersistentDataType.INTEGER,
+                empireDurability
+            )
+            val d: Int = itemStack.type.maxDurability -
+                    itemStack.type.maxDurability * empireDurability / maxCustomDurability
+            itemStack.durability = d.toShort()
+            itemStack.itemMeta = itemMeta
+            return itemStack
+
+        }
         public fun getItemStackByName(str: String): ItemStack {
             return EmpirePlugin.empireItems.empireItems[str] ?: ItemStack(Material.getMaterial(str) ?: Material.PAPER)
         }

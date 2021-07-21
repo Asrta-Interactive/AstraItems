@@ -11,20 +11,16 @@ class HomesMenu(playerMenuUtility: PlayerMenuUtility):PaginatedMenu(playerMenuUt
     override var menuName: String = "Ваши дома"
     override val menuSize: Int = 18
     override var maxItemsPerPage = 9
-    private lateinit var user:User
-    override var slotsAmount: Int = user.homes.size
+    private var user:User? = EssentialsHandler.ess?.getUser(playerMenuUtility.player)
+    override var slotsAmount: Int = user?.homes?.size?:0
     override var maxPages: Int = getMaxPages()
     override var page: Int = 0
 
-    private fun onEnable(){
-        if (EssentialsHandler.ess == null){
-            playerMenuUtility.player.closeInventory()
-            return
-        }
-        user = EssentialsHandler.ess!!.getUser(playerMenuUtility.player)
-    }
+
     init {
-        onEnable()
+        if (EssentialsHandler.ess == null)
+            playerMenuUtility.player.closeInventory()
+
     }
 
     override fun handleMenu(e: InventoryClickEvent) {
@@ -45,17 +41,17 @@ class HomesMenu(playerMenuUtility: PlayerMenuUtility):PaginatedMenu(playerMenuUt
         }
         val index = maxItemsPerPage*page + e.slot
         playerMenuUtility.player.closeInventory()
-        playerMenuUtility.player.teleport(user.getHome(user.homes[index]))
+        playerMenuUtility.player.teleport(user!!.getHome(user!!.homes[index]))
     }
 
     override fun setMenuItems() {
         addManageButtons()
         for (position in 0 until maxItemsPerPage){
             val index = maxItemsPerPage*page+position
-            if (index>=user.homes.size)
+            if (index>=user!!.homes.size)
                 return
-            val homeName = user.homes[index]
-            val home = user.getHome(homeName)
+            val homeName = user!!.homes[index]
+            val home = user!!.getHome(homeName)
             val itemStack = ItemStack(Material.BLUE_BED)
             val itemMeta = itemStack.itemMeta?:continue
             itemMeta.setDisplayName(homeName)

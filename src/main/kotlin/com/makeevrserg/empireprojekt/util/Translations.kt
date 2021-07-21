@@ -67,6 +67,8 @@ class Translations {
 
     val ITEM_UPGRADE_NAME_COLOR: String = text.getHEXString("ITEM_UPGRADE_NAME_COLOR", "#4790ad")
     val ITEM_UPGRADE_AMOUNT_COLOR: String = text.getHEXString("ITEM_UPGRADE_AMOUNT_COLOR", "#47ad5f")
+    val ITEM_UPGRADE_UNSUCCESFULL: String = text.getHEXString("ITEM_UPGRADE_UNSUCCESFULL", "#f55442Улучшение не прошло успешно...")
+    val ITEM_UPGRADE_SUCCESFULL: String = text.getHEXString("ITEM_UPGRADE_SUCCESFULL", "#42f596Улучшение прошло успешно...")
 
     val PLUGIN_PROTOCOLLIB_NOT_INSTALLED: String = text.getHEXString("PLUGIN_PROTOCOLLIB_NOT_INSTALLED", "#f55442ProtocolLib не найден. NPC не включены!")
 

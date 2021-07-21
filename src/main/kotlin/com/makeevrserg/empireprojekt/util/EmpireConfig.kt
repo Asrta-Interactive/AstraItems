@@ -11,8 +11,9 @@ class EmpireConfig(fileConfig: FileConfiguration?) {
     private var upgradeCostMultiplier: Double = 0.05
     private var onJoinResourcePackTimeStay:Int = 200
     public var generateBlocks:Boolean = false
-
     public var generatingDebug:Boolean = false
+    public var itemUpgradeBreakMultiplier:Int = 5
+
 
     private fun initConfig(fileConfig: FileConfiguration?) {
         fileConfig ?: return
@@ -25,6 +26,7 @@ class EmpireConfig(fileConfig: FileConfiguration?) {
         onJoinResourcePackTimeStay = fileConfig.getInt("onJoinResourcePackTimeStay", 200)
         generateBlocks = fileConfig.getBoolean("generate_blocks", false)
         generatingDebug = fileConfig.getBoolean("debug_generating", false)
+        itemUpgradeBreakMultiplier = fileConfig.getInt("item_upgrade_break_multiplier", 30)
 
 
     }

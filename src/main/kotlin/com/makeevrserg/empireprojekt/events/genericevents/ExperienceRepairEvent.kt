@@ -8,6 +8,7 @@ import org.bukkit.event.inventory.PrepareAnvilEvent
 import org.bukkit.event.player.PlayerItemDamageEvent
 import org.bukkit.event.player.PlayerItemMendEvent
 import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.meta.Damageable
 import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.persistence.PersistentDataType
 
@@ -26,6 +27,8 @@ class ExperienceRepairEvent : Listener {
     fun durabilityEvent(e: PlayerItemDamageEvent) {
         changeDurability(e.item, -e.damage)
     }
+
+
 
     @EventHandler
     fun anvilEvent(e: PrepareAnvilEvent) {

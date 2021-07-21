@@ -13,12 +13,15 @@ import org.bukkit.inventory.*
 import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.persistence.PersistentDataType
 import com.makeevrserg.empireprojekt.util.EmpireUtils
+import org.bukkit.Particle
+import org.bukkit.Sound
+import org.bukkit.entity.Player
+import org.bukkit.inventory.meta.Damageable
 import java.util.*
 import kotlin.math.round
 import kotlin.random.Random
 
 class ItemUpgradeEvent : Listener {
-
 
 
     data class ItemUpgrade(
@@ -95,7 +98,8 @@ class ItemUpgradeEvent : Listener {
 
         val ingrMeta: ItemMeta = ingredient.itemMeta ?: return
         val ingrID: String =
-            ingrMeta.persistentDataContainer.get(EmpirePlugin.empireConstants.empireID, PersistentDataType.STRING) ?: return
+            ingrMeta.persistentDataContainer.get(EmpirePlugin.empireConstants.empireID, PersistentDataType.STRING)
+                ?: return
         if (!_upgradesMap.containsKey(ingrID))
             return
         val itemResult = itemBefore.clone()
@@ -108,7 +112,7 @@ class ItemUpgradeEvent : Listener {
                             itemTypeName.contains("boots") ||
                             itemTypeName.contains("leggings") ||
                             itemTypeName.contains("helmet") ||
-                    itemTypeName.contains("shield"))
+                            itemTypeName.contains("shield"))
         }
 
         fun isWeapon(itemTypeName: String): Boolean {
@@ -135,7 +139,7 @@ class ItemUpgradeEvent : Listener {
                 continue
 
             if (!((!isArmor(itemName) && !isArmorAttr(itemUpgrade.attr))
-                || (!isWeapon(itemName) && !isWeaponAttr(itemUpgrade.attr)))
+                        || (!isWeapon(itemName) && !isWeaponAttr(itemUpgrade.attr)))
             )
                 continue
 
@@ -193,6 +197,7 @@ class ItemUpgradeEvent : Listener {
             return
         if (rawSlot != 2)
             return
+        EmpireUtils.getEmpireID((e.inventory as AnvilInventory).getItem(1) ?: return) ?: return
         val itemStack: ItemStack = e.currentItem ?: return
         val itemMeta: ItemMeta = itemStack.itemMeta ?: return
 
@@ -211,14 +216,32 @@ class ItemUpgradeEvent : Listener {
                 )?.round(2)
             )
         }
+        var amount = itemMeta.getAttributeModifiers(itemStack.type.equipmentSlot).values().size
+        amount *= EmpirePlugin.config.itemUpgradeBreakMultiplier * amount
+        println(amount)
+        (itemMeta as Damageable).damage = amount
         itemStack.itemMeta = itemMeta
+        EmpireUtils.manageWithEmpireDurability(itemStack)
 
+        val location = e.whoClicked.location
+        if (amount > itemStack.type.maxDurability) {
+            e.whoClicked.world.strikeLightning(e.whoClicked.location)
+           ( e.whoClicked as Player).sendMessage(EmpirePlugin.translations.ITEM_UPGRADE_UNSUCCESFULL)
+            for (i in 0..2)
+                e.inventory.setItem(i, null)
+            e.whoClicked.closeInventory()
+        }else{
+            location.world!!.spawnParticle(Particle.GLOW,location.add(0.0,1.0,0.0),100)
+            e.whoClicked.sendMessage(EmpirePlugin.translations.ITEM_UPGRADE_SUCCESFULL)
 
+        }
     }
+
     init {
         instance.server.pluginManager.registerEvents(this, instance)
         initList()
     }
+
     fun onDisable() {
         PrepareAnvilEvent.getHandlerList().unregister(this)
         InventoryClickEvent.getHandlerList().unregister(this)
