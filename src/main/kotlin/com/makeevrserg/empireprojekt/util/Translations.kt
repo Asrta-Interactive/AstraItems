@@ -2,6 +2,7 @@ package com.makeevrserg.empireprojekt.util
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.util.files.FileManager
+import org.bukkit.ChatColor
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.configuration.file.YamlConfiguration
@@ -75,6 +76,10 @@ class Translations {
     val ITEM_INFO_DROP: String = text.getHEXString("ITEM_INFO_DROP", "Выпадает из")
     val ITEM_INFO_DROP_COLOR: String = text.getHEXString("ITEM_INFO_DROP_COLOR: String", "#47ad5f")
 
+
+    val PREV_PAGE: String = text.getHEXString("PREV_PAGE", ChatColor.GREEN.toString() + "<- Пред. страница")
+    val BACK_PAGE: String = text.getHEXString("BACK_PAGE", ChatColor.GREEN.toString() + "Назад")
+    val NEXT_PAGE: String = text.getHEXString("NEXT_PAGE", ChatColor.GREEN.toString() + "След. страница ->")
 
     val RESOURCE_PACK_DENY: String = text.getHEXString("RESOURCE_PACK_DENY", "#f55442Вы отклонили ресурс-пак")
     val RESOURCE_PACK_DOWNLOAD_SELF: String = text.getHEXString(

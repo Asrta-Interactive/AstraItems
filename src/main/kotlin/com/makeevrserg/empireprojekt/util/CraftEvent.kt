@@ -94,7 +94,12 @@ class CraftEvent {
         val recipe = ShapedRecipe(key, resultItemStack)
         recipe.shape(pattern[0].toString(), pattern[1].toString(), pattern[2].toString())
         for (recChar in ingrMap.keys) {
-            val choice:RecipeChoice = RecipeChoice.ExactChoice(ingrMap[recChar]?:continue)
+            val item = ingrMap[recChar]?:continue
+            val id = EmpireUtils.getEmpireID(item)
+            var choice:RecipeChoice = RecipeChoice.MaterialChoice(item.type)
+            if (id!=null)
+                choice = RecipeChoice.ExactChoice(item)
+
             recipe.setIngredient(recChar, choice)
         }
         try {

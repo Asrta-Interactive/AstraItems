@@ -20,6 +20,7 @@ import kotlin.random.Random
 class ItemUpgradeEvent : Listener {
 
 
+
     data class ItemUpgrade(
         val attr: String,
         val add_min: Double,
@@ -63,10 +64,6 @@ class ItemUpgradeEvent : Listener {
         )
     }
 
-    init {
-        instance.server.pluginManager.registerEvents(this, instance)
-        initList()
-    }
 
     private fun setAttrLore(itemMeta: ItemMeta, attr: String, amount: Double?): MutableList<String> {
         val lore: MutableList<String> = itemMeta.lore ?: mutableListOf()
@@ -218,9 +215,13 @@ class ItemUpgradeEvent : Listener {
 
 
     }
-
+    init {
+        instance.server.pluginManager.registerEvents(this, instance)
+        initList()
+    }
     fun onDisable() {
         PrepareAnvilEvent.getHandlerList().unregister(this)
         InventoryClickEvent.getHandlerList().unregister(this)
     }
+
 }

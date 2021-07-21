@@ -1,4 +1,4 @@
-package com.makeevrserg.empireprojekt.menumanager.menu
+package com.makeevrserg.empireprojekt.menumanager.emgui
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.menumanager.PaginatedMenu
@@ -13,22 +13,15 @@ import org.bukkit.Sound
 
 class EmpireCategoriesMenu(playerMenuUtility: PlayerMenuUtility?) :
     PaginatedMenu(playerMenuUtility) {
-    private val guiConfigFile = EmpirePlugin.empireFiles.guiFile.getConfig()
-    override var menuName: String = EmpireUtils.HEXPattern(
-        guiConfigFile?.getString("settings.categories_text", "Категории")!!
-    )
-
-    override val slots: Int
-        get() {
-            return 54
-        }
-
+    override var menuName: String = EmpirePlugin.instance.guiSettings.categoriesText
+    override var page: Int = 0
+    override var maxItemsPerPage: Int = 45
+    override val menuSize = 54
+    override var slotsAmount: Int = EmpirePlugin.instance.guiCategories.categoriesMap.size
+    override var maxPages = getMaxPages()
 
     override fun handleMenu(e: InventoryClickEvent) {
-
         e.currentItem ?: return
-
-
         if ((e.slot != 45) && (e.slot != 49) && (e.slot != 53))
             EmpireCategoryMenu(
                 playerMenuUtility,
@@ -36,44 +29,33 @@ class EmpireCategoriesMenu(playerMenuUtility: PlayerMenuUtility?) :
                 page
             ).open()
 
-        if (e.slot == 45)
-            if (checkFirstPage()) return
-            else reloadPage(-1)
-        else if (e.slot == 49)
+        if (e.slot == getPrevButtonIndex())
+            if (isFirstPage()) return
+            else loadPage(-1)
+        else if (e.slot == getBackButtonIndex())
             e.whoClicked.closeInventory()
-        else if (e.slot == 53)
-            if (checkLastPage()) return
-            else reloadPage(1)
+        else if (e.slot == getNextButtonIndex())
+            if (isLastPage()) return
+            else loadPage(1)
 
 
-    }
-
-
-    private fun _getMaxPages(): Int {
-        val size: Int = plugin.categoryItems.size
-        var mP: Int = size / maxItemsPerPage
-        mP += if ((size % maxItemsPerPage > 0)) 1 else 0
-        return mP - 1
     }
 
 
     override fun setMenuItems() {
         addManageButtons()
-        for (i in 0 until super.maxItemsPerPage) {
-            index = super.maxItemsPerPage * page + i
-            if (index < plugin.categoryItems.size) {
-                val categoryItem: CategoryItems.CategorySection = plugin.categoryItems.values.elementAt(index)
-                val menuItem: String = categoryItem.icon
-                val itemStack: ItemStack = EmpirePlugin.empireItems.empireItems[menuItem]?.clone() ?: (ItemStack(
-                    Material.getMaterial(menuItem) ?: Material.PAPER
-                ))
+        for (i in 0 until maxItemsPerPage) {
+            val index = maxItemsPerPage * page + i
+            if (index < EmpirePlugin.instance.guiCategories.categoriesMap.size) {
+                val categoryItem = EmpirePlugin.instance.guiCategories.categoriesMap.values.elementAt(index)
+                val itemStack = categoryItem.icon.clone()
                 val itemMeta: ItemMeta = itemStack.itemMeta?:continue
                 itemMeta.setDisplayName(EmpireUtils.HEXPattern(categoryItem.name))
                 itemMeta.lore = EmpireUtils.HEXPattern(categoryItem.lore)
                 itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
                 itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS)
                 itemStack.itemMeta = itemMeta
-                inventory.setItem(i, itemStack)
+                inventory.setItem(i, itemStack.clone())
             }
         }
     }
@@ -82,7 +64,7 @@ class EmpireCategoriesMenu(playerMenuUtility: PlayerMenuUtility?) :
 
         playerMenuUtility.player.playSound(
             playerMenuUtility.player.location,
-            guiConfigFile?.getString("settings.categories_sound") ?: Sound.ITEM_BOOK_PAGE_TURN.name.toLowerCase(),
+            EmpirePlugin.instance.guiSettings.categoriesSound,
             1.0f,
             1.0f
         )
@@ -90,7 +72,6 @@ class EmpireCategoriesMenu(playerMenuUtility: PlayerMenuUtility?) :
     }
 
     init {
-        maxPages = _getMaxPages()
         playInventorySound()
     }
 }

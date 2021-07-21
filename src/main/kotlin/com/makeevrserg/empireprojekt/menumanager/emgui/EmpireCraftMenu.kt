@@ -1,4 +1,4 @@
-package com.makeevrserg.empireprojekt.menumanager.menu
+package com.makeevrserg.empireprojekt.menumanager.emgui
 
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
@@ -17,7 +17,6 @@ import org.bukkit.NamespacedKey
 import org.bukkit.Sound
 
 
-
 class EmpireCraftMenu(
     override var playerMenuUtility: PlayerMenuUtility,
     private val slot: Int,
@@ -26,8 +25,14 @@ class EmpireCraftMenu(
     override var page: Int
 ) : PaginatedMenu(playerMenuUtility) {
 
-    private val guiConfigFile = EmpirePlugin.empireFiles.guiFile.getConfig()
+    //    private val guiConfigFile = EmpirePlugin.empireFiles.guiFile.getConfig()
     var recipePage = 0
+
+    override var maxItemsPerPage: Int = 9
+    override var menuSize: Int = 54
+    override var slotsAmount: Int = useInCraft(item).size
+    override var maxPages: Int = getMaxPages()
+
 
     private fun getItemName(): String {
         val meta = EmpirePlugin.empireItems.empireItems[item]?.itemMeta
@@ -41,11 +46,11 @@ class EmpireCraftMenu(
                 "Крафт"
             ) + (getItemName())
     )
-    override var slots: Int = 54
+
     private fun playInventorySound() {
         playerMenuUtility.player.playSound(
             playerMenuUtility.player.location,
-            guiConfigFile?.getString("settings.workbench_sound") ?: Sound.ITEM_BOOK_PAGE_TURN.name.lowercase(),
+            EmpirePlugin.instance.guiSettings.workbenchSound,
             1.0f,
             1.0f
         )
@@ -54,11 +59,10 @@ class EmpireCraftMenu(
 
     init {
         playInventorySound()
-        maxPages = useInCraft(item).size / 9
     }
 
     override fun handleMenu(e: InventoryClickEvent) {
-        if (e.slot == 49) {
+        if (e.slot == getBackButtonIndex()) {
             if (playerMenuUtility.previousItems.size == 0)
                 EmpireCategoryMenu(playerMenuUtility, slot, categoryPage).open()
             else {
@@ -77,14 +81,14 @@ class EmpireCraftMenu(
                 return
             playerMenuUtility.player.inventory
                 .addItem(EmpirePlugin.empireItems.empireItems[item] ?: ItemStack(Material.getMaterial(item) ?: return))
-        } else if (e.slot == 53) {
-            if (checkLastPage())
+        } else if (e.slot == getNextButtonIndex()) {
+            if (isLastPage())
                 return
-            reloadPage(1)
-        } else if (e.slot == 45) {
-            if (checkFirstPage())
+            loadPage(1)
+        } else if (e.slot == getPrevButtonIndex()) {
+            if (isFirstPage())
                 return
-            reloadPage(-1)
+            loadPage(-1)
         } else if (e.slot == 7) {
             recipePage++
             setCraftingTable()
@@ -145,22 +149,18 @@ class EmpireCraftMenu(
 
         for (itemResult in EmpirePlugin.instance.recipies.keys) {
             val itemRecipies: CraftEvent.EmpireRecipe =
-                EmpirePlugin.instance.recipies[itemResult] ?: return mutableListOf()
+                EmpirePlugin.instance.recipies[itemResult] ?: continue
             for (empireRecipe in itemRecipies.craftingTable) {
-
                 if (empireRecipe.ingredientMap.values.contains(itemStack)) {
                     list.add(itemResult)
                     //break
                 }
-
-
             }
-
-
         }
         return list
 
     }
+
 
     private fun setCanCraft() {
         val itemsToCraft = useInCraft(item)
@@ -177,37 +177,6 @@ class EmpireCraftMenu(
         }
     }
 
-    override fun setMenuItems() {
-
-        setCraftingTable()
-        setCanCraft()
-        inventory.setItem(
-            25,
-
-            Bukkit.getRecipe(NamespacedKey(plugin, item))?.result ?: EmpirePlugin.empireItems.empireItems[item]
-            ?: ItemStack(
-                Material.getMaterial(item) ?: Material.PAPER
-            )
-        )
-        addManageButtons()
-        inventory.setItem(
-            48,
-            setDrop() ?: ItemStack(Material.AIR)
-        )
-        inventory.setItem(
-            47,
-            setUpgrade() ?: ItemStack(Material.AIR)
-        )
-        if (playerMenuUtility.player.hasPermission(EmpirePermissions.EMPGIVE))
-            inventory.setItem(
-                34,
-                EmpirePlugin.empireItems.empireItems[EmpirePlugin.empireFiles.guiFile.getConfig()
-                    ?.getConfigurationSection("settings")?.getString("give_btn")] ?: ItemStack(Material.AIR)
-            )
-
-
-        setRecipe()
-    }
 
     private fun setWorkbenchButton() {
         inventory.setItem(
@@ -254,7 +223,7 @@ class EmpireCraftMenu(
 
         itemMeta.lore = lore
         itemStack.itemMeta = itemMeta
-        return itemStack
+        return itemStack.clone()
 
 
     }
@@ -264,7 +233,8 @@ class EmpireCraftMenu(
         val itemMeta = itemStack.itemMeta
 
         itemMeta!!.setDisplayName(EmpirePlugin.translations.ITEM_INFO_DROP)
-        val everyDropByItem: MutableMap<String, MutableList<ItemDropListener.ItemDrop>> = plugin.getEveryDrop
+        val everyDropByItem: MutableMap<String, MutableList<ItemDropListener.ItemDrop>> =
+            EmpirePlugin.instance.getEveryDrop
         everyDropByItem[item] ?: return null
         val lore = itemMeta.lore ?: mutableListOf()
         for (drop in everyDropByItem[item]!!) {
@@ -275,6 +245,38 @@ class EmpireCraftMenu(
         return itemStack
     }
 
+    override fun setMenuItems() {
+
+        setCraftingTable()
+        setCanCraft()
+        inventory.setItem(
+            25,
+
+            Bukkit.getRecipe(NamespacedKey(EmpirePlugin.instance, item))?.result
+                ?: EmpirePlugin.empireItems.empireItems[item]
+                ?: ItemStack(
+                    Material.getMaterial(item) ?: Material.PAPER
+                )
+        )
+        addManageButtons()
+        inventory.setItem(
+            48,
+            setDrop() ?: ItemStack(Material.AIR)
+        )
+        inventory.setItem(
+            47,
+            setUpgrade() ?: ItemStack(Material.AIR)
+        )
+        if (playerMenuUtility.player.hasPermission(EmpirePermissions.EMPGIVE))
+            inventory.setItem(
+                34,
+                EmpirePlugin.empireItems.empireItems[EmpirePlugin.empireFiles.guiFile.getConfig()
+                    ?.getConfigurationSection("settings")?.getString("give_btn")] ?: ItemStack(Material.AIR)
+            )
+
+
+        setRecipe()
+    }
 }
 
 

@@ -3,8 +3,8 @@ package com.makeevrserg.empireprojekt.commands
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.ESSENTIALS.sit.SitEvent
 import com.makeevrserg.empireprojekt.menumanager.PlayerMenuUtility
-import com.makeevrserg.empireprojekt.menumanager.menu.EmpireCategoriesMenu
-import com.makeevrserg.empireprojekt.menumanager.menu.EmpireSoundsMenu
+import com.makeevrserg.empireprojekt.menumanager.emgui.EmpireCategoriesMenu
+import com.makeevrserg.empireprojekt.menumanager.emgui.EmpireSoundsMenu
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor

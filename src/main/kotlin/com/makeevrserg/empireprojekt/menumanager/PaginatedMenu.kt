@@ -1,47 +1,56 @@
 package com.makeevrserg.empireprojekt.menumanager
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
-import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.translations
-import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
 
 abstract class PaginatedMenu(playerMenuUtility: PlayerMenuUtility?) : Menu(playerMenuUtility!!) {
-    val plugin: EmpirePlugin = EmpirePlugin.instance
-    open var page = 0
-    open var maxItemsPerPage = 45
-    var maxPages: Int = 1
-    protected var index = 0
 
+    //Page of current menu. Must be 0 by default
+    abstract var page:Int
+    //Max items allowed in current page. No more than 45 for paginated. Final row is for pagination
+    abstract var maxItemsPerPage:Int
+    //Max items in section to display
+    abstract var slotsAmount:Int
+    //Must be owerwritten with getMaxPages()
+    abstract var maxPages: Int
 
-    fun checkFirstPage(): Boolean {
+    @JvmName("getMaxPages1")
+    public fun getMaxPages(): Int {
+        return  slotsAmount/maxItemsPerPage
+    }
+
+    fun getIndex(i:Int): Int {
+        return maxItemsPerPage * page + i
+    }
+
+    fun isFirstPage(): Boolean {
         if (page == 0) {
             playerMenuUtility.player
-                .sendMessage(translations.FIRST_PAGE)
+                .sendMessage(EmpirePlugin.translations.FIRST_PAGE)
             return true
         }
         return false
     }
-
-    fun reloadPage(next: Int) {
+    fun isLastPage(): Boolean {
+        if (page >= maxPages) {
+            playerMenuUtility.player
+                .sendMessage(EmpirePlugin.translations.LAST_PAGE)
+            return true
+        }
+        return false
+    }
+    fun loadPage(next: Int) {
         page += next
         inventory.clear()
         setMenuItems()
     }
 
-    fun checkLastPage(): Boolean {
-        if (page >= maxPages) {
-            playerMenuUtility.player
-                .sendMessage(translations.LAST_PAGE)
-            return true
-        }
-        return false
-    }
-
-    private fun setItem(page: String, items: MutableMap<String, ItemStack>, id: String?): ItemStack {
+    private fun setManageButton(page: String, id: String?): ItemStack {
 
         id ?: return ItemStack(Material.PAPER)
+        val items = EmpirePlugin.empireItems.empireItems
         val itemStack = items[id] ?: ItemStack(Material.PAPER)
         val itemMeta = itemStack.itemMeta?:return itemStack
         itemMeta.setDisplayName(page)
@@ -52,31 +61,33 @@ abstract class PaginatedMenu(playerMenuUtility: PlayerMenuUtility?) : Menu(playe
     }
 
 
+    public fun getPrevButtonIndex() = menuSize-8-1
+    public fun getBackButtonIndex() = menuSize-4-1
+    public fun getNextButtonIndex() = menuSize-1
+
     fun addManageButtons() {
         if (page >= 1)
             inventory.setItem(
-                maxItemsPerPage,
-                setItem(
-                    ChatColor.GREEN.toString() + "<- Пред. страница",
-                    EmpirePlugin.empireItems.empireItems,
+                getPrevButtonIndex(),
+                setManageButton(
+                    EmpirePlugin.translations.PREV_PAGE,
                     EmpirePlugin.empireFiles.guiFile.getConfig()?.getString("settings.prev_btn")
                 )
             )
 
         inventory.setItem(
-            maxItemsPerPage+4,
-            setItem(
-                ChatColor.GREEN.toString() + "Назад",
-                EmpirePlugin.empireItems.empireItems,
+            getBackButtonIndex(),
+            setManageButton(
+                EmpirePlugin.translations.BACK_PAGE,
                 EmpirePlugin.empireFiles.guiFile.getConfig()?.getString("settings.back_btn")
             )
         )
+
         if (page < maxPages)
             inventory.setItem(
-                maxItemsPerPage+8,
-                setItem(
-                    ChatColor.GREEN.toString() + "След. страница ->",
-                    EmpirePlugin.empireItems.empireItems,
+                getNextButtonIndex(),
+                setManageButton(
+                    EmpirePlugin.translations.NEXT_PAGE,
                     EmpirePlugin.empireFiles.guiFile.getConfig()?.getString("settings.next_btn")
                 )
             )

@@ -8,11 +8,12 @@ import org.bukkit.inventory.ItemStack
 
 class WarpsMenu(playerMenuUtility: PlayerMenuUtility) : PaginatedMenu(playerMenuUtility) {
     override var menuName: String = "Варпы"
-    override val slots: Int = 18
+    override val menuSize: Int = 18
     override var maxItemsPerPage = 9
     lateinit var warpNames: Collection<String>
-
-
+    override var slotsAmount: Int =  warpNames.size
+    override var maxPages: Int =getMaxPages()
+    override var page: Int = 0
 
     private fun onEnable() {
         if (EssentialsHandler.ess == null) {
@@ -30,7 +31,7 @@ class WarpsMenu(playerMenuUtility: PlayerMenuUtility) : PaginatedMenu(playerMenu
         e.currentItem ?: return
         when (e.slot) {
             maxItemsPerPage -> {
-                reloadPage(-1)
+                loadPage(-1)
                 return
             }
             maxItemsPerPage + 4 -> {
@@ -38,7 +39,7 @@ class WarpsMenu(playerMenuUtility: PlayerMenuUtility) : PaginatedMenu(playerMenu
                 return
             }
             maxItemsPerPage + 8 -> {
-                reloadPage(+1)
+                loadPage(+1)
                 return
             }
         }

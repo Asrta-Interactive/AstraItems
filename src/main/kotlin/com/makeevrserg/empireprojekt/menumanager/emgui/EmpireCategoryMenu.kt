@@ -1,4 +1,4 @@
-package com.makeevrserg.empireprojekt.menumanager.menu
+package com.makeevrserg.empireprojekt.menumanager.emgui
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.menumanager.PaginatedMenu
@@ -14,86 +14,76 @@ class EmpireCategoryMenu(
     override var playerMenuUtility: PlayerMenuUtility,
     val slot: Int,
     override var page: Int
-
 ) : PaginatedMenu(playerMenuUtility) {
-    private var maxPage: Int
-
-    val guiConfigFile = EmpirePlugin.empireFiles.guiFile.getConfig()
-
+    override val menuSize = 54
+    override var maxItemsPerPage: Int = 45
+    override var slotsAmount: Int = EmpirePlugin.instance.guiCategories.categoriesMap.values.elementAt(slot).items.size
+    override var maxPages: Int = getMaxPages()
     private fun playInventorySound() {
-
-
         playerMenuUtility.player.playSound(
             playerMenuUtility.player.location,
-            guiConfigFile?.getString("settings.category_sound") ?: Sound.ITEM_BOOK_PAGE_TURN.name.toLowerCase(),
+            EmpirePlugin.instance.guiSettings.categorySound,
             1.0f,
             1.0f
         )
-
     }
 
     init {
-        maxPages = _getMaxPages()
-        maxPage = maxPages
         playInventorySound()
     }
 
-    private fun _getMaxPages(): Int {
-        val size: Int = plugin.categoryItems.values.elementAt(slot).items.size
-        var mP = size / maxItemsPerPage
-        mP += if (size % maxItemsPerPage > 0) 1 else 0
-        return mP - 1
-    }
 
-    override var menuName: String = EmpireUtils.HEXPattern(plugin.categoryItems.values.elementAt(slot).title)
-
-    override val slots: Int
-        get() = 54
+    override var menuName: String =
+        EmpireUtils.HEXPattern(EmpirePlugin.instance.guiCategories.categoriesMap.values.elementAt(slot).title)
 
 
     override fun handleMenu(e: InventoryClickEvent) {
         e ?: return
-
-        if (e.currentItem != null) {
-            if (e.slot == 49) {
+        e.currentItem ?: return
+        when (e.slot) {
+            getBackButtonIndex() -> {
                 e.whoClicked.closeInventory()
                 EmpireCategoriesMenu(playerMenuUtility).open()
-            } else if (e.slot == 53) {
-                if (checkLastPage())
+            }
+            getNextButtonIndex() -> {
+                if (isLastPage())
                     return
-                reloadPage(1)
-            } else if (e.slot == 45) {
-                if (checkFirstPage())
+                loadPage(1)
+            }
+            getPrevButtonIndex() -> {
+                if (isFirstPage())
                     return
-                reloadPage(-1)
-            } else {
+                loadPage(-1)
+            }
+            else -> {
                 playerMenuUtility.previousItems.clear()
                 EmpireCraftMenu(
                     playerMenuUtility,
                     slot,
                     page,
-                    plugin.categoryItems.values.elementAt(slot).items[page * maxItemsPerPage + e.slot],
+                    EmpirePlugin.instance.guiCategories.categoriesMap.values.elementAt(slot).items[page * maxItemsPerPage + e.slot],
                     0
                 ).open()
             }
         }
+
     }
 
 
     override fun setMenuItems() {
         addManageButtons()
-        for (i in 0 until super.maxItemsPerPage) {
-            index = super.maxItemsPerPage * page + i
-            if (index >= plugin.categoryItems.values.elementAt(slot).items.size)
+        for (i in 0 until maxItemsPerPage) {
+            val index = getIndex(i)
+            if (index >= EmpirePlugin.instance.guiCategories.categoriesMap.values.elementAt(slot).items.size)
                 return
 
-            val menuItem: String = plugin.categoryItems.values.elementAt(slot).items[index]
+            val menuItem: String = EmpirePlugin.instance.guiCategories.categoriesMap.values.elementAt(slot).items[index]
 
             val itemStack: ItemStack = EmpirePlugin.empireItems.empireItems[menuItem]?.clone() ?: (ItemStack(
                 Material.getMaterial(menuItem) ?: Material.PAPER
             ))
 
-            inventory.setItem(i, itemStack)
+            inventory.setItem(i, itemStack.clone())
         }
     }
 }

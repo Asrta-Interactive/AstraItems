@@ -9,10 +9,12 @@ import org.bukkit.inventory.ItemStack
 
 class HomesMenu(playerMenuUtility: PlayerMenuUtility):PaginatedMenu(playerMenuUtility) {
     override var menuName: String = "Ваши дома"
-    override val slots: Int = 18
+    override val menuSize: Int = 18
     override var maxItemsPerPage = 9
     private lateinit var user:User
-
+    override var slotsAmount: Int = user.homes.size
+    override var maxPages: Int = getMaxPages()
+    override var page: Int = 0
 
     private fun onEnable(){
         if (EssentialsHandler.ess == null){
@@ -20,7 +22,6 @@ class HomesMenu(playerMenuUtility: PlayerMenuUtility):PaginatedMenu(playerMenuUt
             return
         }
         user = EssentialsHandler.ess!!.getUser(playerMenuUtility.player)
-        maxPages = user.homes.size/maxItemsPerPage
     }
     init {
         onEnable()
@@ -30,7 +31,7 @@ class HomesMenu(playerMenuUtility: PlayerMenuUtility):PaginatedMenu(playerMenuUt
         e.currentItem ?: return
         when (e.slot){
             maxItemsPerPage->{
-                reloadPage(-1)
+                loadPage(-1)
                 return
             }
             maxItemsPerPage+4->{
@@ -38,7 +39,7 @@ class HomesMenu(playerMenuUtility: PlayerMenuUtility):PaginatedMenu(playerMenuUt
                 return
             }
             maxItemsPerPage+8->{
-                reloadPage(+1)
+                loadPage(+1)
                 return
             }
         }

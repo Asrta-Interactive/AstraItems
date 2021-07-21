@@ -9,7 +9,6 @@ class MenuListener() : Listener {
     val plugin: EmpirePlugin = EmpirePlugin.instance
     @EventHandler
     fun onMenuClick(e: InventoryClickEvent) {
-
         val holder = e.clickedInventory?.holder?:return
         if (e.view.topInventory.holder is Menu)
             e.isCancelled = true

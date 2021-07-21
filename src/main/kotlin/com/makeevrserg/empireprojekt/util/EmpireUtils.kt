@@ -6,6 +6,7 @@ import net.md_5.bungee.api.ChatColor
 import org.bukkit.Material
 import org.bukkit.block.BlockFace
 import org.bukkit.block.data.MultipleFacing
+import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -20,6 +21,12 @@ import java.net.URL
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
+public fun ConfigurationSection.getHEXString(path: String, def: String): String {
+    return EmpireUtils.HEXPattern(getString(path, def)!!)
+}
+public fun ConfigurationSection.getHEXStringList(path: String): List<String> {
+    return EmpireUtils.HEXPattern(getStringList(path))
+}
 class EmpireUtils {
     public class LambdaRunnable(private val function: Runnable) : BukkitRunnable() {
         override fun run() {
@@ -28,7 +35,9 @@ class EmpireUtils {
     }
 
     companion object {
-
+        public fun getItemStackByName(str: String): ItemStack {
+            return EmpirePlugin.empireItems.empireItems[str] ?: ItemStack(Material.getMaterial(str) ?: Material.PAPER)
+        }
 
         public fun getSkinByPlayerName(player: Player? = null, name: String): Array<String>? {
             try {
@@ -116,7 +125,13 @@ class EmpireUtils {
             }
             return line.replace("<<>>", ":")
         }
-
+        @JvmName("HEXPattern1")
+        fun HEXPattern(_list: List<String>?): List<String> {
+            val list = _list?.toMutableList()?:return mutableListOf()
+            list ?: return mutableListOf()
+            for (i in list.indices) list[i] = HEXPattern(list[i])
+            return list
+        }
         fun HEXPattern(list: MutableList<String>?): List<String> {
             list ?: return mutableListOf()
             for (i in list.indices) list[i] = HEXPattern(list[i])
