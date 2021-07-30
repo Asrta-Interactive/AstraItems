@@ -6,7 +6,7 @@ import com.makeevrserg.empireprojekt.commands.CommandManager
 import com.makeevrserg.empireprojekt.util.CraftEvent
 import com.makeevrserg.empireprojekt.events.GenericListener
 import com.makeevrserg.empireprojekt.events.ItemUpgradeEvent
-import com.makeevrserg.empireprojekt.events.genericevents.ItemDropListener
+import com.makeevrserg.empireprojekt.events.genericevents.drop.ItemDropListener
 import com.makeevrserg.empireprojekt.items.EmpireItems
 import com.makeevrserg.empireprojekt.menumanager.emgui.settings.GuiCategories
 import com.makeevrserg.empireprojekt.menumanager.emgui.settings.GuiSettings
@@ -95,7 +95,8 @@ class EmpirePlugin : JavaPlugin() {
         empireConstants = EmpireConstats()
         translations = Translations()
         empireFiles = Files()
-        EmpirePlugin.config = EmpireConfig(empireFiles.configFile.getConfig())
+        EmpirePlugin.config = EmpireConfig.create()
+        println(EmpirePlugin.config)
         empireSounds = EmpireSounds()
         empireFontImages = EmpireFontImages(empireFiles.fontImagesFile.getConfig())
         empireItems = EmpireItems()
@@ -107,6 +108,8 @@ class EmpirePlugin : JavaPlugin() {
 //                empireFiles.guiFile.getConfig()?.getConfigurationSection("categories")
 //            ).categoriesMap
         getEveryDrop = genericListener._itemDropListener.everyDropByItem
+
+
 
         _craftEvent = CraftEvent()
         empireSounds.getSounds()

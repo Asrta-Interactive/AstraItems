@@ -2,11 +2,15 @@ package com.makeevrserg.empireprojekt.items
 
 import com.makeevrserg.empireprojekt.ESSENTIALS.MusicDiscsEvent
 import com.makeevrserg.empireprojekt.EmpirePlugin
+import com.makeevrserg.empireprojekt.util.EmpireYamlParser
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 import com.makeevrserg.empireprojekt.util.files.FileManager
 import org.bukkit.Material
+import org.bukkit.attribute.Attribute
+import org.bukkit.enchantments.Enchantment
+import org.bukkit.inventory.ItemFlag
 import java.io.File
 import java.lang.NullPointerException
 
@@ -45,7 +49,19 @@ class EmpireItems {
 //    ) {
 //        //val permission: String = "empireitems.$id"
 //    }
-
+data class EmpireItemTest(
+    var namespace: String,
+    var id: String,
+    var displayName: String,
+    var lore: List<String>,
+    var material: Material,
+    var texturePath: String?,
+    var modelPath: String?,
+    var customModelData: Int,
+    var durability: Int?,
+    var musicDisc: String?,
+    var empireBlock: Block?
+)
 
     init {
 
@@ -60,6 +76,7 @@ class EmpireItems {
             for (itemID: String in empireFileConfig.getConfigurationSection("yml_items")!!.getKeys(false)) {
                 val itemConfig: ConfigurationSection =
                     empireFileConfig.getConfigurationSection("yml_items")!!.getConfigurationSection(itemID)!!
+
 
                 var item: EmpireItem? = null
                 try {

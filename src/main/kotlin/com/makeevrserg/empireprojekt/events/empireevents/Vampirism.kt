@@ -1,4 +1,4 @@
-package com.makeevrserg.empireprojekt.events.enchants
+package com.makeevrserg.empireprojekt.events.empireevents
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.instance

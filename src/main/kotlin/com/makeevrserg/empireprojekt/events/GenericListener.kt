@@ -1,22 +1,20 @@
 package com.makeevrserg.empireprojekt.events
 
-import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.instance
 import com.makeevrserg.empireprojekt.ESSENTIALS.AutoBlockChangeEvent
 import com.makeevrserg.empireprojekt.ESSENTIALS.MusicDiscsEvent
-import com.makeevrserg.empireprojekt.events.empireevents.*
-import com.makeevrserg.empireprojekt.events.genericevents.ExperienceRepairEvent
-import com.makeevrserg.empireprojekt.events.genericevents.ItemDropListener
-import com.makeevrserg.empireprojekt.events.genericevents.ItemInteractListener
 import com.makeevrserg.empireprojekt.ESSENTIALS.sit.SitEvent
+import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.events.blocks.events.MushroomBlockEventHandler
-import com.makeevrserg.empireprojekt.events.enchants.Vampirism
+import com.makeevrserg.empireprojekt.events.empireevents.*
+import com.makeevrserg.empireprojekt.events.empireevents.Vampirism
+import com.makeevrserg.empireprojekt.events.genericevents.ExperienceRepairEvent
+import com.makeevrserg.empireprojekt.events.genericevents.ItemInteractListener
+import com.makeevrserg.empireprojekt.events.genericevents.drop.ItemDropListener
 import com.makeevrserg.empireprojekt.menumanager.MenuListener
-
 
 
 //Mananger for all of events
 class GenericListener {
-
 
     private var _itemInteractListener: ItemInteractListener = ItemInteractListener()
     var _itemDropListener: ItemDropListener = ItemDropListener()
@@ -35,6 +33,7 @@ class GenericListener {
     private var _autoBlockChange = AutoBlockChangeEvent()
     val mushroomBlockEventHandler = MushroomBlockEventHandler()
     private var _empireMusicDiscs = MusicDiscsEvent()
+
     //private var _loreBooks = LoreBooks()
     //private var _empireMobs = EmpireMobs()
     private var empireFixEvent = EmpireItemFixEvent()
@@ -47,7 +46,7 @@ class GenericListener {
         _resourcePackEvent.onDisable()
         _grenadeEventEvend.onDisable()
         _hammerEvent.onDisable()
-        instance.server.pluginManager.getPlugin("protocollib")?.let {
+        EmpirePlugin.instance.server.pluginManager.getPlugin("protocollib")?.let {
             _Font_protocolLibEvent.onDisable()
         }
         _lavaWalkerEvent.onDisable()

@@ -10,6 +10,7 @@ class MushroomBlockEventHandler {
     val mushroomBreakEvent = MushroomBlockBreakEvent()
     val hardnessEvent = BlockHardnessEvent()
     var blockGenerationEvent: BlockGenerationEvent? = null
+    val blockTestEvent = MushroomBlockTestEvent()
 
     init {
         if (EmpirePlugin.config.generateBlocks)
@@ -22,6 +23,7 @@ class MushroomBlockEventHandler {
         mushroomCancelEvent.onDisable()
         mushroomBreakEvent.onDisable()
         hardnessEvent.onDisable()
+        blockTestEvent.onDisable()
         if (blockGenerationEvent != null)
             blockGenerationEvent!!.onDisable()
 

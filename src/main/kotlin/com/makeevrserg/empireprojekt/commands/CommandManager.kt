@@ -95,14 +95,7 @@ class CommandManager() : CommandExecutor {
                 val amount = item.amount
 
                 val durability = item.durability
-                item = EmpirePlugin.empireItems.empireItems[id]!!
-                val newMeta = item.itemMeta ?: return true
-
-                for (ench in meta.enchants)
-                    newMeta.addEnchant(ench.key, ench.value, true)
-
-
-                item.itemMeta = newMeta
+                item = EmpirePlugin.empireItems.empireItems[id]?.clone()?:return true
                 item.amount = amount
                 item.durability = durability
                 sender.inventory.setItemInMainHand(item)

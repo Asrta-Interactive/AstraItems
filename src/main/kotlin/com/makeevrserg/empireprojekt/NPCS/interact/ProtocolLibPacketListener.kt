@@ -18,32 +18,40 @@ class ProtocolLibPacketListener {
     private fun initPackerListener() {
         packetListener = object : PacketAdapter(
             EmpirePlugin.instance,
-            ListenerPriority.HIGHEST,
+            ListenerPriority.NORMAL,
             PacketType.Play.Client.USE_ENTITY
         ) {
             override fun onPacketReceiving(event: PacketEvent) {
                 val packet = event.packet
                 val player = event.player
-                for (i in 0 until packet.enumEntityUseActions.size()) {
-                    if (!packet.enumEntityUseActions.read(i).action.toString().equals("INTERACT", ignoreCase = true))
-                        continue
-                    if (packet.enumEntityUseActions.read(i).hand == EnumWrappers.Hand.OFF_HAND)
-                        continue
-                    var npcID: Int? = null
-                    for (j in 0 until packet.integers.size())
-                        if (!packet.integers.getField(j).name.equals("a"))
+                Bukkit.getScheduler().runTaskAsynchronously(EmpirePlugin.instance, Runnable{
+                    for (i in 0 until packet.enumEntityUseActions.size()) {
+                        if (!packet.enumEntityUseActions.read(i).action.toString().equals("INTERACT", ignoreCase = true))
                             continue
-                        else
-                            npcID = packet.integers.read(j)
-                    npcID ?: return
+                        if (packet.enumEntityUseActions.read(i).hand == EnumWrappers.Hand.OFF_HAND)
+                            continue
+                        var npcID: Int? = null
+                        for (j in 0 until packet.integers.size())
+                            if (!packet.integers.getField(j).name.equals("a"))
+                                continue
+                            else
+                                npcID = packet.integers.read(j)
+                        npcID ?: continue
 
-                    for (npc in NPCManager.NPC)
-                        if (npc.id == npcID)
-                            Bukkit.getScheduler().scheduleSyncDelayedTask(EmpirePlugin.instance) {
-                                EmpirePlugin.instance.server.pluginManager.callEvent(RightClickNPC(player, npc))
-                            }
+                        println(npcID)
+                        println(NPCManager.NPCByID.keys)
+                        Bukkit.getScheduler().scheduleSyncDelayedTask(EmpirePlugin.instance) {
+                            EmpirePlugin.instance.server.pluginManager.callEvent(
+                                RightClickNPC(
+                                    player,
+                                    NPCManager.NPCByID[npcID] ?: return@scheduleSyncDelayedTask
+                                )
+                            )
+                        }
 
-                }
+                    }
+                })
+
             }
 
             override fun onPacketSending(event: PacketEvent) {

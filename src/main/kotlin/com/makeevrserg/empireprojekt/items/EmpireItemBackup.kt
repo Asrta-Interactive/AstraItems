@@ -171,6 +171,8 @@ data class EmpireItem(
 
     private fun ItemMeta.setDurability() {
         durability ?: return
+        if (durability==0)
+            return
         this.persistentDataContainer.set(
             EmpirePlugin.empireConstants.EMPIRE_DURABILITY,
             PersistentDataType.INTEGER,

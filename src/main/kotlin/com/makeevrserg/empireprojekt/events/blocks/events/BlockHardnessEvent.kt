@@ -6,6 +6,7 @@ import net.minecraft.core.BlockPosition
 import net.minecraft.network.protocol.game.PacketPlayOutBlockBreakAnimation
 import org.bukkit.block.Block
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer
+import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -15,12 +16,14 @@ import org.bukkit.event.player.PlayerAnimationEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
+import kotlin.random.Random
 
-class BlockHardnessEvent:Listener {
+class BlockHardnessEvent : Listener {
     init {
         EmpirePlugin.instance.server.pluginManager.registerEvents(this, EmpirePlugin.instance)
     }
-    public fun onDisable(){
+
+    public fun onDisable() {
         BlockBreakEvent.getHandlerList().unregister(this)
         PlayerAnimationEvent.getHandlerList().unregister(this)
         BlockBreakEvent.getHandlerList().unregister(this)
@@ -29,33 +32,41 @@ class BlockHardnessEvent:Listener {
     }
 
 
+    data class BreakTimeID(
+        val time: Long = System.currentTimeMillis(),
+        val id: Int = Random.nextInt(6000)
+    )
 
-    val blockDamageMap = mutableMapOf<Player, Long>()
+    val blockDamageMap = mutableMapOf<Player, BreakTimeID>()
 
     @EventHandler
-    fun playerQuitEvent(e:PlayerQuitEvent){
+    fun playerQuitEvent(e: PlayerQuitEvent) {
         blockDamageMap.remove(e.player)
     }
+
     @EventHandler
     fun BlockDamageEvent(e: BlockDamageEvent) {
-        MushroomBlockApi.getBlockData(e.block)?:return
-        e.player.sendBlockBreakPacket(e.block, 10)
-        blockDamageMap[e.player] = System.currentTimeMillis()
+        MushroomBlockApi.getBlockData(e.block) ?: return
+        e.player.sendBlockBreakPacket(e.block, 100)
+        blockDamageMap[e.player] = BreakTimeID()
+        e.player.sendBlockBreakPacket(e.block, 100)
     }
+
     @EventHandler
     fun BlockBreakEvent(e: BlockBreakEvent) {
+        e.player.sendBlockBreakPacket(e.block, 100)
         blockDamageMap.remove(e.player)
-        e.player.sendBlockBreakPacket(e.block, 10)
     }
 
     private fun Player.sendBlockBreakPacket(block: Block, breakProgress: Int) {
         val packet = PacketPlayOutBlockBreakAnimation(
-            10,
+            blockDamageMap[player]?.id ?: player?.entityId ?: return,
             BlockPosition(block.x, block.y, block.z),
             breakProgress
         )
         (this as CraftPlayer).handle.b.sendPacket(packet)
     }
+
 
     @EventHandler
     fun playerBreakingEvent(e: PlayerAnimationEvent) {
@@ -64,11 +75,12 @@ class BlockHardnessEvent:Listener {
         val data = MushroomBlockApi.getBlockData(block) ?: return
         val id = EmpirePlugin.empireItems._empireBlocksByData[data] ?: return
         val empireBlock = EmpirePlugin.empireItems._empireBlocks[id] ?: return
-        val time = System.currentTimeMillis().minus(blockDamageMap[e.player] ?: return) / 10.0
+        val digMultiplier = e.player.inventory.itemInMainHand.enchantments[Enchantment.DIG_SPEED] ?: 1
+        val time = (System.currentTimeMillis().minus(blockDamageMap[e.player]?.time ?: return) / 10.0) * digMultiplier
         player.sendBlockBreakPacket(block, (time / empireBlock.hardness.toDouble() * 9).toInt())
         if (time > empireBlock.hardness) {
             player.breakBlock(block)
-            player.sendBlockBreakPacket(block, 10)
+            player.sendBlockBreakPacket(block, 100)
         }
 
         player.addPotionEffect(

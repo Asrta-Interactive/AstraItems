@@ -1,40 +1,37 @@
 package com.makeevrserg.empireprojekt.util
 
+import com.google.gson.annotations.SerializedName
+import com.makeevrserg.empireprojekt.EmpirePlugin
 import org.bukkit.configuration.file.FileConfiguration
 
-class EmpireConfig(fileConfig: FileConfiguration?) {
-    lateinit var resourcePackRef: String
-    var downloadPackOnJoin: Boolean = false
-    lateinit var tabPrefix: String
-    private var isUpgradeEnabled: Boolean = true
-    var vampirismMultiplier: Double = 0.05
-    private var upgradeCostMultiplier: Double = 0.05
-    private var onJoinResourcePackTimeStay:Int = 200
-    public var generateBlocks:Boolean = false
-    public var generatingDebug:Boolean = false
-    public var itemUpgradeBreakMultiplier:Int = 5
-
-
-    private fun initConfig(fileConfig: FileConfiguration?) {
-        fileConfig ?: return
-        resourcePackRef = fileConfig.getString("resourcePack") ?: ""
-        downloadPackOnJoin = fileConfig.getBoolean("downloadResourcePackOnJoin", false)
-        tabPrefix = fileConfig.getString("tab_prefix", "") ?: ""
-        isUpgradeEnabled = fileConfig.getBoolean("isUpgradeEnabled", true)
-        vampirismMultiplier = fileConfig.getDouble("vampirismMultiplier", 0.05)
-        upgradeCostMultiplier = fileConfig.getDouble("upgradeCostMultiplier", 1.0)
-        onJoinResourcePackTimeStay = fileConfig.getInt("onJoinResourcePackTimeStay", 200)
-        generateBlocks = fileConfig.getBoolean("generate_blocks", false)
-        generatingDebug = fileConfig.getBoolean("debug_generating", false)
-        itemUpgradeBreakMultiplier = fileConfig.getInt("item_upgrade_break_multiplier", 30)
-
-
+data class EmpireConfig(
+    @SerializedName("resourcePack")
+    var resourcePackRef: String="",
+    @SerializedName("downloadResourcePackOnJoin")
+    var downloadPackOnJoin: Boolean = false,
+    @SerializedName("tab_prefix")
+    var tabPrefix: String="",
+    @SerializedName("upgradeEnabled")
+    private var isUpgradeEnabled: Boolean = true,
+    @SerializedName("vampirismMultiplier")
+    var vampirismMultiplier: Double = 0.05,
+    @SerializedName("upgradeCostMultiplier")
+    private var upgradeCostMultiplier: Double = 0.05,
+    @SerializedName("onJoinResourcePackTimeStay")
+    private var onJoinResourcePackTimeStay: Int = 200,
+    @SerializedName("generate_blocks")
+    public var generateBlocks: Boolean = false,
+    @SerializedName("debug_generating")
+    public var generatingDebug: Boolean = false,
+    @SerializedName("item_upgrade_break_multiplier")
+    public var itemUpgradeBreakMultiplier: Int = 5
+) {
+    companion object {
+        public fun create(): EmpireConfig {
+            return EmpireYamlParser.parseYamlConfig(
+                EmpirePlugin.empireFiles.configFile.getConfig(),
+                EmpireConfig::class.java
+            )?:EmpireConfig()
+        }
     }
-
-    init {
-        initConfig(fileConfig)
-
-    }
-
-
 }

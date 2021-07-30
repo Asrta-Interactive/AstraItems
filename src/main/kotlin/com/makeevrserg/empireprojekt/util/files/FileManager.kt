@@ -38,6 +38,10 @@ public class FileManager(var configName:String){
         if (this.dataConfig == null) reloadConfig()
         return this.dataConfig
     }
+    fun getFile(): File? {
+        if (this.dataConfig == null) reloadConfig()
+        return this.configFiles
+    }
 
     fun LoadFiles() {
         configFiles = File(EmpirePlugin.instance.dataFolder, configName)

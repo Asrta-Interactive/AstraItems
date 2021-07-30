@@ -42,6 +42,7 @@ class NPCManager {
 
 
         public val NPC: MutableList<EmpireNPC> = mutableListOf()
+        public val NPCByID:MutableMap<Int,EmpireNPC> = mutableMapOf()
         public val NPCMap: MutableMap<String, EmpireNPC> = mutableMapOf()
 
         public fun createNPC(player: Player, name: String, skin: String? = null) {
@@ -49,6 +50,7 @@ class NPCManager {
             npc.Create(player, name, skin)
             NPC.add(npc)
             NPCMap[name] = npc
+            NPCByID[npc.id] = npc
         }
 
         private fun Player.hideNPC(npc: EmpireNPC) {
@@ -103,11 +105,13 @@ class NPCManager {
         public fun addNPC(npc: EmpireNPC) {
             NPCManager.NPC.add(npc)
             NPCManager.NPCMap[npc.name] = npc
+            NPCByID[npc.id] = npc
         }
 
         public fun changeNPC(npc: EmpireNPC) {
             NPC[NPC.indexOf(npc)] = npc
             NPCManager.NPCMap[npc.name] = npc
+            NPCByID[npc.id] = npc
 
         }
 
@@ -120,6 +124,7 @@ class NPCManager {
             val npc = selectedNPC[player] ?: NPCMap[npcID] ?: return
             NPC.removeAt(NPC.indexOf(npc))
             NPCMap.remove(npc.name)
+            NPCByID.remove(npc.id)
             npc.hideNPCFromOnlinePlayers()
             EmpirePlugin.empireFiles.npcs.getConfig()!!.set("npcs.${npc.name}", null)
             EmpirePlugin.empireFiles.npcs.saveConfig()

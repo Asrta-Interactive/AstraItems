@@ -1,4 +1,4 @@
-package com.makeevrserg.empireprojekt.events.genericevents
+package com.makeevrserg.empireprojekt.events.genericevents.drop
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.instance

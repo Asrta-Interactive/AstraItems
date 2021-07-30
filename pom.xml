@@ -24,17 +24,17 @@
             <id>mavenCentral</id>
             <url>https://repo1.maven.org/maven2/</url>
         </repository>
-<!--        ProtoclLib-->
+        <!--        ProtoclLib-->
         <repository>
             <id>dmulloy2-repo</id>
             <url>https://repo.dmulloy2.net/repository/public/</url>
         </repository>
-<!--        PaperMC-->
+        <!--        PaperMC-->
         <repository>
             <id>papermc</id>
             <url>https://papermc.io/repo/repository/maven-public/</url>
         </repository>
-<!--        Spigot-->
+        <!--        Spigot-->
         <repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
@@ -43,17 +43,17 @@
             <id>dmulloy2-repo</id>
             <url>https://repo.dmulloy2.net/repository/public/</url>
         </repository>
-<!--        PlaceholderAPI-->
+        <!--        PlaceholderAPI-->
         <repository>
             <id>placeholderapi</id>
             <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
-<!--        WorldGuard-->
+        <!--        WorldGuard-->
         <repository>
             <id>sk89q-repo</id>
             <url>https://maven.enginehub.org/repo/</url>
         </repository>
-<!--        Essentials-->
+        <!--        Essentials-->
         <repository>
             <id>essentials-snapshots</id>
             <url>https://repo.essentialsx.net/snapshots/</url>
@@ -94,48 +94,48 @@
 
 
     <dependencies>
-<!--        Essentials-->
+        <!--        Essentials-->
         <dependency>
             <groupId>net.essentialsx</groupId>
             <artifactId>EssentialsX</artifactId>
             <version>2.19.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
-<!--        Paper-->
+        <!--        Paper-->
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
             <version>1.17.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
-<!--        Spigot-->
+        <!--        Spigot-->
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
             <version>1.17.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
-<!--        ProtoclLib-->
+        <!--        ProtoclLib-->
         <dependency>
             <groupId>com.comphenix.protocol</groupId>
             <artifactId>ProtocolLib</artifactId>
             <version>4.7.0</version>
         </dependency>
-<!--        PlaceholderAPI-->
+        <!--        PlaceholderAPI-->
         <dependency>
             <groupId>me.clip</groupId>
             <artifactId>placeholderapi</artifactId>
             <version>2.10.9</version>
             <scope>provided</scope>
         </dependency>
-<!--        WorldGuard-->
+        <!--        WorldGuard-->
         <dependency>
             <groupId>com.sk89q.worldguard</groupId>
             <artifactId>worldguard-bukkit</artifactId>
             <version>7.0.5</version>
             <scope>provided</scope>
         </dependency>
-<!--        Kotlin-->
+        <!--        Kotlin-->
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib-jdk8</artifactId>

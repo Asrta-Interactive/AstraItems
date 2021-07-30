@@ -18,6 +18,9 @@ class MushroomBlockBreakEvent:Listener {
 
     @EventHandler
     fun blockBreak(e:BlockBreakEvent){
+        if (e.isCancelled)
+            return
+
         val player = e.player
         val block = e.block
         val data = MushroomBlockApi.getBlockData(block)?:return

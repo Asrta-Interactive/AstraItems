@@ -2,6 +2,7 @@ package com.makeevrserg.empireprojekt.events.genericevents
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.instance
+import com.makeevrserg.empireprojekt.util.EmpireUtils
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.PrepareAnvilEvent
@@ -56,7 +57,7 @@ class ExperienceRepairEvent : Listener {
     private fun changeDurability(itemStack: ItemStack?, damage: Int) {
         itemStack ?: return
         val itemMeta: ItemMeta = itemStack.itemMeta ?: return
-        val maxCustomDurability: Int = itemMeta.persistentDataContainer.get(
+        var maxCustomDurability: Int = itemMeta.persistentDataContainer.get(
             EmpirePlugin.empireConstants.MAX_CUSTOM_DURABILITY,
             PersistentDataType.INTEGER
         ) ?: return
@@ -66,6 +67,7 @@ class ExperienceRepairEvent : Listener {
             PersistentDataType.INTEGER
         ) ?: return
 
+        println("Durability ${EmpireUtils.getEmpireID(itemStack)}")
 
         empireDurability += damage
 
@@ -84,6 +86,8 @@ class ExperienceRepairEvent : Listener {
         )
         itemStack.itemMeta = itemMeta
 
+        if (maxCustomDurability==0)
+            maxCustomDurability = itemStack.type.maxDurability.toInt()
         val d: Int = itemStack.type.maxDurability -
                 itemStack.type.maxDurability * empireDurability / maxCustomDurability
         itemStack.durability = d.toShort()

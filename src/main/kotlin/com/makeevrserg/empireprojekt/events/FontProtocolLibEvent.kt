@@ -120,5 +120,8 @@ class FontProtocolLibEvent:Listener {
             initPackerListener()
             EmpirePlugin.instance.server.pluginManager.registerEvents(this, EmpirePlugin.instance)
         }
+        for (player in Bukkit.getOnlinePlayers())
+            changePlayerTabName(player)
+
     }
 }
