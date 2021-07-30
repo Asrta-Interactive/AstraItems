@@ -10,6 +10,8 @@ import com.makeevrserg.empireprojekt.events.empireevents.Vampirism
 import com.makeevrserg.empireprojekt.events.genericevents.ExperienceRepairEvent
 import com.makeevrserg.empireprojekt.events.genericevents.ItemInteractListener
 import com.makeevrserg.empireprojekt.events.genericevents.drop.ItemDropListener
+import com.makeevrserg.empireprojekt.events.mobs.EmpireMobs
+import com.makeevrserg.empireprojekt.events.mobs.EntitySoundEvent
 import com.makeevrserg.empireprojekt.menumanager.MenuListener
 
 
@@ -35,7 +37,6 @@ class GenericListener {
     private var _empireMusicDiscs = MusicDiscsEvent()
 
     //private var _loreBooks = LoreBooks()
-    //private var _empireMobs = EmpireMobs()
     private var empireFixEvent = EmpireItemFixEvent()
     fun onDisable() {
         _itemInteractListener.onDisable()
@@ -59,7 +60,6 @@ class GenericListener {
         empireFixEvent.onDisable()
         mushroomBlockEventHandler.onDisable()
         //_loreBooks.onDisable()
-        //_empireMobs.onDisable()
         //_empireBlock.onDisable()
     }
 }

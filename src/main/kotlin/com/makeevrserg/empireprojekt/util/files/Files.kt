@@ -30,6 +30,8 @@ public class Files() {
         FileManager("config" + File.separator + "lore_books.yml")
     val npcs: FileManager =
         FileManager("config" + File.separator + "npcs.yml")
+    val tempChunks: FileManager =
+        FileManager("temp" + File.separator + "generated_chunks.yml")
     val empireItemsFiles: MutableList<FileManager> = mutableListOf()
 
     val _soundsFile: FileManager = FileManager("config" + File.separator + "sounds.yml")

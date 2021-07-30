@@ -74,9 +74,9 @@ class ItemInteractListener : Listener {
 
     @EventHandler
     fun onEntityDamage(event: EntityDamageEvent) {
-        if (event.entity is Player) {
+        if (event.entity is Player)
             initEventByHandler(event.entity as Player, event.eventName)
-        }
+
     }
 
 

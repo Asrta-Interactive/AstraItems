@@ -7,6 +7,7 @@ import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
+import javax.print.DocFlavor
 
 
 class Translations {
@@ -78,6 +79,8 @@ class Translations {
     val ITEM_INFO_DROP: String = text.getHEXString("ITEM_INFO_DROP", "Выпадает из")
     val ITEM_INFO_DROP_COLOR: String = text.getHEXString("ITEM_INFO_DROP_COLOR: String", "#47ad5f")
 
+
+    val MOB_WRON_PARSE:String = text.getHEXString("MOB_WRON_PARSE", "#f55442 Ошибка при парсинге моба: ")
 
     val PREV_PAGE: String = text.getHEXString("PREV_PAGE", ChatColor.GREEN.toString() + "<- Пред. страница")
     val BACK_PAGE: String = text.getHEXString("BACK_PAGE", ChatColor.GREEN.toString() + "Назад")

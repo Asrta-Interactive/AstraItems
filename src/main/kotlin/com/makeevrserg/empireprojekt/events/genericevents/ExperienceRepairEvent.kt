@@ -67,7 +67,7 @@ class ExperienceRepairEvent : Listener {
             PersistentDataType.INTEGER
         ) ?: return
 
-        println("Durability ${EmpireUtils.getEmpireID(itemStack)}")
+
 
         empireDurability += damage
 

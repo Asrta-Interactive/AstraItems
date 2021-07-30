@@ -7,6 +7,7 @@ import com.makeevrserg.empireprojekt.util.CraftEvent
 import com.makeevrserg.empireprojekt.events.GenericListener
 import com.makeevrserg.empireprojekt.events.ItemUpgradeEvent
 import com.makeevrserg.empireprojekt.events.genericevents.drop.ItemDropListener
+import com.makeevrserg.empireprojekt.events.mobs.EmpireMobsManager
 import com.makeevrserg.empireprojekt.items.EmpireItems
 import com.makeevrserg.empireprojekt.menumanager.emgui.settings.GuiCategories
 import com.makeevrserg.empireprojekt.menumanager.emgui.settings.GuiSettings
@@ -33,6 +34,10 @@ class EmpirePlugin : JavaPlugin() {
 
         //Items instance
         lateinit var empireItems: EmpireItems
+            private set
+
+        //Items instance
+        lateinit var empireMobs: EmpireMobsManager
             private set
 
         //Translations instance
@@ -100,6 +105,7 @@ class EmpirePlugin : JavaPlugin() {
         empireSounds = EmpireSounds()
         empireFontImages = EmpireFontImages(empireFiles.fontImagesFile.getConfig())
         empireItems = EmpireItems()
+        empireMobs = EmpireMobsManager()
         genericListener = GenericListener()
         commandManager = CommandManager()
         essentialsHomesHandler = EssentialsHandler()
@@ -122,7 +128,7 @@ class EmpirePlugin : JavaPlugin() {
             println(translations.PLUGIN_PROTOCOLLIB_NOT_INSTALLED)
 
         //Beta plugin countdown
-        //PluginBetaAccessCheck()
+        PluginBetaAccessCheck()
 
     }
 
@@ -158,6 +164,7 @@ class EmpirePlugin : JavaPlugin() {
         if (npcManager != null)
             npcManager!!.onDisable()
         genericListener.onDisable()
+        empireMobs.onDisable()
         server.scheduler.cancelTasks(this)
         val ite = server.recipeIterator()
         var recipe: Recipe?

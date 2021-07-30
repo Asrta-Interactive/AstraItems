@@ -28,6 +28,10 @@ import java.util.regex.Pattern
 public fun ConfigurationSection.getHEXString(path: String, def: String): String {
     return EmpireUtils.HEXPattern(getString(path, def)!!)
 }
+public fun ConfigurationSection.getHEXString(path: String): String? {
+
+    return EmpireUtils.HEXPattern(getString(path)?:return  null)
+}
 public fun ConfigurationSection.getHEXStringList(path: String): List<String> {
     return EmpireUtils.HEXPattern(getStringList(path))
 }

@@ -21,6 +21,8 @@ data class EmpireConfig(
     private var onJoinResourcePackTimeStay: Int = 200,
     @SerializedName("generate_blocks")
     public var generateBlocks: Boolean = false,
+    @SerializedName("generate_only_on_new_chunks")
+    public var generateOnlyOnNewChunks: Boolean = true,
     @SerializedName("debug_generating")
     public var generatingDebug: Boolean = false,
     @SerializedName("item_upgrade_break_multiplier")
