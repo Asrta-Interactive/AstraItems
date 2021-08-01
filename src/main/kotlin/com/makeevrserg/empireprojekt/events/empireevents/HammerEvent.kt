@@ -56,7 +56,10 @@ class HammerEvent : Listener {
             if (!WorldGuard.getInstance().platform.sessionManager
                     .hasBypass(WorldGuardPlugin.inst().wrapPlayer(p), world)
             )
-                if (!query.testState(loc, WorldGuardPlugin.inst().wrapPlayer(p), Flags.BUILD,Flags.BLOCK_BREAK)) return
+                if (!query.testState(loc, WorldGuardPlugin.inst().wrapPlayer(p), Flags.BUILD,Flags.BLOCK_BREAK)) {
+                    e.isCancelled = true
+                    return
+                }
         }
         val itemStack = e.player.inventory.itemInMainHand
         val itemMeta = itemStack.itemMeta ?: return

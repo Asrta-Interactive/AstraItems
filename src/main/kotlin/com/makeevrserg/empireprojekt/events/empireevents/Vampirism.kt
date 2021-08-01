@@ -20,16 +20,17 @@ class Vampirism : Listener {
     private fun onEntityDamate(e: EntityDamageByEntityEvent) {
         if (e.damager !is Player) return
         val p = e.damager as Player
+
         val itemStack = p.inventory.itemInMainHand
         val itemMeta = itemStack.itemMeta ?: return
         val vampSize = itemMeta.persistentDataContainer
-            .get(EmpirePlugin.empireConstants.VAMPIRISM_ENCHANT, PersistentDataType.INTEGER)
+            .get(EmpirePlugin.empireConstants.VAMPIRISM_ENCHANT, PersistentDataType.DOUBLE)
             ?: return
         val damage = e.finalDamage
         val playerHealth = p.health
         val playerMaxHealth = p.maxHealth
-        val toAddHealth: Double = damage * EmpirePlugin.config.vampirismMultiplier + vampSize
-        p.health = Math.min(toAddHealth + playerHealth, playerMaxHealth)
+        val toAddHealth: Double = damage * vampSize
+        p.health = (toAddHealth + playerHealth).coerceAtMost(playerMaxHealth)
     }
 
 

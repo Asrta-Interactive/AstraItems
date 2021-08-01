@@ -2,12 +2,14 @@ package com.makeevrserg.empireprojekt.events.genericevents.drop
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.instance
+import com.makeevrserg.empireprojekt.events.blocks.MushroomBlockApi
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.entity.Entity
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.entity.EntityDeathEvent
@@ -16,69 +18,17 @@ import kotlin.random.Random
 
 class ItemDropListener : Listener {
 
-    data class ItemDrop(
-        val dropFrom: String,
-        val item: String,
-        val minAmount: Int,
-        val maxAmount: Int,
-        val chance: Double
-    )
-
-    private var mobDrops: MutableMap<String, List<ItemDrop>>
-    private var itemDrops: MutableMap<String, List<ItemDrop>>
     private val blockLocations: MutableList<Location> = mutableListOf()
 
-    var everyDropByItem: MutableMap<String, MutableList<ItemDrop>> = mutableMapOf()
 
-    private fun initDrop(section: ConfigurationSection?): MutableMap<String, List<ItemDrop>> {
-        section ?: return mutableMapOf()
-        val drop: MutableMap<String, List<ItemDrop>> = mutableMapOf()
-
-        for (entityKey in section.getKeys(false)) {
-            val list: MutableList<ItemDrop> = mutableListOf()
-            for (item in section.getConfigurationSection(entityKey)!!.getKeys(false)) {
-                val itemSect = section.getConfigurationSection(entityKey)!!.getConfigurationSection(item)!!
-                list.add(
-                    ItemDrop(
-                        entityKey,
-                        item,
-                        itemSect.getInt("min_amount", 0),
-                        itemSect.getInt("max_amount", 0),
-                        itemSect.getDouble("chance", 0.0)
-                    )
-                )
-
-            }
-            drop[entityKey] = list
-        }
-
-        return drop
-
-    }
-
-    private fun initEveryDrop() {
-        val map: MutableMap<String, List<ItemDrop>> = mutableMapOf()
-        map.putAll(mobDrops)
-        map.putAll(itemDrops)
-        for (key in map.keys) {
-            for (drop in map[key]!!) {
-                if (everyDropByItem[drop.item] == null)
-                    everyDropByItem[drop.item] = mutableListOf()
-                everyDropByItem[drop.item]!!.add(drop)
-            }
-        }
-    }
 
     init {
-        itemDrops = initDrop(EmpirePlugin.empireFiles.dropsFile.getConfig()?.getConfigurationSection("loot.blocks"))
-        mobDrops = initDrop(EmpirePlugin.empireFiles.dropsFile.getConfig()?.getConfigurationSection("loot.mobs"))
-        initEveryDrop()
         instance.server.pluginManager.registerEvents(this, instance)
     }
 
-    private fun dropItem(list: List<ItemDrop>, l: Location): Boolean {
+    private fun dropItem(list: List<ItemDropManager.ItemDrop>, l: Location): Boolean {
         var isDropped = false
-        for (drop: ItemDrop in list) {
+        for (drop: ItemDropManager.ItemDrop in list) {
             val dropChance = Random.nextDouble(0.0, 100.0)
             if (drop.chance > dropChance) {
                 isDropped = true
@@ -106,7 +56,9 @@ class ItemDropListener : Listener {
             blockLocations.removeAt(0)
 
 
-        val listDrop: List<ItemDrop> = itemDrops[block.blockData.material.name] ?: return
+        val id = EmpirePlugin.empireItems._empireBlocksByData[MushroomBlockApi.getBlockData(e.block)]
+        println(id)
+        val listDrop: List<ItemDropManager.ItemDrop> = EmpirePlugin.dropManager.itemDrops[id?:block.blockData.material.name] ?: return
         if (dropItem(listDrop, block.location))
             e.isDropItems = false
 
@@ -116,7 +68,7 @@ class ItemDropListener : Listener {
     @EventHandler
     fun onMobDeath(e: EntityDeathEvent) {
         val entity: Entity = e.entity
-        val listDrop = mobDrops[entity.type.name] ?: return
+        val listDrop = EmpirePlugin.dropManager.mobDrops[entity.type.name] ?: return
         dropItem(listDrop, entity.location)
     }
 

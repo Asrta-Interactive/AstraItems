@@ -2,7 +2,7 @@ package com.makeevrserg.empireprojekt.util
 
 import com.google.gson.annotations.SerializedName
 import com.makeevrserg.empireprojekt.EmpirePlugin
-import org.bukkit.configuration.file.FileConfiguration
+import empirelibs.EmpireYamlParser
 
 data class EmpireConfig(
     @SerializedName("resourcePack")

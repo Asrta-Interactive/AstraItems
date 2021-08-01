@@ -2,7 +2,7 @@ package com.makeevrserg.empireprojekt.events.empireevents
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.instance
-import com.makeevrserg.empireprojekt.util.EmpireUtils
+
 import com.sk89q.worldedit.bukkit.BukkitAdapter
 import com.sk89q.worldguard.WorldGuard
 import com.sk89q.worldguard.protection.flags.Flags

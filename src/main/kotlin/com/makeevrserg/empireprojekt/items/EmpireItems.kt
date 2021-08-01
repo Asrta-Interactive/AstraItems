@@ -1,16 +1,12 @@
 package com.makeevrserg.empireprojekt.items
 
-import com.makeevrserg.empireprojekt.ESSENTIALS.MusicDiscsEvent
+import com.makeevrserg.empireprojekt.essentials.MusicDiscsEvent
 import com.makeevrserg.empireprojekt.EmpirePlugin
-import com.makeevrserg.empireprojekt.util.EmpireYamlParser
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
-import com.makeevrserg.empireprojekt.util.files.FileManager
+import empirelibs.FileManager
 import org.bukkit.Material
-import org.bukkit.attribute.Attribute
-import org.bukkit.enchantments.Enchantment
-import org.bukkit.inventory.ItemFlag
 import java.io.File
 import java.lang.NullPointerException
 

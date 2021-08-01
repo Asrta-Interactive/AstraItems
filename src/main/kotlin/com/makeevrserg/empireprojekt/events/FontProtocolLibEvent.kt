@@ -5,8 +5,9 @@ import com.comphenix.protocol.ProtocolLibrary
 import com.comphenix.protocol.ProtocolManager
 import com.comphenix.protocol.events.*
 import com.makeevrserg.empireprojekt.EmpirePlugin
+import empirelibs.EmpireUtils
 
-import com.makeevrserg.empireprojekt.util.EmpireUtils
+
 import me.clip.placeholderapi.PlaceholderAPI
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent

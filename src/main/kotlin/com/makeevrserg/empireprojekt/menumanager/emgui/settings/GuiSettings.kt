@@ -1,8 +1,9 @@
 package com.makeevrserg.empireprojekt.menumanager.emgui.settings
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
-import com.makeevrserg.empireprojekt.util.EmpireUtils
-import com.makeevrserg.empireprojekt.util.getHEXString
+import empirelibs.EmpireUtils
+import empirelibs.getHEXString
+
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.configuration.ConfigurationSection

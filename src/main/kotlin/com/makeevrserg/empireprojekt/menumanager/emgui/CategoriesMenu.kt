@@ -1,15 +1,12 @@
 package com.makeevrserg.empireprojekt.menumanager.emgui
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
-import com.makeevrserg.empireprojekt.menumanager.PaginatedMenu
-import com.makeevrserg.empireprojekt.menumanager.PlayerMenuUtility
-import org.bukkit.Material
+import empirelibs.menu.PaginatedMenu
+import empirelibs.menu.PlayerMenuUtility
+import empirelibs.EmpireUtils
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemFlag
-import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
-import com.makeevrserg.empireprojekt.util.EmpireUtils
-import org.bukkit.Sound
 
 class EmpireCategoriesMenu(playerMenuUtility: PlayerMenuUtility?) :
     PaginatedMenu(playerMenuUtility) {

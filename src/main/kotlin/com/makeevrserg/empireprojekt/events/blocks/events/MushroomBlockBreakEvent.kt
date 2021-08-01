@@ -2,6 +2,7 @@ package com.makeevrserg.empireprojekt.events.blocks.events
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.events.blocks.MushroomBlockApi
+import com.makeevrserg.empireprojekt.events.genericevents.drop.ItemDropListener
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
@@ -21,13 +22,20 @@ class MushroomBlockBreakEvent:Listener {
         if (e.isCancelled)
             return
 
+
+
         val player = e.player
         val block = e.block
         val data = MushroomBlockApi.getBlockData(block)?:return
 
         val id = EmpirePlugin.empireItems._empireBlocksByData[data]?:return
 
+        if (EmpirePlugin.dropManager.itemDrops[id]!=null)
+            return
+
         e.isDropItems=false
+        val listDrop = EmpirePlugin.instance.getEveryDrop[id]//itemDrops[id?:block.blockData.material.name] ?: return
+        println(listDrop)
         block.location.world?.dropItem(block.location,EmpirePlugin.empireItems.empireItems[id]?:return)?:return
     }
 }

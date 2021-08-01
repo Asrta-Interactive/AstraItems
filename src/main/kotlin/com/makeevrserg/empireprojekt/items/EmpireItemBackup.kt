@@ -2,7 +2,8 @@ package com.makeevrserg.empireprojekt.items
 
 import com.destroystokyo.paper.ParticleBuilder
 import com.makeevrserg.empireprojekt.EmpirePlugin
-import com.makeevrserg.empireprojekt.util.EmpireUtils
+import empirelibs.EmpireUtils
+
 import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
@@ -11,6 +12,7 @@ import org.bukkit.attribute.Attribute
 import org.bukkit.attribute.AttributeModifier
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.enchantments.Enchantment
+import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
@@ -99,6 +101,7 @@ private fun getEmprieEnchants(section: ConfigurationSection?): Map<String, Doubl
     }
     return map
 }
+
 data class EmpireItem(
     val namespace: String,
     val id: String,
@@ -124,8 +127,8 @@ data class EmpireItem(
         conf.getHEXString("display_name")!!,
         conf.getHEXStringList("lore"),
         Material.getMaterial(conf.getString("material")!!)!!,
-        conf.getString("texture_path"),
-        conf.getString("model_path"),
+        conf.getString("texture_path")?.replace(".png",""),
+        conf.getString("model_path")?.replace(".json",""),
         conf.getInt("custom_model_data", -1),
         getItemFlagList(conf.getStringList("item_flags")),
         getEnchantements(conf.getConfigurationSection("enchantements")),
@@ -151,16 +154,20 @@ data class EmpireItem(
     private fun ItemMeta.addAttributes(attributes: Map<Attribute, Int>) {
         for (attribute in attributes.keys) {
             val amount = attributes[attribute]?.toDouble() ?: continue
-            this.addAttributeModifier(
-                attribute,
-                AttributeModifier(
-                    UUID.randomUUID(),
-                    attribute.name,
-                    amount,
-                    AttributeModifier.Operation.ADD_NUMBER,
-                    material.equipmentSlot
+            val slots = mutableListOf<EquipmentSlot>(material.equipmentSlot)
+            if (material.equipmentSlot == EquipmentSlot.HAND)
+                slots.add(EquipmentSlot.OFF_HAND)
+            for (slot in slots)
+                this.addAttributeModifier(
+                    attribute,
+                    AttributeModifier(
+                        UUID.randomUUID(),
+                        attribute.name,
+                        amount,
+                        AttributeModifier.Operation.ADD_NUMBER,
+                        slot
+                    )
                 )
-            )
 
         }
     }
@@ -171,7 +178,7 @@ data class EmpireItem(
 
     private fun ItemMeta.setDurability() {
         durability ?: return
-        if (durability==0)
+        if (durability == 0)
             return
         this.persistentDataContainer.set(
             EmpirePlugin.empireConstants.EMPIRE_DURABILITY,
@@ -239,8 +246,8 @@ data class Block(
     val place_sound: String?,
     val hardness: Int,
     val generate: Generate?
-){
-    companion object{
+) {
+    companion object {
         public fun getEmprieBlock(section: ConfigurationSection?): Block? {
             section ?: return null
             val block = Block(
@@ -251,7 +258,7 @@ data class Block(
                 section.getInt("hardness"),
                 Generate.getEmpireGenerateBlock(section.getConfigurationSection("generate"))
             )
-            if (block.data>=192 || block.data<0) {
+            if (block.data >= 192 || block.data < 0) {
                 println(EmpirePlugin.translations.CUSTOM_BLOCK_WRONG_VALUE)
                 return null
             }
@@ -269,20 +276,22 @@ data class Generate(
     val maxY: Int = 10,
     val minDeposite: Int = 1,
     val maxDeposite: Int = 5
-){
-    companion object{
+) {
+    companion object {
         public fun getEmpireGenerateBlock(section: ConfigurationSection?): Generate? {
             section ?: return null
             val chunk = section.getDouble("chunk", 100.0)
             val map = mutableMapOf<Material, Double>()
             for (blockName in section.getConfigurationSection("replace_blocks")?.getKeys(false) ?: return null)
                 map[Material.getMaterial(blockName) ?: continue] = section.getDouble("replace_blocks.$blockName")
-            return Generate(chunk, true, map,
+            return Generate(
+                chunk, true, map,
                 section.getInt("max_per_chunk"),
                 section.getInt("min_y"),
                 section.getInt("max_y"),
                 section.getInt("min_per_deposite"),
-                section.getInt("max_per_deposite"))
+                section.getInt("max_per_deposite")
+            )
         }
     }
 }
@@ -401,4 +410,5 @@ data class Sound(
     val volume: Double,
     val pitch: Double
 )
+
 data class Command(val command: String, val asConsole: Boolean)

@@ -2,7 +2,6 @@ package com.makeevrserg.empireprojekt.events.empireevents
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.instance
-import com.makeevrserg.empireprojekt.util.EmpireUtils
 import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace

@@ -94,8 +94,8 @@ class ResourcePackNew {
         val defaultJson =
             JsonParser().parse(InputStreamReader(plugin.getResource("rpFiles/default.json")!!).readText()).asJsonObject
         providers.add(Gson().fromJson(defaultJson, Fonts::class.java).providers[0])
-        for (font in EmpirePlugin.empireFontImages.fontsInfo.keys) {
-            val fontInfo = EmpirePlugin.empireFontImages.fontsInfo[font]!!
+        for (font in EmpirePlugin.empireFonts.fontsInfo.keys) {
+            val fontInfo = EmpirePlugin.empireFonts.fontsInfo[font]!!
             val provider = Provider(
                 "bitmap",
                 "${fontInfo.namespace}:${fontInfo.path}",

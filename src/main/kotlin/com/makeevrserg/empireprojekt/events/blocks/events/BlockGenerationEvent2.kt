@@ -1,15 +1,12 @@
 package com.makeevrserg.empireprojekt.events.blocks
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
-import com.makeevrserg.empireprojekt.util.EmpireUtils
-import com.makeevrserg.empireprojekt.util.ResourcePackNew
 import org.bukkit.Bukkit
 import org.bukkit.Chunk
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
-import org.bukkit.block.data.MultipleFacing
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.world.ChunkLoadEvent
@@ -62,12 +59,10 @@ class BlockGenerationEvent2 : Listener {
         return locations
     }
 
-    private fun replaceBlock(chunkBlock: Block, data: Int) {
-        val empireBlock = EmpirePlugin.empireItems._empireBlocksByData[data] ?: return
-        chunkBlock.type = MushroomBlockApi.getMaterialByData(data)
+    private fun replaceBlock(chunkBlock: Block,material: Material,facing:MushroomBlockApi.Multipart) {
+        chunkBlock.type = material
         val blockFacing = MushroomBlockApi.getMultipleFacing(chunkBlock) ?: return
-        val empireFacing = MushroomBlockApi.getFacingByData(data)
-        for (f in empireFacing.facing)
+        for (f in facing.facing)
             blockFacing.setFace(BlockFace.valueOf(f.key.uppercase()), f.value)
         chunkBlock.blockData = blockFacing
     }
@@ -93,6 +88,10 @@ class BlockGenerationEvent2 : Listener {
                 val generate = block.generate ?: continue
                 if (generate.chunk < Random.nextDouble(100.0))
                     continue
+
+                val material = MushroomBlockApi.getMaterialByData(block.data)
+                val facing = MushroomBlockApi.getFacingByData(block.data)
+
 
                 val maxDeposits =
                     if (generate.maxDeposite > generate.maxPerChunk) generate.maxPerChunk else generate.maxPerChunk / (generate.maxDeposite - generate.minDeposite)
@@ -127,7 +126,7 @@ class BlockGenerationEvent2 : Listener {
                         Bukkit.getScheduler().callSyncMethod(EmpirePlugin.instance) {
                             for (i in 0 until depositeAmount) {
                                 faceBlock = faceBlock.getRelative(getRandomBlockFace())
-                                replaceBlock(faceBlock, block.data)
+                                replaceBlock(faceBlock, material,facing)
 
                             }
                         }
@@ -177,7 +176,7 @@ class BlockGenerationEvent2 : Listener {
 
         if (!e.isNewChunk && EmpirePlugin.config.generateOnlyOnNewChunks)
             return
-        if (activeChunks.size < 10) {
+        if (activeChunks.size < 3) {
             activeChunks.add(chunk)
             generateChunk(chunk)
         } else

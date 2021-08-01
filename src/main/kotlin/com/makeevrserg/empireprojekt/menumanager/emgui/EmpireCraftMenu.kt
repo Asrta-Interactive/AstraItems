@@ -2,16 +2,18 @@ package com.makeevrserg.empireprojekt.menumanager.emgui
 
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
-import com.makeevrserg.empireprojekt.util.CraftEvent
-import com.makeevrserg.empireprojekt.events.genericevents.drop.ItemDropListener
-import com.makeevrserg.empireprojekt.events.ItemUpgradeEvent
-import com.makeevrserg.empireprojekt.menumanager.PaginatedMenu
-import com.makeevrserg.empireprojekt.menumanager.PlayerMenuUtility
+import com.makeevrserg.empireprojekt.util.EmpireCrafts
+import com.makeevrserg.empireprojekt.events.upgrades.ItemUpgradeEvent
+import com.makeevrserg.empireprojekt.events.genericevents.drop.ItemDropManager
+import com.makeevrserg.empireprojekt.events.upgrades.UpgradesManager
+import empirelibs.menu.PaginatedMenu
+import empirelibs.menu.PlayerMenuUtility
 import org.bukkit.Material
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
 import com.makeevrserg.empireprojekt.util.EmpirePermissions
-import com.makeevrserg.empireprojekt.util.EmpireUtils
+import empirelibs.EmpireUtils
+
 import org.bukkit.Bukkit
 import org.bukkit.NamespacedKey
 
@@ -147,7 +149,7 @@ class EmpireCraftMenu(
         val list = mutableListOf<String>()
 
         for (itemResult in EmpirePlugin.instance.recipies.keys) {
-            val itemRecipies: CraftEvent.EmpireRecipe =
+            val itemRecipies: EmpireCrafts.EmpireRecipe =
                 EmpirePlugin.instance.recipies[itemResult] ?: continue
             for (empireRecipe in itemRecipies.craftingTable) {
                 if (empireRecipe.ingredientMap.values.contains(itemStack)) {
@@ -210,10 +212,10 @@ class EmpireCraftMenu(
 
         val itemStack = getItemStack("settings.drop_btn")
         val itemMeta = itemStack.itemMeta
-        val upgrades: List<ItemUpgradeEvent.ItemUpgrade> = EmpirePlugin.instance.upgradesMap[item] ?: return null
+        val upgrades: List<UpgradesManager.ItemUpgrade> = EmpirePlugin.upgradeManager._upgradesMap[item] ?: return null
         itemMeta!!.setDisplayName(EmpirePlugin.translations.ITEM_INFO_IMPROVING)
         val lore = itemMeta.lore ?: mutableListOf()
-        for (upgrade: ItemUpgradeEvent.ItemUpgrade in upgrades) {
+        for (upgrade in upgrades) {
             if (!containValue(ItemUpgradeEvent.attrMap[upgrade.attr] ?: continue, lore))
                 lore.add(EmpirePlugin.translations.ITEM_INFO_IMPROVING_COLOR + "${ItemUpgradeEvent.attrMap[upgrade.attr]} [${upgrade.add_min};${upgrade.add_max}]")
 
@@ -232,7 +234,7 @@ class EmpireCraftMenu(
         val itemMeta = itemStack.itemMeta
 
         itemMeta!!.setDisplayName(EmpirePlugin.translations.ITEM_INFO_DROP)
-        val everyDropByItem: MutableMap<String, MutableList<ItemDropListener.ItemDrop>> =
+        val everyDropByItem: MutableMap<String, MutableList<ItemDropManager.ItemDrop>> =
             EmpirePlugin.instance.getEveryDrop
         everyDropByItem[item] ?: return null
         val lore = itemMeta.lore ?: mutableListOf()

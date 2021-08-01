@@ -1,18 +1,19 @@
 package com.makeevrserg.empireprojekt
 
-import com.makeevrserg.empireprojekt.ESSENTIALS.homes.EssentialsHandler
-import com.makeevrserg.empireprojekt.NPCS.NPCManager
+import com.makeevrserg.empireprojekt.essentials.homes.EssentialsHandler
+import com.makeevrserg.empireprojekt.npcs.NPCManager
 import com.makeevrserg.empireprojekt.commands.CommandManager
-import com.makeevrserg.empireprojekt.util.CraftEvent
+import com.makeevrserg.empireprojekt.util.EmpireCrafts
 import com.makeevrserg.empireprojekt.events.GenericListener
-import com.makeevrserg.empireprojekt.events.ItemUpgradeEvent
-import com.makeevrserg.empireprojekt.events.genericevents.drop.ItemDropListener
+import com.makeevrserg.empireprojekt.events.genericevents.drop.ItemDropManager
 import com.makeevrserg.empireprojekt.events.mobs.EmpireMobsManager
+import com.makeevrserg.empireprojekt.events.upgrades.UpgradesManager
 import com.makeevrserg.empireprojekt.items.EmpireItems
 import com.makeevrserg.empireprojekt.menumanager.emgui.settings.GuiCategories
 import com.makeevrserg.empireprojekt.menumanager.emgui.settings.GuiSettings
 import com.makeevrserg.empireprojekt.util.*
-import com.makeevrserg.empireprojekt.util.files.Files
+import com.makeevrserg.empireprojekt.util.Files
+import empirelibs.PluginBetaAccessCheck
 import org.bukkit.NamespacedKey
 import org.bukkit.inventory.FurnaceRecipe
 import org.bukkit.inventory.Recipe
@@ -49,11 +50,14 @@ class EmpirePlugin : JavaPlugin() {
             private set
 
         //Font files instance aka custom hud and ui
-        lateinit var empireFontImages: EmpireFontImages
+        lateinit var empireFonts: EmpireFonts
             private set
 
         //Constants
         lateinit var empireConstants: EmpireConstats
+            private set
+
+        lateinit var dropManager: ItemDropManager
             private set
 
         //Custom sounds instance
@@ -63,10 +67,14 @@ class EmpirePlugin : JavaPlugin() {
         //Npc manager instance
         var npcManager: NPCManager? = null
             private set
+
+        //Upgrades for items
+        lateinit var upgradeManager:UpgradesManager
+            private set
     }
 
 
-    lateinit var _craftEvent: CraftEvent
+    lateinit var _empireCrafts: EmpireCrafts
 
     //Command manager for plugin
     private lateinit var commandManager: CommandManager
@@ -81,18 +89,17 @@ class EmpirePlugin : JavaPlugin() {
 //    lateinit var categoryItems: MutableMap<String, CategoryItems.CategorySection>
 
     //Drop from item
-    lateinit var getEveryDrop: MutableMap<String, MutableList<ItemDropListener.ItemDrop>>
+    lateinit var getEveryDrop: MutableMap<String, MutableList<ItemDropManager.ItemDrop>>
 
     //Recipies for items
-    val recipies: MutableMap<String, CraftEvent.EmpireRecipe>
-        get() = _craftEvent.empireRecipies
+    val recipies: MutableMap<String, EmpireCrafts.EmpireRecipe>
+        get() = _empireCrafts.empireRecipies
 
-    //Upgrades for items
-    val upgradesMap: MutableMap<String, List<ItemUpgradeEvent.ItemUpgrade>>
-        get() = genericListener._itemUpgradeEvent.upgradesMap
+
 
     //GuiSettings
     lateinit var guiSettings: GuiSettings
+
     //Gui Categories
     lateinit var guiCategories: GuiCategories
 
@@ -101,23 +108,20 @@ class EmpirePlugin : JavaPlugin() {
         translations = Translations()
         empireFiles = Files()
         EmpirePlugin.config = EmpireConfig.create()
-        println(EmpirePlugin.config)
         empireSounds = EmpireSounds()
-        empireFontImages = EmpireFontImages(empireFiles.fontImagesFile.getConfig())
+        empireFonts = EmpireFonts(empireFiles.fontImagesFile.getConfig())
         empireItems = EmpireItems()
         empireMobs = EmpireMobsManager()
+        upgradeManager = UpgradesManager()
         genericListener = GenericListener()
         commandManager = CommandManager()
         essentialsHomesHandler = EssentialsHandler()
-//        categoryItems =
-//            CategoryItems(
-//                empireFiles.guiFile.getConfig()?.getConfigurationSection("categories")
-//            ).categoriesMap
-        getEveryDrop = genericListener._itemDropListener.everyDropByItem
+        dropManager = ItemDropManager()
+        getEveryDrop = dropManager.everyDropByItem
 
 
 
-        _craftEvent = CraftEvent()
+        _empireCrafts = EmpireCrafts()
         empireSounds.getSounds()
 
         guiSettings = GuiSettings()
@@ -179,7 +183,7 @@ class EmpirePlugin : JavaPlugin() {
                 empireConstants.empireID,
                 PersistentDataType.STRING
             ) ?: continue
-            if (_craftEvent.empireRecipies.contains(id)) ite.remove()
+            if (_empireCrafts.empireRecipies.contains(id)) ite.remove()
         }
 
 

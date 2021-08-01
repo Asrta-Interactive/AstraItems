@@ -1,11 +1,10 @@
 package com.makeevrserg.empireprojekt.menumanager.emgui
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
-import com.makeevrserg.empireprojekt.menumanager.PaginatedMenu
-import com.makeevrserg.empireprojekt.menumanager.PlayerMenuUtility
-import com.makeevrserg.empireprojekt.util.EmpireUtils
+import empirelibs.menu.PaginatedMenu
+import empirelibs.menu.PlayerMenuUtility
+import empirelibs.EmpireUtils
 import org.bukkit.Material
-import org.bukkit.Sound
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
 

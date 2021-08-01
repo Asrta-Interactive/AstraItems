@@ -16,7 +16,6 @@ class MushroomBlockTestEvent: Listener {
     fun mushroomBlockInteractEvent(e:PlayerInteractEvent){
         val block = e.clickedBlock?:return
         val data = MushroomBlockApi.getBlockData(block)?:return
-        println(data)
     }
 
     init {

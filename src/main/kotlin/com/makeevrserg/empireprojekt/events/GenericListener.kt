@@ -1,26 +1,27 @@
 package com.makeevrserg.empireprojekt.events
 
-import com.makeevrserg.empireprojekt.ESSENTIALS.AutoBlockChangeEvent
-import com.makeevrserg.empireprojekt.ESSENTIALS.MusicDiscsEvent
-import com.makeevrserg.empireprojekt.ESSENTIALS.sit.SitEvent
+import com.makeevrserg.empireprojekt.essentials.AutoBlockChangeEvent
+import com.makeevrserg.empireprojekt.essentials.MusicDiscsEvent
+import com.makeevrserg.empireprojekt.essentials.sit.SitEvent
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.events.blocks.events.MushroomBlockEventHandler
 import com.makeevrserg.empireprojekt.events.empireevents.*
 import com.makeevrserg.empireprojekt.events.empireevents.Vampirism
+import com.makeevrserg.empireprojekt.events.genericevents.BookSignEvent
 import com.makeevrserg.empireprojekt.events.genericevents.ExperienceRepairEvent
 import com.makeevrserg.empireprojekt.events.genericevents.ItemInteractListener
 import com.makeevrserg.empireprojekt.events.genericevents.drop.ItemDropListener
-import com.makeevrserg.empireprojekt.events.mobs.EmpireMobs
-import com.makeevrserg.empireprojekt.events.mobs.EntitySoundEvent
-import com.makeevrserg.empireprojekt.menumanager.MenuListener
+import com.makeevrserg.empireprojekt.events.upgrades.ItemUpgradeEvent
+import com.makeevrserg.empireprojekt.events.villagers.VillagerEvent
+import empirelibs.menu.MenuListener
 
 
 //Mananger for all of events
 class GenericListener {
 
     private var _itemInteractListener: ItemInteractListener = ItemInteractListener()
-    var _itemDropListener: ItemDropListener = ItemDropListener()
-    var _itemUpgradeEvent: ItemUpgradeEvent = ItemUpgradeEvent()
+    private var _itemDropListener: ItemDropListener = ItemDropListener()
+    private var _itemUpgradeEvent: ItemUpgradeEvent = ItemUpgradeEvent()
     private var _menuListener: MenuListener = MenuListener()
     private var _experienceRepairEvent: ExperienceRepairEvent = ExperienceRepairEvent()
     private var _resourcePackEvent: ResourcePackEvent = ResourcePackEvent()
@@ -33,11 +34,12 @@ class GenericListener {
     private var _gunEvent: GunEvent = GunEvent()
     private var _sitEvent: SitEvent = SitEvent()
     private var _autoBlockChange = AutoBlockChangeEvent()
-    val mushroomBlockEventHandler = MushroomBlockEventHandler()
+    private val mushroomBlockEventHandler = MushroomBlockEventHandler()
     private var _empireMusicDiscs = MusicDiscsEvent()
-
-    //private var _loreBooks = LoreBooks()
+    private var _villagerEvent = VillagerEvent()
     private var empireFixEvent = EmpireItemFixEvent()
+    private var bookSignEvent = BookSignEvent()
+
     fun onDisable() {
         _itemInteractListener.onDisable()
         _itemDropListener.onDisable()
@@ -59,7 +61,7 @@ class GenericListener {
         _autoBlockChange.onDisable()
         empireFixEvent.onDisable()
         mushroomBlockEventHandler.onDisable()
-        //_loreBooks.onDisable()
-        //_empireBlock.onDisable()
+        _villagerEvent.onDisable()
+        bookSignEvent.onDisable()
     }
 }

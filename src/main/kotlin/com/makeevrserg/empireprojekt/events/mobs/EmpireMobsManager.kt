@@ -1,9 +1,9 @@
 package com.makeevrserg.empireprojekt.events.mobs
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
-import com.makeevrserg.empireprojekt.util.getHEXString
+import com.makeevrserg.empireprojekt.items.getHEXString
+
 import org.bukkit.attribute.Attribute
-import org.bukkit.attribute.AttributeModifier
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.entity.EntityType
 import org.bukkit.inventory.ItemStack
@@ -35,24 +35,26 @@ class EmpireMobsManager {
             }
         }
     }
+
     data class MobAttribute(
         val attribute: Attribute,
-        val min:Double,
-        val max:Double
-    ){
-        companion object{
-            public fun createAttribute(conf:ConfigurationSection):MobAttribute{
+        val min: Double,
+        val max: Double
+    ) {
+        companion object {
+            public fun createAttribute(conf: ConfigurationSection): MobAttribute {
                 return MobAttribute(
                     Attribute.valueOf(conf.name),
-                    conf.getDouble("min",0.0),
-                    conf.getDouble("max",0.0)
+                    conf.getDouble("min", 0.0),
+                    conf.getDouble("max", 0.0)
                 )
             }
+
             public fun createAttributes(conf: ConfigurationSection?): MutableList<MobAttribute> {
-                conf?:return mutableListOf()
+                conf ?: return mutableListOf()
                 val list = mutableListOf<MobAttribute>()
                 for (attr in conf.getKeys(false))
-                    list.add(createAttribute(conf.getConfigurationSection(attr)?:continue))
+                    list.add(createAttribute(conf.getConfigurationSection(attr) ?: continue))
                 return list
             }
         }
@@ -65,7 +67,7 @@ class EmpireMobsManager {
         val attackAnimation: ItemStack,
         val displayName: String?,
         val ai: EntityType,
-        val attributes:List<MobAttribute>,
+        val attributes: List<MobAttribute>,
         val replaceMobSpawn: Map<EntityType, ReplaceMobSpawn>
     ) {
         companion object {
@@ -99,7 +101,7 @@ class EmpireMobsManager {
             }
             mobsMap[mob.id] = mob
             for (entity in mob.replaceMobSpawn.keys) {
-                if (mobsMapByEntitySpawn[entity]==null)
+                if (mobsMapByEntitySpawn[entity] == null)
                     mobsMapByEntitySpawn[entity] = mutableListOf()
                 mobsMapByEntitySpawn[entity]!!.add(mob)
             }
@@ -118,16 +120,17 @@ class EmpireMobsManager {
             private set
     }
 
-    private var _empireMobs = EmpireMobs()
-    private var _entitySoundEvent = EntitySoundEvent()
+    lateinit var _empireMobs: EmpireMobsEvent
 
     init {
         instance = this
         initMobs()
+        if (empireMobs.isNotEmpty())
+            _empireMobs = EmpireMobsEvent()
     }
 
     public fun onDisable() {
-        _empireMobs.onDisable()
-        _entitySoundEvent.onDisable()
+        if (empireMobs.isNotEmpty())
+            _empireMobs.onDisable()
     }
 }

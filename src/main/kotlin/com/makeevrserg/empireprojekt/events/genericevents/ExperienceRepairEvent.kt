@@ -2,7 +2,7 @@ package com.makeevrserg.empireprojekt.events.genericevents
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.instance
-import com.makeevrserg.empireprojekt.util.EmpireUtils
+
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.PrepareAnvilEvent

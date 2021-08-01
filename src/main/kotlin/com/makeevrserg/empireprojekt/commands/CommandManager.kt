@@ -1,8 +1,8 @@
 package com.makeevrserg.empireprojekt.commands
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
-import com.makeevrserg.empireprojekt.ESSENTIALS.sit.SitEvent
-import com.makeevrserg.empireprojekt.menumanager.PlayerMenuUtility
+import com.makeevrserg.empireprojekt.essentials.sit.SitEvent
+import empirelibs.menu.PlayerMenuUtility
 import com.makeevrserg.empireprojekt.menumanager.emgui.EmpireCategoriesMenu
 import com.makeevrserg.empireprojekt.menumanager.emgui.EmpireSoundsMenu
 import org.bukkit.Bukkit
@@ -12,8 +12,8 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.persistence.PersistentDataType
 import com.makeevrserg.empireprojekt.util.EmpirePermissions
-import com.makeevrserg.empireprojekt.util.EmpireUtils
 import com.makeevrserg.empireprojekt.util.ResourcePackNew
+import empirelibs.EmpireUtils
 import java.io.File
 
 class CommandManager() : CommandExecutor {
@@ -115,10 +115,10 @@ class CommandManager() : CommandExecutor {
 
 
                 var list = ""
-                for (emoji in EmpirePlugin.empireFontImages.fontsInfo.keys) {
-                    if (EmpirePlugin.empireFontImages.fontsInfo[emoji]?.sendBlocked ?: continue)
+                for (emoji in EmpirePlugin.empireFonts.fontsInfo.keys) {
+                    if (EmpirePlugin.empireFonts.fontsInfo[emoji]?.sendBlocked ?: continue)
                         continue
-                    list += EmpireUtils.HEXPattern("&r${emoji}\n&r&f${EmpirePlugin.empireFontImages.fontsInfo[emoji]!!.chars}&r\n")
+                    list += EmpireUtils.HEXPattern("&r${emoji}\n&r&f${EmpirePlugin.empireFonts.fontsInfo[emoji]!!.chars}&r\n")
                 }
 
                 val book =

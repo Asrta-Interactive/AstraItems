@@ -1,7 +1,8 @@
 package com.makeevrserg.empireprojekt.events
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
-import com.makeevrserg.empireprojekt.util.EmpireUtils
+
+import empirelibs.EmpireUtils
 import org.bukkit.NamespacedKey
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler

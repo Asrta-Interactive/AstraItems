@@ -66,7 +66,7 @@ class MushroomBlockApi {
         public fun getBlockData(block: Block): Int? {
             val facing = getMultipleFacing(block) ?: return null
             val data = getDataByFacing(facing) ?: return null
-            return data + blockList.indexOf(block.type)*64 ?: 0
+            return data + blockList.indexOf(block.type)*64
 
         }
 

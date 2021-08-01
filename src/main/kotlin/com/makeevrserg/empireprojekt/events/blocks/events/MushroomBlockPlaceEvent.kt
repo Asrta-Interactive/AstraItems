@@ -2,7 +2,8 @@ package com.makeevrserg.empireprojekt.events.blocks.events
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.events.blocks.MushroomBlockApi
-import com.makeevrserg.empireprojekt.util.EmpireUtils
+import empirelibs.EmpireUtils
+
 import org.bukkit.Material
 import org.bukkit.block.BlockFace
 import org.bukkit.block.data.MultipleFacing
