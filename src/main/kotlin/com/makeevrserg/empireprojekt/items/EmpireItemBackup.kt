@@ -268,6 +268,7 @@ data class Block(
 }
 
 data class Generate(
+    val world:String?,
     val chunk: Double,
     val onlyNewChunks: Boolean,
     val replaceBlocks: MutableMap<Material, Double>,
@@ -281,10 +282,12 @@ data class Generate(
         public fun getEmpireGenerateBlock(section: ConfigurationSection?): Generate? {
             section ?: return null
             val chunk = section.getDouble("chunk", 100.0)
+            val world = section.getString("world")
             val map = mutableMapOf<Material, Double>()
             for (blockName in section.getConfigurationSection("replace_blocks")?.getKeys(false) ?: return null)
                 map[Material.getMaterial(blockName) ?: continue] = section.getDouble("replace_blocks.$blockName")
             return Generate(
+                world,
                 chunk, true, map,
                 section.getInt("max_per_chunk"),
                 section.getInt("min_y"),

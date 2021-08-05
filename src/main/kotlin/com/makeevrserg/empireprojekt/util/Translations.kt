@@ -22,6 +22,11 @@ class Translations {
     val LOADING_FILE: String =
         translationFile.getHEXString("LOADING_FILE", "#18dbd1Загрузка файла")
     val NOT_EXIST_FILE: String = translationFile.getHEXString("NOT_EXIST_FILE", "#db2c18Файл не существует")
+    val NO_PERMISSION: String = translationFile.getHEXString("NO_PERMISSION", "#db2c18Недостаточно прав!")
+    val WRONG_ARGS: String = translationFile.getHEXString("NO_PERMISSION", "#db2c18Неверные аргументы")
+    val INVENTORY_SAVED: String = translationFile.getHEXString("NO_PERMISSION", "#42f596Инвентарь сохранен")
+    val INVENTORY_LOADED: String = translationFile.getHEXString("NO_PERMISSION", "#42f596Инвентарь загргужен")
+    val SUCCESS: String = translationFile.getHEXString("SUCCESS", "#42f596Успех!")
 
     val PLUGIN_WRONG_SYNTAX_ITEM: String = translationFile.getHEXString("PLUGIN_WRONG_SYNTAX_ITEM", "#db2c18Ошибка при загрузке файла. Вероятно, указаны неверные параметры предмета.")
     val EXISTED_CUSTOM_MODEL_DATA: String = translationFile.getHEXString("EXISTED_CUSTOM_MODEL_DATA", "#db2c18Внимание! Введене уже существующая custom_model_data.")
@@ -65,6 +70,8 @@ class Translations {
     val ITEM_INFO_IMPROVING: String = translationFile.getHEXString("ITEM_INFO_IMPROVING", "Улучшает")
     val ITEM_INFO_IMPROVING_COLOR: String = translationFile.getHEXString("ITEM_INFO_IMPROVING_COLOR: String", "#47ad5f")
 
+    val ITEM_INFO_GENERATE: String = translationFile.getHEXString("ITEM_INFO_GENERATE", "Генерируется:")
+    val ITEM_INFO_VILLAGER_BUY: String = translationFile.getHEXString("ITEM_INFO_VILLAGER_BUY", "Можно купить у жителя:")
     val ITEM_INFO_DROP: String = translationFile.getHEXString("ITEM_INFO_DROP", "Выпадает из")
     val ITEM_INFO_DROP_COLOR: String = translationFile.getHEXString("ITEM_INFO_DROP_COLOR: String", "#47ad5f")
 

@@ -1,4 +1,4 @@
-package com.makeevrserg.empireprojekt.menumanager.emgui.settings
+package com.makeevrserg.empireprojekt.emgui.settings
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.items.getHEXStringList

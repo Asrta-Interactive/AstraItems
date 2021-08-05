@@ -1,4 +1,4 @@
-package com.makeevrserg.empireprojekt.menumanager.emgui
+package com.makeevrserg.empireprojekt.emgui
 
 
 import com.makeevrserg.empireprojekt.EmpirePlugin

@@ -5,5 +5,6 @@ class EmpirePermissions{
         const val EMPGIVE: String = "empireitems.give"
         const val EZIP: String = "empireitems.zip"
         const val RELOAD: String = "empireitems.reload"
+        const val INVENTORY_SAVE: String = "empireitems.save_inventory"
     }
 }

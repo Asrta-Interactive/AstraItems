@@ -6,6 +6,7 @@ import com.makeevrserg.empireprojekt.items.Command
 import com.makeevrserg.empireprojekt.items.Sound
 import empirelibs.EmpireUtils
 import me.clip.placeholderapi.PlaceholderAPI
+import org.bukkit.Bukkit
 import org.bukkit.entity.HumanEntity
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -27,12 +28,16 @@ class GenericEventManager {
         }
 
         private fun managePotionAdd(p: Player, effects: List<PotionEffect>) {
-            p.addPotionEffects(effects)
+            Bukkit.getScheduler().callSyncMethod(EmpirePlugin.instance) {
+                p.addPotionEffects(effects)
+            }
         }
 
         private fun managePotionRemove(p: Player, effects: List<PotionEffectType>) {
-            for (effect: PotionEffectType in effects)
-                p.removePotionEffect(effect)
+            Bukkit.getScheduler().callSyncMethod(EmpirePlugin.instance) {
+                for (effect: PotionEffectType in effects)
+                    p.removePotionEffect(effect)
+            }
         }
 
         private fun manageDurability(item: ItemStack) {

@@ -78,14 +78,15 @@ class BlockGenerationEvent2 : Listener {
         EmpirePlugin.empireFiles.tempChunks.saveConfig()
 
         val task = Bukkit.getScheduler().runTaskAsynchronously(EmpirePlugin.instance, Runnable {
-
             if (EmpirePlugin.config.generatingDebug) {
                 println("Generating blocks in ${chunk}*16. ${inactiveChunks.size} chunks in queue. Current chunks: ${activeChunks.size}; Current Threads: ${activeTasks.size}")
-
             }
 
             for ((id, block) in blocks) {
                 val generate = block.generate ?: continue
+                if (block.generate.world!= null && block.generate.world!=chunk.world.name) {
+                    continue
+                }
                 if (generate.chunk < Random.nextDouble(100.0))
                     continue
 
@@ -124,7 +125,7 @@ class BlockGenerationEvent2 : Listener {
                         generatedAmount += depositeAmount
                         var faceBlock = blockToReplace.block
                         Bukkit.getScheduler().callSyncMethod(EmpirePlugin.instance) {
-                            for (i in 0 until depositeAmount) {
+                            for (i_ in 0 until depositeAmount) {
                                 faceBlock = faceBlock.getRelative(getRandomBlockFace())
                                 replaceBlock(faceBlock, material,facing)
 
@@ -138,22 +139,17 @@ class BlockGenerationEvent2 : Listener {
 
 
             }
-            activeChunks.remove(chunk)
             synchronized(this) {
+                activeChunks.remove(chunk)
                 if (inactiveChunks.isNotEmpty()) {
                     val newChunk = inactiveChunks[0]
                     inactiveChunks.removeAt(0)
                     activeChunks.add(newChunk)
                     generateChunk(newChunk)
                 }
-
-                val tasksToRemove = mutableListOf<BukkitTask>()
-                for (task in activeTasks)
+                for (task in activeTasks.toList())
                     if (!Bukkit.getScheduler().pendingTasks.contains(task))
-                        tasksToRemove.add(task)
-
-                for (task in tasksToRemove)
-                    activeTasks.remove(task)
+                        activeTasks.remove(task)
             }
         })
         activeTasks.add(task)

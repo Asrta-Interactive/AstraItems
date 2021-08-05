@@ -1,4 +1,4 @@
-package com.makeevrserg.empireprojekt.menumanager.emgui
+package com.makeevrserg.empireprojekt.emgui
 
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
@@ -6,6 +6,7 @@ import com.makeevrserg.empireprojekt.util.EmpireCrafts
 import com.makeevrserg.empireprojekt.events.upgrades.ItemUpgradeEvent
 import com.makeevrserg.empireprojekt.events.genericevents.drop.ItemDropManager
 import com.makeevrserg.empireprojekt.events.upgrades.UpgradesManager
+import com.makeevrserg.empireprojekt.events.villagers.VillagerManager
 import empirelibs.menu.PaginatedMenu
 import empirelibs.menu.PlayerMenuUtility
 import org.bukkit.Material
@@ -130,6 +131,10 @@ class EmpireCraftMenu(
         if (empireRecipie.craftingTable.size <= recipePage)
             recipePage = 0
 
+        if (empireRecipie.craftingTable.isEmpty()) {
+            setFurnaceRecipe()
+            return
+        }
         val recipe = empireRecipie.craftingTable[recipePage]
 
         for (lineShape in recipe.shape) {
@@ -151,12 +156,15 @@ class EmpireCraftMenu(
         for (itemResult in EmpirePlugin.instance.recipies.keys) {
             val itemRecipies: EmpireCrafts.EmpireRecipe =
                 EmpirePlugin.instance.recipies[itemResult] ?: continue
-            for (empireRecipe in itemRecipies.craftingTable) {
-                if (empireRecipe.ingredientMap.values.contains(itemStack)) {
+            for (empireRecipe in itemRecipies.craftingTable)
+                if (empireRecipe.ingredientMap.values.contains(itemStack))
                     list.add(itemResult)
-                    //break
-                }
-            }
+
+            for (empireRecipe in itemRecipies.furnace)
+                if (empireRecipe.input == itemStack)
+                    list.add(itemResult)
+
+
         }
         return list
 
@@ -213,7 +221,7 @@ class EmpireCraftMenu(
         val itemStack = getItemStack("settings.drop_btn")
         val itemMeta = itemStack.itemMeta
         val upgrades: List<UpgradesManager.ItemUpgrade> = EmpirePlugin.upgradeManager._upgradesMap[item] ?: return null
-        itemMeta!!.setDisplayName(EmpirePlugin.translations.ITEM_INFO_IMPROVING)
+        itemMeta!!.setDisplayName(EmpirePlugin.translations.ITEM_INFO_DROP_COLOR+EmpirePlugin.translations.ITEM_INFO_IMPROVING)
         val lore = itemMeta.lore ?: mutableListOf()
         for (upgrade in upgrades) {
             if (!containValue(ItemUpgradeEvent.attrMap[upgrade.attr] ?: continue, lore))
@@ -225,23 +233,55 @@ class EmpireCraftMenu(
         itemMeta.lore = lore
         itemStack.itemMeta = itemMeta
         return itemStack.clone()
-
-
     }
 
     private fun setDrop(): ItemStack? {
         val itemStack = getItemStack("settings.drop_btn")
         val itemMeta = itemStack.itemMeta
 
-        itemMeta!!.setDisplayName(EmpirePlugin.translations.ITEM_INFO_DROP)
+        itemMeta!!.setDisplayName(EmpirePlugin.translations.ITEM_INFO_DROP_COLOR+EmpirePlugin.translations.ITEM_INFO_DROP)
         val everyDropByItem: MutableMap<String, MutableList<ItemDropManager.ItemDrop>> =
-            EmpirePlugin.instance.getEveryDrop
+            EmpirePlugin.dropManager.everyDropByItem
         everyDropByItem[item] ?: return null
         val lore = itemMeta.lore ?: mutableListOf()
         for (drop in everyDropByItem[item]!!) {
             lore.add(EmpirePlugin.translations.ITEM_INFO_DROP_COLOR + "${drop.dropFrom} [${drop.minAmount};${drop.maxAmount}] ${drop.chance}%")
         }
         itemMeta.lore = lore
+        itemStack.itemMeta = itemMeta
+        return itemStack
+    }
+
+    private fun setBlockGenerate(): ItemStack? {
+        val itemStack = getItemStack("settings.drop_btn")
+        val itemMeta = itemStack.itemMeta
+        itemMeta!!.setDisplayName(EmpirePlugin.translations.ITEM_INFO_GENERATE)
+        val itemInfo = EmpirePlugin.empireItems._empireBlocks[item] ?: return null
+        val generate = itemInfo.generate ?: return null
+        val lore = mutableListOf<String>()
+        lore.add("${EmpirePlugin.translations.ITEM_INFO_DROP_COLOR}Макс в чанке: ${generate.maxPerChunk}")
+        lore.add("${EmpirePlugin.translations.ITEM_INFO_DROP_COLOR}Появится в чанке: ${generate.chunk}%")
+        lore.add("${EmpirePlugin.translations.ITEM_INFO_DROP_COLOR}Появляется в мире: ${generate.world ?: "Любом"}")
+        lore.add("${EmpirePlugin.translations.ITEM_INFO_DROP_COLOR}Появляется на высоте: [${generate.minY};${generate.maxY}]")
+        lore.add("${EmpirePlugin.translations.ITEM_INFO_DROP_COLOR}Количество в месторождении: [${generate.minDeposite};${generate.maxDeposite}]")
+        itemMeta.lore = lore
+        itemMeta.setDisplayName(EmpirePlugin.translations.ITEM_INFO_DROP_COLOR+EmpirePlugin.translations.ITEM_INFO_GENERATE)
+        itemStack.itemMeta = itemMeta
+        return itemStack
+    }
+
+    private fun setNPCSell(): ItemStack? {
+        val itemStack = getItemStack("settings.drop_btn")
+        val itemMeta = itemStack.itemMeta
+        itemMeta!!.setDisplayName(EmpirePlugin.translations.ITEM_INFO_GENERATE)
+        val villagers = VillagerManager.villagerByItem[item] ?: return null
+        val lore = mutableListOf<String>()
+        for (villager in villagers)
+            lore.add("${EmpirePlugin.translations.ITEM_INFO_DROP_COLOR}$villager")
+
+
+        itemMeta.lore = lore
+        itemMeta.setDisplayName(EmpirePlugin.translations.ITEM_INFO_DROP_COLOR+EmpirePlugin.translations.ITEM_INFO_VILLAGER_BUY)
         itemStack.itemMeta = itemMeta
         return itemStack
     }
@@ -261,12 +301,20 @@ class EmpireCraftMenu(
         )
         addManageButtons()
         inventory.setItem(
+            50,
+            setNPCSell() ?: ItemStack(Material.AIR)
+        )
+        inventory.setItem(
             48,
             setDrop() ?: ItemStack(Material.AIR)
         )
         inventory.setItem(
             47,
             setUpgrade() ?: ItemStack(Material.AIR)
+        )
+        inventory.setItem(
+            46,
+            setBlockGenerate() ?: ItemStack(Material.AIR)
         )
         if (playerMenuUtility.player.hasPermission(EmpirePermissions.EMPGIVE))
             inventory.setItem(

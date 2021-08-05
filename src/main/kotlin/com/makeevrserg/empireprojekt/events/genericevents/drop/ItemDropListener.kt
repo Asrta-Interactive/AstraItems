@@ -57,7 +57,7 @@ class ItemDropListener : Listener {
 
 
         val id = EmpirePlugin.empireItems._empireBlocksByData[MushroomBlockApi.getBlockData(e.block)]
-        println(id)
+		
         val listDrop: List<ItemDropManager.ItemDrop> = EmpirePlugin.dropManager.itemDrops[id?:block.blockData.material.name] ?: return
         if (dropItem(listDrop, block.location))
             e.isDropItems = false

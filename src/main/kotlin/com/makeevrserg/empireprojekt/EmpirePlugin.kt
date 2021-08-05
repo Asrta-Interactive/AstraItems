@@ -9,8 +9,9 @@ import com.makeevrserg.empireprojekt.events.genericevents.drop.ItemDropManager
 import com.makeevrserg.empireprojekt.events.mobs.EmpireMobsManager
 import com.makeevrserg.empireprojekt.events.upgrades.UpgradesManager
 import com.makeevrserg.empireprojekt.items.EmpireItems
-import com.makeevrserg.empireprojekt.menumanager.emgui.settings.GuiCategories
-import com.makeevrserg.empireprojekt.menumanager.emgui.settings.GuiSettings
+import com.makeevrserg.empireprojekt.emgui.settings.GuiCategories
+import com.makeevrserg.empireprojekt.emgui.settings.GuiSettings
+import com.makeevrserg.empireprojekt.essentials.inventorysaver.ISCommandManager
 import com.makeevrserg.empireprojekt.util.*
 import com.makeevrserg.empireprojekt.util.Files
 import empirelibs.PluginBetaAccessCheck
@@ -79,23 +80,19 @@ class EmpirePlugin : JavaPlugin() {
     //Command manager for plugin
     private lateinit var commandManager: CommandManager
 
+
+    //Command manager for item saving
+    private lateinit var isCommandManager: ISCommandManager
+
     //Handler for new home and warp mechanic
     private lateinit var essentialsHomesHandler: EssentialsHandler
 
     //private lateinit var npcManager:NPCManager
     private lateinit var genericListener: GenericListener
 
-//    //Category section form emgui
-//    lateinit var categoryItems: MutableMap<String, CategoryItems.CategorySection>
-
-    //Drop from item
-    lateinit var getEveryDrop: MutableMap<String, MutableList<ItemDropManager.ItemDrop>>
-
     //Recipies for items
     val recipies: MutableMap<String, EmpireCrafts.EmpireRecipe>
         get() = _empireCrafts.empireRecipies
-
-
 
     //GuiSettings
     lateinit var guiSettings: GuiSettings
@@ -117,10 +114,10 @@ class EmpirePlugin : JavaPlugin() {
         commandManager = CommandManager()
         essentialsHomesHandler = EssentialsHandler()
         dropManager = ItemDropManager()
-        getEveryDrop = dropManager.everyDropByItem
 
 
 
+        isCommandManager = ISCommandManager()
         _empireCrafts = EmpireCrafts()
         empireSounds.getSounds()
 
@@ -132,7 +129,7 @@ class EmpirePlugin : JavaPlugin() {
             println(translations.PLUGIN_PROTOCOLLIB_NOT_INSTALLED)
 
         //Beta plugin countdown
-        PluginBetaAccessCheck()
+        //PluginBetaAccessCheck()
 
     }
 
@@ -167,6 +164,7 @@ class EmpirePlugin : JavaPlugin() {
 
         if (npcManager != null)
             npcManager!!.onDisable()
+
         genericListener.onDisable()
         empireMobs.onDisable()
         server.scheduler.cancelTasks(this)

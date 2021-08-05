@@ -23,6 +23,7 @@ commands:
   sit:
   emnpc:
   skin:
+  eminv:
   empireitems:
     usage: |
       /ereload - Перезагружает плагин

@@ -34,8 +34,8 @@ class MushroomBlockBreakEvent:Listener {
             return
 
         e.isDropItems=false
-        val listDrop = EmpirePlugin.instance.getEveryDrop[id]//itemDrops[id?:block.blockData.material.name] ?: return
-        println(listDrop)
+        val listDrop = EmpirePlugin.dropManager.everyDropByItem[id]//itemDrops[id?:block.blockData.material.name] ?: return
+		
         block.location.world?.dropItem(block.location,EmpirePlugin.empireItems.empireItems[id]?:return)?:return
     }
 }

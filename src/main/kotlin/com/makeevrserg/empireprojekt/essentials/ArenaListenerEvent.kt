@@ -7,6 +7,11 @@
 //import org.bukkit.event.Listener
 //import org.bukkit.event.entity.EntityDamageByEntityEvent
 //import org.bukkit.event.entity.PlayerDeathEvent
+//import java.awt.Point
+//import java.lang.Double.max
+//import java.lang.Double.min
+//import kotlin.math.max
+//import kotlin.math.min
 //
 //class ArenaListener : Listener {
 //
@@ -17,11 +22,12 @@
 //
 //    }
 //
-//    private fun Player.inLocation(P1: Location,endLoc:Location){
-//        val playerLocation = this.location
-//        val P2 = Location(P1.world,endLoc.x,P1.y,P1.z)
-//
-//
+//    private fun Player.inLocation(p1:Point,p2:Point):Boolean{
+//        if (this.location.x>max(p1.x,p2.x) || this.location.x<min(p1.x,p2.x))
+//            return false
+//        if (this.location.z>max(p1.y,p2.y) || this.location.z<min(p1.y,p2.y))
+//            return false
+//        return true
 //    }
 //
 //    @EventHandler
@@ -29,16 +35,17 @@
 //        if (e.entity !is Player)
 //            return
 //        val player = e.entity as Player
-//
 //        if (!(e.damage > player.health || e.finalDamage > player.health))
 //            return
+//        if (!player.inLocation(Point(100,200),Point(300,400)))
+//            return
 //        e.isCancelled = true
-//        player.teleport(Location(player.location.world,))
+//
 //    }
 //
 //
 //    init {
-//        EmpirePlugin.plugin.server.pluginManager.registerEvents(this, EmpirePlugin.plugin)
+//        EmpirePlugin.instance.server.pluginManager.registerEvents(this, EmpirePlugin.instance)
 //    }
 //
 //    fun onDisable() {
