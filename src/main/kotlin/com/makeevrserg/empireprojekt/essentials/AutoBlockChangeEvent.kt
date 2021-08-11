@@ -20,32 +20,30 @@ class AutoBlockChangeEvent : Listener {
         val player = e.player
         val blockPlaced = e.blockPlaced
         val itemInHand = player.inventory.itemInMainHand
-        if (EmpireUtils.getEmpireID(itemInHand)!=null)
+        if (EmpireUtils.getEmpireID(itemInHand) != null)
             return
-        if (blockPlaced.type!=itemInHand.type)
+        if (blockPlaced.type != itemInHand.type)
             return
 
         val material = itemInHand.type
+
         if (itemInHand.amount > 1)
             return
-        else
-            itemInHand.amount -= 1
+
+        itemInHand.amount -= 1
 
         if (!player.inventory.contains(material))
             return
+        if (player.inventory.itemInMainHand.type != Material.AIR)
+            return
 
-        val itemIndex = player.inventory.first(material)
-        if (itemIndex == -1) return
-
-
+        val itemIndexMap = player.inventory.all(material)
+        itemIndexMap.remove(player.inventory.heldItemSlot)
+        val itemIndex = itemIndexMap.keys.elementAt(0) ?: return
         val itemStack = player.inventory.getItem(itemIndex)?.clone() ?: return
-
         player.inventory.setItem(itemIndex, null)
+        player.inventory.setItemInMainHand(itemStack)
 
-        if (player.inventory.itemInMainHand.type == Material.AIR)
-            player.inventory.setItemInMainHand(itemStack)
-        else if (player.inventory.itemInOffHand.type == Material.AIR)
-            player.inventory.setItemInOffHand(itemStack)
 
     }
 
@@ -53,13 +51,13 @@ class AutoBlockChangeEvent : Listener {
     fun onCropInteract(e: PlayerInteractEvent) {
         if (e.action != Action.RIGHT_CLICK_BLOCK)
             return
-        val block = e.clickedBlock?:return
+        val block = e.clickedBlock ?: return
         if (block.blockData !is Ageable)
             return
 
         val blockAge = block.blockData as Ageable
 
-        if (blockAge.age!=blockAge.maximumAge)
+        if (blockAge.age != blockAge.maximumAge)
             return
 
         val material = block.type

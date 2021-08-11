@@ -4,6 +4,7 @@ import com.makeevrserg.empireprojekt.essentials.AutoBlockChangeEvent
 import com.makeevrserg.empireprojekt.essentials.MusicDiscsEvent
 import com.makeevrserg.empireprojekt.essentials.sit.SitEvent
 import com.makeevrserg.empireprojekt.EmpirePlugin
+import com.makeevrserg.empireprojekt.essentials.SpawnerEggBlockEvent
 import com.makeevrserg.empireprojekt.events.blocks.events.MushroomBlockEventHandler
 import com.makeevrserg.empireprojekt.events.empireevents.*
 import com.makeevrserg.empireprojekt.events.empireevents.Vampirism
@@ -37,8 +38,9 @@ class GenericListener {
     private val mushroomBlockEventHandler = MushroomBlockEventHandler()
     private var _empireMusicDiscs = MusicDiscsEvent()
     private var _villagerEvent = VillagerEvent()
-    private var empireFixEvent = EmpireItemFixEvent()
+    //private var empireFixEvent = EmpireItemFixEvent()
     private var bookSignEvent = BookSignEvent()
+    private var spawnEggBlockEvent = SpawnerEggBlockEvent()
 
     fun onDisable() {
         _itemInteractListener.onDisable()
@@ -59,9 +61,10 @@ class GenericListener {
         _empireMusicDiscs.onDisable()
         _sitEvent.onDisable()
         _autoBlockChange.onDisable()
-        empireFixEvent.onDisable()
+        //empireFixEvent.onDisable()
         mushroomBlockEventHandler.onDisable()
         _villagerEvent.onDisable()
         bookSignEvent.onDisable()
+        spawnEggBlockEvent.onDisable()
     }
 }

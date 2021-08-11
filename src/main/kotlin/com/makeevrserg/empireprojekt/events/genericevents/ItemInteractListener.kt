@@ -3,8 +3,10 @@ package com.makeevrserg.empireprojekt.events.genericevents
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.instance
 import empirelibs.EmpireUtils
+import empirelibs.getEmpireID
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
+import org.bukkit.event.Event
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.SignChangeEvent
@@ -46,17 +48,13 @@ class ItemInteractListener : Listener {
     }
 
     private fun initEventByHandler(p: Player, eventName: String) {
+        if (eventName.equals("PlayerMoveEvent", ignoreCase = true))
+            for (item in p.inventory.armorContents)
+                GenericEventManager.handleEvent(item.getEmpireID(), p, eventName)
 
-        val ids = listOf<String?>(
-            EmpireUtils.getEmpireID(p.inventory.itemInMainHand),
-            EmpireUtils.getEmpireID(p.inventory.itemInOffHand),
-            EmpireUtils.getEmpireID(p.inventory.helmet),
-            EmpireUtils.getEmpireID(p.inventory.chestplate),
-            EmpireUtils.getEmpireID(p.inventory.leggings),
-            EmpireUtils.getEmpireID(p.inventory.boots)
-        )
-        for (id in ids)
-            GenericEventManager.handleEvent(id, p, eventName)
+        GenericEventManager.handleEvent(p.inventory.itemInMainHand.getEmpireID(), p, eventName)
+        GenericEventManager.handleEvent(p.inventory.itemInOffHand.getEmpireID(), p, eventName)
+
     }
 
 

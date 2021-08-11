@@ -2,14 +2,17 @@ package com.makeevrserg.empireprojekt.events.villagers
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import empirelibs.EmpireUtils
+import empirelibs.getEmpireID
 
 import org.bukkit.ChatColor
+import org.bukkit.Material
 import org.bukkit.entity.Villager
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.VillagerAcquireTradeEvent
 import org.bukkit.event.entity.VillagerCareerChangeEvent
 import org.bukkit.event.entity.VillagerReplenishTradeEvent
+import org.bukkit.event.player.PlayerInteractEntityEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.MerchantRecipe
 import java.lang.IllegalArgumentException
@@ -32,7 +35,41 @@ class VillagerEvent : Listener {
     }
 
 
+    private fun checkForEquality(vItem: ItemStack?, tItem: ItemStack?): ItemStack? {
+        vItem ?: return vItem
+        if (vItem.getEmpireID().equals(tItem.getEmpireID()))
+            if (vItem.amount == tItem?.amount)
+                return tItem
+        return vItem
+    }
 
+
+    @EventHandler
+    fun villagerInteractEvent(e: PlayerInteractEntityEvent) {
+        if (e.rightClicked !is Villager)
+            return
+        val villager = e.rightClicked as Villager
+        val trades = VillagerManager.villagerTradeByProfession[villager.profession] ?: return
+
+        val recipes = villager.recipes.toMutableList()
+        villager.recipes = mutableListOf()
+        for (i in recipes.indices) {
+            val recipe = recipes[i]
+            for (trade in trades) {
+                val ingredients = recipe.ingredients.toMutableList()
+                recipe.ingredients = mutableListOf()
+                if (ingredients.isEmpty())
+                    continue
+                ingredients[0] = checkForEquality(ingredients[0], trade.itemLeft)
+                if (ingredients.size == 2)
+                    ingredients[1] = checkForEquality(ingredients[1], trade.itemRight)
+                recipe.ingredients = ingredients
+            }
+        }
+        villager.recipes = recipes
+
+
+    }
 
 
     private fun addRecipe(villager: Villager, trade: VillagerManager.VillagerTrades) {
@@ -60,8 +97,6 @@ class VillagerEvent : Listener {
     }
 
 
-
-
     init {
         EmpirePlugin.instance.server.pluginManager.registerEvents(this, EmpirePlugin.instance)
         VillagerManager()
@@ -73,5 +108,6 @@ class VillagerEvent : Listener {
         VillagerAcquireTradeEvent.getHandlerList().unregister(this)
         VillagerReplenishTradeEvent.getHandlerList().unregister(this)
         VillagerCareerChangeEvent.getHandlerList().unregister(this)
+        PlayerInteractEntityEvent.getHandlerList().unregister(this)
     }
 }

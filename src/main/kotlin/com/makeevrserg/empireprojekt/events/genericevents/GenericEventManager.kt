@@ -4,9 +4,10 @@ import com.destroystokyo.paper.ParticleBuilder
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.items.Command
 import com.makeevrserg.empireprojekt.items.Sound
-import empirelibs.EmpireUtils
+import empirelibs.getEmpireID
 import me.clip.placeholderapi.PlaceholderAPI
 import org.bukkit.Bukkit
+import org.bukkit.entity.EntityType
 import org.bukkit.entity.HumanEntity
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -54,6 +55,12 @@ class GenericEventManager {
                 item.amount -= 1
 
         }
+        private fun manageEntitySpawn(p:Player,map:Map<String,Int>?){
+            map?:return
+            for ((entity,amount) in map)
+                p.location.world?.spawnEntity(p.location,EntityType.fromName(entity)?:return)?:continue
+
+        }
 
         private fun executeServerCommand(cmd: String) {
             EmpirePlugin.instance.server.dispatchCommand(EmpirePlugin.instance.server.consoleSender, cmd)
@@ -73,25 +80,28 @@ class GenericEventManager {
 
 
 
-        fun handleEvent(id: String?, p: Player, actionName: String) {
+        fun handleEvent(id: String?, p: Player, eventName: String) {
             id ?: return
             val humanEntity = p as HumanEntity
             if (humanEntity.hasCooldown(p.inventory.itemInMainHand.type))
                 return
             val events = EmpirePlugin.empireItems.empireEvents[id] ?: return
             for (event in events ) {
-                if (actionName !in event.eventNames)
+                if (eventName !in event.eventNames)
                     continue
 
                 if (event.cooldown > 0)
                     humanEntity.setCooldown(p.inventory.itemInMainHand.type, event.cooldown)
+                manageEntitySpawn(p,event.entitySpawn)
                 manageCommand(p, event.commands)
                 manageSound(p, event.soundsPlay)
                 manageParticle(p, event.particlePlay)
                 managePotionAdd(p, event.potionEffectsAdd)
                 managePotionRemove(p, event.potionEffectsRemove)
-                manageDurability(p.inventory.itemInMainHand)
-                manageDurability(p.inventory.itemInOffHand)
+                if (!eventName.equals("PlayerMoveEvent",ignoreCase = true)) {
+                    manageDurability(p.inventory.itemInMainHand)
+                    manageDurability(p.inventory.itemInOffHand)
+                }
             }
         }
     }

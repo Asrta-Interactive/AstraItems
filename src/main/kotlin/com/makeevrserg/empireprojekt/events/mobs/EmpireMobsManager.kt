@@ -2,6 +2,7 @@ package com.makeevrserg.empireprojekt.events.mobs
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.items.getHEXString
+import org.bukkit.Location
 
 import org.bukkit.attribute.Attribute
 import org.bukkit.configuration.ConfigurationSection
@@ -13,13 +14,13 @@ class EmpireMobsManager {
 
     data class ReplaceMobSpawn(
         val type: EntityType,
-        val chance: Double
+        val chance: Double,
     ) {
         companion object {
             public fun getMobSpawn(sect: ConfigurationSection): ReplaceMobSpawn? {
                 return ReplaceMobSpawn(
                     EntityType.fromName(sect.getString("type") ?: sect.name) ?: return null,
-                    sect.getDouble("chance")
+                    sect.getDouble("chance"),
                 )
 
             }
@@ -65,11 +66,19 @@ class EmpireMobsManager {
         val idleAnimation: ItemStack,
         val walkAnimation: ItemStack,
         val attackAnimation: ItemStack,
+        val useArmorStand:Boolean = false,
+        val smallArmorStand:Boolean = false,
         val displayName: String?,
+        val soundIdle:String?,
+        val soundDie:String?,
+        val soundHurt:String?,
         val ai: EntityType,
         val attributes: List<MobAttribute>,
         val replaceMobSpawn: Map<EntityType, ReplaceMobSpawn>
     ) {
+        enum class STATE{
+            WALK,ATTACK,IDLE
+        }
         companion object {
             public fun create(sect: ConfigurationSection?): EmpireMob? {
                 sect ?: return null
@@ -78,7 +87,12 @@ class EmpireMobsManager {
                     EmpirePlugin.empireItems.empireItems[sect.getString("idle_animation")] ?: return null,
                     EmpirePlugin.empireItems.empireItems[sect.getString("walk_animation")] ?: return null,
                     EmpirePlugin.empireItems.empireItems[sect.getString("attack_animation")] ?: return null,
+                    sect.getBoolean("use_armor_stand"),
+                    sect.getBoolean("small_armor_stand"),
                     sect.getHEXString("display_name"),
+                    sect.getString("sound_idle"),
+                    sect.getString("sound_die"),
+                    sect.getString("sound_hurt"),
                     EntityType.fromName(sect.getString("ai") ?: return null) ?: return null,
                     MobAttribute.createAttributes(sect.getConfigurationSection("attributes")),
                     ReplaceMobSpawn.getMobSpawnMap(sect.getConfigurationSection("replace_mob_spawn") ?: return null)
@@ -118,6 +132,9 @@ class EmpireMobsManager {
             private set
         public lateinit var empireMobsByEntitySpawn: Map<EntityType, List<EmpireMob>>
             private set
+
+        val spawnList = mutableListOf<Location>()
+
     }
 
     lateinit var _empireMobs: EmpireMobsEvent

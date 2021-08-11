@@ -35,6 +35,9 @@ fun ConfigurationSection.getHEXStringList(path: String): List<String> {
 fun FileConfiguration.getHEXString(path: String, def: String): String {
     return EmpireUtils.HEXPattern(getString(path, def)!!)
 }
+fun ItemStack?.getEmpireID(): String? {
+    return EmpireUtils.getEmpireID(this)
+}
 
 class EmpireUtils {
     class LambdaRunnable(private val function: Runnable) : BukkitRunnable() {

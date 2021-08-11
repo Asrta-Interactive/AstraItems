@@ -5,6 +5,8 @@ import com.makeevrserg.empireprojekt.essentials.sit.SitEvent
 import empirelibs.menu.PlayerMenuUtility
 import com.makeevrserg.empireprojekt.emgui.EmpireCategoriesMenu
 import com.makeevrserg.empireprojekt.emgui.EmpireSoundsMenu
+import com.makeevrserg.empireprojekt.events.mobs.EmpireMobsManager
+import com.makeevrserg.empireprojekt.events.mobs.MobAPI
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -24,6 +26,8 @@ class CommandManager() : CommandExecutor {
     init {
         plugin.getCommand("emp")!!.tabCompleter = tabCompletion
         plugin.getCommand("emnpc")!!.tabCompleter = tabCompletion
+        plugin.getCommand("emspawn")!!.tabCompleter = tabCompletion
+        plugin.getCommand("emspawn")!!.setExecutor(this)
         plugin.getCommand("ereload")!!.setExecutor(this)
         plugin.getCommand("ezip")!!.setExecutor(this)
         plugin.getCommand("emgui")!!.setExecutor(this)
@@ -143,6 +147,18 @@ class CommandManager() : CommandExecutor {
                 //sender.inventory.addItem(book)
                 sender.openBook(book)
             }
+        }
+        if (label.equals("emspawn",ignoreCase = true) && sender.hasPermission(EmpirePermissions.SPAWN_ENTITY)){
+            val p = sender as Player
+            if (args.size>1 || args.size<1) {
+                sender.sendMessage(EmpirePlugin.translations.WRONG_ARGS)
+                return true
+
+            }
+
+            val empireMob = EmpireMobsManager.empireMobs[args[0]]?:return true
+
+            MobAPI().spawnMob(p.location,empireMob)
         }
 
 

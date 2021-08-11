@@ -127,8 +127,8 @@ data class EmpireItem(
         conf.getHEXString("display_name")!!,
         conf.getHEXStringList("lore"),
         Material.getMaterial(conf.getString("material")!!)!!,
-        conf.getString("texture_path")?.replace(".png",""),
-        conf.getString("model_path")?.replace(".json",""),
+        conf.getString("texture_path")?.replace(".png", ""),
+        conf.getString("model_path")?.replace(".json", ""),
         conf.getInt("custom_model_data", -1),
         getItemFlagList(conf.getStringList("item_flags")),
         getEnchantements(conf.getConfigurationSection("enchantements")),
@@ -268,7 +268,7 @@ data class Block(
 }
 
 data class Generate(
-    val world:String?,
+    val world: String?,
     val chunk: Double,
     val onlyNewChunks: Boolean,
     val replaceBlocks: MutableMap<Material, Double>,
@@ -309,48 +309,6 @@ private fun getCommands(section: ConfigurationSection?): List<Command> {
     return list
 }
 
-private fun getPotionEffectAdd(section: ConfigurationSection?): List<PotionEffect> {
-    section ?: return mutableListOf()
-    val list = mutableListOf<PotionEffect>()
-    for (key in section.getKeys(false)) {
-        val sect = section.getConfigurationSection(key) ?: continue
-        val potionType = PotionEffectType.getByName(sect.name.lowercase()) ?: continue
-        val potionEffect = PotionEffect(potionType, sect.getInt("duration"), sect.getInt("amplifier"))
-        list.add(potionEffect)
-    }
-    return list
-}
-
-private fun getPotionEffectRemove(removeList: List<String>): List<PotionEffectType> {
-    val list = mutableListOf<PotionEffectType>()
-    for (key in removeList) {
-        val potionType = PotionEffectType.getByName(key) ?: continue
-        list.add(potionType)
-    }
-    return list
-}
-
-private fun getParticles(sect: ConfigurationSection?): ParticleBuilder? {
-    sect ?: return null
-    val name = sect.getString("name") ?: return null
-    val count = sect.getInt("count")
-    val time = sect.getDouble("time")
-    val particle = ParticleBuilder(Particle.valueOf(name)).count(count).extra(time)
-
-    return particle
-}
-
-private fun getSounds(section: ConfigurationSection?): Sound? {
-    section ?: return null
-
-
-    val name = section.getString("name") ?: return null
-    val volume = section.getDouble("volume")
-    val pitch = section.getDouble("pitch")
-
-
-    return Sound(name, volume, pitch)
-}
 
 class EmpireGun {
 
@@ -395,8 +353,58 @@ data class Event(
     val potionEffectsRemove: List<PotionEffectType>,
     val particlePlay: ParticleBuilder?,
     val soundsPlay: Sound?,
+    val entitySpawn: Map<String,Int>?,
     val cooldown: Int
 ) {
+
+
+    companion object {
+        private fun getPotionEffectAdd(section: ConfigurationSection?): List<PotionEffect> {
+            section ?: return mutableListOf()
+            val list = mutableListOf<PotionEffect>()
+            for (key in section.getKeys(false)) {
+                val sect = section.getConfigurationSection(key) ?: continue
+                val potionType = PotionEffectType.getByName(sect.name.lowercase()) ?: continue
+                val potionEffect = PotionEffect(potionType, sect.getInt("duration"), sect.getInt("amplifier"))
+                list.add(potionEffect)
+            }
+            return list
+        }
+
+        private fun getPotionEffectRemove(removeList: List<String>): List<PotionEffectType> {
+            val list = mutableListOf<PotionEffectType>()
+            for (key in removeList) {
+                val potionType = PotionEffectType.getByName(key) ?: continue
+                list.add(potionType)
+            }
+            return list
+        }
+
+        private fun getParticles(sect: ConfigurationSection?): ParticleBuilder? {
+            sect ?: return null
+            val name = sect.getString("name") ?: return null
+            val count = sect.getInt("count")
+            val time = sect.getDouble("time")
+            val particle = ParticleBuilder(Particle.valueOf(name)).count(count).extra(time)
+            return particle
+        }
+
+        private fun getSounds(section: ConfigurationSection?): Sound? {
+            section ?: return null
+            val name = section.getString("name") ?: return null
+            val volume = section.getDouble("volume")
+            val pitch = section.getDouble("pitch")
+            return Sound(name, volume, pitch)
+        }
+        private fun getEntitySpawn(section: ConfigurationSection?): Map<String,Int>? {
+            section ?: return null
+            val map = mutableMapOf<String,Int>()
+            for (key in section.getKeys(false))
+                map[key] = section.getInt(key,1)
+            return map
+        }
+    }
+
     constructor(section: ConfigurationSection) : this(
         section.getStringList("events_names"),
         getCommands(section.getConfigurationSection("play_command")),
@@ -404,6 +412,7 @@ data class Event(
         getPotionEffectRemove(section.getStringList("potion_effect_remove")),
         getParticles(section.getConfigurationSection("play_particle")),
         getSounds(section.getConfigurationSection("play_sound")),
+        getEntitySpawn(section.getConfigurationSection("spawn_entity")),
         section.getInt("cooldown", -1),
     )
 }

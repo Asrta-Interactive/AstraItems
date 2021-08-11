@@ -3,6 +3,7 @@ package com.makeevrserg.empireprojekt.events.genericevents.drop
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.instance
 import com.makeevrserg.empireprojekt.events.blocks.MushroomBlockApi
+import com.makeevrserg.empireprojekt.events.mobs.MobAPI
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.Block
@@ -68,7 +69,8 @@ class ItemDropListener : Listener {
     @EventHandler
     fun onMobDeath(e: EntityDeathEvent) {
         val entity: Entity = e.entity
-        val listDrop = EmpirePlugin.dropManager.mobDrops[entity.type.name] ?: return
+        val empireMobID = MobAPI().getEmpireMob(entity)?.id
+        val listDrop = EmpirePlugin.dropManager.mobDrops[empireMobID?:entity.type.name] ?: return
         dropItem(listDrop, entity.location)
     }
 
