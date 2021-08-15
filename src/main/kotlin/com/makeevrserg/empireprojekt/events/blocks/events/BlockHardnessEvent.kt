@@ -2,6 +2,7 @@ package com.makeevrserg.empireprojekt.events.blocks.events
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.events.blocks.MushroomBlockApi
+import empirelibs.IEmpireListener
 import net.minecraft.core.BlockPosition
 import net.minecraft.network.protocol.game.PacketPlayOutBlockBreakAnimation
 import org.bukkit.block.Block
@@ -18,12 +19,11 @@ import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import kotlin.random.Random
 
-class BlockHardnessEvent : Listener {
-    init {
-        EmpirePlugin.instance.server.pluginManager.registerEvents(this, EmpirePlugin.instance)
-    }
+class BlockHardnessEvent : IEmpireListener {
 
-    public fun onDisable() {
+
+
+    public override fun onDisable() {
         BlockBreakEvent.getHandlerList().unregister(this)
         PlayerAnimationEvent.getHandlerList().unregister(this)
         BlockBreakEvent.getHandlerList().unregister(this)
@@ -73,8 +73,9 @@ class BlockHardnessEvent : Listener {
         val block = e.player.getTargetBlock(null, 100)
         val player = e.player
         val data = MushroomBlockApi.getBlockData(block) ?: return
-        val id = EmpirePlugin.empireItems._empireBlocksByData[data] ?: return
-        val empireBlock = EmpirePlugin.empireItems._empireBlocks[id] ?: return
+        val id = EmpirePlugin.empireItems.empireBlocksByData[data] ?: return
+        val empireBlock = EmpirePlugin.empireItems.empireBlocks[id] ?: return
+        empireBlock.hardness?:return
         val digMultiplier = e.player.inventory.itemInMainHand.enchantments[Enchantment.DIG_SPEED] ?: 1
         val time = (System.currentTimeMillis().minus(blockDamageMap[e.player]?.time ?: return) / 10.0) * digMultiplier
         player.sendBlockBreakPacket(block, (time / empireBlock.hardness.toDouble() * 9).toInt())

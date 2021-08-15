@@ -2,30 +2,22 @@ package com.makeevrserg.empireprojekt.events.blocks.events
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.events.blocks.BlockGenerationEvent2
+import empirelibs.IEmpireListener
+import empirelibs.IEventManager
 
-class MushroomBlockEventHandler {
+class MushroomBlockEventHandler() :IEventManager {
 
-    val blockPlace = MushroomBlockPlaceEvent()
-    val mushroomCancelEvent = MushroomCancelEvent()
-    val mushroomBreakEvent = MushroomBlockBreakEvent()
-    val hardnessEvent = BlockHardnessEvent()
-    var blockGenerationEvent: BlockGenerationEvent2? = null
-    val blockTestEvent = MushroomBlockTestEvent()
-
+    override val handlers: MutableList<IEmpireListener> = mutableListOf()
     init {
-        if (EmpirePlugin.config.generateBlocks)
-            blockGenerationEvent = BlockGenerationEvent2()
+        if (EmpirePlugin.empireConfig.generateBlocks)
+            BlockGenerationEvent2().onEnable(this)
+        MushroomBlockPlaceEvent().onEnable(this)
+        MushroomCancelEvent().onEnable(this)
+        MushroomBlockBreakEvent().onEnable(this)
+        BlockHardnessEvent().onEnable(this)
+        MushroomBlockTestEvent().onEnable(this)
 
     }
 
-    public fun onDisable() {
-        blockPlace.onDisable()
-        mushroomCancelEvent.onDisable()
-        mushroomBreakEvent.onDisable()
-        hardnessEvent.onDisable()
-        blockTestEvent.onDisable()
-        if (blockGenerationEvent != null)
-            blockGenerationEvent!!.onDisable()
 
-    }
 }

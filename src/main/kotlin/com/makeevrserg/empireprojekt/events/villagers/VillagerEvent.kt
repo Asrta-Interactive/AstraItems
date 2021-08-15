@@ -1,8 +1,12 @@
 package com.makeevrserg.empireprojekt.events.villagers
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
+import com.makeevrserg.empireprojekt.events.villagers.data.VillagerItem
+import com.makeevrserg.empireprojekt.events.villagers.data.VillagerTrade
 import empirelibs.EmpireUtils
+import empirelibs.IEmpireListener
 import empirelibs.getEmpireID
+import empirelibs.getEmpireItem
 
 import org.bukkit.ChatColor
 import org.bukkit.Material
@@ -18,14 +22,13 @@ import org.bukkit.inventory.MerchantRecipe
 import java.lang.IllegalArgumentException
 import kotlin.random.Random
 
-class VillagerEvent : Listener {
+class VillagerEvent : IEmpireListener {
 
 
     @EventHandler
     fun villagerAcquireTradeEvent(e: VillagerAcquireTradeEvent) {
-        println(ChatColor.AQUA.toString() + e.eventName)
         val villager = e.entity as Villager
-        val trades = VillagerManager.villagerTradeByProfession[villager.profession] ?: return
+        val trades = VillagerManager.villagerTradeByProfession[villager.profession.name] ?: return
         if (e.isCancelled)
             return
         for (trade in trades)
@@ -49,7 +52,7 @@ class VillagerEvent : Listener {
         if (e.rightClicked !is Villager)
             return
         val villager = e.rightClicked as Villager
-        val trades = VillagerManager.villagerTradeByProfession[villager.profession] ?: return
+        val trades = VillagerManager.villagerTradeByProfession[villager.profession.name] ?: return
 
         val recipes = villager.recipes.toMutableList()
         villager.recipes = mutableListOf()
@@ -60,9 +63,9 @@ class VillagerEvent : Listener {
                 recipe.ingredients = mutableListOf()
                 if (ingredients.isEmpty())
                     continue
-                ingredients[0] = checkForEquality(ingredients[0], trade.itemLeft)
+                ingredients[0] = checkForEquality(ingredients[0], trade.leftItem.id.getEmpireItem())
                 if (ingredients.size == 2)
-                    ingredients[1] = checkForEquality(ingredients[1], trade.itemRight)
+                    ingredients[1] = checkForEquality(ingredients[1], trade.middleItem?.id.getEmpireItem())
                 recipe.ingredients = ingredients
             }
         }
@@ -72,7 +75,7 @@ class VillagerEvent : Listener {
     }
 
 
-    private fun addRecipe(villager: Villager, trade: VillagerManager.VillagerTrades) {
+    private fun addRecipe(villager: Villager, trade:VillagerItem ) {
 
         if (villager.villagerLevel < trade.minLevel)
             return
@@ -80,11 +83,11 @@ class VillagerEvent : Listener {
             return
         if (trade.chance < Random.nextDouble(100.0))
             return
-        val mRecipe = MerchantRecipe(trade.result, 1)
-        mRecipe.addIngredient(trade.itemLeft)
+        val mRecipe = MerchantRecipe(trade.resultItem.id.getEmpireItem()?:return, 1)
+        mRecipe.addIngredient(trade.leftItem.id.getEmpireItem()?:return)
         mRecipe.maxUses = Random.nextInt(1, 6)
-        if (trade.itemRight != null)
-            mRecipe.addIngredient(trade.itemRight)
+        if (trade.middleItem != null)
+            mRecipe.addIngredient(trade.middleItem.id.getEmpireItem()?:return)
         if (villager.recipes.contains(mRecipe))
             return
         for (vRecipe in villager.recipes)
@@ -98,13 +101,11 @@ class VillagerEvent : Listener {
 
 
     init {
-        EmpirePlugin.instance.server.pluginManager.registerEvents(this, EmpirePlugin.instance)
         VillagerManager()
-
     }
 
 
-    fun onDisable() {
+    override fun onDisable() {
         VillagerAcquireTradeEvent.getHandlerList().unregister(this)
         VillagerReplenishTradeEvent.getHandlerList().unregister(this)
         VillagerCareerChangeEvent.getHandlerList().unregister(this)

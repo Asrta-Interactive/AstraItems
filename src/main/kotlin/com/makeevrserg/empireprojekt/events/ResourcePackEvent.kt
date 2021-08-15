@@ -1,19 +1,16 @@
 package com.makeevrserg.empireprojekt.events
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
-import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.instance
+import empirelibs.IEmpireListener
 import org.bukkit.event.EventHandler
-import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerResourcePackStatusEvent
 
-class ResourcePackEvent : Listener {
+class ResourcePackEvent : IEmpireListener {
 
-    init {
-        instance.server.pluginManager.registerEvents(this, instance)
-    }
 
-    fun onDisable() {
+
+    override fun onDisable() {
         PlayerJoinEvent.getHandlerList().unregister(this)
         PlayerResourcePackStatusEvent.getHandlerList().unregister(this)
     }
@@ -22,7 +19,7 @@ class ResourcePackEvent : Listener {
     @EventHandler
     fun onJoin(e: PlayerJoinEvent) {
         val p = e.player
-        if (EmpirePlugin.config.downloadPackOnJoin)
+        if (EmpirePlugin.empireConfig.downloadPackOnJoin)
             p.performCommand("empack")
         else
             p.sendTitle(

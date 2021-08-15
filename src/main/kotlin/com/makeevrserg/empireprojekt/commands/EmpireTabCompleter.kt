@@ -38,7 +38,7 @@ class EmpireTabCompleter() : TabCompleter {
         return if (alias.equals("emnpc", ignoreCase = true)) {
             listOf("create", "tp", "move", "delete", "changeskin", "select")
         } else if (alias.equals("emspawn", ignoreCase = true)) {
-            EmpireMobsManager.empireMobs.keys.toList()
+            EmpireMobsManager.mobById.keys.toList()
         } else {
             listOf("reload", "give")
         }

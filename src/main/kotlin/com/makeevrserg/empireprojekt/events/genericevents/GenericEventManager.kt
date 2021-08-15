@@ -1,12 +1,17 @@
 package com.makeevrserg.empireprojekt.events.genericevents
 
+import com.comphenix.protocol.wrappers.EnumWrappers
 import com.destroystokyo.paper.ParticleBuilder
 import com.makeevrserg.empireprojekt.EmpirePlugin
-import com.makeevrserg.empireprojekt.items.Command
-import com.makeevrserg.empireprojekt.items.Sound
+import com.makeevrserg.empireprojekt.items.data.interact.CommandEvent
+import com.makeevrserg.empireprojekt.items.data.interact.ParticleEvent
+import com.makeevrserg.empireprojekt.items.data.interact.PotionEffectEvent
+import com.makeevrserg.empireprojekt.items.data.interact.Sound
+import empirelibs.EmpireUtils
 import empirelibs.getEmpireID
 import me.clip.placeholderapi.PlaceholderAPI
 import org.bukkit.Bukkit
+import org.bukkit.Particle
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.HumanEntity
 import org.bukkit.entity.Player
@@ -17,27 +22,40 @@ import org.bukkit.potion.PotionEffectType
 
 class GenericEventManager {
     companion object {
-        private fun manageSound(p: Player, empireSound: Sound?) {
-            empireSound ?: return
-            p.world.playSound(p.location, empireSound.name, empireSound.volume.toFloat(), empireSound.pitch.toFloat())
+        private fun manageSound(p: Player, empireSounds: List<Sound>?) {
+            empireSounds ?: return
+            for (empireSound in empireSounds)
+                p.world.playSound(
+                    p.location,
+                    empireSound.song,
+                    empireSound.volume?.toFloat() ?: 1.0f,
+                    empireSound.pitch?.toFloat() ?: 1.0f
+                )
 
         }
 
-        private fun manageParticle(p: Player, empireParticle: ParticleBuilder?) {
+        private fun manageParticle(p: Player, empireParticle: List<ParticleEvent>?) {
             empireParticle ?: return
-            empireParticle.location(p.location).spawn()
+            for (particle in empireParticle)
+            ParticleBuilder(EmpireUtils.valueOfOrNull<Particle>(particle.name)?:continue)
+                .count(particle.count)
+                .extra(particle.time)
+                .location(p.location.add(0.0,1.5,0.0)).spawn()
         }
 
-        private fun managePotionAdd(p: Player, effects: List<PotionEffect>) {
+        private fun managePotionAdd(p: Player, effects: List<PotionEffectEvent>?) {
+            effects ?: return
             Bukkit.getScheduler().callSyncMethod(EmpirePlugin.instance) {
-                p.addPotionEffects(effects)
+                for (effect in effects)
+                    p.addPotionEffect(PotionEffect(PotionEffectType.getByName(effect.effect)?:continue,effect.duration,effect.amplifier))
             }
         }
 
-        private fun managePotionRemove(p: Player, effects: List<PotionEffectType>) {
+        private fun managePotionRemove(p: Player, effects: List<String>?) {
+            effects ?: return
             Bukkit.getScheduler().callSyncMethod(EmpirePlugin.instance) {
-                for (effect: PotionEffectType in effects)
-                    p.removePotionEffect(effect)
+                for (effect in effects)
+                    p.removePotionEffect(PotionEffectType.getByName(effect)?:continue)
             }
         }
 
@@ -55,10 +73,11 @@ class GenericEventManager {
                 item.amount -= 1
 
         }
-        private fun manageEntitySpawn(p:Player,map:Map<String,Int>?){
-            map?:return
-            for ((entity,amount) in map)
-                p.location.world?.spawnEntity(p.location,EntityType.fromName(entity)?:return)?:continue
+
+        private fun manageEntitySpawn(p: Player, map: Map<String, Int>?) {
+            map ?: return
+            for ((entity, amount) in map)
+                p.location.world?.spawnEntity(p.location, EntityType.fromName(entity) ?: return) ?: continue
 
         }
 
@@ -66,7 +85,8 @@ class GenericEventManager {
             EmpirePlugin.instance.server.dispatchCommand(EmpirePlugin.instance.server.consoleSender, cmd)
         }
 
-        public fun manageCommand(p: Player, empireCommands: List<Command>) {
+        public fun manageCommand(p: Player, empireCommands: List<CommandEvent>?) {
+            empireCommands ?: return
             for (command in empireCommands) {
                 var cmd = command.command
                 if (EmpirePlugin.instance.server.pluginManager.getPlugin("placeholderapi") != null)
@@ -79,26 +99,26 @@ class GenericEventManager {
         }
 
 
-
         fun handleEvent(id: String?, p: Player, eventName: String) {
             id ?: return
             val humanEntity = p as HumanEntity
             if (humanEntity.hasCooldown(p.inventory.itemInMainHand.type))
                 return
             val events = EmpirePlugin.empireItems.empireEvents[id] ?: return
-            for (event in events ) {
-                if (eventName !in event.eventNames)
+            for (event in events) {
+                event.eventList ?: return
+                if (eventName !in event.eventList)
                     continue
 
-                if (event.cooldown > 0)
+                if (event.cooldown != null && event.cooldown > 0)
                     humanEntity.setCooldown(p.inventory.itemInMainHand.type, event.cooldown)
-                manageEntitySpawn(p,event.entitySpawn)
-                manageCommand(p, event.commands)
-                manageSound(p, event.soundsPlay)
-                manageParticle(p, event.particlePlay)
-                managePotionAdd(p, event.potionEffectsAdd)
+                manageEntitySpawn(p, event.spawnEntity)
+                manageCommand(p, event.playCommand)
+                manageSound(p, event.playSound)
+                manageParticle(p, event.playParticle)
+                managePotionAdd(p, event.potionEffect)
                 managePotionRemove(p, event.potionEffectsRemove)
-                if (!eventName.equals("PlayerMoveEvent",ignoreCase = true)) {
+                if (!eventName.equals("PlayerMoveEvent", ignoreCase = true)) {
                     manageDurability(p.inventory.itemInMainHand)
                     manageDurability(p.inventory.itemInOffHand)
                 }

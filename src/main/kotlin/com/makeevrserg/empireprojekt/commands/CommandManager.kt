@@ -86,7 +86,7 @@ class CommandManager() : CommandExecutor {
         if (label.equals("empack", ignoreCase = true)) {
             if (sender is Player) {
 
-                sender.setResourcePack(EmpirePlugin.config.resourcePackRef)
+                sender.setResourcePack(EmpirePlugin.empireConfig.resourcePackRef?:return true)
             }
         }
         if (label.equals("emreplace", ignoreCase = true)) {
@@ -119,10 +119,10 @@ class CommandManager() : CommandExecutor {
 
 
                 var list = ""
-                for (emoji in EmpirePlugin.empireFonts.fontsInfo.keys) {
-                    if (EmpirePlugin.empireFonts.fontsInfo[emoji]?.sendBlocked ?: continue)
+                for (emoji in EmpirePlugin.empireFonts._fontInfoValueById.keys) {
+                    if (EmpirePlugin.empireFonts._fontInfoValueById[emoji]?.sendBlocked ?: continue)
                         continue
-                    list += EmpireUtils.HEXPattern("&r${emoji}\n&r&f${EmpirePlugin.empireFonts.fontsInfo[emoji]!!.chars}&r\n")
+                    list += EmpireUtils.HEXPattern("&r${emoji}\n&r&f${EmpirePlugin.empireFonts._fontInfoValueById[emoji]!!.chars}&r\n")
                 }
 
                 val book =
@@ -156,7 +156,7 @@ class CommandManager() : CommandExecutor {
 
             }
 
-            val empireMob = EmpireMobsManager.empireMobs[args[0]]?:return true
+            val empireMob = EmpireMobsManager.mobById[args[0]]?:return true
 
             MobAPI().spawnMob(p.location,empireMob)
         }

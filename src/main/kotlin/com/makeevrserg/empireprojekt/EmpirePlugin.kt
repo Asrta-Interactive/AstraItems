@@ -12,8 +12,11 @@ import com.makeevrserg.empireprojekt.items.EmpireItems
 import com.makeevrserg.empireprojekt.emgui.settings.GuiCategories
 import com.makeevrserg.empireprojekt.emgui.settings.GuiSettings
 import com.makeevrserg.empireprojekt.essentials.inventorysaver.ISCommandManager
+import com.makeevrserg.empireprojekt.events.blocks.events.MushroomBlockEventHandler
 import com.makeevrserg.empireprojekt.util.*
 import com.makeevrserg.empireprojekt.util.Files
+import com.makeevrserg.empireprojekt.util.sounds.SoundManager
+import empirelibs.EmpireYamlParser
 import empirelibs.PluginBetaAccessCheck
 import org.bukkit.NamespacedKey
 import org.bukkit.inventory.FurnaceRecipe
@@ -47,7 +50,7 @@ class EmpirePlugin : JavaPlugin() {
             private set
 
         //Config Instance
-        lateinit var config: EmpireConfig
+        lateinit var empireConfig: EmpireConfig
             private set
 
         //Font files instance aka custom hud and ui
@@ -62,7 +65,7 @@ class EmpirePlugin : JavaPlugin() {
             private set
 
         //Custom sounds instance
-        lateinit var empireSounds: EmpireSounds
+        lateinit var empireSounds: SoundManager
             private set
 
         //Npc manager instance
@@ -94,6 +97,7 @@ class EmpirePlugin : JavaPlugin() {
     val recipies: MutableMap<String, EmpireCrafts.EmpireRecipe>
         get() = _empireCrafts.empireRecipies
 
+    private lateinit var mushroomBlockEventHandler:MushroomBlockEventHandler
     //GuiSettings
     lateinit var guiSettings: GuiSettings
 
@@ -101,12 +105,16 @@ class EmpirePlugin : JavaPlugin() {
     lateinit var guiCategories: GuiCategories
 
     fun initPlugin() {
+
+
         empireConstants = EmpireConstats()
         translations = Translations()
         empireFiles = Files()
-        EmpirePlugin.config = EmpireConfig.create()
-        empireSounds = EmpireSounds()
-        empireFonts = EmpireFonts(empireFiles.fontImagesFile.getConfig())
+
+
+        empireConfig = EmpireConfig.new()
+        empireSounds = SoundManager()
+        empireFonts = EmpireFonts.new()
         empireItems = EmpireItems()
         empireMobs = EmpireMobsManager()
         upgradeManager = UpgradesManager()
@@ -116,10 +124,9 @@ class EmpirePlugin : JavaPlugin() {
         dropManager = ItemDropManager()
 
 
-
+        mushroomBlockEventHandler = MushroomBlockEventHandler()
         isCommandManager = ISCommandManager()
         _empireCrafts = EmpireCrafts()
-        empireSounds.getSounds()
 
         guiSettings = GuiSettings()
         guiCategories = GuiCategories()
@@ -129,7 +136,7 @@ class EmpirePlugin : JavaPlugin() {
             println(translations.PLUGIN_PROTOCOLLIB_NOT_INSTALLED)
 
         //Beta plugin countdown
-        //PluginBetaAccessCheck()
+        PluginBetaAccessCheck()
 
     }
 
@@ -166,6 +173,8 @@ class EmpirePlugin : JavaPlugin() {
             npcManager!!.onDisable()
 
         genericListener.onDisable()
+        mushroomBlockEventHandler.onDisable()
+//        genericListener.onDisable()
         empireMobs.onDisable()
         server.scheduler.cancelTasks(this)
         val ite = server.recipeIterator()

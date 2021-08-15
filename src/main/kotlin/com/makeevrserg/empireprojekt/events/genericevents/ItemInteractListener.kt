@@ -3,6 +3,7 @@ package com.makeevrserg.empireprojekt.events.genericevents
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.instance
 import empirelibs.EmpireUtils
+import empirelibs.IEmpireListener
 import empirelibs.getEmpireID
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
@@ -16,11 +17,9 @@ import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerItemConsumeEvent
 import org.bukkit.event.player.PlayerMoveEvent
 
-class ItemInteractListener : Listener {
+class ItemInteractListener : IEmpireListener {
 
-    init {
-        instance.server.pluginManager.registerEvents(this, instance)
-    }
+
 
 
     @EventHandler
@@ -58,7 +57,7 @@ class ItemInteractListener : Listener {
     }
 
 
-    fun onDisable() {
+    override fun onDisable() {
         PlayerInteractEvent.getHandlerList().unregister(this)
         PlayerItemConsumeEvent.getHandlerList().unregister(this)
         EntityDamageEvent.getHandlerList().unregister(this)

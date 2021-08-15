@@ -1,9 +1,9 @@
 package com.makeevrserg.empireprojekt.emgui.settings
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
-import com.makeevrserg.empireprojekt.items.getHEXStringList
 import empirelibs.EmpireUtils
 import empirelibs.getHEXString
+import empirelibs.getHEXStringList
 
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.inventory.ItemStack

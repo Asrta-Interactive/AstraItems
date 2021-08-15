@@ -3,17 +3,17 @@ package com.makeevrserg.empireprojekt.events.blocks.events
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.events.blocks.MushroomBlockApi
 import com.makeevrserg.empireprojekt.events.genericevents.drop.ItemDropListener
+import empirelibs.IEmpireListener
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPlaceEvent
 
-class MushroomBlockBreakEvent:Listener {
+class MushroomBlockBreakEvent:IEmpireListener {
 
-    init {
-        EmpirePlugin.instance.server.pluginManager.registerEvents(this, EmpirePlugin.instance)
-    }
-    public fun onDisable(){
+
+
+    public override fun onDisable(){
         BlockBreakEvent.getHandlerList().unregister(this)
     }
 
@@ -28,7 +28,7 @@ class MushroomBlockBreakEvent:Listener {
         val block = e.block
         val data = MushroomBlockApi.getBlockData(block)?:return
 
-        val id = EmpirePlugin.empireItems._empireBlocksByData[data]?:return
+        val id = EmpirePlugin.empireItems.empireBlocksByData[data]?:return
 
         if (EmpirePlugin.dropManager.itemDrops[id]!=null)
             return

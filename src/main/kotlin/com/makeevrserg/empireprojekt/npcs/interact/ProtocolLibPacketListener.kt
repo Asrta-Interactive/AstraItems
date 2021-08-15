@@ -24,6 +24,7 @@ class ProtocolLibPacketListener {
             override fun onPacketReceiving(event: PacketEvent) {
                 val packet = event.packet
                 val player = event.player
+
                 Bukkit.getScheduler().runTaskAsynchronously(EmpirePlugin.instance, Runnable{
                     for (i in 0 until packet.enumEntityUseActions.size()) {
                         if (!packet.enumEntityUseActions.read(i).action.toString().equals("INTERACT", ignoreCase = true))

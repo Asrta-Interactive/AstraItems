@@ -2,18 +2,18 @@ package com.makeevrserg.empireprojekt.events.empireevents
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.instance
+import empirelibs.IEmpireListener
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.persistence.PersistentDataType
 
-class Vampirism : Listener {
+class Vampirism : IEmpireListener {
 
-    init {
-        instance.server.pluginManager.registerEvents(this,instance)
-    }
-    fun onDisable(){
+
+
+    override fun onDisable(){
         EntityDamageByEntityEvent.getHandlerList().unregister(this)
     }
     @EventHandler

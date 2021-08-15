@@ -1,24 +1,16 @@
 package com.makeevrserg.empireprojekt.events.mobs
 
-import com.makeevrserg.empireprojekt.EmpirePlugin
+import com.makeevrserg.empireprojekt.events.mobs.data.EmpireMob
+import empirelibs.IEmpireListener
 import io.papermc.paper.event.entity.EntityMoveEvent
-import org.bukkit.Location
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity
-import org.bukkit.entity.ArmorStand
-import org.bukkit.entity.Entity
-import org.bukkit.entity.EntityType
 import org.bukkit.entity.LivingEntity
 import org.bukkit.event.EventHandler
-import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDeathEvent
 import org.bukkit.event.entity.EntitySpawnEvent
-import org.bukkit.inventory.ItemStack
-import org.bukkit.potion.PotionEffect
-import org.bukkit.potion.PotionEffectType
 import kotlin.random.Random
 
-class EmpireMobsEvent : Listener {
+class EmpireMobsEvent : IEmpireListener {
 
 
     @EventHandler
@@ -58,9 +50,9 @@ class EmpireMobsEvent : Listener {
             attackCooldown.remove(entity)
 
         if (e.from.distance(e.to) < 0.08)
-            mobAPI.changeMobState(entity, empireMob, EmpireMobsManager.EmpireMob.STATE.IDLE)
+            mobAPI.changeMobState(entity, empireMob, EmpireMob.STATE.IDLE)
         else
-            mobAPI.changeMobState(entity, empireMob, EmpireMobsManager.EmpireMob.STATE.WALK)
+            mobAPI.changeMobState(entity, empireMob, EmpireMob.STATE.WALK)
 
     }
 
@@ -87,14 +79,12 @@ class EmpireMobsEvent : Listener {
         val empireMobDamager = mobAPI.getEmpireMob(e.damager) ?: return
 
         attackCooldown[entity] = System.currentTimeMillis()
-        mobAPI.changeMobState(entity, empireMobDamager, EmpireMobsManager.EmpireMob.STATE.ATTACK)
+        mobAPI.changeMobState(entity, empireMobDamager, EmpireMob.STATE.ATTACK)
     }
 
-    init {
-        EmpirePlugin.instance.server.pluginManager.registerEvents(this, EmpirePlugin.instance)
-    }
 
-    public fun onDisable() {
+
+    public override fun onDisable() {
         EntitySpawnEvent.getHandlerList().unregister(this)
         EntityMoveEvent.getHandlerList().unregister(this)
         EntityDamageByEntityEvent.getHandlerList().unregister(this)

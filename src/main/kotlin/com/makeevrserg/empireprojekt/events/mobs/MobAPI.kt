@@ -1,5 +1,8 @@
 package com.makeevrserg.empireprojekt.events.mobs
 
+import com.makeevrserg.empireprojekt.events.mobs.data.EmpireMob
+import empirelibs.EmpireUtils
+import empirelibs.getEmpireItem
 import org.bukkit.Location
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity
 import org.bukkit.entity.ArmorStand
@@ -27,9 +30,9 @@ class MobAPI {
         return (e as CraftEntity).handle.scoreboardTags
     }
 
-    fun getEmpireMob(e: Entity): EmpireMobsManager.EmpireMob? {
+    fun getEmpireMob(e: Entity): EmpireMob? {
         for (tag in (e as CraftEntity).handle.scoreboardTags) {
-            val mob = EmpireMobsManager.empireMobs[tag]
+            val mob = EmpireMobsManager.mobById[tag]
             if (mob != null)
                 return mob
         }
@@ -38,8 +41,8 @@ class MobAPI {
 
     fun changeMobState(
         entity: LivingEntity,
-        empireMob: EmpireMobsManager.EmpireMob,
-        state: EmpireMobsManager.EmpireMob.STATE
+        empireMob: EmpireMob,
+        state: EmpireMob.STATE
     ) {
         fun setAnim(stand: ArmorStand?, entity: LivingEntity, item: ItemStack) {
 
@@ -50,26 +53,26 @@ class MobAPI {
 
         val aStand: ArmorStand? = if (empireMob.useArmorStand) getEntityArmorStand(entity, empireMob) else null
         when (state) {
-            EmpireMobsManager.EmpireMob.STATE.IDLE ->
-                setAnim(aStand, entity, empireMob.idleAnimation)
-            EmpireMobsManager.EmpireMob.STATE.WALK ->
-                setAnim(aStand, entity, empireMob.walkAnimation)
+            EmpireMob.STATE.IDLE ->
+                setAnim(aStand, entity, empireMob.idleAnimation.getEmpireItem()?:return)
+            EmpireMob.STATE.WALK ->
+                setAnim(aStand, entity, empireMob.walkAnimation.getEmpireItem()?:return)
 
-            EmpireMobsManager.EmpireMob.STATE.ATTACK ->
-                setAnim(aStand, entity, empireMob.attackAnimation)
+            EmpireMob.STATE.ATTACK ->
+                setAnim(aStand, entity, empireMob.attackAnimation.getEmpireItem()?:return)
 
         }
 
     }
 
-    private fun isItemIsMobAnim(itemStack: ItemStack, mob: EmpireMobsManager.EmpireMob): Boolean {
-        if (listOf(mob.idleAnimation, mob.walkAnimation, mob.attackAnimation).contains(itemStack))
+    private fun isItemIsMobAnim(itemStack: ItemStack, mob: EmpireMob): Boolean {
+        if (listOf(mob.idleAnimation.getEmpireItem(), mob.walkAnimation.getEmpireItem(), mob.attackAnimation.getEmpireItem()).contains(itemStack))
             return true
         return false
 
     }
 
-    private fun getEntityArmorStand(e: Entity, empireMob: EmpireMobsManager.EmpireMob): ArmorStand? {
+    private fun getEntityArmorStand(e: Entity, empireMob: EmpireMob): ArmorStand? {
         var aStand: ArmorStand? = null
         for (passenger in e.passengers)
             if (passenger is ArmorStand)
@@ -79,36 +82,36 @@ class MobAPI {
     }
 
     private fun getMobToSpawn(
-        list: List<EmpireMobsManager.EmpireMob>,
+        list: List<EmpireMob>,
         entity: Entity
-    ): MutableList<EmpireMobsManager.EmpireMob> {
-        val mobs = mutableListOf<EmpireMobsManager.EmpireMob>()
+    ): MutableList<EmpireMob> {
+        val mobs = mutableListOf<EmpireMob>()
         for (mob in list)
-            if (mob.replaceMobSpawn[entity.type]?.chance ?: continue > Random.nextDouble(100.0))
+            if (mob.mobByMap[entity.type.name] ?: continue > Random.nextDouble(100.0))
                 mobs.add(mob)
         return mobs
     }
 
-    fun getEmpireMobByEntity(e: Entity): EmpireMobsManager.EmpireMob? {
+    fun getEmpireMobByEntity(e: Entity): EmpireMob? {
         val entity = getLivingEntity(e) ?: return null
-        val empireMobs = EmpireMobsManager.empireMobsByEntitySpawn[entity.type] ?: return null
+        val empireMobs = EmpireMobsManager.empireMobsByEntitySpawn[entity.type.name] ?: return null
         val mobsToSpawn = getMobToSpawn(empireMobs, entity)
         if (mobsToSpawn.isEmpty())
             return null
         return mobsToSpawn[Random.nextInt(mobsToSpawn.size)]
     }
 
-    public fun spawnMob(location: Location, empireMob: EmpireMobsManager.EmpireMob) {
+    public fun spawnMob(location: Location, empireMob: EmpireMob) {
 
 
 
         EmpireMobsManager.spawnList.add(location)
-        val ent = (location.world!!.spawnEntity(location, empireMob.ai))
+        val ent = (location.world!!.spawnEntity(location, EmpireUtils.valueOfOrNull<EntityType>(empireMob.ai)?:return))
         ent.teleport(location)
         val entity = ent as LivingEntity
 
-        for (attr in empireMob.attributes)
-            entity.getAttribute(attr.attribute)?.baseValue = Random.nextDouble(attr.min, attr.max + 0.0001)
+//        for (attr in empireMob.attributes)
+//            entity.getAttribute(attr.attribute)?.baseValue = Random.nextDouble(attr.add_min, attr.add_max + 0.0001)
 
 
         setNameTag(entity, empireMob.id)
@@ -118,14 +121,14 @@ class MobAPI {
             val aStand = entity.world.spawnEntity(entity.location, EntityType.ARMOR_STAND) as ArmorStand
             aStand.isInvisible = true
             aStand.isInvulnerable = true
-            aStand.equipment!!.helmet = empireMob.idleAnimation
+            aStand.equipment!!.helmet = empireMob.idleAnimation.getEmpireItem()?:return
             if (empireMob.smallArmorStand)
                 aStand.isSmall = true
             entity.addPassenger(aStand)
         } else {
             entity.equipment?.clear() ?: return
             entity.equipment?.helmetDropChance = 0.0f
-            entity.equipment?.helmet = empireMob.idleAnimation
+            entity.equipment?.helmet = empireMob.idleAnimation.getEmpireItem()?:return
 
         }
         entity.isSilent = true

@@ -2,6 +2,7 @@ package com.makeevrserg.empireprojekt.essentials
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import empirelibs.EmpireUtils
+import empirelibs.IEmpireListener
 import org.bukkit.Material
 import org.bukkit.block.data.Ageable
 import org.bukkit.event.EventHandler
@@ -10,7 +11,7 @@ import org.bukkit.event.block.Action
 import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.player.PlayerInteractEvent
 
-class AutoBlockChangeEvent : Listener {
+class AutoBlockChangeEvent : IEmpireListener {
 
 
     @EventHandler
@@ -68,11 +69,12 @@ class AutoBlockChangeEvent : Listener {
 
     }
 
-    init {
-        EmpirePlugin.instance.server.pluginManager.registerEvents(this, EmpirePlugin.instance)
-    }
 
-    fun onDisable() {
+
+
+
+
+    override fun onDisable() {
         BlockPlaceEvent.getHandlerList().unregister(this)
         PlayerInteractEvent.getHandlerList().unregister(this)
     }

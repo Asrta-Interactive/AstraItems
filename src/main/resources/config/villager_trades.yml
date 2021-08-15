@@ -1,7 +1,22 @@
-LIBRARIAN:
-  profession: LIBRARIAN
-  chance: 70.0
-  result: schlatt_coin
-  recipes:
-    - DIAMOND: 1
-    - ender_ingot: 1
+villager_trades:
+  #Профессия https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/entity/Villager.Profession.html
+  profession: CLERIC
+  items:
+    #Результат при трейде
+    - id: power_totem
+      amount: 1
+      chance: 50
+      #Если не указано, то =1 по умолчанию
+      min_level: 2
+      #Если не указано, то =5 по умолчанию
+      max_level: 2
+      recipes:
+        #Предмет в левой колонке
+        left_item:
+          id: ruby
+          amount: 10
+        #Предмет в середине
+        middle_item:
+          id: stone_of_power
+          amount: 1
+

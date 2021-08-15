@@ -24,8 +24,7 @@ public class Files() {
         FileManager("config" + File.separator + "crafting.yml")
     val mobsFile: FileManager =
         FileManager("config" + File.separator + "mobs.yml")
-    val mechanicsFile: FileManager =
-        FileManager("config" + File.separator + "mechanics.yml")
+
     val loreBooks: FileManager =
         FileManager("config" + File.separator + "lore_books.yml")
     val npcs: FileManager =

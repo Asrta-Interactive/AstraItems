@@ -2,17 +2,16 @@ package com.makeevrserg.empireprojekt.events.genericevents
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import empirelibs.EmpireUtils
+import empirelibs.IEmpireListener
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.SignChangeEvent
 import org.bukkit.event.player.PlayerEditBookEvent
 
-class BookSignEvent:Listener {
+class BookSignEvent:IEmpireListener {
 
-    init {
-        EmpirePlugin.instance.server.pluginManager.registerEvents(this, EmpirePlugin.instance)
-    }
-    public fun onDisable(){
+
+    public override fun onDisable(){
         SignChangeEvent.getHandlerList().unregister(this)
         PlayerEditBookEvent.getHandlerList().unregister(this)
     }

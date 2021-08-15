@@ -7,6 +7,7 @@ import com.sk89q.worldedit.bukkit.BukkitAdapter
 import com.sk89q.worldguard.WorldGuard
 import com.sk89q.worldguard.protection.flags.Flags
 import com.sk89q.worldguard.protection.regions.RegionQuery
+import empirelibs.IEmpireListener
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Material
@@ -19,11 +20,9 @@ import org.bukkit.event.Listener
 import org.bukkit.event.entity.ProjectileHitEvent
 import org.bukkit.persistence.PersistentDataType
 
-class MolotovEvent : Listener {
+class MolotovEvent : IEmpireListener {
 
-    init {
-        instance.server.pluginManager.registerEvents(this, instance)
-    }
+
 
     @EventHandler
     fun onProjectileHit(e: ProjectileHitEvent) {
@@ -118,7 +117,7 @@ class MolotovEvent : Listener {
     }
 
 
-    fun onDisable() {
+    override fun onDisable() {
         ProjectileHitEvent.getHandlerList().unregister(this)
     }
 }

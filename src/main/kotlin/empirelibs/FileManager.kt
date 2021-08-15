@@ -34,13 +34,13 @@ public class FileManager(var configName:String){
     }
 
 
-    fun getConfig(): FileConfiguration? {
+    fun getConfig(): FileConfiguration {
         if (this.dataConfig == null) reloadConfig()
-        return this.dataConfig
+        return this.dataConfig!!
     }
-    fun getFile(): File? {
+    fun getFile(): File {
         if (this.dataConfig == null) reloadConfig()
-        return this.configFiles
+        return this.configFiles!!
     }
 
     fun LoadFiles() {

@@ -8,6 +8,7 @@ import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.BookMeta
 import org.bukkit.inventory.meta.ItemMeta
@@ -15,6 +16,7 @@ import org.bukkit.persistence.PersistentDataType
 import org.bukkit.scheduler.BukkitRunnable
 import java.io.InputStreamReader
 import java.lang.Exception
+import java.lang.IllegalArgumentException
 import java.net.URL
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -39,6 +41,13 @@ fun ItemStack?.getEmpireID(): String? {
     return EmpireUtils.getEmpireID(this)
 }
 
+inline fun <reified T:kotlin.Enum<T>> T.valueOfOrNull(type:String?):T?{
+    return java.lang.Enum.valueOf(T::class.java,type)
+}
+fun String?.getEmpireItem():ItemStack?{
+    return EmpirePlugin.empireItems.empireItems[this]
+}
+
 class EmpireUtils {
     class LambdaRunnable(private val function: Runnable) : BukkitRunnable() {
         override fun run() {
@@ -47,6 +56,13 @@ class EmpireUtils {
     }
 
     companion object {
+        inline fun <reified T : kotlin.Enum<T>> valueOfOrNull(key: String?): T? {
+            return java.lang.Enum.valueOf(T::class.java, key)
+
+        }
+
+
+
 
 
         fun getItemStackByID(id: String): ItemStack? {
@@ -159,7 +175,7 @@ class EmpireUtils {
         private val emojiPattern = Pattern.compile(":([a-zA-Z0-9_]*):")
 
         fun emojiPattern(_line: String): String {
-            val map = EmpirePlugin.empireFonts.fontValueById
+            val map = EmpirePlugin.empireFonts._fontValueById
             var matcher: Matcher = emojiPattern.matcher(_line)
             var line = _line
             while (matcher.find()) {

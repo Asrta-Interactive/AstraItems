@@ -1,14 +1,13 @@
 package com.makeevrserg.empireprojekt.events.upgrades
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
-import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.instance
 import empirelibs.EmpireUtils
+import empirelibs.IEmpireListener
 import org.bukkit.Particle
 import org.bukkit.attribute.Attribute
 import org.bukkit.attribute.AttributeModifier
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
-import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.PrepareAnvilEvent
 import org.bukkit.inventory.AnvilInventory
@@ -22,8 +21,7 @@ import java.util.*
 import kotlin.math.round
 import kotlin.random.Random
 
-class ItemUpgradeEvent : Listener {
-
+class ItemUpgradeEvent : IEmpireListener {
 
 
 
@@ -114,13 +112,13 @@ class ItemUpgradeEvent : Listener {
             if (!isArmor(itemName) && !isWeapon(itemName))
                 continue
 
-            if (!((!isArmor(itemName) && !isArmorAttr(itemUpgrade.attr))
-                        || (!isWeapon(itemName) && !isWeaponAttr(itemUpgrade.attr)))
+            if (!((!isArmor(itemName) && !isArmorAttr(itemUpgrade.attribute.name))
+                        || (!isWeapon(itemName) && !isWeaponAttr(itemUpgrade.attribute.name)))
             )
                 continue
 
             var attrAmount = resultMeta.persistentDataContainer.get(
-                EmpirePlugin.empireConstants.getUpgradesMap()[itemUpgrade.attr] ?: continue,
+                EmpirePlugin.empireConstants.getUpgradesMap()[itemUpgrade.attribute.name] ?: continue,
                 PersistentDataType.DOUBLE
             ) ?: 0.0
             isUpgraded = true
@@ -128,10 +126,10 @@ class ItemUpgradeEvent : Listener {
 
             attrAmount += upgradeAmount
             resultMeta.addAttributeModifier(
-                Attribute.valueOf(itemUpgrade.attr),
+                itemUpgrade.attribute,
                 AttributeModifier(
                     UUID.randomUUID(),
-                    itemUpgrade.attr,
+                    itemUpgrade.attribute.name,
                     upgradeAmount,
                     AttributeModifier.Operation.ADD_NUMBER,
                     itemResult.type.equipmentSlot
@@ -140,13 +138,13 @@ class ItemUpgradeEvent : Listener {
 
 
 
-            if (resultMeta.getAttributeModifiers(Attribute.valueOf(itemUpgrade.attr)) != null) {
+            if (resultMeta.getAttributeModifiers(itemUpgrade.attribute) != null) {
                 resultMeta.persistentDataContainer.set(
-                    EmpirePlugin.empireConstants.getUpgradesMap()[itemUpgrade.attr] ?: continue,
+                    EmpirePlugin.empireConstants.getUpgradesMap()[itemUpgrade.attribute.name] ?: continue,
                     PersistentDataType.DOUBLE, attrAmount
                 )
 
-                resultMeta.lore = setAttrLore(resultMeta, itemUpgrade.attr, null)
+                resultMeta.lore = setAttrLore(resultMeta, itemUpgrade.attribute.name, null)
                 resultMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
                 itemResult.itemMeta = resultMeta
 
@@ -193,7 +191,7 @@ class ItemUpgradeEvent : Listener {
             )
         }
         var amount = itemMeta.getAttributeModifiers(itemStack.type.equipmentSlot).values().size
-        amount *= EmpirePlugin.config.itemUpgradeBreakMultiplier * amount
+        amount *= EmpirePlugin.empireConfig.itemUpgradeBreakMultiplier * amount
         (itemMeta as Damageable).damage = amount
         itemStack.itemMeta = itemMeta
         EmpireUtils.manageWithEmpireDurability(itemStack)
@@ -212,11 +210,9 @@ class ItemUpgradeEvent : Listener {
         }
     }
 
-    init {
-        instance.server.pluginManager.registerEvents(this, instance)
-    }
 
-    fun onDisable() {
+
+    override fun onDisable() {
         PrepareAnvilEvent.getHandlerList().unregister(this)
         InventoryClickEvent.getHandlerList().unregister(this)
     }

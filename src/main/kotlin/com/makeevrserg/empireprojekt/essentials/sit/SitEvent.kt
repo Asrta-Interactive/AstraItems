@@ -2,6 +2,7 @@ package com.makeevrserg.empireprojekt.essentials.sit
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.translations
+import empirelibs.IEmpireListener
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.BlockFace
@@ -17,7 +18,7 @@ import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.event.player.PlayerTeleportEvent
 import org.spigotmc.event.entity.EntityDismountEvent
 
-class SitEvent : Listener {
+class SitEvent : IEmpireListener {
 
 
     private val sitPlayers = mutableMapOf<Player, ArmorStand>()
@@ -100,13 +101,10 @@ class SitEvent : Listener {
 
     init {
         instance = this
-        EmpirePlugin.instance.server.pluginManager.registerEvents(this,
-            EmpirePlugin.instance
-        )
     }
 
 
-    fun onDisable() {
+    override fun onDisable() {
         for (player in sitPlayers.keys)
             sitPlayers[player]!!.remove()
         sitPlayers.clear()

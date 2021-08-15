@@ -1,58 +1,89 @@
 package com.makeevrserg.empireprojekt.util
 
-import com.google.gson.annotations.JsonAdapter
+import com.google.gson.annotations.SerializedName
+import com.google.gson.reflect.TypeToken
+import com.makeevrserg.empireprojekt.EmpirePlugin
+import com.makeevrserg.empireprojekt.events.mobs.data.EmpireMob
+import empirelibs.EmpireYamlParser
 import org.bukkit.configuration.ConfigurationSection
-import org.bukkit.configuration.file.FileConfiguration
-
-class EmpireFonts(fontFileConfig: FileConfiguration?) {
-
-    private val _fontValueById: MutableMap<String, String> = mutableMapOf()
-    private val _fontsInfo:MutableMap<String,EmpireFont> = mutableMapOf()
-    val fontValueById: MutableMap<String, String>
-        get() = _fontValueById
-    val fontsInfo: MutableMap<String,EmpireFont>
-        get() = _fontsInfo
-
-    private fun initFonts(fontFileConfig: FileConfiguration?) {
-        fontFileConfig ?: return
-        val fontImagesConfig: ConfigurationSection = fontFileConfig.getConfigurationSection("font_images") ?: return
-
-        for (fontID in fontImagesConfig.getKeys(false)) {
-            val fontValue: String =
-                fontImagesConfig.getConfigurationSection(fontID)!!
-                    .getString("chars") ?: continue
-
-            //fontValue = (Integer.parseInt(fontValue.substring(2), 16).toChar()).toString()
+import java.io.Serial
 
 
-            _fontValueById[":$fontID:"] = fontValue
 
-            val currentFontConfig = fontImagesConfig.getConfigurationSection(fontID)!!
-            _fontsInfo[":$fontID:"] = EmpireFont(
-                currentFontConfig.getString("namespace","empire_items")?:"empire_items",
-                currentFontConfig.getBoolean("send_blocked",false),
-                currentFontConfig.getString("path")?:continue,
-                fontValue,
-                currentFontConfig.getInt("offset",8),
-                currentFontConfig.getInt("size",10)
+
+data class EmpireFont(
+    @SerializedName("id")
+    val id:String,
+    @SerializedName("path")
+    val path:String,
+    @SerializedName("height")
+    val height:Int,
+    @SerializedName("ascent")
+    val ascent:Int,
+    @SerializedName("chars")
+    val chars:String,
+    @SerializedName("send_blocked")
+    val sendBlocked:Boolean=false
+)
+data class EmpireFonts(
+    val _fontInfoValueById: Map<String, EmpireFont>,
+    val _fontValueById:Map<String,String>
+) {
+    companion object {
+
+
+        fun new(): EmpireFonts {
+
+
+            val fonts = EmpireYamlParser.parseYamlConfig<List<EmpireFont>>(
+                EmpirePlugin.empireFiles.fontImagesFile.getConfig(),
+                object : TypeToken<List<EmpireFont?>?>() {}.type,
+                listOf("font_images")
+            )!!
+
+
+
+            val fontsInfoMap = mutableMapOf<String, EmpireFont>()
+            val fontsById = mutableMapOf<String,String>()
+            for (font in fonts) {
+
+                fontsInfoMap[":${font.id}:"] = font
+
+                fontsById[":${font.id}:"] = font.chars
+            }
+            val offsets = mapOf(
+                "l_1" to "\uF801",
+                "l_2" to "\uF802",
+                "l_3" to "\uF803",
+                "l_4" to "\uF804",
+                "l_5" to "\uF805",
+                "l_6" to "\uF806",
+                "l_7" to "\uF807",
+                "l_8" to "\uF808",
+                "l_16" to "\uF809",
+                "l_32" to "\uF80A",
+                "l_64" to "\uF80B",
+                "l_128" to "\uF80C",
+                "l_512" to "\uF80D",
+                "l_1024" to "\uF80E",
+                "r_1" to "\uF821",
+                "r_2" to "\uF822",
+                "r_3" to "\uF823",
+                "r_4" to "\uF824",
+                "r_5" to "\uF825",
+                "r_6" to "\uF826",
+                "r_7" to "\uF827",
+                "r_8" to "\uF828",
+                "r_16" to "\uF829",
+                "r_32" to "\uF82A",
+                "r_64" to "\uF82B",
+                "r_128" to "\uF82C",
+                "r_512" to "\uF82D",
+                "r_1024" to "\uF82E"
             )
+            for ((offset,value) in offsets)
+                fontsById[":$offset:"] = value
+            return EmpireFonts(fontsInfoMap,fontsById)
         }
-        for (offsedId in fontFileConfig.getConfigurationSection("offsets")?.getKeys(false) ?: return)
-            _fontValueById[":$offsedId:"] = fontFileConfig.getConfigurationSection("offsets")!!.getString(offsedId)!!
-
     }
-
-    data class EmpireFont(
-        val namespace: String,
-        val sendBlocked: Boolean,
-        val path: String,
-        val chars: String,
-        val ascent: Int,
-        val height: Int
-    )
-
-    init {
-        initFonts(fontFileConfig)
-    }
-
 }

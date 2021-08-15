@@ -6,6 +6,7 @@ import com.sk89q.worldedit.bukkit.BukkitAdapter
 import com.sk89q.worldguard.WorldGuard
 import com.sk89q.worldguard.protection.flags.Flags
 import com.sk89q.worldguard.protection.regions.RegionQuery
+import empirelibs.IEmpireListener
 import org.bukkit.Location
 import org.bukkit.Particle
 import org.bukkit.entity.Player
@@ -14,12 +15,10 @@ import org.bukkit.event.Listener
 import org.bukkit.event.entity.ProjectileHitEvent
 import org.bukkit.persistence.PersistentDataType
 
-class GrenadeEvent : Listener {
+class GrenadeEvent : IEmpireListener {
 
-    init {
-        instance.server.pluginManager.registerEvents(this, instance)
-    }
-    fun onDisable() {
+
+    override fun onDisable() {
         ProjectileHitEvent.getHandlerList().unregister(this)
     }
 

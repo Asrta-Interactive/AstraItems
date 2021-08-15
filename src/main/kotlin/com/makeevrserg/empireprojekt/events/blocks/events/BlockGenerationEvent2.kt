@@ -1,6 +1,7 @@
 package com.makeevrserg.empireprojekt.events.blocks
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
+import empirelibs.IEmpireListener
 import org.bukkit.Bukkit
 import org.bukkit.Chunk
 import org.bukkit.Location
@@ -8,16 +9,15 @@ import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
 import org.bukkit.event.EventHandler
-import org.bukkit.event.Listener
 import org.bukkit.event.world.ChunkLoadEvent
 import org.bukkit.event.world.ChunkUnloadEvent
 import org.bukkit.scheduler.BukkitTask
 import kotlin.random.Random
 
-class BlockGenerationEvent2 : Listener {
+class BlockGenerationEvent2 : IEmpireListener {
 
 
-    val blocks = EmpirePlugin.empireItems._empireBlocks
+    val blocks = EmpirePlugin.empireItems.empireBlocks
 
     val activeChunks = mutableListOf<Chunk>()
     val inactiveChunks = mutableListOf<Chunk>()
@@ -25,11 +25,9 @@ class BlockGenerationEvent2 : Listener {
     val activeTasks = mutableListOf<BukkitTask>()
 
 
-    init {
-        EmpirePlugin.instance.server.pluginManager.registerEvents(this, EmpirePlugin.instance)
-    }
 
-    public fun onDisable() {
+
+    public override fun onDisable() {
         ChunkLoadEvent.getHandlerList().unregister(this)
         ChunkUnloadEvent.getHandlerList().unregister(this)
         for (task in activeTasks)
@@ -40,9 +38,9 @@ class BlockGenerationEvent2 : Listener {
     private fun Chunk.getNearBlocks(
         yMin: Int,
         yMax: Int,
-        types: List<Material>
-    ): MutableMap<Material, MutableList<Location>> {
-        val locations = mutableMapOf<Material, MutableList<Location>>()
+        types: List<String>
+    ): MutableMap<String, MutableList<Location>> {
+        val locations = mutableMapOf<String, MutableList<Location>>()
         for (type in types)
             locations[type] = mutableListOf()
 
@@ -50,8 +48,8 @@ class BlockGenerationEvent2 : Listener {
             for (x in 0 until 15) {
                 for (z in 0 until 15) {
                     val loc = Location(world, this.x * 16.0 + x, y * 1.0, this.z * 16.0 + z)
-                    if (types.contains(loc.block.type))
-                        locations[loc.block.type]!!.add(loc)
+                    if (types.contains(loc.block.type.name))
+                        locations[loc.block.type.name]!!.add(loc)
                 }
             }
 
@@ -78,7 +76,7 @@ class BlockGenerationEvent2 : Listener {
         EmpirePlugin.empireFiles.tempChunks.saveConfig()
 
         val task = Bukkit.getScheduler().runTaskAsynchronously(EmpirePlugin.instance, Runnable {
-            if (EmpirePlugin.config.generatingDebug) {
+            if (EmpirePlugin.empireConfig.generatingDebug) {
                 println("Generating blocks in ${chunk}*16. ${inactiveChunks.size} chunks in queue. Current chunks: ${activeChunks.size}; Current Threads: ${activeTasks.size}")
             }
 
@@ -87,7 +85,7 @@ class BlockGenerationEvent2 : Listener {
                 if (block.generate.world!= null && block.generate.world!=chunk.world.name) {
                     continue
                 }
-                if (generate.chunk < Random.nextDouble(100.0))
+                if (generate.generateInChunkChance < Random.nextDouble(100.0))
                     continue
 
                 val material = MushroomBlockApi.getMaterialByData(block.data)
@@ -95,11 +93,11 @@ class BlockGenerationEvent2 : Listener {
 
 
                 val maxDeposits =
-                    if (generate.maxDeposite > generate.maxPerChunk) generate.maxPerChunk else generate.maxPerChunk / (generate.maxDeposite - generate.minDeposite)
+                    if (generate.maxPerDeposite > generate.maxPerChunk) generate.maxPerChunk else generate.maxPerChunk / (generate.maxPerDeposite - generate.minPerDeposite)
 
                 val deposits = Random.nextInt(maxDeposits)
                 val blockLocByType =
-                    chunk.getNearBlocks(generate.minY, generate.maxY, generate.replaceBlocks.keys.toList())
+                    chunk.getNearBlocks(generate.minY?:0, generate.maxY?:20, generate.replaceBlocks.keys.toList())
 
                 if (blockLocByType.isEmpty())
                     continue
@@ -118,7 +116,7 @@ class BlockGenerationEvent2 : Listener {
                             continue
 
                         val blockToReplace = replaceBlocks[Random.nextInt(replaceBlocks.size)] ?: continue
-                        var depositeAmount = Random.nextInt(generate.minDeposite, generate.maxDeposite)
+                        var depositeAmount = Random.nextInt(generate.minPerDeposite, generate.maxPerDeposite)
                         if (depositeAmount + generatedAmount > generate.maxPerChunk)
                             depositeAmount = generate.maxPerChunk - generatedAmount
 
@@ -170,7 +168,7 @@ class BlockGenerationEvent2 : Listener {
         if (EmpirePlugin.empireFiles.tempChunks.getConfig()?.contains(chunk.toString()) ?: return)
             return
 
-        if (!e.isNewChunk && EmpirePlugin.config.generateOnlyOnNewChunks)
+        if (!e.isNewChunk && EmpirePlugin.empireConfig.generateOnlyOnNewChunks)
             return
         if (activeChunks.size < 3) {
             activeChunks.add(chunk)

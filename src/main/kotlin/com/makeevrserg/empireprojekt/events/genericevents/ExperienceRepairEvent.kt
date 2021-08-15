@@ -2,6 +2,7 @@ package com.makeevrserg.empireprojekt.events.genericevents
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.instance
+import empirelibs.IEmpireListener
 
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -13,11 +14,9 @@ import org.bukkit.inventory.meta.Damageable
 import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.persistence.PersistentDataType
 
-class ExperienceRepairEvent : Listener {
+class ExperienceRepairEvent : IEmpireListener {
 
-    init {
-        instance.server.pluginManager.registerEvents(this, instance)
-    }
+
 
     @EventHandler
     fun repairEvent(e: PlayerItemMendEvent) {
@@ -94,7 +93,7 @@ class ExperienceRepairEvent : Listener {
 
     }
 
-    fun onDisable() {
+    override fun onDisable() {
         PlayerItemMendEvent.getHandlerList().unregister(this)
         PlayerItemDamageEvent.getHandlerList().unregister(this)
         PrepareAnvilEvent.getHandlerList().unregister(this)

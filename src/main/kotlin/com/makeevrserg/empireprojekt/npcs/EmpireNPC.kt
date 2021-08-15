@@ -1,7 +1,8 @@
 package com.makeevrserg.empireprojekt.npcs
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
-import com.makeevrserg.empireprojekt.items.Command
+import com.makeevrserg.empireprojekt.items.data.interact.CommandEvent
+
 import com.mojang.authlib.GameProfile
 import com.mojang.authlib.properties.Property
 import empirelibs.EmpireUtils
@@ -38,7 +39,7 @@ class EmpireNPC {
     val location: Location
         get() = Location(npc)
     var phrases: List<String> = mutableListOf()
-    var commands: MutableList<Command> = mutableListOf()
+    var commands: MutableList<CommandEvent> = mutableListOf()
 
 
     private fun Location(npc: EntityPlayer): Location {
@@ -79,7 +80,7 @@ class EmpireNPC {
         setNPCSkin(section.getConfigurationSection("skin"), profile)
         for (cmdKey in section.getConfigurationSection("commands")?.getKeys(false) ?: mutableSetOf())
             commands.add(
-                Command(
+                CommandEvent(
                     section.getString("commands.$cmdKey.command") ?: continue,
                     section.getBoolean("commands.$cmdKey.as_console")
                 )

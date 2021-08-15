@@ -1,43 +1,38 @@
 package com.makeevrserg.empireprojekt.events.genericevents.drop
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
-import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.instance
 import com.makeevrserg.empireprojekt.events.blocks.MushroomBlockApi
+import com.makeevrserg.empireprojekt.events.genericevents.drop.data.ItemDrop
 import com.makeevrserg.empireprojekt.events.mobs.MobAPI
+import empirelibs.IEmpireListener
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.Block
-import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.entity.Entity
 import org.bukkit.event.EventHandler
-import org.bukkit.event.EventPriority
-import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.entity.EntityDeathEvent
 import org.bukkit.inventory.ItemStack
 import kotlin.random.Random
 
-class ItemDropListener : Listener {
+class ItemDropListener : IEmpireListener {
 
     private val blockLocations: MutableList<Location> = mutableListOf()
 
 
 
-    init {
-        instance.server.pluginManager.registerEvents(this, instance)
-    }
 
-    private fun dropItem(list: List<ItemDropManager.ItemDrop>, l: Location): Boolean {
+    private fun dropItem(list: List<ItemDrop>, l: Location): Boolean {
         var isDropped = false
-        for (drop: ItemDropManager.ItemDrop in list) {
+        for (drop: ItemDrop in list) {
             val dropChance = Random.nextDouble(0.0, 100.0)
             if (drop.chance > dropChance) {
                 isDropped = true
                 for (i in 0 until Random.nextInt(drop.minAmount, drop.maxAmount + 1))
                     l.world?.dropItem(
                         l,
-                        EmpirePlugin.empireItems.empireItems[drop.item] ?: ItemStack(
-                            Material.getMaterial(drop.item) ?: continue
+                        EmpirePlugin.empireItems.empireItems[drop.id] ?: ItemStack(
+                            Material.getMaterial(drop.id) ?: continue
                         )
                     ) ?: return isDropped
             }
@@ -57,9 +52,10 @@ class ItemDropListener : Listener {
             blockLocations.removeAt(0)
 
 
-        val id = EmpirePlugin.empireItems._empireBlocksByData[MushroomBlockApi.getBlockData(e.block)]
+
+        val id = EmpirePlugin.empireItems.empireBlocksByData[MushroomBlockApi.getBlockData(e.block)]
 		
-        val listDrop: List<ItemDropManager.ItemDrop> = EmpirePlugin.dropManager.itemDrops[id?:block.blockData.material.name] ?: return
+        val listDrop: List<ItemDrop> = EmpirePlugin.dropManager.itemDrops[id?:block.blockData.material.name] ?: return
         if (dropItem(listDrop, block.location))
             e.isDropItems = false
 
@@ -74,7 +70,7 @@ class ItemDropListener : Listener {
         dropItem(listDrop, entity.location)
     }
 
-    fun onDisable() {
+    override fun onDisable() {
         EntityDeathEvent.getHandlerList().unregister(this)
         BlockBreakEvent.getHandlerList().unregister(this)
 

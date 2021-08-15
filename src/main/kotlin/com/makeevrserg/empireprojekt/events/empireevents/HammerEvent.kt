@@ -9,6 +9,7 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin
 import com.sk89q.worldguard.protection.flags.Flag
 import com.sk89q.worldguard.protection.flags.Flags
 import com.sk89q.worldguard.protection.regions.RegionQuery
+import empirelibs.IEmpireListener
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
 import org.bukkit.entity.Player
@@ -19,14 +20,13 @@ import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.persistence.PersistentDataType
 import java.util.*
 
-class HammerEvent : Listener {
+class HammerEvent : IEmpireListener {
     private val blockFace: MutableMap<Player, Int> = mutableMapOf()
 
-    init {
-        instance.server.pluginManager.registerEvents(this, instance)
-    }
 
-    fun onDisable() {
+
+
+    override fun onDisable() {
         PlayerInteractEvent.getHandlerList().unregister(this)
         BlockBreakEvent.getHandlerList().unregister(this)
     }

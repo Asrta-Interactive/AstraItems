@@ -3,6 +3,7 @@ package com.makeevrserg.empireprojekt.events.blocks.events
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.events.blocks.MushroomBlockApi
 import empirelibs.EmpireUtils
+import empirelibs.IEmpireListener
 
 import org.bukkit.Material
 import org.bukkit.block.BlockFace
@@ -12,16 +13,14 @@ import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPlaceEvent
 
-class MushroomBlockPlaceEvent:Listener {
+class MushroomBlockPlaceEvent:IEmpireListener {
 
 
 
 
 
-    init {
-        EmpirePlugin.instance.server.pluginManager.registerEvents(this, EmpirePlugin.instance)
-    }
-    public fun onDisable(){
+
+    public override fun onDisable(){
         BlockPlaceEvent.getHandlerList().unregister(this)
     }
 
@@ -30,7 +29,7 @@ class MushroomBlockPlaceEvent:Listener {
         val player = e.player
         val block = e.block
         val id = EmpireUtils.getEmpireID(player.inventory.itemInMainHand)
-        val empireBlock = EmpirePlugin.empireItems._empireBlocks[id]?:return
+        val empireBlock = EmpirePlugin.empireItems.empireBlocks[id]?:return
         val empireFacings = MushroomBlockApi.getFacingByData(empireBlock.data)?:return
         block.type = MushroomBlockApi.getMaterialByData(empireBlock.data)
         val facing = block.blockData as MultipleFacing

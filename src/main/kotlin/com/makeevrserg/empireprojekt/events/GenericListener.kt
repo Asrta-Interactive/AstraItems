@@ -14,57 +14,35 @@ import com.makeevrserg.empireprojekt.events.genericevents.ItemInteractListener
 import com.makeevrserg.empireprojekt.events.genericevents.drop.ItemDropListener
 import com.makeevrserg.empireprojekt.events.upgrades.ItemUpgradeEvent
 import com.makeevrserg.empireprojekt.events.villagers.VillagerEvent
+import empirelibs.IEmpireListener
+import empirelibs.IEventManager
 import empirelibs.menu.MenuListener
 
 
-//Mananger for all of events
-class GenericListener {
 
-    private var _itemInteractListener: ItemInteractListener = ItemInteractListener()
-    private var _itemDropListener: ItemDropListener = ItemDropListener()
-    private var _itemUpgradeEvent: ItemUpgradeEvent = ItemUpgradeEvent()
-    private var _menuListener: MenuListener = MenuListener()
-    private var _experienceRepairEvent: ExperienceRepairEvent = ExperienceRepairEvent()
-    private var _resourcePackEvent: ResourcePackEvent = ResourcePackEvent()
-    private var _grenadeEventEvend: GrenadeEvent = GrenadeEvent()
-    private var _molotovEvent: MolotovEvent = MolotovEvent()
-    private var _hammerEvent: HammerEvent = HammerEvent()
-    private var _lavaWalkerEvent: LavaWalkerEvent = LavaWalkerEvent()
-    private var _Font_protocolLibEvent: FontProtocolLibEvent = FontProtocolLibEvent()
-    private var _vampirismEnchant: Vampirism = Vampirism()
-    private var _gunEvent: GunEvent = GunEvent()
-    private var _sitEvent: SitEvent = SitEvent()
-    private var _autoBlockChange = AutoBlockChangeEvent()
-    private val mushroomBlockEventHandler = MushroomBlockEventHandler()
-    private var _empireMusicDiscs = MusicDiscsEvent()
-    private var _villagerEvent = VillagerEvent()
-    //private var empireFixEvent = EmpireItemFixEvent()
-    private var bookSignEvent = BookSignEvent()
-    private var spawnEggBlockEvent = SpawnerEggBlockEvent()
+class GenericListener() :IEventManager {
+    override val handlers: MutableList<IEmpireListener> = mutableListOf()
+    init {
+        SpawnerEggBlockEvent().onEnable(this)
+        BookSignEvent().onEnable(this)
+        MusicDiscsEvent().onEnable(this)
+        AutoBlockChangeEvent().onEnable(this)
+        SitEvent().onEnable(this)
+        //GunEvent().onEnable(this)
+        Vampirism().onEnable(this)
+        FontProtocolLibEvent().onEnable(this)
+        LavaWalkerEvent().onEnable(this)
+        HammerEvent().onEnable(this)
+        MolotovEvent().onEnable(this)
+        GrenadeEvent().onEnable(this)
+        ResourcePackEvent().onEnable(this)
+        ExperienceRepairEvent().onEnable(this)
+        MenuListener().onEnable(this)
+        ItemUpgradeEvent().onEnable(this)
+        ItemDropListener().onEnable(this)
+        ItemInteractListener().onEnable(this)
+        VillagerEvent().onEnable(this)
 
-    fun onDisable() {
-        _itemInteractListener.onDisable()
-        _itemDropListener.onDisable()
-        _itemUpgradeEvent.onDisable()
-        _menuListener.onDisable()
-        _experienceRepairEvent.onDisable()
-        _resourcePackEvent.onDisable()
-        _grenadeEventEvend.onDisable()
-        _hammerEvent.onDisable()
-        EmpirePlugin.instance.server.pluginManager.getPlugin("protocollib")?.let {
-            _Font_protocolLibEvent.onDisable()
-        }
-        _lavaWalkerEvent.onDisable()
-        _vampirismEnchant.onDisable()
-        _molotovEvent.onDisable()
-        _gunEvent.onDisable()
-        _empireMusicDiscs.onDisable()
-        _sitEvent.onDisable()
-        _autoBlockChange.onDisable()
-        //empireFixEvent.onDisable()
-        mushroomBlockEventHandler.onDisable()
-        _villagerEvent.onDisable()
-        bookSignEvent.onDisable()
-        spawnEggBlockEvent.onDisable()
     }
+
 }

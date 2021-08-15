@@ -1,11 +1,12 @@
 package empirelibs.menu
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
+import empirelibs.IEmpireListener
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
 
-class MenuListener() : Listener {
+class MenuListener() : IEmpireListener {
     val plugin: EmpirePlugin = EmpirePlugin.instance
     @EventHandler
     fun onMenuClick(e: InventoryClickEvent) {
@@ -21,11 +22,9 @@ class MenuListener() : Listener {
     }
 
 
-    init {
-        plugin.server.pluginManager.registerEvents(this, plugin)
-    }
 
-    public fun onDisable(){
+
+    public override fun onDisable(){
         InventoryClickEvent.getHandlerList().unregister(this)
     }
 }

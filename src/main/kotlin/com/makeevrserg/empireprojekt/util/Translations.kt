@@ -39,6 +39,7 @@ class Translations {
 
     val ITEM_GIVE: String = translationFile.getHEXString("ITEM_GIVE", "#18dbd1Вы выдали")
     val ITEM_NOT_FOUND: String = translationFile.getHEXString("ITEM_NOT_FOUND", "#db2c18Нет предмета")
+    val WRONG_NAMESPACE: String = translationFile.getHEXString("WRONG_NAMESPACE", "#db2c18Вы указали неверный путь для предмета ")
 
     val WRONG_NUMBER: String = translationFile.getHEXString("WRONG_NUMBER", "#db2c18Количество задано неверно")
 

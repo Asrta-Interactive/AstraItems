@@ -1,6 +1,7 @@
 package com.makeevrserg.empireprojekt.essentials
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
+import empirelibs.IEmpireListener
 import org.bukkit.Material
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -8,7 +9,7 @@ import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockExplodeEvent
 import org.bukkit.event.player.PlayerInteractEvent
 
-class SpawnerEggBlockEvent:Listener {
+class SpawnerEggBlockEvent:IEmpireListener {
 
 
     @EventHandler
@@ -24,12 +25,7 @@ class SpawnerEggBlockEvent:Listener {
         }
     }
 
-    init {
-        EmpirePlugin.instance.server.pluginManager.registerEvents(this, EmpirePlugin.instance)
-
-    }
-
-    fun onDisable() {
+    override fun onDisable() {
         PlayerInteractEvent.getHandlerList().unregister(this)
 
     }

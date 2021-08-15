@@ -2,6 +2,7 @@ package com.makeevrserg.empireprojekt.events.empireevents
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.instance
+import empirelibs.IEmpireListener
 import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
@@ -14,12 +15,11 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.persistence.PersistentDataType
 
-class LavaWalkerEvent : Listener {
-    init {
-        instance.server.pluginManager.registerEvents(this, instance)
-    }
+class LavaWalkerEvent : IEmpireListener {
 
-    fun onDisable() {
+
+
+    override fun onDisable() {
         PlayerMoveEvent.getHandlerList().unregister(this)
         EntityDamageEvent.getHandlerList().unregister(this)
     }

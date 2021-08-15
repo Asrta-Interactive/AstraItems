@@ -6,6 +6,7 @@ import com.comphenix.protocol.ProtocolManager
 import com.comphenix.protocol.events.*
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import empirelibs.EmpireUtils
+import empirelibs.IEmpireListener
 
 
 import me.clip.placeholderapi.PlaceholderAPI
@@ -16,16 +17,15 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
-import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 import org.jetbrains.annotations.NotNull
 
-class FontProtocolLibEvent:Listener {
+class FontProtocolLibEvent:IEmpireListener {
     private lateinit var protocolManager: ProtocolManager
     private lateinit var packetListener: PacketListener
     private fun changePlayerTabName(player:Player?){
         player?:return
-        var format: String = EmpirePlugin.config.tabPrefix + player.name
+        var format: String = EmpirePlugin.empireConfig.tabPrefix + player.name
         if (EmpirePlugin.instance.server.pluginManager.getPlugin("placeholderapi") != null)
             format = PlaceholderAPI.setPlaceholders(player, format)
 
@@ -108,7 +108,7 @@ class FontProtocolLibEvent:Listener {
 
     }
 
-    fun onDisable() {
+    override fun onDisable() {
 
         protocolManager.removePacketListener(packetListener)
         PlayerJoinEvent.getHandlerList().unregister(this)
@@ -119,7 +119,6 @@ class FontProtocolLibEvent:Listener {
         EmpirePlugin.instance.server.pluginManager.getPlugin("protocollib")?.let {
             protocolManager = ProtocolLibrary.getProtocolManager()
             initPackerListener()
-            EmpirePlugin.instance.server.pluginManager.registerEvents(this, EmpirePlugin.instance)
         }
         for (player in Bukkit.getOnlinePlayers())
             changePlayerTabName(player)

@@ -3,7 +3,7 @@ package com.makeevrserg.empireprojekt.util
 import com.google.gson.*
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.events.blocks.MushroomBlockApi
-import com.makeevrserg.empireprojekt.items.EmpireItem
+import com.makeevrserg.empireprojekt.items.data.EmpireItem
 import org.apache.commons.lang.StringEscapeUtils
 import org.bukkit.Instrument
 import java.io.*
@@ -94,14 +94,14 @@ class ResourcePackNew {
         val defaultJson =
             JsonParser().parse(InputStreamReader(plugin.getResource("rpFiles/default.json")!!).readText()).asJsonObject
         providers.add(Gson().fromJson(defaultJson, Fonts::class.java).providers[0])
-        for (font in EmpirePlugin.empireFonts.fontsInfo.keys) {
-            val fontInfo = EmpirePlugin.empireFonts.fontsInfo[font]!!
+        for (font in EmpirePlugin.empireFonts._fontInfoValueById.keys) {
+            val fontInfo = EmpirePlugin.empireFonts._fontInfoValueById[font]!!
             val provider = Provider(
                 "bitmap",
-                "${fontInfo.namespace}:${fontInfo.path}",
+                "${fontInfo.path}",
                 null, null, null,
                 listOf(StringEscapeUtils.escapeJava(fontInfo.chars)),
-                fontInfo.height, fontInfo.ascent
+                fontInfo.height,fontInfo.ascent
             )
             providers.add(provider)
         }
@@ -110,18 +110,18 @@ class ResourcePackNew {
     }
 
     private fun generateSounds() {
-        val map = EmpirePlugin.empireSounds.getSounds()
-        val namespace = EmpirePlugin.empireSounds.getNamespace()
+
+
         val file = File(
             plugin.dataFolder,
-            "pack${File.separator}assets${File.separator}${namespace}${File.separator}sounds.json"
+            "pack${File.separator}assets${File.separator}empire_items${File.separator}sounds.json"
         )
         val musicFileObj = JsonObject()
-        for (soundID in map.keys) {
+        for (soundID in EmpirePlugin.empireSounds.soundByID.keys) {
             val musicObj = JsonObject()
             val sounds = JsonArray()
-            for (sound in map[soundID]!!)
-                sounds.add("$namespace:$sound")
+            for (sound in EmpirePlugin.empireSounds.soundByID[soundID]?.sounds?: mutableListOf())
+            sounds.add("${sound}")
             musicObj.add("sounds", sounds)
             musicFileObj.add(soundID, musicObj)
         }
@@ -182,6 +182,7 @@ class ResourcePackNew {
 
     private fun generateMinecraftModel(file: File, item: EmpireItem, model: Model) {
         val predicate = Predicate(item.customModelData, null, null, null)
+
         val override = Override("${item.namespace}:${item.modelPath ?: ("auto_generated/" + item.id)}", predicate)
         model.overrides!!.add(override)
         file.writeText(setPrettyString(Gson().toJson(model)))
@@ -233,7 +234,7 @@ class ResourcePackNew {
         model.overrides = null
         model.display = null
         model.gui_light = null
-        if (item.material.name.equals("bow", ignoreCase = true)) {
+        if (item.material.equals("bow", ignoreCase = true)) {
             model.parent = "item/base/bow"
             try {
                 val code = file.nameWithoutExtension[file.nameWithoutExtension.length - 1].toString().toInt()
@@ -241,7 +242,7 @@ class ResourcePackNew {
             } catch (e: NumberFormatException) {
                 model.textures.layer0 = "${item.namespace}:${item.texturePath}"
             }
-        } else if (item.empireBlock != null) {
+        } else if (item.block != null) {
             model.parent = "block/base/block_real"
             model.textures = Textures(null, null, null)
             model.textures.all = "${item.namespace}:${item.texturePath}"
@@ -255,10 +256,10 @@ class ResourcePackNew {
     private fun generateItems() {
         val items = EmpirePlugin.empireItems.itemsInfo
         for (item in items) {
-            val filePath = getMinecraftItemModelPath(item.material.name)
+            val filePath = getMinecraftItemModelPath(item.material)
             val minecraftModelFile = File(filePath)
             if (!minecraftModelFile.exists()) {
-                println(EmpirePlugin.translations.NOT_EXIST_FILE + " ${item.material.name.lowercase()}.json")
+                println(EmpirePlugin.translations.NOT_EXIST_FILE + " ${item.material.lowercase()}.json")
                 continue
             }
             val fileText = InputStreamReader(minecraftModelFile.inputStream()).readText()
@@ -267,7 +268,7 @@ class ResourcePackNew {
             if (model.overrides == null)
                 model.overrides = mutableListOf()
             when {
-                item.material.name.equals("bow", ignoreCase = true) -> {
+                item.material.equals("bow", ignoreCase = true) -> {
                     generateMinecraftBowModel(minecraftModelFile, item, model)
                     generateAutoGenerateModel(File(getAutoGeneratedModelPath(item.namespace, item.id)), item, model)
                     for (i in 0..2)
@@ -277,7 +278,7 @@ class ResourcePackNew {
                             model
                         )
                 }
-                item.material.name.equals("shield", ignoreCase = true) -> {
+                item.material.equals("shield", ignoreCase = true) -> {
 
                     generateMinecraftShieldModel(minecraftModelFile, item, model)
 
@@ -347,7 +348,7 @@ class ResourcePackNew {
 
         for (item in EmpirePlugin.empireItems.itemsInfo) {
             val id = item.id
-            val empireBlock = EmpirePlugin.empireItems._empireBlocks[id] ?: continue
+            val empireBlock = EmpirePlugin.empireItems.empireBlocks[id] ?: continue
             val multipart = MushroomBlockApi.getFacingByData(empireBlock.data) ?: continue
             multipart.apply = MushroomBlockApi.Apply("${item.namespace}:${item.modelPath ?: "auto_generated/${id}"}")
 

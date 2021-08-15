@@ -5,6 +5,7 @@ import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.util.EmpireCrafts
 import com.makeevrserg.empireprojekt.events.upgrades.ItemUpgradeEvent
 import com.makeevrserg.empireprojekt.events.genericevents.drop.ItemDropManager
+import com.makeevrserg.empireprojekt.events.genericevents.drop.data.ItemDrop
 import com.makeevrserg.empireprojekt.events.upgrades.UpgradesManager
 import com.makeevrserg.empireprojekt.events.villagers.VillagerManager
 import empirelibs.menu.PaginatedMenu
@@ -220,12 +221,12 @@ class EmpireCraftMenu(
 
         val itemStack = getItemStack("settings.drop_btn")
         val itemMeta = itemStack.itemMeta
-        val upgrades: List<UpgradesManager.ItemUpgrade> = EmpirePlugin.upgradeManager._upgradesMap[item] ?: return null
+        val upgrades = EmpirePlugin.upgradeManager._upgradesMap[item] ?: return null
         itemMeta!!.setDisplayName(EmpirePlugin.translations.ITEM_INFO_DROP_COLOR+EmpirePlugin.translations.ITEM_INFO_IMPROVING)
         val lore = itemMeta.lore ?: mutableListOf()
         for (upgrade in upgrades) {
-            if (!containValue(ItemUpgradeEvent.attrMap[upgrade.attr] ?: continue, lore))
-                lore.add(EmpirePlugin.translations.ITEM_INFO_IMPROVING_COLOR + "${ItemUpgradeEvent.attrMap[upgrade.attr]} [${upgrade.add_min};${upgrade.add_max}]")
+            if (!containValue(ItemUpgradeEvent.attrMap[upgrade.attribute.name] ?: continue, lore))
+                lore.add(EmpirePlugin.translations.ITEM_INFO_IMPROVING_COLOR + "${ItemUpgradeEvent.attrMap[upgrade.attribute.name]} [${upgrade.add_min};${upgrade.add_max}]")
 
 
         }
@@ -240,7 +241,7 @@ class EmpireCraftMenu(
         val itemMeta = itemStack.itemMeta
 
         itemMeta!!.setDisplayName(EmpirePlugin.translations.ITEM_INFO_DROP_COLOR+EmpirePlugin.translations.ITEM_INFO_DROP)
-        val everyDropByItem: MutableMap<String, MutableList<ItemDropManager.ItemDrop>> =
+        val everyDropByItem: MutableMap<String, MutableList<ItemDrop>> =
             EmpirePlugin.dropManager.everyDropByItem
         everyDropByItem[item] ?: return null
         val lore = itemMeta.lore ?: mutableListOf()
@@ -256,14 +257,14 @@ class EmpireCraftMenu(
         val itemStack = getItemStack("settings.drop_btn")
         val itemMeta = itemStack.itemMeta
         itemMeta!!.setDisplayName(EmpirePlugin.translations.ITEM_INFO_GENERATE)
-        val itemInfo = EmpirePlugin.empireItems._empireBlocks[item] ?: return null
+        val itemInfo = EmpirePlugin.empireItems.empireBlocks[item] ?: return null
         val generate = itemInfo.generate ?: return null
         val lore = mutableListOf<String>()
         lore.add("${EmpirePlugin.translations.ITEM_INFO_DROP_COLOR}Макс в чанке: ${generate.maxPerChunk}")
-        lore.add("${EmpirePlugin.translations.ITEM_INFO_DROP_COLOR}Появится в чанке: ${generate.chunk}%")
+        lore.add("${EmpirePlugin.translations.ITEM_INFO_DROP_COLOR}Появится в чанке: ${generate.generateInChunkChance}%")
         lore.add("${EmpirePlugin.translations.ITEM_INFO_DROP_COLOR}Появляется в мире: ${generate.world ?: "Любом"}")
         lore.add("${EmpirePlugin.translations.ITEM_INFO_DROP_COLOR}Появляется на высоте: [${generate.minY};${generate.maxY}]")
-        lore.add("${EmpirePlugin.translations.ITEM_INFO_DROP_COLOR}Количество в месторождении: [${generate.minDeposite};${generate.maxDeposite}]")
+        lore.add("${EmpirePlugin.translations.ITEM_INFO_DROP_COLOR}Количество в месторождении: [${generate.minPerDeposite};${generate.maxPerDeposite}]")
         itemMeta.lore = lore
         itemMeta.setDisplayName(EmpirePlugin.translations.ITEM_INFO_DROP_COLOR+EmpirePlugin.translations.ITEM_INFO_GENERATE)
         itemStack.itemMeta = itemMeta
@@ -274,7 +275,7 @@ class EmpireCraftMenu(
         val itemStack = getItemStack("settings.drop_btn")
         val itemMeta = itemStack.itemMeta
         itemMeta!!.setDisplayName(EmpirePlugin.translations.ITEM_INFO_GENERATE)
-        val villagers = VillagerManager.villagerByItem[item] ?: return null
+        val villagers = VillagerManager.professionsByItem(item)?: return null
         val lore = mutableListOf<String>()
         for (villager in villagers)
             lore.add("${EmpirePlugin.translations.ITEM_INFO_DROP_COLOR}$villager")

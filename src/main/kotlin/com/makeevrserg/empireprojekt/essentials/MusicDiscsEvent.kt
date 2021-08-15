@@ -3,6 +3,7 @@ package com.makeevrserg.empireprojekt.essentials
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.instance
 import empirelibs.EmpireUtils
+import empirelibs.IEmpireListener
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Material
@@ -18,7 +19,7 @@ import org.bukkit.event.block.BlockExplodeEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.ItemStack
 
-class MusicDiscsEvent : Listener {
+class MusicDiscsEvent : IEmpireListener {
 
     private val musicDiscs = EmpirePlugin.empireItems.empireDiscsEvent
     private val activDiscs = mutableMapOf<Location, CompanionDisc>()
@@ -134,12 +135,8 @@ class MusicDiscsEvent : Listener {
     }
 
 
-    init {
-        instance.server.pluginManager.registerEvents(this, instance)
 
-    }
-
-    fun onDisable() {
+    override fun onDisable() {
         PlayerInteractEvent.getHandlerList().unregister(this)
         BlockBreakEvent.getHandlerList().unregister(this)
         BlockExplodeEvent.getHandlerList().unregister(this)
