@@ -47,27 +47,39 @@ class VillagerEvent : IEmpireListener {
     }
 
 
+    private fun replaceEmpireItem(itemStack: ItemStack?): ItemStack? {
+        val id = itemStack?.getEmpireID() ?: return itemStack
+        val amount = itemStack.amount
+        val newItemStack = EmpirePlugin.empireItems.empireItems[id]?.clone() ?: return itemStack
+        newItemStack.amount = amount
+        return newItemStack
+
+    }
+
     @EventHandler
     fun villagerInteractEvent(e: PlayerInteractEntityEvent) {
         if (e.rightClicked !is Villager)
             return
+        if (!e.player.isSneaking)
+            return
+
         val villager = e.rightClicked as Villager
         val trades = VillagerManager.villagerTradeByProfession[villager.profession.name] ?: return
 
         val recipes = villager.recipes.toMutableList()
         villager.recipes = mutableListOf()
         for (i in recipes.indices) {
+
+
             val recipe = recipes[i]
-            for (trade in trades) {
-                val ingredients = recipe.ingredients.toMutableList()
-                recipe.ingredients = mutableListOf()
-                if (ingredients.isEmpty())
-                    continue
-                ingredients[0] = checkForEquality(ingredients[0], trade.leftItem.id.getEmpireItem())
-                if (ingredients.size == 2)
-                    ingredients[1] = checkForEquality(ingredients[1], trade.middleItem?.id.getEmpireItem())
-                recipe.ingredients = ingredients
-            }
+            val ingredients = recipe.ingredients.toMutableList()
+            recipe.ingredients = mutableListOf()
+            if (ingredients.isEmpty())
+                continue
+            ingredients[0] = replaceEmpireItem(ingredients[0])
+            if (ingredients.size == 2)
+                ingredients[1] = replaceEmpireItem(ingredients[1])
+            recipe.ingredients = ingredients
         }
         villager.recipes = recipes
 
@@ -75,7 +87,7 @@ class VillagerEvent : IEmpireListener {
     }
 
 
-    private fun addRecipe(villager: Villager, trade:VillagerItem ) {
+    private fun addRecipe(villager: Villager, trade: VillagerItem) {
 
         if (villager.villagerLevel < trade.minLevel)
             return
@@ -83,11 +95,11 @@ class VillagerEvent : IEmpireListener {
             return
         if (trade.chance < Random.nextDouble(100.0))
             return
-        val mRecipe = MerchantRecipe(trade.resultItem.id.getEmpireItem()?:return, 1)
-        mRecipe.addIngredient(trade.leftItem.id.getEmpireItem()?:return)
+        val mRecipe = MerchantRecipe(trade.resultItem.id.getEmpireItem() ?: return, 1)
+        mRecipe.addIngredient(trade.leftItem.id.getEmpireItem() ?: return)
         mRecipe.maxUses = Random.nextInt(1, 6)
         if (trade.middleItem != null)
-            mRecipe.addIngredient(trade.middleItem.id.getEmpireItem()?:return)
+            mRecipe.addIngredient(trade.middleItem.id.getEmpireItem() ?: return)
         if (villager.recipes.contains(mRecipe))
             return
         for (vRecipe in villager.recipes)

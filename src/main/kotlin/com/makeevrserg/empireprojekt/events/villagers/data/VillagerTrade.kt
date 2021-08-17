@@ -31,7 +31,7 @@ data class VillagerTrade(
 
         fun new(): List<VillagerTrade> {
 
-            val trades = EmpireYamlParser.parseYamlConfig<List<VillagerTrade>>(
+            val trades = EmpireYamlParser.fromYAML<List<VillagerTrade>>(
                 EmpirePlugin.empireFiles.villagerTrades.getConfig(),
                 object : TypeToken<List<VillagerTrade?>?>() {}.type,
                 listOf("villager_trades")

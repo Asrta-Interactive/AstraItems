@@ -3,14 +3,16 @@ package empirelibs
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonParser
+import com.makeevrserg.empireprojekt.EmpirePlugin
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.configuration.file.FileConfiguration
+import java.lang.Exception
 import java.lang.reflect.Type
 
 
 class EmpireYamlParser {
     companion object {
-        public fun getConfSection(cs: ConfigurationSection?): MutableMap<String, Any>? {
+        private fun getConfSection(cs: ConfigurationSection?): MutableMap<String, Any>? {
             cs ?: return null
             val map = mutableMapOf<String, Any>()
             for (key in cs.getKeys(false)) {
@@ -22,8 +24,9 @@ class EmpireYamlParser {
             return map
         }
 
-        public fun getMap(fc: FileConfiguration?): MutableMap<String, Any>? {
+        private fun getMap(fc: FileConfiguration?): MutableMap<String, Any>? {
             fc ?: return null
+
             val map = mutableMapOf<String, Any>()
             for (key in fc.getKeys(false)) {
                 if (fc.isConfigurationSection(key)) {
@@ -36,9 +39,9 @@ class EmpireYamlParser {
             return map
         }
 
-        public fun <T> parseYamlConfig(file: FileConfiguration?, type: Type, paths: List<String>?=null): T? {
-            file ?: return null
-            val map = getMap(file)
+
+        private fun <T> fromJson(map: Map<String, Any>?, type: Type, paths: List<String>?): T? {
+
             var json = JsonParser().parse(Gson().toJson(map, LinkedHashMap::class.java))
             val gson = GsonBuilder().serializeNulls().create()
             return if (paths != null) {
@@ -47,26 +50,37 @@ class EmpireYamlParser {
                         json = json.asJsonObject.get(path)
 
                 gson.fromJson(json, type)
-            }
-            else
+            } else
                 gson.fromJson(json, type)
 
         }
 
-        public fun <T> parseYamlConfig(section: ConfigurationSection?, type: Type, paths: List<String>?=null): T? {
+        private fun <T> returnTry(
+            map: MutableMap<String, Any>?,
+            type: Type,
+            paths: List<String>?,
+            file: String
+        ): T? {
+            return try {
+                fromJson(map, type, paths)
+            } catch (e: Exception) {
+                println("${EmpirePlugin.translations.FILE_WRONG_PARSE} ?${file}")
+                println(e.stackTraceToString())
+                return null
+            }
+        }
+
+        public fun <T> fromYAML(file: FileConfiguration?, type: Type, paths: List<String>? = null): T? {
+            file ?: return null
+            val map = getMap(file)
+            return returnTry<T>(map, type, paths, file.name)
+        }
+
+
+        public fun <T> fromYAML(section: ConfigurationSection?, type: Type, paths: List<String>? = null): T? {
             section ?: return null
             val map = getConfSection(section)
-            var json = JsonParser().parse(Gson().toJson(map, LinkedHashMap::class.java))
-
-            val gson = GsonBuilder().serializeNulls().create()
-            return if (paths != null) {
-                for (path in paths)
-                    if (json.isJsonObject)
-                        json = json.asJsonObject.get(path)
-                gson.fromJson(json, type)
-            }
-            else
-                gson.fromJson(json, type)
+            return returnTry<T>(map, type, paths, section.name)
         }
 
     }

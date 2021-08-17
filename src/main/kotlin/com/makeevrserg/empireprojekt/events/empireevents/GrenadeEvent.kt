@@ -2,6 +2,7 @@ package com.makeevrserg.empireprojekt.events.empireevents
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.instance
+import com.makeevrserg.empireprojekt.util.BetterConstants
 import com.sk89q.worldedit.bukkit.BukkitAdapter
 import com.sk89q.worldguard.WorldGuard
 import com.sk89q.worldguard.protection.flags.Flags
@@ -30,7 +31,7 @@ class GrenadeEvent : IEmpireListener {
         val itemStack = player.inventory.itemInMainHand
         val meta = itemStack.itemMeta ?: return
         val explosionPower =
-            meta.persistentDataContainer.get(EmpirePlugin.empireConstants.GRENADE_EXPLOSION_POWER, PersistentDataType.DOUBLE)
+            meta.persistentDataContainer.get(BetterConstants.GRENADE_EXPLOSION_POWER.value, PersistentDataType.DOUBLE)
                 ?: return
         println("Player ${player.name} threw grenade at blockLocation=${e.hitBlock?.location} playerLocation=${player.location}")
         if (!allowExplosion(instance, e.entity.location))

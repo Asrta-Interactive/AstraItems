@@ -53,7 +53,7 @@ class EmpireCrafts {
             val inputItemStack: ItemStack =
                 EmpirePlugin.empireItems.empireItems[inputID] ?: ItemStack(Material.getMaterial(inputID) ?: continue)
             val recipe = FurnaceRecipe(
-                NamespacedKey(instance, EmpirePlugin.empireConstants.CUSTOM_RECIPE_KEY+key),
+                NamespacedKey(instance, BetterConstants.CUSTOM_RECIPE_KEY.name+key),
                 resultItem,
                 RecipeChoice.ExactChoice(inputItemStack),
                 exp.toFloat(),
@@ -91,7 +91,7 @@ class EmpireCrafts {
             colList.add(rowList)
         }
 
-        val key = NamespacedKey(instance, EmpirePlugin.empireConstants.CUSTOM_RECIPE_KEY+itemID)
+        val key = NamespacedKey(instance, BetterConstants.CUSTOM_RECIPE_KEY.name+itemID)
         val recipe = ShapedRecipe(key, resultItemStack)
         recipe.shape(pattern[0].toString(), pattern[1].toString(), pattern[2].toString())
         for (recChar in ingrMap.keys) {

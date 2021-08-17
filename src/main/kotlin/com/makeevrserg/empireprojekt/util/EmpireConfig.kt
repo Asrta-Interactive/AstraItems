@@ -4,8 +4,6 @@ package com.makeevrserg.empireprojekt.util
 import com.google.gson.annotations.SerializedName
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import empirelibs.EmpireYamlParser
-import org.bukkit.configuration.ConfigurationSection
-import org.bukkit.configuration.file.FileConfiguration
 
 
 data class EmpireConfig(
@@ -37,7 +35,7 @@ data class EmpireConfig(
     companion object {
         fun new(): EmpireConfig {
             val section = EmpirePlugin.empireFiles.configFile.getConfig()
-            val config = EmpireYamlParser.parseYamlConfig<EmpireConfig>(section,EmpireConfig::class.java)!!
+            val config = EmpireYamlParser.fromYAML<EmpireConfig>(section,EmpireConfig::class.java)!!
             return config
         }
 

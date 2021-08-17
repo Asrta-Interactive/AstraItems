@@ -2,6 +2,7 @@ package com.makeevrserg.empireprojekt.events.empireevents
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.instance
+import com.makeevrserg.empireprojekt.util.BetterConstants
 import empirelibs.IEmpireListener
 import org.bukkit.Material
 import org.bukkit.block.Block
@@ -66,7 +67,7 @@ class LavaWalkerEvent : IEmpireListener {
     private fun hasLaveWalker(meta: ItemMeta?): Boolean {
         meta ?: return false
         return meta.persistentDataContainer
-            .has(EmpirePlugin.empireConstants.LAVA_WALKER_ENCHANT, PersistentDataType.DOUBLE)
+            .has(BetterConstants.LAVA_WALKER_ENCHANT.value, PersistentDataType.DOUBLE)
     }
 
     @EventHandler

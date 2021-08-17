@@ -1,4 +1,4 @@
-//package com.makeevrserg.empireprojekt.essentials
+//package com.essentials
 //
 //import com.makeevrserg.empireprojekt.EmpirePlugin
 //import org.bukkit.Location

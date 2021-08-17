@@ -5,6 +5,7 @@ import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.essentials.MusicDiscsEvent
 import com.makeevrserg.empireprojekt.items.data.EmpireItem
 import com.makeevrserg.empireprojekt.items.data.block.Block
+import com.makeevrserg.empireprojekt.items.data.decoration.Decoration
 import com.makeevrserg.empireprojekt.items.data.interact.Interact
 import empirelibs.EmpireYamlParser
 import empirelibs.FileManager
@@ -15,6 +16,7 @@ import org.bukkit.inventory.ItemStack
 class EmpireItems {
     val empireItems: MutableMap<String, ItemStack> = mutableMapOf()
     public val empireBlocks: MutableMap<String, Block> = mutableMapOf()
+    public val empireDecorations: MutableMap<String, Decoration> = mutableMapOf()
     public val empireBlocksByData: MutableMap<Int, String> = mutableMapOf()
     public val itemsInfo: MutableList<EmpireItem> = mutableListOf()
     public val empireEvents: MutableMap<String, List<Interact>> = mutableMapOf()
@@ -23,7 +25,7 @@ class EmpireItems {
 
     private var existedCustomModelData: MutableMap<Material, MutableList<Int>> = mutableMapOf()
 
-    private fun getItemsInFile(file:FileManager) = EmpireYamlParser.parseYamlConfig<List<EmpireItem>>(
+    private fun getItemsInFile(file:FileManager) = EmpireYamlParser.fromYAML<List<EmpireItem>>(
         file.getConfig(),
         object : TypeToken<List<EmpireItem?>?>() {}.type,
         listOf("yml_items")
@@ -44,6 +46,9 @@ class EmpireItems {
                 empireBlocks[item.id] = item.block
                 empireBlocksByData[item.block.data] = item.id
             }
+            if (item.decoration!=null)
+                empireDecorations[item.id] = item.decoration
+
             if (item.interact!=null)
                 empireEvents[item.id] = item.interact
 

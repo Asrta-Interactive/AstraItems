@@ -3,24 +3,23 @@ package com.makeevrserg.empireprojekt.items.data
 import com.google.gson.annotations.SerializedName
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.items.data.block.Block
+import com.makeevrserg.empireprojekt.items.data.decoration.Decoration
 import com.makeevrserg.empireprojekt.items.data.interact.Interact
 import com.makeevrserg.empireprojekt.items.data.interact.Sound
+import com.makeevrserg.empireprojekt.util.BetterConstants
 import empirelibs.EmpireUtils
-import empirelibs.EmpireUtils.Companion.valueOfOrNull
-import empirelibs.EmpireYamlParser
+import empirelibs.valueOfOrNull
 import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.attribute.Attribute
 import org.bukkit.attribute.AttributeModifier
-import org.bukkit.enchantments.Enchantment
 import org.bukkit.enchantments.EnchantmentWrapper
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.inventory.meta.PotionMeta
 import org.bukkit.persistence.PersistentDataType
-import java.lang.Exception
 import java.lang.IllegalArgumentException
 import java.util.*
 
@@ -57,19 +56,15 @@ data class EmpireItem(
     @SerializedName("music_disc")
     val musicDisc: Sound?,
     @SerializedName("block")
-    val block: Block?
+    val block: Block?,
+    @SerializedName("decoration")
+    val decoration: Decoration?
+
 ) {
 
 
 
-    public fun valueOfOrNull(value: String): ItemFlag? {
-        return try {
-            ItemFlag.valueOf(value)
-        } catch (e: IllegalArgumentException) {
-            null
-        }
 
-    }
 
     private fun addItemFlags(itemMeta: ItemMeta) {
         for (flag in itemFlags ?: return) {
@@ -88,7 +83,7 @@ data class EmpireItem(
     }
 
     private fun setEmpireID(itemMeta: ItemMeta) {
-        itemMeta.persistentDataContainer.set(EmpirePlugin.empireConstants.empireID, PersistentDataType.STRING, id)
+        itemMeta.persistentDataContainer.set(BetterConstants.EMPIRE_ID.value, PersistentDataType.STRING, id)
     }
 
     private fun setEmpireDurability(itemMeta: ItemMeta) {
@@ -96,12 +91,12 @@ data class EmpireItem(
         if (durability == 0)
             return
         itemMeta.persistentDataContainer.set(
-            EmpirePlugin.empireConstants.EMPIRE_DURABILITY,
+            BetterConstants.EMPIRE_DURABILITY.value,
             PersistentDataType.INTEGER,
             durability
         )
         itemMeta.persistentDataContainer.set(
-            EmpirePlugin.empireConstants.MAX_CUSTOM_DURABILITY,
+            BetterConstants.MAX_CUSTOM_DURABILITY.value,
             PersistentDataType.INTEGER,
             durability
         )
@@ -109,9 +104,8 @@ data class EmpireItem(
 
     private fun addEmpireEnchant(itemMeta: ItemMeta) {
         empireEnchants ?: return
-        val map = EmpirePlugin.empireConstants.getEnchantsMap()
         for ((ench, value) in empireEnchants)
-            itemMeta.persistentDataContainer.set(map[ench] ?: continue, PersistentDataType.DOUBLE, value)
+            itemMeta.persistentDataContainer.set(BetterConstants.valueOf(ench).value ?: continue, PersistentDataType.DOUBLE, value)
 
     }
 

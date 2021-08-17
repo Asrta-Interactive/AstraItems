@@ -2,6 +2,7 @@ package empirelibs
 
 import com.google.gson.JsonParser
 import com.makeevrserg.empireprojekt.EmpirePlugin
+import com.makeevrserg.empireprojekt.util.BetterConstants
 import net.md_5.bungee.api.ChatColor
 import org.bukkit.Material
 import org.bukkit.configuration.ConfigurationSection
@@ -48,6 +49,16 @@ fun String?.getEmpireItem():ItemStack?{
     return EmpirePlugin.empireItems.empireItems[this]
 }
 
+fun valueOfOrNull(value: String): ItemFlag? {
+    return try {
+        ItemFlag.valueOf(value)
+    } catch (e: IllegalArgumentException) {
+        null
+    }
+
+}
+
+
 class EmpireUtils {
     class LambdaRunnable(private val function: Runnable) : BukkitRunnable() {
         override fun run() {
@@ -73,7 +84,7 @@ class EmpireUtils {
         }
         private fun getEmpireID(meta: ItemMeta?): String? {
             return meta?.persistentDataContainer?.get(
-                EmpirePlugin.empireConstants.empireID,
+                BetterConstants.EMPIRE_ID.value,
                 PersistentDataType.STRING
             )
 
@@ -90,13 +101,13 @@ class EmpireUtils {
             val damage: Short = itemStack.durability
 
             val maxCustomDurability: Int = itemMeta.persistentDataContainer.get(
-                EmpirePlugin.empireConstants.MAX_CUSTOM_DURABILITY,
+                BetterConstants.MAX_CUSTOM_DURABILITY.value,
                 PersistentDataType.INTEGER
             ) ?: return itemStack
 
             val empireDurability = maxCustomDurability - damage * maxCustomDurability / itemStack.type.maxDurability
             itemMeta.persistentDataContainer.set(
-                EmpirePlugin.empireConstants.EMPIRE_DURABILITY,
+                BetterConstants.EMPIRE_DURABILITY.value,
                 PersistentDataType.INTEGER,
                 empireDurability
             )
@@ -173,6 +184,13 @@ class EmpireUtils {
         }
 
         private val emojiPattern = Pattern.compile(":([a-zA-Z0-9_]*):")
+
+        fun emojiPattern(lines:List<String>):List<String>{
+            val newList = mutableListOf<String>()
+            for (line in lines)
+                newList.add(emojiPattern(line))
+            return newList
+        }
 
         fun emojiPattern(_line: String): String {
             val map = EmpirePlugin.empireFonts._fontValueById

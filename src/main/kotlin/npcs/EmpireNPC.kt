@@ -1,4 +1,4 @@
-package com.makeevrserg.empireprojekt.npcs
+package npcs
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.items.data.interact.CommandEvent

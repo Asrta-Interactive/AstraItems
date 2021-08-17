@@ -1,6 +1,6 @@
-package com.makeevrserg.empireprojekt.npcs.interact
+package npcs.interact
 
-import com.makeevrserg.empireprojekt.npcs.NPCManager
+import npcs.NPCManager
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.events.genericevents.GenericEventManager
 import org.bukkit.event.EventHandler

@@ -4,9 +4,7 @@ package com.makeevrserg.empireprojekt.events.genericevents.drop.data
 import com.google.gson.annotations.SerializedName
 import com.google.gson.reflect.TypeToken
 import com.makeevrserg.empireprojekt.EmpirePlugin
-import com.makeevrserg.empireprojekt.events.mobs.data.EmpireMob
 import empirelibs.EmpireYamlParser
-import org.bukkit.configuration.ConfigurationSection
 
 
 data class ItemDrop(
@@ -24,7 +22,7 @@ data class ItemDrop(
     companion object {
 
         private fun getList(path: String): List<ItemDrop>? {
-            return EmpireYamlParser.parseYamlConfig<List<ItemDrop>>(
+            return EmpireYamlParser.fromYAML<List<ItemDrop>>(
                 EmpirePlugin.empireFiles.dropsFile.getConfig(),
                 object : TypeToken<List<ItemDrop?>?>() {}.type,
                 listOf("loot", path)

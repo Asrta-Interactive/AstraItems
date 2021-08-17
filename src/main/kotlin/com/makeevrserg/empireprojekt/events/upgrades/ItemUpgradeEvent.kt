@@ -1,6 +1,7 @@
 package com.makeevrserg.empireprojekt.events.upgrades
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
+import com.makeevrserg.empireprojekt.util.BetterConstants
 import empirelibs.EmpireUtils
 import empirelibs.IEmpireListener
 import org.bukkit.Particle
@@ -22,9 +23,6 @@ import kotlin.math.round
 import kotlin.random.Random
 
 class ItemUpgradeEvent : IEmpireListener {
-
-
-
 
 
     companion object {
@@ -72,7 +70,7 @@ class ItemUpgradeEvent : IEmpireListener {
 
         val ingrMeta: ItemMeta = ingredient.itemMeta ?: return
         val ingrID: String =
-            ingrMeta.persistentDataContainer.get(EmpirePlugin.empireConstants.empireID, PersistentDataType.STRING)
+            ingrMeta.persistentDataContainer.get(BetterConstants.EMPIRE_ID.value, PersistentDataType.STRING)
                 ?: return
         if (!EmpirePlugin.upgradeManager._upgradesMap.containsKey(ingrID))
             return
@@ -117,8 +115,9 @@ class ItemUpgradeEvent : IEmpireListener {
             )
                 continue
 
+
             var attrAmount = resultMeta.persistentDataContainer.get(
-                EmpirePlugin.empireConstants.getUpgradesMap()[itemUpgrade.attribute.name] ?: continue,
+                BetterConstants.valueOf(itemUpgrade.attribute.name).value ?: continue,
                 PersistentDataType.DOUBLE
             ) ?: 0.0
             isUpgraded = true
@@ -140,7 +139,7 @@ class ItemUpgradeEvent : IEmpireListener {
 
             if (resultMeta.getAttributeModifiers(itemUpgrade.attribute) != null) {
                 resultMeta.persistentDataContainer.set(
-                    EmpirePlugin.empireConstants.getUpgradesMap()[itemUpgrade.attribute.name] ?: continue,
+                    BetterConstants.valueOf(itemUpgrade.attribute.name).value ?: continue,
                     PersistentDataType.DOUBLE, attrAmount
                 )
 
@@ -176,16 +175,16 @@ class ItemUpgradeEvent : IEmpireListener {
         val itemMeta: ItemMeta = itemStack.itemMeta ?: return
 
 
-        for (key in EmpirePlugin.empireConstants.getUpgradesMap().keys) {
+        for (key in BetterConstants.values()) {
             if (!itemMeta.persistentDataContainer.has(
-                    EmpirePlugin.empireConstants.getUpgradesMap()[key] ?: continue,
+                    key.value ?: continue,
                     PersistentDataType.DOUBLE
                 )
             )
                 continue
             itemMeta.lore = setAttrLore(
-                itemMeta, key, itemMeta.persistentDataContainer.get(
-                    EmpirePlugin.empireConstants.getUpgradesMap()[key] ?: continue,
+                itemMeta, key.name, itemMeta.persistentDataContainer.get(
+                    key.value ?: continue,
                     PersistentDataType.DOUBLE
                 )?.round(2)
             )
@@ -199,17 +198,16 @@ class ItemUpgradeEvent : IEmpireListener {
         val location = e.whoClicked.location
         if (amount > itemStack.type.maxDurability) {
             e.whoClicked.world.strikeLightning(e.whoClicked.location)
-           ( e.whoClicked as Player).sendMessage(EmpirePlugin.translations.ITEM_UPGRADE_UNSUCCESFULL)
+            (e.whoClicked as Player).sendMessage(EmpirePlugin.translations.ITEM_UPGRADE_UNSUCCESFULL)
             for (i in 0..2)
                 e.inventory.setItem(i, null)
             e.whoClicked.closeInventory()
-        }else{
-            location.world!!.spawnParticle(Particle.GLOW,location.add(0.0,1.0,0.0),100)
+        } else {
+            location.world!!.spawnParticle(Particle.GLOW, location.add(0.0, 1.0, 0.0), 100)
             e.whoClicked.sendMessage(EmpirePlugin.translations.ITEM_UPGRADE_SUCCESFULL)
 
         }
     }
-
 
 
     override fun onDisable() {

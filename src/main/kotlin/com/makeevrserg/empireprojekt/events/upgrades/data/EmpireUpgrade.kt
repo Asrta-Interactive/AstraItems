@@ -19,7 +19,7 @@ data class EmpireUpgrade(
 
 
     companion object {
-        fun newList(): List<EmpireUpgrade> = EmpireYamlParser.parseYamlConfig<List<EmpireUpgrade>>(
+        fun newList(): List<EmpireUpgrade> = EmpireYamlParser.fromYAML<List<EmpireUpgrade>>(
             EmpirePlugin.empireFiles.upgradesFile.getConfig(),
             object : TypeToken<List<EmpireUpgrade?>?>() {}.type,
             listOf("upgrades")

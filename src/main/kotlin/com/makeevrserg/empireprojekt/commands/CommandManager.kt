@@ -7,6 +7,7 @@ import com.makeevrserg.empireprojekt.emgui.EmpireCategoriesMenu
 import com.makeevrserg.empireprojekt.emgui.EmpireSoundsMenu
 import com.makeevrserg.empireprojekt.events.mobs.EmpireMobsManager
 import com.makeevrserg.empireprojekt.events.mobs.MobAPI
+import com.makeevrserg.empireprojekt.util.BetterConstants
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -16,6 +17,7 @@ import org.bukkit.persistence.PersistentDataType
 import com.makeevrserg.empireprojekt.util.EmpirePermissions
 import com.makeevrserg.empireprojekt.util.ResourcePackNew
 import empirelibs.EmpireUtils
+import makeevrserg.empireprojekt.commands.RandomItem
 import java.io.File
 
 class CommandManager() : CommandExecutor {
@@ -28,6 +30,8 @@ class CommandManager() : CommandExecutor {
         plugin.getCommand("emnpc")!!.tabCompleter = tabCompletion
         plugin.getCommand("emspawn")!!.tabCompleter = tabCompletion
         plugin.getCommand("emspawn")!!.setExecutor(this)
+        plugin.getCommand("erandomitem")!!.setExecutor(RandomItem())
+        plugin.getCommand("erandomitem")!!.tabCompleter = tabCompletion
         plugin.getCommand("ereload")!!.setExecutor(this)
         plugin.getCommand("ezip")!!.setExecutor(this)
         plugin.getCommand("emgui")!!.setExecutor(this)
@@ -93,7 +97,7 @@ class CommandManager() : CommandExecutor {
             fun emreplace(sender: Player): Boolean {
                 var item = sender.inventory.itemInMainHand
                 val meta = item.itemMeta ?: return false
-                val id = meta.persistentDataContainer.get(EmpirePlugin.empireConstants.empireID, PersistentDataType.STRING)
+                val id = meta.persistentDataContainer.get(BetterConstants.EMPIRE_ID.value, PersistentDataType.STRING)
                     ?: return false
 
                 val amount = item.amount
@@ -129,22 +133,6 @@ class CommandManager() : CommandExecutor {
                     EmpireUtils.getBook("RomaRoman", EmpireUtils.HEXPattern("&fЭмодзи"), mutableListOf(list), false)
 
 
-//                var list = ""
-//                val pages: MutableList<String> = mutableListOf()
-//                var count = 0
-//                for (emoji in plugin.empireFontImages.fontsInfo.keys) {
-//                    if (plugin.empireFontImages.fontsInfo[emoji]?.sendBlocked ?: continue)
-//                        continue
-//
-//                    count++
-//                    list += "$emoji&r\n&f${plugin.empireFontImages.fontsInfo[emoji]}&r\n"
-//                    if (count % 7 == 0) {
-//                        pages.add(list)
-//                        list = ""
-//                    }
-//                }
-//                pages.add(list)
-                //sender.inventory.addItem(book)
                 sender.openBook(book)
             }
         }

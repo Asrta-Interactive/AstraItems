@@ -1,8 +1,8 @@
-package com.makeevrserg.empireprojekt.npcs
+package npcs
 
 import com.comphenix.protocol.ProtocolLibrary
-import com.makeevrserg.empireprojekt.npcs.interact.ClickNPC
-import com.makeevrserg.empireprojekt.npcs.interact.ProtocolLibPacketListener
+import npcs.interact.ClickNPC
+import npcs.interact.ProtocolLibPacketListener
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import org.bukkit.Bukkit
 import org.bukkit.configuration.ConfigurationSection

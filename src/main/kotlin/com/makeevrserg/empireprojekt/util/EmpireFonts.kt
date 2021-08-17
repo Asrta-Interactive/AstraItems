@@ -3,12 +3,7 @@ package com.makeevrserg.empireprojekt.util
 import com.google.gson.annotations.SerializedName
 import com.google.gson.reflect.TypeToken
 import com.makeevrserg.empireprojekt.EmpirePlugin
-import com.makeevrserg.empireprojekt.events.mobs.data.EmpireMob
 import empirelibs.EmpireYamlParser
-import org.bukkit.configuration.ConfigurationSection
-import java.io.Serial
-
-
 
 
 data class EmpireFont(
@@ -35,7 +30,7 @@ data class EmpireFonts(
         fun new(): EmpireFonts {
 
 
-            val fonts = EmpireYamlParser.parseYamlConfig<List<EmpireFont>>(
+            val fonts = EmpireYamlParser.fromYAML<List<EmpireFont>>(
                 EmpirePlugin.empireFiles.fontImagesFile.getConfig(),
                 object : TypeToken<List<EmpireFont?>?>() {}.type,
                 listOf("font_images")

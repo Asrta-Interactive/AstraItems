@@ -1,6 +1,6 @@
-package com.makeevrserg.empireprojekt.npcs.interact
+package npcs.interact
 
-import com.makeevrserg.empireprojekt.npcs.EmpireNPC
+import npcs.EmpireNPC
 import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
 import org.bukkit.event.Event

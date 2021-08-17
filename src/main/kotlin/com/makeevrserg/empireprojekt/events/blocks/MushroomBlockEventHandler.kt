@@ -1,7 +1,7 @@
-package com.makeevrserg.empireprojekt.events.blocks.events
+package com.makeevrserg.empireprojekt.events.blocks
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
-import com.makeevrserg.empireprojekt.events.blocks.BlockGenerationEvent2
+import com.makeevrserg.empireprojekt.events.blocks.events.*
 import empirelibs.IEmpireListener
 import empirelibs.IEventManager
 

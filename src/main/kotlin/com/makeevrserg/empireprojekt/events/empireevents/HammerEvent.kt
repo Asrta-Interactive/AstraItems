@@ -2,6 +2,7 @@ package com.makeevrserg.empireprojekt.events.empireevents
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.instance
+import com.makeevrserg.empireprojekt.util.BetterConstants
 import com.sk89q.worldedit.bukkit.BukkitAdapter
 import com.sk89q.worldedit.world.World
 import com.sk89q.worldguard.WorldGuard
@@ -64,7 +65,7 @@ class HammerEvent : IEmpireListener {
         val itemStack = e.player.inventory.itemInMainHand
         val itemMeta = itemStack.itemMeta ?: return
         if (!itemMeta.persistentDataContainer
-                .has(EmpirePlugin.empireConstants.HAMMER_ENCHANT, PersistentDataType.DOUBLE)
+                .has(BetterConstants.HAMMER_ENCHANT.value, PersistentDataType.DOUBLE)
         ) return
         val side = blockFace[e.player]
         blockFace.remove(e.player)

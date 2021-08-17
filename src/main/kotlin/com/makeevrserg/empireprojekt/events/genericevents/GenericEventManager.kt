@@ -7,6 +7,7 @@ import com.makeevrserg.empireprojekt.items.data.interact.CommandEvent
 import com.makeevrserg.empireprojekt.items.data.interact.ParticleEvent
 import com.makeevrserg.empireprojekt.items.data.interact.PotionEffectEvent
 import com.makeevrserg.empireprojekt.items.data.interact.Sound
+import com.makeevrserg.empireprojekt.util.BetterConstants
 import empirelibs.EmpireUtils
 import empirelibs.getEmpireID
 import me.clip.placeholderapi.PlaceholderAPI
@@ -61,12 +62,12 @@ class GenericEventManager {
 
         private fun manageDurability(item: ItemStack) {
             var durability = item.itemMeta?.persistentDataContainer?.get(
-                EmpirePlugin.empireConstants.EMPIRE_DURABILITY,
+                BetterConstants.EMPIRE_DURABILITY.value,
                 PersistentDataType.INTEGER
             ) ?: return
             durability -= 1
             item.itemMeta?.persistentDataContainer?.set(
-                EmpirePlugin.empireConstants.EMPIRE_DURABILITY,
+                BetterConstants.EMPIRE_DURABILITY.value,
                 PersistentDataType.INTEGER, durability
             ) ?: return
             if (durability <= 0)

@@ -2,6 +2,7 @@ package com.makeevrserg.empireprojekt.events.empireevents
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.instance
+import com.makeevrserg.empireprojekt.util.BetterConstants
 import empirelibs.IEmpireListener
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -24,7 +25,7 @@ class Vampirism : IEmpireListener {
         val itemStack = p.inventory.itemInMainHand
         val itemMeta = itemStack.itemMeta ?: return
         val vampSize = itemMeta.persistentDataContainer
-            .get(EmpirePlugin.empireConstants.VAMPIRISM_ENCHANT, PersistentDataType.DOUBLE)
+            .get(BetterConstants.VAMPIRISM_ENCHANT.value, PersistentDataType.DOUBLE)
             ?: return
         val damage = e.finalDamage
         val playerHealth = p.health

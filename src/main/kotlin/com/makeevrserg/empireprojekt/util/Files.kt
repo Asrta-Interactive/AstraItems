@@ -33,6 +33,8 @@ public class Files() {
         FileManager("temp" + File.separator + "generated_chunks.yml")
     val villagerTrades: FileManager =
         FileManager("config" + File.separator + "villager_trades.yml")
+    val randomItems: FileManager =
+        FileManager("config" + File.separator + "random_items.yml")
 
 
 

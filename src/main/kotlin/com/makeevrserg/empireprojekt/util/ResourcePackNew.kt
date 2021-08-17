@@ -101,7 +101,7 @@ class ResourcePackNew {
                 "${fontInfo.path}",
                 null, null, null,
                 listOf(StringEscapeUtils.escapeJava(fontInfo.chars)),
-                fontInfo.height,fontInfo.ascent
+                fontInfo.height, fontInfo.ascent
             )
             providers.add(provider)
         }
@@ -120,8 +120,8 @@ class ResourcePackNew {
         for (soundID in EmpirePlugin.empireSounds.soundByID.keys) {
             val musicObj = JsonObject()
             val sounds = JsonArray()
-            for (sound in EmpirePlugin.empireSounds.soundByID[soundID]?.sounds?: mutableListOf())
-            sounds.add("${sound}")
+            for (sound in EmpirePlugin.empireSounds.soundByID[soundID]?.sounds ?: mutableListOf())
+                sounds.add("${sound}")
             musicObj.add("sounds", sounds)
             musicFileObj.add(soundID, musicObj)
         }
@@ -242,7 +242,7 @@ class ResourcePackNew {
             } catch (e: NumberFormatException) {
                 model.textures.layer0 = "${item.namespace}:${item.texturePath}"
             }
-        } else if (item.block != null) {
+        } else if (item.block != null || item.decoration != null) {
             model.parent = "block/base/block_real"
             model.textures = Textures(null, null, null)
             model.textures.all = "${item.namespace}:${item.texturePath}"
@@ -355,9 +355,20 @@ class ResourcePackNew {
 
             val materialName = MushroomBlockApi.getMaterialByData(empireBlock.data).name.lowercase()
             val file = File(getMinecraftPath() + "blockstates" + File.separator + "${materialName}.json")
-            val multipartList = Gson().fromJson(JsonParser().parse(file.reader()).asJsonObject,MushroomBlockClassJson::class.java)
-            println(MushroomBlockApi.Multipart(multipart.facing,MushroomBlockApi.Apply("block/original/${materialName}_true")))
-            multipartList.multipart.remove(MushroomBlockApi.Multipart(multipart.facing,MushroomBlockApi.Apply("block/original/${materialName}_true")))
+            val multipartList =
+                Gson().fromJson(JsonParser().parse(file.reader()).asJsonObject, MushroomBlockClassJson::class.java)
+            println(
+                MushroomBlockApi.Multipart(
+                    multipart.facing,
+                    MushroomBlockApi.Apply("block/original/${materialName}_true")
+                )
+            )
+            multipartList.multipart.remove(
+                MushroomBlockApi.Multipart(
+                    multipart.facing,
+                    MushroomBlockApi.Apply("block/original/${materialName}_true")
+                )
+            )
             multipartList.multipart.add(multipart)
             file.writeText(setPrettyString(Gson().toJson(multipartList)))
 

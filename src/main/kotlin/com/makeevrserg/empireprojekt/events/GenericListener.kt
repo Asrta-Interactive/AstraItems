@@ -3,9 +3,7 @@ package com.makeevrserg.empireprojekt.events
 import com.makeevrserg.empireprojekt.essentials.AutoBlockChangeEvent
 import com.makeevrserg.empireprojekt.essentials.MusicDiscsEvent
 import com.makeevrserg.empireprojekt.essentials.sit.SitEvent
-import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.essentials.SpawnerEggBlockEvent
-import com.makeevrserg.empireprojekt.events.blocks.events.MushroomBlockEventHandler
 import com.makeevrserg.empireprojekt.events.empireevents.*
 import com.makeevrserg.empireprojekt.events.empireevents.Vampirism
 import com.makeevrserg.empireprojekt.events.genericevents.BookSignEvent
@@ -17,11 +15,14 @@ import com.makeevrserg.empireprojekt.events.villagers.VillagerEvent
 import empirelibs.IEmpireListener
 import empirelibs.IEventManager
 import empirelibs.menu.MenuListener
+import makeevrserg.empireprojekt.events.resourcepack.ProtocolLibResourcePack
+import makeevrserg.empireprojekt.events.resourcepack.ResourcePackEvent
+import org.bukkit.Bukkit
 
 
-
-class GenericListener() :IEventManager {
+class GenericListener() : IEventManager {
     override val handlers: MutableList<IEmpireListener> = mutableListOf()
+
     init {
         SpawnerEggBlockEvent().onEnable(this)
         BookSignEvent().onEnable(this)
@@ -30,7 +31,10 @@ class GenericListener() :IEventManager {
         SitEvent().onEnable(this)
         //GunEvent().onEnable(this)
         Vampirism().onEnable(this)
-        FontProtocolLibEvent().onEnable(this)
+        if (Bukkit.getServer().pluginManager.getPlugin("ProtocolLib") != null)
+            FontProtocolLibEvent().onEnable(this)
+        if (Bukkit.getServer().pluginManager.getPlugin("ProtocolLib") != null)
+            ProtocolLibResourcePack().onEnable(this)
         LavaWalkerEvent().onEnable(this)
         HammerEvent().onEnable(this)
         MolotovEvent().onEnable(this)

@@ -78,6 +78,7 @@ class Translations {
 
 
     val MOB_WRON_PARSE:String = translationFile.getHEXString("MOB_WRON_PARSE", "#f55442 Ошибка при парсинге моба: ")
+    val FILE_WRONG_PARSE:String = translationFile.getHEXString("FILE_WRONG_PARSE", "#f55442 Ошибка при парсинге файла: ")
 
     val PREV_PAGE: String = translationFile.getHEXString("PREV_PAGE", ChatColor.GREEN.toString() + "<- Пред. страница")
     val BACK_PAGE: String = translationFile.getHEXString("BACK_PAGE", ChatColor.GREEN.toString() + "Назад")
@@ -86,6 +87,13 @@ class Translations {
     val WRONG_ENUM: String = translationFile.getHEXString("WRONG_ENUM", "#f55442Введено несуществующее значение...")
 
     val RESOURCE_PACK_DENY: String = translationFile.getHEXString("RESOURCE_PACK_DENY", "#f55442Вы отклонили ресурс-пак")
+    val RESOURCE_PACK_SEND: String = translationFile.getHEXString("RESOURCE_PACK_SEND", "#34ebab Приветствуем на EmpireSMP!\n" +
+            "#20b3c9 У нас тут куча новых предметов в /emgui Новые мобы, меню, эмодзи...\n" +
+            "#20c942 Однако, чтобы видеть это - необходимо скачать наш ресурс-пак!\n" +
+            "#20c99c С ним у вас возникнет ощущение, что вы играете с модами, хотя никаких модов тут нет!\n" +
+            "#2085c9 У нас куча новых механик, с которыми  вам помогут разобраться игроки и администрация!\n" +
+            "#c93920 Если возникнут вопросы - зайдите в наш дискорд /motd")
+    val RESOURCE_PACK_SEND_JSON:String = translationFile.getString("RESOURCE_PACK_SEND_JSON","[\"\",{\"text\":\"-----------------------------------------------------------------------\",\"color\":\"#9C0EDC\"},{\"text\":\"\\n\"},{\"text\":\"Приветствуем на EmpireSMP!\",\"color\":\"#E4CC15\"},{\"text\":\"\\n\"},{\"text\":\"У нас куча новых предметов, мобов, новые меню и эмодзи!\",\"color\":\"#2ACADF\"},{\"text\":\"\\n\"},{\"text\":\"Всё это имеет новые текстурки и модельки!\",\"color\":\"#13C93A\"},{\"text\":\"\\n\"},{\"text\":\"Играя здесь у вас возникнет ощущение игры с модами!\",\"color\":\"#62C21D\"},{\"text\":\"\\n\"},{\"text\":\"Множество новых механик:\",\"color\":\"#AF8F08\"},{\"text\":\"\\n\"},{\"text\":\"Система рангов, апгрейды, оружие, ранги, новая руда, магазины\",\"color\":\"#C7BF1B\"},{\"text\":\"\\n\"},{\"text\":\"Не забудьте зайти в дискорд, если будут какие-то вопросы! /motd\",\"color\":\"#1784D3\"},{\"text\":\"\\n\"},{\"text\":\"EmpireProjekt.ru\",\"color\":\"#CE1881\"},{\"text\":\"\\n\"},{\"text\":\"------------------------------------------------------------------------\",\"color\":\"#7000ED\"}]")!!
     val RESOURCE_PACK_DOWNLOAD_SELF: String = translationFile.getHEXString(
         "RESOURCE_PACK_DOWNLOAD_SELF",
         "#f54542Попробуйте скачать самостоятельно. #429ef5empireprojekt.ru/files/EmpireProjektPack.zip"

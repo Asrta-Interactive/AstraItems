@@ -1,6 +1,6 @@
 package com.makeevrserg.empireprojekt.commands
 
-import com.makeevrserg.empireprojekt.npcs.NPCManager
+import npcs.NPCManager
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.events.mobs.EmpireMobsManager
 import org.bukkit.command.Command
@@ -39,7 +39,12 @@ class EmpireTabCompleter() : TabCompleter {
             listOf("create", "tp", "move", "delete", "changeskin", "select")
         } else if (alias.equals("emspawn", ignoreCase = true)) {
             EmpireMobsManager.mobById.keys.toList()
-        } else {
+        }
+        else if (alias.equals("erandomitem",ignoreCase = true)){
+            val list = EmpirePlugin.instance.randomItems.getList()
+            list
+        }
+        else {
             listOf("reload", "give")
         }
     }
@@ -50,6 +55,14 @@ class EmpireTabCompleter() : TabCompleter {
                 return listOf("<id>")
             } else if (listOf("create", "tp", "delete", "changeskin", "move").contains(args[0])) {
                 return NPCManager.NPCMap.keys.toList()
+            }else if (alias.equals("erandomitem",ignoreCase = true)){
+                val list = EmpirePlugin.instance.randomItems.getList()
+                val arg = args[0]
+                val newList = mutableListOf<String>()
+                for (id in list)
+                    if (id.contains(arg,ignoreCase = true))
+                        newList.add(arg)
+                return newList
             }
         }
 

@@ -1,11 +1,11 @@
-package com.makeevrserg.empireprojekt.npcs.interact
+package npcs.interact
 
 import com.comphenix.protocol.PacketType
 import com.comphenix.protocol.ProtocolLibrary
 import com.comphenix.protocol.ProtocolManager
 import com.comphenix.protocol.events.*
 import com.comphenix.protocol.wrappers.EnumWrappers
-import com.makeevrserg.empireprojekt.npcs.NPCManager
+import npcs.NPCManager
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import org.bukkit.Bukkit
 

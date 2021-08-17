@@ -1,7 +1,7 @@
 package com.makeevrserg.empireprojekt
 
 import com.makeevrserg.empireprojekt.essentials.homes.EssentialsHandler
-import com.makeevrserg.empireprojekt.npcs.NPCManager
+import npcs.NPCManager
 import com.makeevrserg.empireprojekt.commands.CommandManager
 import com.makeevrserg.empireprojekt.util.EmpireCrafts
 import com.makeevrserg.empireprojekt.events.GenericListener
@@ -12,12 +12,13 @@ import com.makeevrserg.empireprojekt.items.EmpireItems
 import com.makeevrserg.empireprojekt.emgui.settings.GuiCategories
 import com.makeevrserg.empireprojekt.emgui.settings.GuiSettings
 import com.makeevrserg.empireprojekt.essentials.inventorysaver.ISCommandManager
-import com.makeevrserg.empireprojekt.events.blocks.events.MushroomBlockEventHandler
+import com.makeevrserg.empireprojekt.events.blocks.MushroomBlockEventHandler
+import com.makeevrserg.empireprojekt.events.decorations.DecorationBlockEventHandler
 import com.makeevrserg.empireprojekt.util.*
 import com.makeevrserg.empireprojekt.util.Files
 import com.makeevrserg.empireprojekt.util.sounds.SoundManager
-import empirelibs.EmpireYamlParser
 import empirelibs.PluginBetaAccessCheck
+import makeevrserg.empireprojekt.random_items.RandomItems
 import org.bukkit.NamespacedKey
 import org.bukkit.inventory.FurnaceRecipe
 import org.bukkit.inventory.Recipe
@@ -58,8 +59,8 @@ class EmpirePlugin : JavaPlugin() {
             private set
 
         //Constants
-        lateinit var empireConstants: EmpireConstats
-            private set
+//        lateinit var empireConstants: EmpireConstats
+//            private set
 
         lateinit var dropManager: ItemDropManager
             private set
@@ -97,17 +98,18 @@ class EmpirePlugin : JavaPlugin() {
     val recipies: MutableMap<String, EmpireCrafts.EmpireRecipe>
         get() = _empireCrafts.empireRecipies
 
-    private lateinit var mushroomBlockEventHandler:MushroomBlockEventHandler
+    private lateinit var mushroomBlockEventHandler: MushroomBlockEventHandler
+    private lateinit var decorationBlockEventHandler:DecorationBlockEventHandler
     //GuiSettings
     lateinit var guiSettings: GuiSettings
 
+    public lateinit var randomItems:RandomItems
     //Gui Categories
     lateinit var guiCategories: GuiCategories
 
     fun initPlugin() {
 
 
-        empireConstants = EmpireConstats()
         translations = Translations()
         empireFiles = Files()
 
@@ -124,7 +126,9 @@ class EmpirePlugin : JavaPlugin() {
         dropManager = ItemDropManager()
 
 
+        randomItems = RandomItems()
         mushroomBlockEventHandler = MushroomBlockEventHandler()
+        decorationBlockEventHandler = DecorationBlockEventHandler()
         isCommandManager = ISCommandManager()
         _empireCrafts = EmpireCrafts()
 
@@ -136,7 +140,7 @@ class EmpirePlugin : JavaPlugin() {
             println(translations.PLUGIN_PROTOCOLLIB_NOT_INSTALLED)
 
         //Beta plugin countdown
-        PluginBetaAccessCheck()
+        //PluginBetaAccessCheck()
 
     }
 
@@ -149,7 +153,7 @@ class EmpirePlugin : JavaPlugin() {
     fun disablePlugin() {
 
         fun isCustomRecipe(key: NamespacedKey): Boolean {
-            return key.key.contains(empireConstants.CUSTOM_RECIPE_KEY)
+            return key.key.contains(BetterConstants.CUSTOM_RECIPE_KEY.name)
         }
 
         fun isCustomRecipe(recipe: FurnaceRecipe): Boolean {
@@ -187,7 +191,7 @@ class EmpirePlugin : JavaPlugin() {
             }
             val itemMeta = recipe?.result?.itemMeta ?: continue
             val id = itemMeta.persistentDataContainer.get(
-                empireConstants.empireID,
+                BetterConstants.EMPIRE_ID.value,
                 PersistentDataType.STRING
             ) ?: continue
             if (_empireCrafts.empireRecipies.contains(id)) ite.remove()

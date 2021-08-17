@@ -3,10 +3,7 @@ package com.makeevrserg.empireprojekt.events.mobs.data
 import com.google.gson.annotations.SerializedName
 import com.google.gson.reflect.TypeToken
 import com.makeevrserg.empireprojekt.EmpirePlugin
-import empirelibs.EmpireUtils
 import empirelibs.EmpireYamlParser
-import org.bukkit.configuration.ConfigurationSection
-import org.bukkit.entity.EntityType
 
 data class EmpireMob(
     @SerializedName("id")
@@ -59,7 +56,7 @@ data class EmpireMob(
     companion object {
 
         fun new(): List<EmpireMob> {
-            return EmpireYamlParser.parseYamlConfig<List<EmpireMob>>(
+            return EmpireYamlParser.fromYAML<List<EmpireMob>>(
                 EmpirePlugin.empireFiles.mobsFile.getConfig(),
                 object : TypeToken<List<EmpireMob?>?>() {}.type,
                 listOf("mobs")

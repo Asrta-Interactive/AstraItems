@@ -2,6 +2,7 @@ package com.makeevrserg.empireprojekt.events.genericevents
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.instance
+import com.makeevrserg.empireprojekt.util.BetterConstants
 import empirelibs.IEmpireListener
 
 import org.bukkit.event.EventHandler
@@ -36,14 +37,14 @@ class ExperienceRepairEvent : IEmpireListener {
         val itemMeta: ItemMeta = itemStack.itemMeta ?: return
 
         val maxCustomDurability: Int = itemMeta.persistentDataContainer.get(
-            EmpirePlugin.empireConstants.MAX_CUSTOM_DURABILITY,
+            BetterConstants.MAX_CUSTOM_DURABILITY.value,
             PersistentDataType.INTEGER
         ) ?: return
 
         val damage: Short = itemStack.durability
         val empireDurability = maxCustomDurability - damage * maxCustomDurability / itemStack.type.maxDurability
         itemMeta.persistentDataContainer.set(
-            EmpirePlugin.empireConstants.EMPIRE_DURABILITY,
+            BetterConstants.EMPIRE_DURABILITY.value,
             PersistentDataType.INTEGER,
             empireDurability
         )
@@ -57,12 +58,12 @@ class ExperienceRepairEvent : IEmpireListener {
         itemStack ?: return
         val itemMeta: ItemMeta = itemStack.itemMeta ?: return
         var maxCustomDurability: Int = itemMeta.persistentDataContainer.get(
-            EmpirePlugin.empireConstants.MAX_CUSTOM_DURABILITY,
+            BetterConstants.MAX_CUSTOM_DURABILITY.value,
             PersistentDataType.INTEGER
         ) ?: return
 
         var empireDurability: Int = itemMeta.persistentDataContainer.get(
-            EmpirePlugin.empireConstants.EMPIRE_DURABILITY,
+            BetterConstants.EMPIRE_DURABILITY.value,
             PersistentDataType.INTEGER
         ) ?: return
 
@@ -79,7 +80,7 @@ class ExperienceRepairEvent : IEmpireListener {
         }
 
         itemMeta.persistentDataContainer.set(
-            EmpirePlugin.empireConstants.EMPIRE_DURABILITY,
+            BetterConstants.EMPIRE_DURABILITY.value,
             PersistentDataType.INTEGER,
             empireDurability
         )

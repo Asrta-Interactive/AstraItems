@@ -2,6 +2,7 @@ package com.makeevrserg.empireprojekt.events.empireevents
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.EmpirePlugin.Companion.instance
+import com.makeevrserg.empireprojekt.util.BetterConstants
 
 import com.sk89q.worldedit.bukkit.BukkitAdapter
 import com.sk89q.worldguard.WorldGuard
@@ -31,7 +32,7 @@ class MolotovEvent : IEmpireListener {
         val itemStack = player.inventory.itemInMainHand
         val meta = itemStack.itemMeta ?: return
         val molotovPower =
-            meta.persistentDataContainer.get(EmpirePlugin.empireConstants.MOLOTOV, PersistentDataType.DOUBLE)
+            meta.persistentDataContainer.get(BetterConstants.MOLOTOV.value, PersistentDataType.DOUBLE)
                 ?: return
         println("Player ${player.name} threw molotov at blockLocation=${e.hitBlock?.location} playerLocation=${player.location}")
         Igniter(instance, e.hitBlock ?: return, molotovPower.toInt(), player)
