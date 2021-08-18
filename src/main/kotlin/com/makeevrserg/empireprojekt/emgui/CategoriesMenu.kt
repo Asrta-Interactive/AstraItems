@@ -4,17 +4,18 @@ import com.makeevrserg.empireprojekt.EmpirePlugin
 import empirelibs.menu.PaginatedMenu
 import empirelibs.menu.PlayerMenuUtility
 import empirelibs.EmpireUtils
+import empirelibs.asEmpireItem
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.meta.ItemMeta
 
 class EmpireCategoriesMenu(playerMenuUtility: PlayerMenuUtility?) :
     PaginatedMenu(playerMenuUtility) {
-    override var menuName: String = EmpirePlugin.instance.guiSettings.categoriesText
+    override var menuName: String = EmpireUtils.HEXPattern(EmpirePlugin.instance.guiSettings.categoriesText)
     override var page: Int = 0
     override var maxItemsPerPage: Int = 45
     override val menuSize = 54
-    override var slotsAmount: Int = EmpirePlugin.instance.guiCategories.categoriesMap.size
+    override var slotsAmount: Int = EmpirePlugin.instance.guiCategories.keys.size
     override var maxPages = getMaxPages()
 
     override fun handleMenu(e: InventoryClickEvent) {
@@ -43,9 +44,10 @@ class EmpireCategoriesMenu(playerMenuUtility: PlayerMenuUtility?) :
         addManageButtons()
         for (i in 0 until maxItemsPerPage) {
             val index = maxItemsPerPage * page + i
-            if (index < EmpirePlugin.instance.guiCategories.categoriesMap.size) {
-                val categoryItem = EmpirePlugin.instance.guiCategories.categoriesMap.values.elementAt(index)
-                val itemStack = categoryItem.icon.clone()
+            if (index < EmpirePlugin.instance.guiCategories.keys.size) {
+                val categoryName = EmpirePlugin.instance.guiCategories.keys.elementAt(index)
+                val categoryItem = EmpirePlugin.instance.guiCategories[categoryName]!!
+                val itemStack = categoryItem.icon.asEmpireItem()?.clone()?:continue
                 val itemMeta: ItemMeta = itemStack.itemMeta?:continue
                 itemMeta.setDisplayName(EmpireUtils.HEXPattern(categoryItem.name))
                 itemMeta.lore = EmpireUtils.HEXPattern(categoryItem.lore)

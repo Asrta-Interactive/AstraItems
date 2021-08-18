@@ -13,7 +13,7 @@ import org.bukkit.inventory.ItemStack
 class EmpireSoundsMenu(playerMenuUtility: PlayerMenuUtility?) :
     PaginatedMenu(playerMenuUtility) {
     override var menuName: String = EmpireUtils.HEXPattern(
-        EmpirePlugin.empireFiles.guiFile.getConfig()?.getString("settings.sounds_text", "Звуки")!!
+        EmpirePlugin.instance.guiSettings.soundsText
     )
 
     override var page: Int = 0

@@ -15,6 +15,7 @@ import com.makeevrserg.empireprojekt.events.villagers.VillagerEvent
 import empirelibs.IEmpireListener
 import empirelibs.IEventManager
 import empirelibs.menu.MenuListener
+import makeevrserg.empireprojekt.events.PlayerShowRecipeKey
 import makeevrserg.empireprojekt.events.resourcepack.ProtocolLibResourcePack
 import makeevrserg.empireprojekt.events.resourcepack.ResourcePackEvent
 import org.bukkit.Bukkit
@@ -46,6 +47,7 @@ class GenericListener() : IEventManager {
         ItemDropListener().onEnable(this)
         ItemInteractListener().onEnable(this)
         VillagerEvent().onEnable(this)
+        PlayerShowRecipeKey().onEnable(this)
 
     }
 

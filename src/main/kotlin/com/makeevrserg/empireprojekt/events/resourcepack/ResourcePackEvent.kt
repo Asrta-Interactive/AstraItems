@@ -29,6 +29,7 @@ class ResourcePackEvent : IEmpireListener {
         val p = e.player
         if (EmpirePlugin.empireConfig.downloadPackOnJoin || !p.hasPlayedBefore()) {
             p.performCommand("empack")
+            println("Игрок ${p.name} присоединился впервые. Запрашиваем ресурс-пакS")
         }
         else
             p.sendTitle(

@@ -3,8 +3,10 @@ package empirelibs
 import com.google.gson.JsonParser
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.util.BetterConstants
+import com.makeevrserg.empireprojekt.util.EmpireCrafts
 import net.md_5.bungee.api.ChatColor
 import org.bukkit.Material
+import org.bukkit.NamespacedKey
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer
@@ -48,7 +50,9 @@ inline fun <reified T:kotlin.Enum<T>> T.valueOfOrNull(type:String?):T?{
 fun String?.getEmpireItem():ItemStack?{
     return EmpirePlugin.empireItems.empireItems[this]
 }
-
+fun String?.asEmpireItem():ItemStack?{
+    return EmpirePlugin.empireItems.empireItems[this]
+}
 fun valueOfOrNull(value: String): ItemFlag? {
     return try {
         ItemFlag.valueOf(value)
@@ -71,7 +75,35 @@ class EmpireUtils {
             return java.lang.Enum.valueOf(T::class.java, key)
 
         }
+        fun getRecipeKey(id:String?): NamespacedKey? {
+            id?:return null
+            if (!EmpirePlugin.empireItems.empireItems.containsKey(id))
+                return null
+           return NamespacedKey(EmpirePlugin.instance, BetterConstants.CUSTOM_RECIPE_KEY.name+id)
+        }
 
+
+
+
+        fun useInCraft(item: String): MutableSet<String> {
+            val itemStack = EmpirePlugin.empireItems.empireItems[item] ?: ItemStack(
+                Material.getMaterial(item) ?: return mutableSetOf()
+            )
+            val set = mutableSetOf<String>()
+
+            for (itemResult in EmpirePlugin.instance.recipies.keys) {
+                val itemRecipies: EmpireCrafts.EmpireRecipe =
+                    EmpirePlugin.instance.recipies[itemResult] ?: continue
+                for (empireRecipe in itemRecipies.craftingTable)
+                    if (empireRecipe.ingredientMap.values.contains(itemStack))
+                        set.add(itemResult)
+                for (empireRecipe in itemRecipies.furnace)
+                    if (empireRecipe.input == itemStack)
+                        set.add(itemResult)
+            }
+            return set
+
+        }
 
 
 
@@ -202,6 +234,7 @@ class EmpireUtils {
                 line = line.replace(emoji, toReplace + "")
                 matcher = emojiPattern.matcher(line)
             }
+
             return line.replace("<<>>", ":")
         }
 

@@ -16,7 +16,7 @@ class EmpireCategoryMenu(
 ) : PaginatedMenu(playerMenuUtility) {
     override val menuSize = 54
     override var maxItemsPerPage: Int = 45
-    override var slotsAmount: Int = EmpirePlugin.instance.guiCategories.categoriesMap.values.elementAt(slot).items.size
+    override var slotsAmount: Int = EmpirePlugin.instance.guiCategories.values.elementAt(slot).items.size
     override var maxPages: Int = getMaxPages()
     private fun playInventorySound() {
         playerMenuUtility.player.playSound(
@@ -33,7 +33,7 @@ class EmpireCategoryMenu(
 
 
     override var menuName: String =
-        EmpireUtils.HEXPattern(EmpirePlugin.instance.guiCategories.categoriesMap.values.elementAt(slot).title)
+        EmpireUtils.HEXPattern(EmpirePlugin.instance.guiCategories.values.elementAt(slot).title)
 
 
     override fun handleMenu(e: InventoryClickEvent) {
@@ -60,7 +60,7 @@ class EmpireCategoryMenu(
                     playerMenuUtility,
                     slot,
                     page,
-                    EmpirePlugin.instance.guiCategories.categoriesMap.values.elementAt(slot).items[page * maxItemsPerPage + e.slot],
+                    EmpirePlugin.instance.guiCategories.values.elementAt(slot).items[page * maxItemsPerPage + e.slot],
                     0
                 ).open()
             }
@@ -73,10 +73,10 @@ class EmpireCategoryMenu(
         addManageButtons()
         for (i in 0 until maxItemsPerPage) {
             val index = getIndex(i)
-            if (index >= EmpirePlugin.instance.guiCategories.categoriesMap.values.elementAt(slot).items.size)
+            if (index >= EmpirePlugin.instance.guiCategories.values.elementAt(slot).items.size)
                 return
 
-            val menuItem: String = EmpirePlugin.instance.guiCategories.categoriesMap.values.elementAt(slot).items[index]
+            val menuItem: String = EmpirePlugin.instance.guiCategories.values.elementAt(slot).items[index]
 
             val itemStack: ItemStack = EmpirePlugin.empireItems.empireItems[menuItem]?.clone() ?: (ItemStack(
                 Material.getMaterial(menuItem) ?: Material.PAPER

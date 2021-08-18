@@ -9,8 +9,6 @@ import com.makeevrserg.empireprojekt.events.genericevents.drop.ItemDropManager
 import com.makeevrserg.empireprojekt.events.mobs.EmpireMobsManager
 import com.makeevrserg.empireprojekt.events.upgrades.UpgradesManager
 import com.makeevrserg.empireprojekt.items.EmpireItems
-import com.makeevrserg.empireprojekt.emgui.settings.GuiCategories
-import com.makeevrserg.empireprojekt.emgui.settings.GuiSettings
 import com.makeevrserg.empireprojekt.essentials.inventorysaver.ISCommandManager
 import com.makeevrserg.empireprojekt.events.blocks.MushroomBlockEventHandler
 import com.makeevrserg.empireprojekt.events.decorations.DecorationBlockEventHandler
@@ -18,14 +16,20 @@ import com.makeevrserg.empireprojekt.util.*
 import com.makeevrserg.empireprojekt.util.Files
 import com.makeevrserg.empireprojekt.util.sounds.SoundManager
 import empirelibs.PluginBetaAccessCheck
+import makeevrserg.empireprojekt.emgui.data.Category
+import makeevrserg.empireprojekt.emgui.data.Settings
 import makeevrserg.empireprojekt.random_items.RandomItems
+import org.bukkit.Bukkit
 import org.bukkit.NamespacedKey
+import org.bukkit.boss.BarColor
+import org.bukkit.boss.BarFlag
+import org.bukkit.boss.BarStyle
 import org.bukkit.inventory.FurnaceRecipe
 import org.bukkit.inventory.Recipe
 import org.bukkit.inventory.ShapedRecipe
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.plugin.java.JavaPlugin
-
+import shop.EmpireShopManager
 
 class EmpirePlugin : JavaPlugin() {
 
@@ -100,12 +104,15 @@ class EmpirePlugin : JavaPlugin() {
 
     private lateinit var mushroomBlockEventHandler: MushroomBlockEventHandler
     private lateinit var decorationBlockEventHandler:DecorationBlockEventHandler
-    //GuiSettings
-    lateinit var guiSettings: GuiSettings
+
 
     public lateinit var randomItems:RandomItems
-    //Gui Categories
-    lateinit var guiCategories: GuiCategories
+
+    lateinit var guiSettings:Settings
+    lateinit var guiCategories:Map<String,Category>
+
+
+    private lateinit var shopManager:EmpireShopManager
 
     fun initPlugin() {
 
@@ -132,13 +139,16 @@ class EmpirePlugin : JavaPlugin() {
         isCommandManager = ISCommandManager()
         _empireCrafts = EmpireCrafts()
 
-        guiSettings = GuiSettings()
-        guiCategories = GuiCategories()
+
+        guiCategories = Category.toMap(Category.newCategories()?: mutableListOf())
+        guiSettings = Settings.new()
+
         if (server.pluginManager.getPlugin("ProtocolLib") != null) {
             npcManager = NPCManager()
         } else
             println(translations.PLUGIN_PROTOCOLLIB_NOT_INSTALLED)
 
+        //shopManager = EmpireShopManager()
         //Beta plugin countdown
         //PluginBetaAccessCheck()
 

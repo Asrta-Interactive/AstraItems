@@ -4,9 +4,7 @@ package com.makeevrserg.empireprojekt.emgui
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.util.EmpireCrafts
 import com.makeevrserg.empireprojekt.events.upgrades.ItemUpgradeEvent
-import com.makeevrserg.empireprojekt.events.genericevents.drop.ItemDropManager
 import com.makeevrserg.empireprojekt.events.genericevents.drop.data.ItemDrop
-import com.makeevrserg.empireprojekt.events.upgrades.UpgradesManager
 import com.makeevrserg.empireprojekt.events.villagers.VillagerManager
 import empirelibs.menu.PaginatedMenu
 import empirelibs.menu.PlayerMenuUtility
@@ -15,6 +13,7 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
 import com.makeevrserg.empireprojekt.util.EmpirePermissions
 import empirelibs.EmpireUtils
+import empirelibs.asEmpireItem
 
 import org.bukkit.Bukkit
 import org.bukkit.NamespacedKey
@@ -42,13 +41,7 @@ class EmpireCraftMenu(
         return meta?.displayName ?: item
     }
 
-    override var menuName: String = EmpireUtils.HEXPattern(
-        EmpirePlugin.empireFiles.guiFile.getConfig()
-            ?.getString(
-                "settings.workbench_ui",
-                "Крафт"
-            ) + (getItemName())
-    )
+    override var menuName: String = EmpireUtils.HEXPattern(EmpirePlugin.instance.guiSettings.workbenchUi)
 
     private fun playInventorySound() {
         playerMenuUtility.player.playSound(
@@ -148,32 +141,32 @@ class EmpireCraftMenu(
 
     }
 
-    private fun useInCraft(item: String): MutableList<String> {
+    private fun useInCraft(item: String): Set<String> {
         val itemStack = EmpirePlugin.empireItems.empireItems[item] ?: ItemStack(
-            Material.getMaterial(item) ?: return mutableListOf()
+            Material.getMaterial(item) ?: return mutableSetOf()
         )
-        val list = mutableListOf<String>()
+        val set = mutableSetOf<String>()
 
         for (itemResult in EmpirePlugin.instance.recipies.keys) {
             val itemRecipies: EmpireCrafts.EmpireRecipe =
                 EmpirePlugin.instance.recipies[itemResult] ?: continue
             for (empireRecipe in itemRecipies.craftingTable)
                 if (empireRecipe.ingredientMap.values.contains(itemStack))
-                    list.add(itemResult)
+                    set.add(itemResult)
 
             for (empireRecipe in itemRecipies.furnace)
                 if (empireRecipe.input == itemStack)
-                    list.add(itemResult)
+                    set.add(itemResult)
 
 
         }
-        return list
+        return set
 
     }
 
 
     private fun setCanCraft() {
-        val itemsToCraft = useInCraft(item)
+        val itemsToCraft = useInCraft(item).toList()
         var invPosition = 36
         for (invPos in 0 until 9) {
             val index = 9 * page + invPos
@@ -190,23 +183,21 @@ class EmpireCraftMenu(
 
     private fun setWorkbenchButton() {
         inventory.setItem(
-            7, EmpirePlugin.empireItems.empireItems[EmpirePlugin.empireFiles.guiFile.getConfig()
-                ?.getConfigurationSection("settings")?.getString("crafting_table_btn")]
+            7,EmpirePlugin.instance.guiSettings.craftingTableButton.asEmpireItem()?:return
         )
     }
 
     private fun setFurnaceButton() {
         inventory.setItem(
-            8, EmpirePlugin.empireItems.empireItems[EmpirePlugin.empireFiles.guiFile.getConfig()
-                ?.getConfigurationSection("settings")?.getString("furnace_btn")]
+            8, EmpirePlugin.instance.guiSettings.furnaceButton.asEmpireItem()?:return
         )
     }
 
-    private fun getItemStack(path: String): ItemStack {
-        return EmpirePlugin.empireItems.empireItems[EmpirePlugin.empireFiles.guiFile.getConfig()
-            ?.getString(path)]?.clone()
-            ?: ItemStack(Material.PAPER).clone()
-    }
+//    private fun getItemStack(path: String): ItemStack {
+//        return EmpirePlugin.empireItems.empireItems[EmpirePlugin.empireFiles.guiFile.getConfig()
+//            ?.getString(path)]?.clone()
+//            ?: ItemStack(Material.PAPER).clone()
+//    }
 
 
     private fun setUpgrade(): ItemStack? {
@@ -219,7 +210,7 @@ class EmpireCraftMenu(
             return false
         }
 
-        val itemStack = getItemStack("settings.drop_btn")
+        val itemStack = EmpirePlugin.instance.guiSettings.dropButton.asEmpireItem()?:return null
         val itemMeta = itemStack.itemMeta
         val upgrades = EmpirePlugin.upgradeManager._upgradesMap[item] ?: return null
         itemMeta!!.setDisplayName(EmpirePlugin.translations.ITEM_INFO_DROP_COLOR+EmpirePlugin.translations.ITEM_INFO_IMPROVING)
@@ -237,7 +228,7 @@ class EmpireCraftMenu(
     }
 
     private fun setDrop(): ItemStack? {
-        val itemStack = getItemStack("settings.drop_btn")
+        val itemStack = EmpirePlugin.instance.guiSettings.dropButton.asEmpireItem()?:return null
         val itemMeta = itemStack.itemMeta
 
         itemMeta!!.setDisplayName(EmpirePlugin.translations.ITEM_INFO_DROP_COLOR+EmpirePlugin.translations.ITEM_INFO_DROP)
@@ -254,7 +245,7 @@ class EmpireCraftMenu(
     }
 
     private fun setBlockGenerate(): ItemStack? {
-        val itemStack = getItemStack("settings.drop_btn")
+        val itemStack = EmpirePlugin.instance.guiSettings.dropButton.asEmpireItem()?:return null
         val itemMeta = itemStack.itemMeta
         itemMeta!!.setDisplayName(EmpirePlugin.translations.ITEM_INFO_GENERATE)
         val itemInfo = EmpirePlugin.empireItems.empireBlocks[item] ?: return null
@@ -272,7 +263,7 @@ class EmpireCraftMenu(
     }
 
     private fun setNPCSell(): ItemStack? {
-        val itemStack = getItemStack("settings.drop_btn")
+        val itemStack = EmpirePlugin.instance.guiSettings.dropButton.asEmpireItem()?:return null
         val itemMeta = itemStack.itemMeta
         itemMeta!!.setDisplayName(EmpirePlugin.translations.ITEM_INFO_GENERATE)
         val villagers = VillagerManager.professionsByItem(item)?: return null
@@ -320,8 +311,7 @@ class EmpireCraftMenu(
         if (playerMenuUtility.player.hasPermission(EmpirePermissions.EMPGIVE))
             inventory.setItem(
                 34,
-                EmpirePlugin.empireItems.empireItems[EmpirePlugin.empireFiles.guiFile.getConfig()
-                    ?.getConfigurationSection("settings")?.getString("give_btn")] ?: ItemStack(Material.AIR)
+                EmpirePlugin.instance.guiSettings.giveButton.asEmpireItem()?:return
             )
 
 
