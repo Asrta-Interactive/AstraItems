@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>EmpireItems</artifactId>
-    <groupId>me.makee</groupId>
-    <version>1.0</version>
+    <groupId>me.makeevrserg</groupId>
+    <version>1.1</version>
     <packaging>jar</packaging>
     <name>EmpireItems</name>
 
@@ -39,10 +39,6 @@
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
-        <repository>
-            <id>dmulloy2-repo</id>
-            <url>https://repo.dmulloy2.net/repository/public/</url>
-        </repository>
         <!--        PlaceholderAPI-->
         <repository>
             <id>placeholderapi</id>
@@ -63,7 +59,11 @@
             <id>Scarsz-Nexus</id>
             <url>https://nexus.scarsz.me/content/groups/public/</url>
         </repository>
-
+        <!--Vault-->
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
 
     <build>
@@ -150,6 +150,13 @@
             <groupId>com.discordsrv</groupId>
             <artifactId>discordsrv</artifactId>
             <version>1.22.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <!--        Vault-->
+        <dependency>
+            <groupId>com.github.MilkBowl</groupId>
+            <artifactId>VaultAPI</artifactId>
+            <version>1.7</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
