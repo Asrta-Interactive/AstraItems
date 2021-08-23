@@ -1,4 +1,4 @@
-package com.makeevrserg.empireprojekt.betternpcs.data
+package com.makeevrserg.empireprojekt.npc.data
 
 import org.bukkit.configuration.ConfigurationSection
 

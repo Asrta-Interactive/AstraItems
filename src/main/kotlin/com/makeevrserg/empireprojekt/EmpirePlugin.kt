@@ -1,6 +1,6 @@
 package com.makeevrserg.empireprojekt
 
-import com.makeevrserg.empireprojekt.betternpcs.BetterNPCManager
+import com.makeevrserg.empireprojekt.npc.NPCManager
 import com.makeevrserg.empireprojekt.credit.EmpireCredit
 import com.makeevrserg.empireprojekt.essentials.homes.EssentialsHandler
 
@@ -20,6 +20,7 @@ import com.makeevrserg.empireprojekt.empire_items.util.sounds.SoundManager
 import makeevrserg.empireprojekt.emgui.data.Category
 import makeevrserg.empireprojekt.emgui.data.Settings
 import makeevrserg.empireprojekt.random_items.RandomItems
+import org.bukkit.Bukkit
 import org.bukkit.NamespacedKey
 import org.bukkit.inventory.FurnaceRecipe
 import org.bukkit.inventory.Recipe
@@ -94,15 +95,13 @@ class EmpirePlugin : JavaPlugin() {
             private set
 
 
-//        /**
-//         *Npc manager instance
-//         */
-//        var npcManager: NPCManager? = null
-//            private set
+        /**
+         *Npc manager instance
+         */
+        var npcManager: NPCManager? = null
+            private set
 
 
-        lateinit var betterNPCManager:BetterNPCManager
-        private set
         /**
          * Upgrades for items
          */
@@ -210,13 +209,9 @@ class EmpirePlugin : JavaPlugin() {
 
         empireCredit = EmpireCredit()
 
-//        if (server.pluginManager.getPlugin("ProtocolLib") != null)
-//            npcManager = NPCManager()
-//        else
-//            println(translations.PLUGIN_PROTOCOLLIB_NOT_INSTALLED)
 
+        npcManager = NPCManager()
 
-        betterNPCManager = BetterNPCManager()
         //Beta plugin countdown
         //PluginBetaAccessCheck()
 
@@ -253,12 +248,11 @@ class EmpirePlugin : JavaPlugin() {
             return false
         }
 
-        betterNPCManager.onDisable()
+
 
         empireCredit.onDisable()
-//        if (npcManager != null)
-//            npcManager!!.onDisable()
 
+        npcManager!!.onDisable()
         genericListener.onDisable()
         mushroomBlockEventHandler.onDisable()
         empireMobs.onDisable()
@@ -288,6 +282,8 @@ class EmpirePlugin : JavaPlugin() {
         disablePlugin()
         for (p in server.onlinePlayers)
             p.closeInventory()
+
+        Bukkit.getScheduler().cancelTasks(this)
 
     }
 }

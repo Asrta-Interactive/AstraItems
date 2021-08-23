@@ -170,7 +170,9 @@ class BlockGenerationEvent2 : IEmpireListener {
 
         if (!e.isNewChunk && EmpirePlugin.empireConfig.generateOnlyOnNewChunks)
             return
-        if (activeChunks.size < 3) {
+        if (inactiveChunks.size>50)
+            return
+        if (activeChunks.size < 2) {
             activeChunks.add(chunk)
             generateChunk(chunk)
         } else

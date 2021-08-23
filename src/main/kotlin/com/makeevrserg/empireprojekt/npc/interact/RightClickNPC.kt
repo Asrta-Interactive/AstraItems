@@ -1,12 +1,12 @@
-package com.makeevrserg.empireprojekt.npcs.interact
+package com.makeevrserg.empireprojekt.npc.interact
 
-import com.makeevrserg.empireprojekt.npcs.EmpireNPC
+import com.makeevrserg.empireprojekt.npc.AbstractNPC
 import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
 
-class RightClickNPC(val player: Player, val npc: EmpireNPC) : Event(), Cancellable {
+class RightClickNPC(val player: Player, val npc: AbstractNPC) : Event(), Cancellable {
 
 
     private var isCancelled = false

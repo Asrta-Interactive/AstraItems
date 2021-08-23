@@ -1,4 +1,4 @@
-package com.makeevrserg.empireprojekt.betternpcs.interact
+package com.makeevrserg.empireprojekt.npc.interact
 
 import com.comphenix.protocol.PacketType
 import com.comphenix.protocol.ProtocolLibrary
@@ -6,8 +6,10 @@ import com.comphenix.protocol.ProtocolManager
 import com.comphenix.protocol.events.*
 import com.comphenix.protocol.wrappers.EnumWrappers
 import com.makeevrserg.empireprojekt.EmpirePlugin
-import com.makeevrserg.empireprojekt.betternpcs.BetterNPCManager
+import com.makeevrserg.empireprojekt.npc.NPCManager
+import com.makeevrserg.empireprojekt.empirelibs.EmpireUtils
 import com.makeevrserg.empireprojekt.empirelibs.IEmpireListener
+import com.makeevrserg.empireprojekt.empirelibs.runTaskAsynchronously
 import org.bukkit.Bukkit
 
 class ProtocolLibPacketListener:IEmpireListener {
@@ -26,12 +28,13 @@ class ProtocolLibPacketListener:IEmpireListener {
                 val packet = event.packet
                 val player = event.player
 
-                Bukkit.getScheduler().runTaskAsynchronously(EmpirePlugin.instance, Runnable{
+                EmpireUtils.EmpireRunnable{
                     for (i in 0 until packet.enumEntityUseActions.size()) {
                         if (!packet.enumEntityUseActions.read(i).action.toString().equals("INTERACT", ignoreCase = true))
                             continue
                         if (packet.enumEntityUseActions.read(i).hand == EnumWrappers.Hand.OFF_HAND)
                             continue
+
                         var npcID: Int? = null
                         for (j in 0 until packet.integers.size())
                             if (!packet.integers.getField(j).name.equals("a"))
@@ -39,18 +42,21 @@ class ProtocolLibPacketListener:IEmpireListener {
                             else
                                 npcID = packet.integers.read(j)
                         npcID ?: continue
-
-                        Bukkit.getScheduler().scheduleSyncDelayedTask(EmpirePlugin.instance) {
+                        Bukkit.getScheduler().callSyncMethod(EmpirePlugin.instance) {
+                            println("Protocol notice")
                             EmpirePlugin.instance.server.pluginManager.callEvent(
                                 RightClickNPC(
                                     player,
-                                    BetterNPCManager.abstractNPCByID[npcID] ?: return@scheduleSyncDelayedTask
+                                    NPCManager.abstractNPCByID[npcID] ?: return@callSyncMethod
                                 )
                             )
                         }
 
                     }
-                })
+                }.runTaskAsynchronously()
+
+
+
 
             }
 

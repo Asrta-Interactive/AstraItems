@@ -1,10 +1,7 @@
-package com.makeevrserg.empireprojekt.betternpcs.data
+package com.makeevrserg.empireprojekt.npc.data
 
-import com.google.gson.reflect.TypeToken
-import com.makeevrserg.empireprojekt.EmpirePlugin
-import com.makeevrserg.empireprojekt.betternpcs.BetterNPCManager
+import com.makeevrserg.empireprojekt.npc.NPCManager
 import com.makeevrserg.empireprojekt.empirelibs.EmpireYamlParser
-import makeevrserg.empireprojekt.random_items.data.RandomItem
 
 data class NPCConfig(
     val radiusTrack: Int = 20,
@@ -16,7 +13,7 @@ data class NPCConfig(
     companion object {
 
         fun new() = EmpireYamlParser.fromYAML<NPCConfig>(
-            BetterNPCManager.fileManager.getConfig().getConfigurationSection("config"),
+            NPCManager.fileManager.getConfig().getConfigurationSection("config"),
             NPCConfig::class.java
         )
 

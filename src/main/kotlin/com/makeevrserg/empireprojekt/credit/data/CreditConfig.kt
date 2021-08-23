@@ -13,7 +13,9 @@ data class CreditConfig(
     @SerializedName("credit_tax")
     val creditTax: Double,
     @SerializedName("min_amount_for_credit")
-    val minAmountForCredit:Int
+    val minAmountForCredit: Int,
+    @SerializedName("credit_withdraw_tax")
+    val creditWithdrawTax: Double?
 
 ) {
     companion object {

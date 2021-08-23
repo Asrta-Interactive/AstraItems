@@ -10,7 +10,7 @@ data class CreditPlayer(
     val name: String,
     var bank:Int = 0,
     var credit: Int = 0,
-    val unix: Long = System.currentTimeMillis()
+    var unix: Long = System.currentTimeMillis()
 ) {
     companion object {
         fun getPlayer(uuid: String): CreditPlayer? =

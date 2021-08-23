@@ -1,9 +1,9 @@
-package com.makeevrserg.empireprojekt.betternpcs
+package com.makeevrserg.empireprojekt.npc
 
 import com.google.gson.JsonParser
 import com.makeevrserg.empireprojekt.EmpirePlugin
-import com.makeevrserg.empireprojekt.betternpcs.data.EmpireNPC
-import com.makeevrserg.empireprojekt.betternpcs.data.Skin
+import com.makeevrserg.empireprojekt.npc.data.EmpireNPC
+import com.makeevrserg.empireprojekt.npc.data.Skin
 import com.makeevrserg.empireprojekt.empirelibs.EmpireUtils
 import com.mojang.authlib.GameProfile
 import com.mojang.authlib.properties.Property
@@ -28,12 +28,14 @@ import java.lang.Exception
 import java.net.URL
 import java.util.*
 
-class EmpireAbstractNPC(val npc: EmpireNPC) {
+class AbstractNPC(val npc: EmpireNPC) {
 
     private var armorStands: List<ArmorStand> = listOf()
-    private lateinit var nmsNpc: EntityPlayer
+    public lateinit var nmsNpc: EntityPlayer
     val id: Int
         get() = nmsNpc.id
+    val location: Location
+        get() = npc.location
 
     /**
      * Установка имени NPC
@@ -43,11 +45,13 @@ class EmpireAbstractNPC(val npc: EmpireNPC) {
         val mArmorStands = mutableListOf<ArmorStand>()
         for (line in npc.lines ?: listOf()) {
             val location = npc.location.clone().add(0.0, offset, 0.0)
-            val armorStand = location.world?.spawnEntity(location, EntityType.ARMOR_STAND) as ArmorStand
-            armorStand.customName = EmpireUtils.HEXPattern(line)
-            armorStand.isCustomNameVisible = true
-            armorStand.isInvisible = true
-            armorStand.isInvulnerable = true
+            val armorStand = (location.world?.spawnEntity(location, EntityType.ARMOR_STAND) as ArmorStand).apply {
+                customName = EmpireUtils.HEXPattern(line)
+                isCustomNameVisible = true
+                isInvisible = true
+                isInvulnerable = true
+            }
+
             offset += 0.2
             mArmorStands.add(armorStand)
         }
@@ -73,11 +77,17 @@ class EmpireAbstractNPC(val npc: EmpireNPC) {
         nmsNpc.listName = IChatBaseComponent.a(npc.name ?: "")
 
         if (npc.skin != null)
-            setSkin(npc.skin)
+            setSkin(npc.skin!!)
         setName()
         showNPCToOnlinePlayers()
         hideName()
     }
+
+
+    fun despawnNPC(){
+        hideNPCFromOnlinePlayers()
+    }
+
 
     /**
      * Set skin
@@ -87,6 +97,7 @@ class EmpireAbstractNPC(val npc: EmpireNPC) {
             "textures",
             Property("textures", skin.value, skin.signature)
         )
+
     }
 
     /**
@@ -94,7 +105,10 @@ class EmpireAbstractNPC(val npc: EmpireNPC) {
      */
     fun setSkinByName(playerName: String) {
         val skin = getSkinByPlayerName(playerName) ?: return
-        setSkin(skin)
+        npc.skin = skin
+        despawnNPC()
+        spawnNPC()
+        NPCManager.saveNPC(npc)
     }
 
 
@@ -115,7 +129,6 @@ class EmpireAbstractNPC(val npc: EmpireNPC) {
             Skin(value, signature)
         } catch (e: Exception) {
             null
-
         }
     }
 
@@ -124,7 +137,19 @@ class EmpireAbstractNPC(val npc: EmpireNPC) {
      * Set location of NPC
      */
     fun setLocation(l: Location) {
-        nmsNpc.setLocation(l)
+
+//        hideNPCFromOnlinePlayers()
+//        nmsNpc.setLocation(l)
+        npc.location = l
+        despawnNPC()
+        spawnNPC()
+        NPCManager.saveNPC(npc)
+//        setName()
+//        showNPCToOnlinePlayers()
+//        if (npc.skin != null)
+//            setSkin(npc.skin!!)
+
+
     }
 
     /**
@@ -137,7 +162,8 @@ class EmpireAbstractNPC(val npc: EmpireNPC) {
                 nmsNpc
             )
         )//WARNING EnumPlayerInfoAction.a==EnumPlayerInfoAction.ADD_PLAYER
-        Bukkit.getScheduler().runTaskLaterAsynchronously(EmpirePlugin.instance,
+        Bukkit.getScheduler().runTaskLaterAsynchronously(
+            EmpirePlugin.instance,
             Runnable {
                 connection.sendPacket(
                     PacketPlayOutPlayerInfo(
@@ -145,7 +171,7 @@ class EmpireAbstractNPC(val npc: EmpireNPC) {
                         nmsNpc
                     )
                 )
-            }, BetterNPCManager.npcConfig.npcRemoveListTime
+            }, NPCManager.npcConfig.npcRemoveListTime
         )
     }
 
@@ -164,10 +190,11 @@ class EmpireAbstractNPC(val npc: EmpireNPC) {
                 false
             )
         )
-        Bukkit.getScheduler().runTaskLaterAsynchronously(EmpirePlugin.instance,
+        Bukkit.getScheduler().runTaskLaterAsynchronously(
+            EmpirePlugin.instance,
             Runnable {
                 spawnNPCPacket(connection)
-            }, BetterNPCManager.npcConfig.spawnNPCPacketTime
+            }, NPCManager.npcConfig.spawnNPCPacketTime
         )
         connection.sendPacket(PacketPlayOutEntityHeadRotation(nmsNpc, newLoc.yaw.toAngle()))
     }
@@ -286,9 +313,10 @@ class EmpireAbstractNPC(val npc: EmpireNPC) {
     }
 
 
-    fun onDisable(){
+    fun onDisable() {
         removeArmorStands()
         hideNPCFromOnlinePlayers()
+        despawnNPC()
     }
 
 }

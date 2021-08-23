@@ -54,6 +54,15 @@ fun String?.getEmpireItem():ItemStack?{
 fun String?.asEmpireItem():ItemStack?{
     return EmpirePlugin.empireItems.empireItems[this]
 }
+
+fun List<String>.withEntry(entry:String,ignoreCase:Boolean=true): List<String> {
+    val list = mutableListOf<String>()
+    for (line in this)
+        if (line.contains(entry,ignoreCase = true))
+            list.add(line)
+    return list
+}
+
 fun valueOfOrNull(value: String): ItemFlag? {
     return try {
         ItemFlag.valueOf(value)

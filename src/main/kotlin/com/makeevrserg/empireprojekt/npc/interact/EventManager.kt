@@ -1,4 +1,4 @@
-package com.makeevrserg.empireprojekt.betternpcs.interact
+package com.makeevrserg.empireprojekt.npc.interact
 
 import com.makeevrserg.empireprojekt.empirelibs.IEmpireListener
 import com.makeevrserg.empireprojekt.empirelibs.IEventManager

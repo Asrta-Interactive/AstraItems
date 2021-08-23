@@ -1,15 +1,10 @@
-package com.makeevrserg.empireprojekt.betternpcs.data
+package com.makeevrserg.empireprojekt.npc.data
 
 
-import com.google.gson.annotations.Expose
-import com.makeevrserg.empireprojekt.betternpcs.BetterNPCManager
+import com.makeevrserg.empireprojekt.npc.NPCManager
 import com.makeevrserg.empireprojekt.empirelibs.EmpireUtils
-import com.makeevrserg.empireprojekt.empirelibs.EmpireYamlParser
 import com.makeevrserg.empireprojekt.empirelibs.getHEXStringList
-import net.minecraft.server.level.EntityPlayer
 import org.bukkit.Location
-import org.bukkit.configuration.ConfigurationSection
-import org.bukkit.entity.ArmorStand
 
 data class EmpireNPC(
     val id: String,
@@ -17,14 +12,14 @@ data class EmpireNPC(
     val lines: List<String>? = null,
     val phrases: List<String>? = null,
     val commands: List<CommandEvent>? = null,
-    val skin: Skin? = null,
-    val location: Location
+    var skin: Skin? = null,
+    var location: Location
 ) {
 
 
     companion object {
         fun new(npc:String): EmpireNPC? {
-            val section = BetterNPCManager.fileManager.getConfig().getConfigurationSection("npcs.$npc")?:return  null
+            val section = NPCManager.fileManager.getConfig().getConfigurationSection("npcs.$npc")?:return  null
             val id = npc
             val lines = section.getHEXStringList("lines")
             val name = EmpireUtils.HEXPattern(section.getString("name"))
@@ -41,6 +36,15 @@ data class EmpireNPC(
                 skin = skin,
                 location = location
             )
+        }
+
+        fun save(npc: EmpireNPC){
+            val config = NPCManager.fileManager.getConfig()
+            val path = "npcs.${npc.id}"
+            config.set("$path.location",npc.location)
+            config.set("$path.skin.value",npc.skin?.value)
+            config.set("$path.skin.signature",npc.skin?.signature)
+            NPCManager.fileManager.saveConfig()
         }
 
 
