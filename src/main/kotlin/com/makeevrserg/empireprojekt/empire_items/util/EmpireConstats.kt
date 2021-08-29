@@ -21,6 +21,8 @@ enum class BetterConstants(public val value:NamespacedKey){
     EMPIRE_GUN_CURRENT_CLIP_SIZE(NamespacedKey(EmpirePlugin.instance, "EMPIRE_GUN_CURRENT_CLIP_SIZE")),
     GRENADE_EXPLOSION_POWER(NamespacedKey(EmpirePlugin.instance, "GRENADE_EXPLOSION_POWER")),
     MOLOTOV(NamespacedKey(EmpirePlugin.instance, "MOLOTOV")),
+    GRAPPLING_HOOK(NamespacedKey(EmpirePlugin.instance, "GRAPPLING_HOOK")),
+    SOUL_BIND(NamespacedKey(EmpirePlugin.instance, "SOUL_BIND")),
     HAMMER_ENCHANT(NamespacedKey(EmpirePlugin.instance, "ITEM_HAMMER")),
     LAVA_WALKER_ENCHANT(NamespacedKey(EmpirePlugin.instance, "LAVA_WALKER_ENCHANT")),
     VAMPIRISM_ENCHANT(NamespacedKey(EmpirePlugin.instance, "VAMPIRISM_ENCHANT")),

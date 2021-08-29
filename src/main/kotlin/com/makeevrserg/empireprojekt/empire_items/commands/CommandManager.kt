@@ -17,6 +17,7 @@ import org.bukkit.persistence.PersistentDataType
 import com.makeevrserg.empireprojekt.empire_items.util.EmpirePermissions
 import com.makeevrserg.empireprojekt.empire_items.util.ResourcePackNew
 import com.makeevrserg.empireprojekt.empirelibs.EmpireUtils
+import com.makeevrserg.empireprojekt.empirelibs.HEX
 import makeevrserg.empireprojekt.commands.RandomItem
 import java.io.File
 
@@ -32,6 +33,8 @@ class CommandManager() : CommandExecutor {
         plugin.getCommand("emspawn")!!.setExecutor(this)
         plugin.getCommand("erandomitem")!!.setExecutor(RandomItem())
         plugin.getCommand("erandomitem")!!.tabCompleter = tabCompletion
+        plugin.getCommand("emoji")!!.tabCompleter = tabCompletion
+        plugin.getCommand("emoji")!!.setExecutor(this)
         plugin.getCommand("ereload")!!.setExecutor(this)
         plugin.getCommand("ezip")!!.setExecutor(this)
         plugin.getCommand("emgui")!!.setExecutor(this)
@@ -76,6 +79,13 @@ class CommandManager() : CommandExecutor {
                 }
             }
 
+        if (label.equals("emoji",ignoreCase = true)){
+            if (sender !is Player)
+                return true
+            val chat = args.joinToString(" ").HEX()
+            sender.chat(chat)
+            return true
+        }
 
         if (label.equals("sit", ignoreCase = true)) {
             if (sender is Player)

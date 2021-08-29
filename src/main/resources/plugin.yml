@@ -7,8 +7,10 @@ softdepend: [PlaceholderAPI,ProtocolLib,WorldGuard]
 depend: []
 commands:
   ereload:
+  erating:
   emsplash:
   emreplace:
+  emoji:
   erandomitem:
   emcredit:
   embank:

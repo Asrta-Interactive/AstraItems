@@ -14,6 +14,7 @@ import org.bukkit.NamespacedKey
 import org.bukkit.attribute.Attribute
 import org.bukkit.attribute.AttributeModifier
 import org.bukkit.enchantments.EnchantmentWrapper
+import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.inventory.meta.PotionMeta
@@ -125,9 +126,19 @@ data class EmpireItem(
                     amount,
                     AttributeModifier.Operation.ADD_NUMBER,
                     Material.getMaterial(material)!!.equipmentSlot
-
                 )
             )
+            if ( Material.getMaterial(material)!!.equipmentSlot == EquipmentSlot.HAND)
+                itemMeta.addAttributeModifier(
+                    attribute,
+                    AttributeModifier(
+                        UUID.randomUUID(),
+                        attribute.name,
+                        amount,
+                        AttributeModifier.Operation.ADD_NUMBER,
+                        EquipmentSlot.OFF_HAND
+                    )
+                )
         }
     }
 

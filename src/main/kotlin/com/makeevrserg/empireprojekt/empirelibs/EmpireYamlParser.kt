@@ -9,7 +9,11 @@ import org.bukkit.configuration.file.FileConfiguration
 import java.lang.Exception
 import java.lang.reflect.Type
 
-
+/**
+ * Converting yaml file to .json format
+ *
+ * It allows you to use GSON with yaml
+ */
 class EmpireYamlParser {
     companion object {
         private fun getConfSection(cs: ConfigurationSection?): MutableMap<String, Any>? {

@@ -3,10 +3,17 @@ package com.makeevrserg.empireprojekt.empirelibs.menu
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.empirelibs.IEmpireListener
 import org.bukkit.event.EventHandler
+import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
 
-class MenuListener() : IEmpireListener {
-    val plugin: EmpirePlugin = EmpirePlugin.instance
+/**
+ * You probably won't ever edit this file
+ */
+class MenuListener : IEmpireListener {
+
+    /**
+     * Cancelling inventory event if player clicked
+     */
     @EventHandler
     fun onMenuClick(e: InventoryClickEvent) {
         val holder = e.clickedInventory?.holder?:return
@@ -19,6 +26,7 @@ class MenuListener() : IEmpireListener {
             holder.handleMenu(e)
         }
     }
+
 
 
 

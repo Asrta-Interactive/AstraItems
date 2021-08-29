@@ -25,17 +25,34 @@ import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 
+
+
+/**
+ * Converting string from file configuration to hex with default param
+ */
 fun ConfigurationSection.getHEXString(path: String, def: String): String {
     return EmpireUtils.HEXPattern(getString(path, def)!!)
 }
 
-fun ConfigurationSection.getHEXString(path: String): String? {
-
-    return EmpireUtils.HEXPattern(getString(path) ?: return null)
+/**
+ * Converting string from file configuration to hex without default param
+ */
+fun FileConfiguration.getHEXString(path: String): String? {
+    return EmpireUtils.HEXPattern(getString(path))
 }
 
+/**
+ * Converting string list from file configuration to hex without default param
+ */
 fun ConfigurationSection.getHEXStringList(path: String): List<String> {
     return EmpireUtils.HEXPattern(getStringList(path))
+}
+
+/**
+ * Converting string to hex
+ */
+fun String.HEX(): String {
+    return EmpireUtils.HEXPattern(this)
 }
 
 fun FileConfiguration.getHEXString(path: String, def: String): String {
@@ -77,6 +94,9 @@ fun BukkitRunnable.runTaskAsynchronously(){
     this.runTaskAsynchronously(EmpirePlugin.instance)
 }
 
+/**
+ * Utils class
+ */
 class EmpireUtils {
 
 

@@ -7,20 +7,44 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.InventoryHolder
 
 
+
+
+/**
+ * PlayerMenuUtility data class
+ *
+ * Don't use just Player class
+ */
 data class PlayerMenuUtility(val player: Player){
     val previousItems:MutableList<String> = mutableListOf()
 }
-
+/**
+ * Default menu abstract class
+ */
 public abstract class Menu(open var playerMenuUtility: PlayerMenuUtility) :InventoryHolder {
 
     private lateinit var inventory: Inventory
-    //Title of inventory
+    /**
+     * Title of this inventory
+     */
     abstract var menuName: String
-    //Size of inventory. Must be [9;54] and divided by 9
+    /**
+     * Size of inventory
+     *
+     * Shoul be in [9;54] and divided by 9
+     */
     abstract val menuSize: Int
+    /**
+     * Menu handler
+     */
     abstract fun handleMenu(e: InventoryClickEvent)
+    /**
+     * Function for setting items in menu
+     */
     abstract fun setMenuItems()
 
+    /**
+     * Open inventory method for Menu class
+     */
     fun open() {
         inventory = Bukkit.createInventory(this, menuSize, menuName)
         setMenuItems()

@@ -7,13 +7,21 @@ import org.bukkit.inventory.ItemStack
 
 abstract class PaginatedMenu(playerMenuUtility: PlayerMenuUtility?) : Menu(playerMenuUtility!!) {
 
-    //Page of current menu. Must be 0 by default
+    /**
+     * Page of current menu. Must be 0 by default
+     */
     abstract var page:Int
-    //Max items allowed in current page. No more than 45 for paginated. Final row is for pagination
+    /**
+     * Max items allowed in current page. No more than 45 for paginated. Final row is for pagination
+     */
     abstract var maxItemsPerPage:Int
-    //Max items in section to display
+    /**
+     * Max items in section to display
+     */
     abstract var slotsAmount:Int
-    //Must be owerwritten with getMaxPages()
+    /**
+     * Must be owerwritten with getMaxPages()
+     */
     abstract var maxPages: Int
 
     @JvmName("getMaxPages1")
@@ -21,10 +29,16 @@ abstract class PaginatedMenu(playerMenuUtility: PlayerMenuUtility?) : Menu(playe
         return  slotsAmount/maxItemsPerPage
     }
 
+    /**
+     * Index of current item
+     */
     fun getIndex(i:Int): Int {
         return maxItemsPerPage * page + i
     }
 
+    /**
+     * Check for first page
+     */
     fun isFirstPage(): Boolean {
         if (page == 0) {
             playerMenuUtility.player
@@ -33,6 +47,9 @@ abstract class PaginatedMenu(playerMenuUtility: PlayerMenuUtility?) : Menu(playe
         }
         return false
     }
+    /**
+     * Check for last page
+     */
     fun isLastPage(): Boolean {
         if (page >= maxPages) {
             playerMenuUtility.player
@@ -41,6 +58,9 @@ abstract class PaginatedMenu(playerMenuUtility: PlayerMenuUtility?) : Menu(playe
         }
         return false
     }
+    /**
+     * Function for handling pages
+     */
     fun loadPage(next: Int) {
         page += next
         inventory.clear()
@@ -65,6 +85,11 @@ abstract class PaginatedMenu(playerMenuUtility: PlayerMenuUtility?) : Menu(playe
     public fun getBackButtonIndex() = menuSize-4-1
     public fun getNextButtonIndex() = menuSize-1
 
+    /**
+     * Managing buttons for pages
+     *
+     * next,prev,back
+     */
     fun addManageButtons() {
         if (page >= 1)
             inventory.setItem(

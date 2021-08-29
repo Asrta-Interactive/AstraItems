@@ -8,22 +8,26 @@ import com.makeevrserg.empireprojekt.empirelibs.EmpireYamlParser
 
 data class EmpireFont(
     @SerializedName("id")
-    val id:String,
+    val id: String,
     @SerializedName("path")
-    val path:String,
+    val path: String,
     @SerializedName("height")
-    val height:Int,
+    val height: Int,
     @SerializedName("ascent")
-    val ascent:Int,
+    val ascent: Int,
     @SerializedName("chars")
-    val chars:String,
+    val chars: String,
     @SerializedName("send_blocked")
-    val sendBlocked:Boolean=false
+    val sendBlocked: Boolean = false
 )
+
 data class EmpireFonts(
     val _fontInfoValueById: Map<String, EmpireFont>,
-    val _fontValueById:Map<String,String>
+    val _fontValueById: Map<String, String>,
+    val playerFonts: Map<String, String>
 ) {
+
+
     companion object {
 
 
@@ -37,14 +41,18 @@ data class EmpireFonts(
             )!!
 
 
-
             val fontsInfoMap = mutableMapOf<String, EmpireFont>()
-            val fontsById = mutableMapOf<String,String>()
+            val fontsById = mutableMapOf<String, String>()
+            val playerFonts = mutableMapOf<String, String>()
             for (font in fonts) {
 
                 fontsInfoMap[":${font.id}:"] = font
 
                 fontsById[":${font.id}:"] = font.chars
+
+                if (!font.sendBlocked)
+                    playerFonts[":${font.id}:"] = font.chars
+
             }
             val offsets = mapOf(
                 "l_1" to "\uF801",
@@ -76,9 +84,10 @@ data class EmpireFonts(
                 "r_512" to "\uF82D",
                 "r_1024" to "\uF82E"
             )
-            for ((offset,value) in offsets)
+            for ((offset, value) in offsets)
                 fontsById[":$offset:"] = value
-            return EmpireFonts(fontsInfoMap,fontsById)
+
+            return EmpireFonts(fontsInfoMap, fontsById, playerFonts)
         }
     }
 }

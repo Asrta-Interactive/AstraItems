@@ -25,6 +25,10 @@ class EmpireTabCompleter() : TabCompleter {
             args.size == 1 -> on1Args(alias)
             args.size == 2 -> on2Args(alias, args)
             args.size == 3 -> on3Args(alias, args)
+
+            (alias.equals("emoji", ignoreCase = true)) ->
+                EmpirePlugin.empireFonts.playerFonts.values.toList()
+
             else -> null
         }
 
@@ -40,27 +44,29 @@ class EmpireTabCompleter() : TabCompleter {
             listOf("create", "tp", "move", "delete", "changeskin", "select").withEntry(alias)
         } else if (alias.equals("emspawn", ignoreCase = true)) {
             EmpireMobsManager.mobById.keys.toList()
-        }
-        else if (alias.equals("erandomitem",ignoreCase = true)){
+        } else if (alias.equals("erandomitem", ignoreCase = true)) {
             val list = EmpirePlugin.instance.randomItems.getList()
             list.withEntry(alias)
-        }
-        else {
+        } else if (alias.equals("emoji", ignoreCase = true)) {
+            return EmpirePlugin.empireFonts.playerFonts.values.toList()
+        } else {
             listOf("reload", "give").withEntry(alias)
         }
     }
 
     private fun on2Args(alias: String, args: Array<out String>): List<String>? {
 
-            if (alias.equals("erandomitem",ignoreCase = true)){
-                val list = EmpirePlugin.instance.randomItems.getList()
-                val arg = args[0]
-                val newList = mutableListOf<String>()
-                for (id in list)
-                    if (id.contains(arg,ignoreCase = true))
-                        newList.add(arg)
-                return newList.withEntry(alias)
-            }
+        if (alias.equals("erandomitem", ignoreCase = true)) {
+            val list = EmpirePlugin.instance.randomItems.getList()
+            val arg = args[0]
+            val newList = mutableListOf<String>()
+            for (id in list)
+                if (id.contains(arg, ignoreCase = true))
+                    newList.add(arg)
+            return newList.withEntry(alias)
+        } else if (alias.equals("emoji", ignoreCase = true)) {
+            return EmpirePlugin.empireFonts.playerFonts.values.toList()
+        }
 
 
         return null
@@ -71,6 +77,8 @@ class EmpireTabCompleter() : TabCompleter {
             if (args[0].equals("create", ignoreCase = true)) {
                 return listOf("<skin>")
             }
+        } else if (alias.equals("emoji", ignoreCase = true)) {
+            return EmpirePlugin.empireFonts.playerFonts.values.toList()
         } else {
             if (!args[0].equals("give", ignoreCase = true))
                 return null

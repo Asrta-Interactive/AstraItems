@@ -185,4 +185,9 @@ class Translations {
     val BANK_WITHDRAW: String = translationFile.getHEXString("BANK_WITHDRAW", "#f5a742Вы взяли из банка %amount%$.")
 
 
+    //Database
+    val DB_SUCCESS: String = translationFile.getHEXString("DB_SUCCESS", "#f5a742База данных успешно подключена.")
+    val DB_FAIL: String = translationFile.getHEXString("DB_FAIL", "#f5a742Не удалось подключиться к базе данных.")
+
+
 }

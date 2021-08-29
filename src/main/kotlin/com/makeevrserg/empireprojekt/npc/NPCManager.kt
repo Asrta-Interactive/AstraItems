@@ -165,6 +165,8 @@ class NPCManager {
     }
 
     fun onDisable() {
+        if (EmpirePlugin.instance.server.pluginManager.getPlugin("ProtocolLib") == null)
+            return
         for (npc in abstractNPCList)
             npc.onDisable()
         eventManager.onDisable()

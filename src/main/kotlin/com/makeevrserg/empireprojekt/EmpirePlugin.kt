@@ -17,6 +17,8 @@ import com.makeevrserg.empireprojekt.empire_items.events.decorations.DecorationB
 import com.makeevrserg.empireprojekt.empire_items.util.*
 import com.makeevrserg.empireprojekt.empire_items.util.Files
 import com.makeevrserg.empireprojekt.empire_items.util.sounds.SoundManager
+import com.makeevrserg.empireprojekt.empirelibs.database.EmpireDatabase
+import com.makeevrserg.empireprojekt.rating.EmpireRating
 import makeevrserg.empireprojekt.emgui.data.Category
 import makeevrserg.empireprojekt.emgui.data.Settings
 import makeevrserg.empireprojekt.random_items.RandomItems
@@ -178,6 +180,8 @@ class EmpirePlugin : JavaPlugin() {
      */
     lateinit var empireCredit: EmpireCredit
 
+    private lateinit var database:EmpireDatabase
+//    private lateinit var empireRating:EmpireRating
 
     fun initPlugin() {
 
@@ -211,6 +215,8 @@ class EmpirePlugin : JavaPlugin() {
 
 
         npcManager = NPCManager()
+        database = EmpireDatabase()
+//        empireRating = EmpireRating()
 
         //Beta plugin countdown
         //PluginBetaAccessCheck()
@@ -249,6 +255,8 @@ class EmpirePlugin : JavaPlugin() {
         }
 
 
+        database.onDisable()
+//        empireRating.onDisable()
 
         empireCredit.onDisable()
 

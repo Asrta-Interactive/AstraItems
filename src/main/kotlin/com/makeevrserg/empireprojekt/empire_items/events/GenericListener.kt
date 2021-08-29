@@ -15,7 +15,6 @@ import com.makeevrserg.empireprojekt.empire_items.events.villagers.VillagerEvent
 import com.makeevrserg.empireprojekt.empirelibs.IEmpireListener
 import com.makeevrserg.empireprojekt.empirelibs.IEventManager
 import com.makeevrserg.empireprojekt.empirelibs.menu.MenuListener
-import com.makeevrserg.empireprojekt.essentials.TimberEvent
 import makeevrserg.empireprojekt.events.PlayerShowRecipeKey
 import makeevrserg.empireprojekt.events.resourcepack.ProtocolLibResourcePack
 import makeevrserg.empireprojekt.events.resourcepack.ResourcePackEvent
@@ -26,11 +25,10 @@ class GenericListener() : IEventManager {
     override val handlers: MutableList<IEmpireListener> = mutableListOf()
 
     init {
-        TimberEvent().onEnable(this)
         SpawnerEggBlockEvent().onEnable(this)
         BookSignEvent().onEnable(this)
         MusicDiscsEvent().onEnable(this)
-        AutoBlockChangeEvent().onEnable(this)
+//        AutoBlockChangeEvent().onEnable(this)
         SitEvent().onEnable(this)
         //GunEvent().onEnable(this)
         Vampirism().onEnable(this)
@@ -41,7 +39,9 @@ class GenericListener() : IEventManager {
         LavaWalkerEvent().onEnable(this)
         HammerEvent().onEnable(this)
         MolotovEvent().onEnable(this)
+        SoulBindEvent().onEnable(this)
         GrenadeEvent().onEnable(this)
+        GrapplingHook().onEnable(this)
         ResourcePackEvent().onEnable(this)
         ExperienceRepairEvent().onEnable(this)
         MenuListener().onEnable(this)
