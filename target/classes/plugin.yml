@@ -1,6 +1,6 @@
 main: com.makeevrserg.empireprojekt.EmpirePlugin
 name: EmpireItems
-version: 2.2
+version: 3.0.1
 author: RatushevRoman
 api-version: 1.13
 softdepend: [PlaceholderAPI,ProtocolLib,WorldGuard]

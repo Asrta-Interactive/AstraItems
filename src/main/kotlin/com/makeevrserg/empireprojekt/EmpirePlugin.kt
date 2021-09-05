@@ -1,24 +1,22 @@
 package com.makeevrserg.empireprojekt
 
-import com.makeevrserg.empireprojekt.npc.NPCManager
 import com.makeevrserg.empireprojekt.credit.EmpireCredit
-import com.makeevrserg.empireprojekt.essentials.homes.EssentialsHandler
-
 import com.makeevrserg.empireprojekt.empire_items.commands.CommandManager
-import com.makeevrserg.empireprojekt.empire_items.util.EmpireCrafts
 import com.makeevrserg.empireprojekt.empire_items.events.GenericListener
+import com.makeevrserg.empireprojekt.empire_items.events.blocks.MushroomBlockEventHandler
+import com.makeevrserg.empireprojekt.empire_items.events.decorations.DecorationBlockEventHandler
 import com.makeevrserg.empireprojekt.empire_items.events.genericevents.drop.ItemDropManager
 import com.makeevrserg.empireprojekt.empire_items.events.mobs.EmpireMobsManager
 import com.makeevrserg.empireprojekt.empire_items.events.upgrades.UpgradesManager
 import com.makeevrserg.empireprojekt.empire_items.items.EmpireItems
-import com.makeevrserg.empireprojekt.essentials.inventorysaver.ISCommandManager
-import com.makeevrserg.empireprojekt.empire_items.events.blocks.MushroomBlockEventHandler
-import com.makeevrserg.empireprojekt.empire_items.events.decorations.DecorationBlockEventHandler
 import com.makeevrserg.empireprojekt.empire_items.util.*
-import com.makeevrserg.empireprojekt.empire_items.util.Files
+import com.makeevrserg.empireprojekt.empire_items.util.crafting.CraftingManager
 import com.makeevrserg.empireprojekt.empire_items.util.sounds.SoundManager
+import com.makeevrserg.empireprojekt.empirelibs.PluginBetaAccessCheck
 import com.makeevrserg.empireprojekt.empirelibs.database.EmpireDatabase
-import com.makeevrserg.empireprojekt.rating.EmpireRating
+import com.makeevrserg.empireprojekt.essentials.homes.EssentialsHandler
+import com.makeevrserg.empireprojekt.essentials.inventorysaver.ISCommandManager
+import com.makeevrserg.empireprojekt.npc.NPCManager
 import makeevrserg.empireprojekt.emgui.data.Category
 import makeevrserg.empireprojekt.emgui.data.Settings
 import makeevrserg.empireprojekt.random_items.RandomItems
@@ -27,6 +25,7 @@ import org.bukkit.NamespacedKey
 import org.bukkit.inventory.FurnaceRecipe
 import org.bukkit.inventory.Recipe
 import org.bukkit.inventory.ShapedRecipe
+import org.bukkit.inventory.ShapelessRecipe
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.plugin.java.JavaPlugin
 
@@ -115,7 +114,7 @@ class EmpirePlugin : JavaPlugin() {
     /**
      * Custom crafts
      */
-    lateinit var _empireCrafts: EmpireCrafts
+    lateinit var empireCraftingManager: CraftingManager
 
 
     /**
@@ -145,8 +144,8 @@ class EmpirePlugin : JavaPlugin() {
      * Crafting recipies instance for emgui
      * @see com.makeevrserg.empireprojekt.empire_items.emgui.EmpireCraftMenu
      */
-    val recipies: MutableMap<String, EmpireCrafts.EmpireRecipe>
-        get() = _empireCrafts.empireRecipies
+    val recipies: MutableMap<String, CraftingManager.EmpireRecipe>
+        get() = empireCraftingManager.empireRecipies
 
     /**
      * Event handler for custom blocks
@@ -180,7 +179,7 @@ class EmpirePlugin : JavaPlugin() {
      */
     lateinit var empireCredit: EmpireCredit
 
-    private lateinit var database:EmpireDatabase
+//    private lateinit var database:EmpireDatabase
 //    private lateinit var empireRating:EmpireRating
 
     fun initPlugin() {
@@ -205,7 +204,7 @@ class EmpirePlugin : JavaPlugin() {
         mushroomBlockEventHandler = MushroomBlockEventHandler()
         decorationBlockEventHandler = DecorationBlockEventHandler()
         isCommandManager = ISCommandManager()
-        _empireCrafts = EmpireCrafts()
+//        _empireCrafts = EmpireCrafts()
 
 
         guiCategories = Category.toMap(Category.newCategories() ?: mutableListOf())
@@ -213,15 +212,20 @@ class EmpirePlugin : JavaPlugin() {
 
         empireCredit = EmpireCredit()
 
+        empireCraftingManager = CraftingManager()
 
         npcManager = NPCManager()
-        database = EmpireDatabase()
+//        database = EmpireDatabase()
 //        empireRating = EmpireRating()
+
+
 
         //Beta plugin countdown
         //PluginBetaAccessCheck()
 
     }
+
+
 
 
     /**
@@ -234,28 +238,28 @@ class EmpirePlugin : JavaPlugin() {
 
     fun disablePlugin() {
 
-        fun isCustomRecipe(key: NamespacedKey): Boolean {
-            return key.key.contains(BetterConstants.CUSTOM_RECIPE_KEY.name)
-        }
+        fun isCustomRecipe(key: NamespacedKey) = key.key.contains(BetterConstants.CUSTOM_RECIPE_KEY.name)
 
-        fun isCustomRecipe(recipe: FurnaceRecipe): Boolean {
-            return isCustomRecipe(recipe.key)
-        }
 
-        fun isCustomRecipe(recipe: ShapedRecipe): Boolean {
-            return isCustomRecipe(recipe.key)
-        }
+        fun isCustomRecipe(recipe: FurnaceRecipe) = isCustomRecipe(recipe.key)
+
+
+        fun isCustomRecipe(recipe: ShapedRecipe) = isCustomRecipe(recipe.key)
+
+        fun isCustomRecipe(recipe: ShapelessRecipe) = isCustomRecipe(recipe.key)
+
 
         fun isCustomRecipe(recipe: Recipe): Boolean {
-            if (recipe is FurnaceRecipe)
-                return isCustomRecipe(recipe)
-            else if (recipe is ShapedRecipe)
-                return isCustomRecipe(recipe)
-            return false
+            return when (recipe) {
+                is FurnaceRecipe -> isCustomRecipe(recipe)
+                is ShapedRecipe -> isCustomRecipe(recipe)
+                is ShapelessRecipe -> isCustomRecipe(recipe)
+                else -> false
+            }
         }
 
 
-        database.onDisable()
+//        database.onDisable()
 //        empireRating.onDisable()
 
         empireCredit.onDisable()
@@ -278,7 +282,7 @@ class EmpirePlugin : JavaPlugin() {
                 BetterConstants.EMPIRE_ID.value,
                 PersistentDataType.STRING
             ) ?: continue
-            if (_empireCrafts.empireRecipies.contains(id)) ite.remove()
+            if (empireCraftingManager.empireRecipies.contains(id)) ite.remove()
         }
 
 

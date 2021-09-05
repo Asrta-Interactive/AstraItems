@@ -3,7 +3,7 @@ package com.makeevrserg.empireprojekt.empirelibs
 import com.google.gson.JsonParser
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.empire_items.util.BetterConstants
-import com.makeevrserg.empireprojekt.empire_items.util.EmpireCrafts
+import com.makeevrserg.empireprojekt.empire_items.util.crafting.CraftingManager
 import net.md_5.bungee.api.ChatColor
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
@@ -71,6 +71,9 @@ fun String?.getEmpireItem():ItemStack?{
 fun String?.asEmpireItem():ItemStack?{
     return EmpirePlugin.empireItems.empireItems[this]
 }
+fun String?.asEmpireItemOrItem():ItemStack?{
+    return  this.asEmpireItem()?: ItemStack(Material.getMaterial(this?:return null)?:return null)
+}
 
 fun List<String>.withEntry(entry:String,ignoreCase:Boolean=true): List<String> {
     val list = mutableListOf<String>()
@@ -131,7 +134,7 @@ class EmpireUtils {
             val set = mutableSetOf<String>()
 
             for (itemResult in EmpirePlugin.instance.recipies.keys) {
-                val itemRecipies: EmpireCrafts.EmpireRecipe =
+                val itemRecipies: CraftingManager.EmpireRecipe =
                     EmpirePlugin.instance.recipies[itemResult] ?: continue
                 for (empireRecipe in itemRecipies.craftingTable)
                     if (empireRecipe.ingredientMap.values.contains(itemStack))

@@ -3,6 +3,7 @@ package com.makeevrserg.empireprojekt.empire_items.events.villagers
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.empire_items.events.villagers.data.VillagerItem
 import com.makeevrserg.empireprojekt.empirelibs.IEmpireListener
+import com.makeevrserg.empireprojekt.empirelibs.asEmpireItemOrItem
 import com.makeevrserg.empireprojekt.empirelibs.getEmpireID
 import com.makeevrserg.empireprojekt.empirelibs.getEmpireItem
 
@@ -89,11 +90,12 @@ class VillagerEvent : IEmpireListener {
             return
         if (trade.chance < Random.nextDouble(100.0))
             return
-        val mRecipe = MerchantRecipe(trade.resultItem.id.getEmpireItem() ?: return, 1)
-        mRecipe.addIngredient(trade.leftItem.id.getEmpireItem() ?: return)
+
+        val mRecipe = MerchantRecipe(trade.resultItem.id.asEmpireItemOrItem()?.clone()?.apply { amount = trade.resultItem.amount } ?: return, 50)
+        mRecipe.addIngredient(trade.leftItem.id.asEmpireItemOrItem()?.clone()?.apply { amount = trade.leftItem.amount } ?: return)
         mRecipe.maxUses = Random.nextInt(1, 6)
         if (trade.middleItem != null)
-            mRecipe.addIngredient(trade.middleItem.id.getEmpireItem() ?: return)
+            mRecipe.addIngredient(trade.middleItem.id.asEmpireItemOrItem()?.clone()?.apply { amount = trade.middleItem.amount } ?: return)
         if (villager.recipes.contains(mRecipe))
             return
         for (vRecipe in villager.recipes)

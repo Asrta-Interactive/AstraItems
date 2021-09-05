@@ -4,10 +4,12 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonParser
 import com.makeevrserg.empireprojekt.EmpirePlugin
+import org.bukkit.ChatColor
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.configuration.file.FileConfiguration
 import java.lang.Exception
 import java.lang.reflect.Type
+import kotlin.random.Random
 
 /**
  * Converting yaml file to .json format
@@ -84,7 +86,6 @@ class EmpireYamlParser {
         public fun <T> fromYAML(section: ConfigurationSection?, type: Type, paths: List<String>? = null): T? {
             section ?: return null
             val map = getConfSection(section)
-            println(map)
             return returnTry<T>(map, type, paths, section.name)
         }
 

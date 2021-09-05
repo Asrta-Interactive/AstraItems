@@ -2,21 +2,20 @@ package com.makeevrserg.empireprojekt.empire_items.emgui
 
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
-import com.makeevrserg.empireprojekt.empire_items.util.EmpireCrafts
-import com.makeevrserg.empireprojekt.empire_items.events.upgrades.ItemUpgradeEvent
 import com.makeevrserg.empireprojekt.empire_items.events.genericevents.drop.data.ItemDrop
+import com.makeevrserg.empireprojekt.empire_items.events.upgrades.ItemUpgradeEvent
 import com.makeevrserg.empireprojekt.empire_items.events.villagers.VillagerManager
-import com.makeevrserg.empireprojekt.empirelibs.menu.PaginatedMenu
-import com.makeevrserg.empireprojekt.empirelibs.menu.PlayerMenuUtility
-import org.bukkit.Material
-import org.bukkit.event.inventory.InventoryClickEvent
-import org.bukkit.inventory.ItemStack
 import com.makeevrserg.empireprojekt.empire_items.util.EmpirePermissions
+import com.makeevrserg.empireprojekt.empire_items.util.crafting.CraftingManager
 import com.makeevrserg.empireprojekt.empirelibs.EmpireUtils
 import com.makeevrserg.empireprojekt.empirelibs.asEmpireItem
-
+import com.makeevrserg.empireprojekt.empirelibs.menu.PaginatedMenu
+import com.makeevrserg.empireprojekt.empirelibs.menu.PlayerMenuUtility
 import org.bukkit.Bukkit
+import org.bukkit.Material
 import org.bukkit.NamespacedKey
+import org.bukkit.event.inventory.InventoryClickEvent
+import org.bukkit.inventory.ItemStack
 
 
 class EmpireCraftMenu(
@@ -142,13 +141,13 @@ class EmpireCraftMenu(
     }
 
     private fun useInCraft(item: String): Set<String> {
-        val itemStack = EmpirePlugin.empireItems.empireItems[item] ?: ItemStack(
+        val itemStack = EmpirePlugin.empireItems.empireItems[item]?.clone() ?: ItemStack(
             Material.getMaterial(item) ?: return mutableSetOf()
         )
         val set = mutableSetOf<String>()
 
         for (itemResult in EmpirePlugin.instance.recipies.keys) {
-            val itemRecipies: EmpireCrafts.EmpireRecipe =
+            val itemRecipies: CraftingManager.EmpireRecipe =
                 EmpirePlugin.instance.recipies[itemResult] ?: continue
             for (empireRecipe in itemRecipies.craftingTable)
                 if (empireRecipe.ingredientMap.values.contains(itemStack))
@@ -210,7 +209,7 @@ class EmpireCraftMenu(
             return false
         }
 
-        val itemStack = EmpirePlugin.instance.guiSettings.dropButton.asEmpireItem()?:return null
+        val itemStack = EmpirePlugin.instance.guiSettings.dropButton.asEmpireItem()?.clone()?:return null
         val itemMeta = itemStack.itemMeta
         val upgrades = EmpirePlugin.upgradeManager._upgradesMap[item] ?: return null
         itemMeta!!.setDisplayName(EmpirePlugin.translations.ITEM_INFO_DROP_COLOR+EmpirePlugin.translations.ITEM_INFO_IMPROVING)
@@ -228,7 +227,7 @@ class EmpireCraftMenu(
     }
 
     private fun setDrop(): ItemStack? {
-        val itemStack = EmpirePlugin.instance.guiSettings.dropButton.asEmpireItem()?:return null
+        val itemStack = EmpirePlugin.instance.guiSettings.dropButton.asEmpireItem()?.clone()?:return null
         val itemMeta = itemStack.itemMeta
 
         itemMeta!!.setDisplayName(EmpirePlugin.translations.ITEM_INFO_DROP_COLOR+EmpirePlugin.translations.ITEM_INFO_DROP)
@@ -245,7 +244,7 @@ class EmpireCraftMenu(
     }
 
     private fun setBlockGenerate(): ItemStack? {
-        val itemStack = EmpirePlugin.instance.guiSettings.dropButton.asEmpireItem()?:return null
+        val itemStack = EmpirePlugin.instance.guiSettings.dropButton.asEmpireItem()?.clone()?:return null
         val itemMeta = itemStack.itemMeta
         itemMeta!!.setDisplayName(EmpirePlugin.translations.ITEM_INFO_GENERATE)
         val itemInfo = EmpirePlugin.empireItems.empireBlocks[item] ?: return null
@@ -263,7 +262,7 @@ class EmpireCraftMenu(
     }
 
     private fun setNPCSell(): ItemStack? {
-        val itemStack = EmpirePlugin.instance.guiSettings.dropButton.asEmpireItem()?:return null
+        val itemStack = EmpirePlugin.instance.guiSettings.dropButton.asEmpireItem()?.clone()?:return null
         val itemMeta = itemStack.itemMeta
         itemMeta!!.setDisplayName(EmpirePlugin.translations.ITEM_INFO_GENERATE)
         val villagers = VillagerManager.professionsByItem(item)?: return null

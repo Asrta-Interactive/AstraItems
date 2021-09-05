@@ -16,6 +16,8 @@ import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.persistence.PersistentDataType
+import org.bukkit.potion.PotionEffect
+import org.bukkit.potion.PotionEffectType
 
 class GrapplingHook : IEmpireListener {
 
@@ -44,10 +46,10 @@ class GrapplingHook : IEmpireListener {
         if (mapHooks.containsKey(player)) {
             val location = mapHooks[player]!!.clone()
             mapHooks.remove(player)
-            val v3 = location.subtract(player.location)
+            val v3 = location.clone().subtract(player.location)
 
-            val distance = location.distance(player.location)
-            println(distance)
+            val distance = location.clone().distance(player.location)
+
             if (distance > 400) {
                 val l = player.location
                 ParticleBuilder(Particle.GLOW)
@@ -62,14 +64,15 @@ class GrapplingHook : IEmpireListener {
             }
             val multiply = 0.4 - (distance/1000)
             println(multiply)
-            player.velocity = v3.toVector().multiply(multiply)
+            player.velocity = v3.toVector().multiply(multiply/2)
+            player.addPotionEffect(PotionEffect(PotionEffectType.SLOW_FALLING,25,1,false,false,false))
             return
         }
 
 
 
         var l = player.location.clone().add(0.0, 1.5, 0.0)
-        for (i in 0 until 300) {
+        for (i in 0 until 350) {
             ParticleBuilder(Particle.REDSTONE)
                 .count(20)
                 .force(false)

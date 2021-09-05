@@ -1,4 +1,4 @@
-package makeevrserg.empireprojekt.events
+package com.makeevrserg.empireprojekt.empire_items.events
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.empirelibs.EmpireUtils

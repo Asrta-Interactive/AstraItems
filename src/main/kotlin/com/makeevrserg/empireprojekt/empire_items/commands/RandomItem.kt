@@ -1,4 +1,4 @@
-package makeevrserg.empireprojekt.commands
+package com.makeevrserg.empireprojekt.empire_items.commands
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.empire_items.util.EmpirePermissions
