@@ -1,6 +1,7 @@
 package com.makeevrserg.empireprojekt.items.data.interact
 
 import com.google.gson.annotations.SerializedName
+import com.makeevrserg.empireprojekt.empire_items.items.data.interact.Sound
 
 data class Interact(
     @SerializedName("events_names")

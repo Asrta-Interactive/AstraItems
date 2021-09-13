@@ -5,8 +5,6 @@ import com.makeevrserg.empireprojekt.essentials.sit.SitEvent
 import com.makeevrserg.empireprojekt.empirelibs.menu.PlayerMenuUtility
 import com.makeevrserg.empireprojekt.empire_items.emgui.EmpireCategoriesMenu
 import com.makeevrserg.empireprojekt.empire_items.emgui.EmpireSoundsMenu
-import com.makeevrserg.empireprojekt.empire_items.events.mobs.EmpireMobsManager
-import com.makeevrserg.empireprojekt.empire_items.events.mobs.MobAPI
 import com.makeevrserg.empireprojekt.empire_items.util.BetterConstants
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
@@ -39,16 +37,12 @@ class CommandManager() : CommandExecutor {
         plugin.getCommand("emgui")!!.setExecutor(this)
         plugin.getCommand("emsounds")!!.setExecutor(this)
         plugin.getCommand("emreplace")!!.setExecutor(this)
-        plugin.getCommand("emrepair")!!.setExecutor(this)
-        plugin.getCommand("emsplash")!!.setExecutor(this)
-        plugin.getCommand("emnbt")!!.setExecutor(this)
         plugin.getCommand("emojis")!!.setExecutor(this)
         plugin.getCommand("emp")!!.setExecutor(this)
         plugin.getCommand("empireitems")!!.setExecutor(this)
         plugin.getCommand("ezip")!!.setExecutor(this)
         plugin.getCommand("empack")!!.setExecutor(this)
         plugin.getCommand("sit")!!.setExecutor(this)
-        plugin.getCommand("skin")!!.setExecutor(this)
     }
 
 
@@ -66,6 +60,14 @@ class CommandManager() : CommandExecutor {
     }
 
 
+    fun emoji(sender: CommandSender, args: Array<out String>) {
+        if (sender !is Player)
+            return
+        val chat = args.joinToString(" ").HEX()
+        sender.chat(chat)
+        return
+    }
+
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
 
         if (sender.hasPermission(EmpirePermissions.EMPGIVE) && (label.equals("emp", true)))
@@ -78,11 +80,8 @@ class CommandManager() : CommandExecutor {
                 }
             }
 
-        if (label.equals("emoji",ignoreCase = true)){
-            if (sender !is Player)
-                return true
-            val chat = args.joinToString(" ").HEX()
-            sender.chat(chat)
+        if (label.equals("emoji", ignoreCase = true)) {
+            emoji(sender, args)
             return true
         }
 
@@ -93,15 +92,18 @@ class CommandManager() : CommandExecutor {
         if (label.equals("emgui", ignoreCase = true)) {
             EmpireCategoriesMenu(PlayerMenuUtility(sender as Player)).open()
         }
+
         if (label.equals("emsounds", ignoreCase = true)) {
             EmpireSoundsMenu(PlayerMenuUtility(sender as Player)).open()
         }
+
         if (label.equals("empack", ignoreCase = true)) {
             if (sender is Player) {
 
-                sender.setResourcePack(EmpirePlugin.empireConfig.resourcePackRef?:return true)
+                sender.setResourcePack(EmpirePlugin.empireConfig.resourcePackRef ?: return true)
             }
         }
+
         if (label.equals("emreplace", ignoreCase = true)) {
             fun emreplace(sender: Player): Boolean {
                 var item = sender.inventory.itemInMainHand
@@ -112,7 +114,7 @@ class CommandManager() : CommandExecutor {
                 val amount = item.amount
 
                 val durability = item.durability
-                item = EmpirePlugin.empireItems.empireItems[id]?.clone()?:return true
+                item = EmpirePlugin.empireItems.empireItems[id]?.clone() ?: return true
                 item.amount = amount
                 item.durability = durability
                 sender.inventory.setItemInMainHand(item)
@@ -145,17 +147,13 @@ class CommandManager() : CommandExecutor {
                 sender.openBook(book)
             }
         }
-        if (label.equals("emspawn",ignoreCase = true) && sender.hasPermission(EmpirePermissions.SPAWN_ENTITY)){
+        if (label.equals("emspawn", ignoreCase = true) && sender.hasPermission(EmpirePermissions.SPAWN_ENTITY)) {
             val p = sender as Player
-            if (args.size>1 || args.size<1) {
+            if (args.size > 1 || args.size < 1) {
                 sender.sendMessage(EmpirePlugin.translations.WRONG_ARGS)
                 return true
 
             }
-
-            val empireMob = EmpireMobsManager.mobById[args[0]]?:return true
-
-            MobAPI().spawnMob(p.location,empireMob)
         }
 
 

@@ -5,7 +5,7 @@ import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.items.data.interact.CommandEvent
 import com.makeevrserg.empireprojekt.items.data.interact.ParticleEvent
 import com.makeevrserg.empireprojekt.items.data.interact.PotionEffectEvent
-import com.makeevrserg.empireprojekt.items.data.interact.Sound
+import com.makeevrserg.empireprojekt.empire_items.items.data.interact.Sound
 import com.makeevrserg.empireprojekt.empire_items.util.BetterConstants
 import com.makeevrserg.empireprojekt.empirelibs.EmpireUtils
 import me.clip.placeholderapi.PlaceholderAPI

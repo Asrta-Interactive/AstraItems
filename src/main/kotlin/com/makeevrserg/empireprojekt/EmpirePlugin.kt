@@ -6,7 +6,6 @@ import com.makeevrserg.empireprojekt.empire_items.events.GenericListener
 import com.makeevrserg.empireprojekt.empire_items.events.blocks.MushroomBlockEventHandler
 import com.makeevrserg.empireprojekt.empire_items.events.decorations.DecorationBlockEventHandler
 import com.makeevrserg.empireprojekt.empire_items.events.genericevents.drop.ItemDropManager
-import com.makeevrserg.empireprojekt.empire_items.events.mobs.EmpireMobsManager
 import com.makeevrserg.empireprojekt.empire_items.events.upgrades.UpgradesManager
 import com.makeevrserg.empireprojekt.empire_items.items.EmpireItems
 import com.makeevrserg.empireprojekt.empire_items.util.*
@@ -15,7 +14,6 @@ import com.makeevrserg.empireprojekt.empire_items.util.sounds.SoundManager
 import com.makeevrserg.empireprojekt.empirelibs.PluginBetaAccessCheck
 import com.makeevrserg.empireprojekt.empirelibs.database.EmpireDatabase
 import com.makeevrserg.empireprojekt.essentials.homes.EssentialsHandler
-import com.makeevrserg.empireprojekt.essentials.inventorysaver.ISCommandManager
 import com.makeevrserg.empireprojekt.npc.NPCManager
 import makeevrserg.empireprojekt.emgui.data.Category
 import makeevrserg.empireprojekt.emgui.data.Settings
@@ -54,12 +52,6 @@ class EmpirePlugin : JavaPlugin() {
         lateinit var empireItems: EmpireItems
             private set
 
-
-        /**
-         *Items instance
-         */
-        lateinit var empireMobs: EmpireMobsManager
-            private set
 
 
         /**
@@ -123,10 +115,6 @@ class EmpirePlugin : JavaPlugin() {
     private lateinit var commandManager: CommandManager
 
 
-    /**
-     * Command manager for item saving
-     */
-    private lateinit var isCommandManager: ISCommandManager
 
 
     /**
@@ -192,7 +180,6 @@ class EmpirePlugin : JavaPlugin() {
         empireSounds = SoundManager()
         empireFonts = EmpireFonts.new()
         empireItems = EmpireItems()
-        empireMobs = EmpireMobsManager()
         upgradeManager = UpgradesManager()
         genericListener = GenericListener()
         commandManager = CommandManager()
@@ -203,7 +190,6 @@ class EmpirePlugin : JavaPlugin() {
         randomItems = RandomItems()
         mushroomBlockEventHandler = MushroomBlockEventHandler()
         decorationBlockEventHandler = DecorationBlockEventHandler()
-        isCommandManager = ISCommandManager()
 //        _empireCrafts = EmpireCrafts()
 
 
@@ -267,7 +253,6 @@ class EmpirePlugin : JavaPlugin() {
         npcManager!!.onDisable()
         genericListener.onDisable()
         mushroomBlockEventHandler.onDisable()
-        empireMobs.onDisable()
         server.scheduler.cancelTasks(this)
         val ite = server.recipeIterator()
         var recipe: Recipe?

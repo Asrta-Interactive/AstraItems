@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 import com.makeevrserg.empireprojekt.items.data.block.Block
 import com.makeevrserg.empireprojekt.items.data.decoration.Decoration
 import com.makeevrserg.empireprojekt.items.data.interact.Interact
-import com.makeevrserg.empireprojekt.items.data.interact.Sound
+import com.makeevrserg.empireprojekt.empire_items.items.data.interact.Sound
 import com.makeevrserg.empireprojekt.empire_items.util.BetterConstants
 import com.makeevrserg.empireprojekt.empirelibs.EmpireUtils
 import com.makeevrserg.empireprojekt.empirelibs.valueOfOrNull
@@ -20,8 +20,6 @@ import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.inventory.meta.PotionMeta
 import org.bukkit.persistence.PersistentDataType
 import java.util.*
-import kotlin.properties.Delegates
-import kotlin.reflect.KProperty
 
 
 data class EmpireItem(

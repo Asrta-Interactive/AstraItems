@@ -10,6 +10,7 @@ import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Color
 import org.bukkit.Location
 import org.bukkit.Particle
+import org.bukkit.entity.HumanEntity
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.block.Action
@@ -20,6 +21,7 @@ import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 
 class GrapplingHook : IEmpireListener {
+
 
 
 
@@ -41,6 +43,8 @@ class GrapplingHook : IEmpireListener {
             mapHooks.remove(e.player)
             return
         }
+        if ((e.player as HumanEntity).hasCooldown(item.type))
+            return
 
         val player = e.player
         if (mapHooks.containsKey(player)) {
@@ -66,29 +70,30 @@ class GrapplingHook : IEmpireListener {
             println(multiply)
             player.velocity = v3.toVector().multiply(multiply/2)
             player.addPotionEffect(PotionEffect(PotionEffectType.SLOW_FALLING,25,1,false,false,false))
+            (e.player as HumanEntity).setCooldown(item.type,50)
             return
         }
 
 
 
         var l = player.location.clone().add(0.0, 1.5, 0.0)
-        for (i in 0 until 350) {
+        for (i in 0 until 200) {
             ParticleBuilder(Particle.REDSTONE)
                 .count(20)
-                .force(false)
+                .force(true)
                 .extra(0.06)
                 .data(null)
                 .color(Color.BLACK)
                 .location(l.world ?: return, l.x, l.y, l.z)
                 .spawn()
             l =
-                l.add(l.direction.x, l.direction.y - i / (200 * 0.9), l.direction.z)
+                l.add(l.direction.x, l.direction.y - i / (350 * 0.9), l.direction.z)
 
             if (!l.block.isPassable) {
                 mapHooks[player] = l.add(0.0, 1.0, 0.0)
                 ParticleBuilder(Particle.SMOKE_LARGE)
                     .count(70)
-                    .force(false)
+                    .force(true)
                     .extra(0.06)
                     .data(null)
                     .location(l.world ?: return, l.x, l.y, l.z)

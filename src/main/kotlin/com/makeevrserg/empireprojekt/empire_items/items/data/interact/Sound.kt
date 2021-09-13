@@ -1,4 +1,4 @@
-package com.makeevrserg.empireprojekt.items.data.interact
+package com.makeevrserg.empireprojekt.empire_items.items.data.interact
 
 import com.google.gson.annotations.SerializedName
 

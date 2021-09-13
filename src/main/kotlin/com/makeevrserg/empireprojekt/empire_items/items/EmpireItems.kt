@@ -2,7 +2,7 @@ package com.makeevrserg.empireprojekt.empire_items.items
 
 import com.google.gson.reflect.TypeToken
 import com.makeevrserg.empireprojekt.EmpirePlugin
-import com.makeevrserg.empireprojekt.essentials.MusicDiscsEvent
+import com.makeevrserg.empireprojekt.empire_items.items.data.interact.Sound
 import com.makeevrserg.empireprojekt.items.data.EmpireItem
 import com.makeevrserg.empireprojekt.items.data.block.Block
 import com.makeevrserg.empireprojekt.items.data.decoration.Decoration
@@ -15,12 +15,12 @@ import org.bukkit.inventory.ItemStack
 
 class EmpireItems {
     val empireItems: MutableMap<String, ItemStack> = mutableMapOf()
-    public val empireBlocks: MutableMap<String, Block> = mutableMapOf()
-    public val empireDecorations: MutableMap<String, Decoration> = mutableMapOf()
-    public val empireBlocksByData: MutableMap<Int, String> = mutableMapOf()
-    public val itemsInfo: MutableList<EmpireItem> = mutableListOf()
-    public val empireEvents: MutableMap<String, List<Interact>> = mutableMapOf()
-    public val empireDiscsEvent: MutableMap<String, MusicDiscsEvent.MusicDisc> = mutableMapOf()
+    val empireBlocks: MutableMap<String, Block> = mutableMapOf()
+    val empireDecorations: MutableMap<String, Decoration> = mutableMapOf()
+    val empireBlocksByData: MutableMap<Int, String> = mutableMapOf()
+    val itemsInfo: MutableList<EmpireItem> = mutableListOf()
+    val empireEvents: MutableMap<String, List<Interact>> = mutableMapOf()
+    val empireDiscs: MutableMap<String, EmpireItem> = mutableMapOf()
 
 
     private var existedCustomModelData: MutableMap<Material, MutableList<Int>> = mutableMapOf()
@@ -39,7 +39,7 @@ class EmpireItems {
             itemsList.addAll(getItemsInFile(fileManager) ?: continue)
         }
 
-        for (item in itemsList){
+        for (item in itemsList.toList()){
             val itemStack = item.getItemStack()?:continue
             empireItems[item.id] = itemStack
             if (item.block!=null) {
@@ -51,6 +51,11 @@ class EmpireItems {
 
             if (item.interact!=null)
                 empireEvents[item.id] = item.interact
+
+            if (item.musicDisc!=null)empireDiscs[item.id] = item
+
+            if (item.customModelData==0)
+                itemsList.remove(item)
 
         }
         itemsInfo.addAll(itemsList)

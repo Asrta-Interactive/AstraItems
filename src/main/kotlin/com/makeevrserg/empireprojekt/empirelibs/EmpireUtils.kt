@@ -4,6 +4,7 @@ import com.google.gson.JsonParser
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.empire_items.util.BetterConstants
 import com.makeevrserg.empireprojekt.empire_items.util.crafting.CraftingManager
+import com.makeevrserg.empireprojekt.items.data.EmpireItem
 import net.md_5.bungee.api.ChatColor
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
@@ -23,8 +24,6 @@ import java.lang.IllegalArgumentException
 import java.net.URL
 import java.util.regex.Matcher
 import java.util.regex.Pattern
-
-
 
 
 /**
@@ -58,27 +57,33 @@ fun String.HEX(): String {
 fun FileConfiguration.getHEXString(path: String, def: String): String {
     return EmpireUtils.HEXPattern(getString(path, def)!!)
 }
+
 fun ItemStack?.getEmpireID(): String? {
     return EmpireUtils.getEmpireID(this)
 }
 
-inline fun <reified T:kotlin.Enum<T>> T.valueOfOrNull(type:String?):T?{
-    return java.lang.Enum.valueOf(T::class.java,type)
-}
-fun String?.getEmpireItem():ItemStack?{
-    return EmpirePlugin.empireItems.empireItems[this]
-}
-fun String?.asEmpireItem():ItemStack?{
-    return EmpirePlugin.empireItems.empireItems[this]
-}
-fun String?.asEmpireItemOrItem():ItemStack?{
-    return  this.asEmpireItem()?: ItemStack(Material.getMaterial(this?:return null)?:return null)
+inline fun <reified T : kotlin.Enum<T>> T.valueOfOrNull(type: String?): T? {
+    return java.lang.Enum.valueOf(T::class.java, type)
 }
 
-fun List<String>.withEntry(entry:String,ignoreCase:Boolean=true): List<String> {
+fun String?.getEmpireItem(): ItemStack? {
+    return EmpirePlugin.empireItems.empireItems[this]
+}
+
+
+
+fun String?.asEmpireItem(): ItemStack? {
+    return EmpirePlugin.empireItems.empireItems[this]
+}
+
+fun String?.asEmpireItemOrItem(): ItemStack? {
+    return this.asEmpireItem() ?: ItemStack(Material.getMaterial(this ?: return null) ?: return null)
+}
+
+fun List<String>.withEntry(entry: String?, ignoreCase: Boolean = true): List<String> {
     val list = mutableListOf<String>()
     for (line in this)
-        if (line.contains(entry,ignoreCase = true))
+        if (line.contains(entry ?: "", ignoreCase = true))
             list.add(line)
     return list
 }
@@ -93,7 +98,7 @@ fun valueOfOrNull(value: String): ItemFlag? {
 }
 
 
-fun BukkitRunnable.runTaskAsynchronously(){
+fun BukkitRunnable.runTaskAsynchronously() {
     this.runTaskAsynchronously(EmpirePlugin.instance)
 }
 
@@ -101,9 +106,6 @@ fun BukkitRunnable.runTaskAsynchronously(){
  * Utils class
  */
 class EmpireUtils {
-
-
-
 
 
     class EmpireRunnable(private val function: Runnable) : BukkitRunnable() {
@@ -117,14 +119,13 @@ class EmpireUtils {
             return java.lang.Enum.valueOf(T::class.java, key)
 
         }
-        fun getRecipeKey(id:String?): NamespacedKey? {
-            id?:return null
+
+        fun getRecipeKey(id: String?): NamespacedKey? {
+            id ?: return null
             if (!EmpirePlugin.empireItems.empireItems.containsKey(id))
                 return null
-           return NamespacedKey(EmpirePlugin.instance, BetterConstants.CUSTOM_RECIPE_KEY.name+id)
+            return NamespacedKey(EmpirePlugin.instance, BetterConstants.CUSTOM_RECIPE_KEY.name + id)
         }
-
-
 
 
         fun useInCraft(item: String): MutableSet<String> {
@@ -148,14 +149,14 @@ class EmpireUtils {
         }
 
 
-
-
         fun getItemStackByID(id: String): ItemStack? {
             return EmpirePlugin.empireItems.empireItems[id] ?: ItemStack(Material.getMaterial(id) ?: return null)
         }
+
         fun getItemStackByName(str: String): ItemStack {
             return EmpirePlugin.empireItems.empireItems[str] ?: ItemStack(Material.getMaterial(str) ?: Material.PAPER)
         }
+
         private fun getEmpireID(meta: ItemMeta?): String? {
             return meta?.persistentDataContainer?.get(
                 BetterConstants.EMPIRE_ID.value,
@@ -165,7 +166,7 @@ class EmpireUtils {
         }
 
         fun getEmpireID(item: ItemStack?): String? {
-            item?:return null
+            item ?: return null
             return getEmpireID(item.itemMeta)
         }
 
@@ -192,7 +193,6 @@ class EmpireUtils {
             return itemStack
 
         }
-
 
 
         fun getSkinByPlayerName(player: Player? = null, name: String): Array<String>? {
@@ -231,7 +231,6 @@ class EmpireUtils {
             Pattern.compile("#[a-fA-F0-9]{6}|&#[a-fA-F0-9]{6}")
 
 
-
         fun getBook(author: String, title: String, lines: List<String>, useHex: Boolean = true): ItemStack {
 
             val book = ItemStack(Material.WRITTEN_BOOK)
@@ -259,7 +258,7 @@ class EmpireUtils {
 
         private val emojiPattern = Pattern.compile(":([a-zA-Z0-9_]*):")
 
-        fun emojiPattern(lines:List<String>):List<String>{
+        fun emojiPattern(lines: List<String>): List<String> {
             val newList = mutableListOf<String>()
             for (line in lines)
                 newList.add(emojiPattern(line))
@@ -292,6 +291,7 @@ class EmpireUtils {
             for (i in list.indices) list[i] = HEXPattern(list[i])
             return list
         }
+
         /**
          * Convert string to HEX #FFFFFF pattern
          */
@@ -300,6 +300,7 @@ class EmpireUtils {
             line ?: return line
             return HEXPattern(line)
         }
+
         /**
          * Convert string to HEX #FFFFFF pattern
          */

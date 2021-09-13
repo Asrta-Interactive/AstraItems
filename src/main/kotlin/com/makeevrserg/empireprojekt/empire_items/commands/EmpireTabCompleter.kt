@@ -2,7 +2,6 @@ package com.makeevrserg.empireprojekt.empire_items.commands
 
 import com.makeevrserg.empireprojekt.npc.NPCManager
 import com.makeevrserg.empireprojekt.EmpirePlugin
-import com.makeevrserg.empireprojekt.empire_items.events.mobs.EmpireMobsManager
 import com.makeevrserg.empireprojekt.empirelibs.withEntry
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -22,7 +21,7 @@ class EmpireTabCompleter() : TabCompleter {
 
         return when {
             args.isEmpty() -> on0Args(alias)
-            args.size == 1 -> on1Args(alias)
+            args.size == 1 -> on1Args(alias,args)
             args.size == 2 -> on2Args(alias, args)
             args.size == 3 -> on3Args(alias, args)
 
@@ -38,19 +37,17 @@ class EmpireTabCompleter() : TabCompleter {
         return listOf("emp", "emreplace", "emrepair").withEntry(alias)
     }
 
-    private fun on1Args(alias: String): List<String> {
+    private fun on1Args(alias: String,args: Array<out String>): List<String> {
 
         return if (alias.equals("emnpc", ignoreCase = true)) {
-            listOf("create", "tp", "move", "delete", "changeskin", "select").withEntry(alias)
-        } else if (alias.equals("emspawn", ignoreCase = true)) {
-            EmpireMobsManager.mobById.keys.toList()
+            listOf("create", "tp", "move", "delete", "changeskin", "select").withEntry(args.lastOrNull())
         } else if (alias.equals("erandomitem", ignoreCase = true)) {
             val list = EmpirePlugin.instance.randomItems.getList()
-            list.withEntry(alias)
+            list.withEntry(args.lastOrNull())
         } else if (alias.equals("emoji", ignoreCase = true)) {
             return EmpirePlugin.empireFonts.playerFonts.values.toList()
         } else {
-            listOf("reload", "give").withEntry(alias)
+            listOf("reload", "give").withEntry(args.lastOrNull())
         }
     }
 
@@ -63,7 +60,7 @@ class EmpireTabCompleter() : TabCompleter {
             for (id in list)
                 if (id.contains(arg, ignoreCase = true))
                     newList.add(arg)
-            return newList.withEntry(alias)
+            return newList.withEntry(args.lastOrNull())
         } else if (alias.equals("emoji", ignoreCase = true)) {
             return EmpirePlugin.empireFonts.playerFonts.values.toList()
         }
