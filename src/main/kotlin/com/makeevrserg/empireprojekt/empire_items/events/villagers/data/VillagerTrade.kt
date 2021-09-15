@@ -15,15 +15,15 @@ data class VillagerTrade(
     public fun professionToTrades(): Map<String, List<VillagerItem>> =
         mapOf(profession to trades)
 
-    public fun isItemInProfession(id: String): List<String>? {
-        val list = mutableListOf<String>()
-        for (trade in trades)
-            if (trade.resultItem.id == id)
-                list.add(profession)
-        return if (list.isEmpty())
-            null
-        else
-            list
+    public fun professionsByItemId(id: String): List<String> {
+        return trades.filter { it.resultItem.id == id }.map { profession }
+//        for (trade in trades)
+//            if (trade.resultItem.id == id)
+//                list.add(profession)
+//        return if (list.isEmpty())
+//            null
+//        else
+//            list
     }
 
 

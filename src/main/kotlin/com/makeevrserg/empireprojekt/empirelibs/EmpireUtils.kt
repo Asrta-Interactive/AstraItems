@@ -6,6 +6,7 @@ import com.makeevrserg.empireprojekt.empire_items.util.BetterConstants
 import com.makeevrserg.empireprojekt.empire_items.util.crafting.CraftingManager
 import com.makeevrserg.empireprojekt.items.data.EmpireItem
 import net.md_5.bungee.api.ChatColor
+import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.configuration.ConfigurationSection
@@ -71,7 +72,6 @@ fun String?.getEmpireItem(): ItemStack? {
 }
 
 
-
 fun String?.asEmpireItem(): ItemStack? {
     return EmpirePlugin.empireItems.empireItems[this]
 }
@@ -95,6 +95,17 @@ fun valueOfOrNull(value: String): ItemFlag? {
         null
     }
 
+}
+
+fun runAsyncTask(function: Runnable) {
+    Bukkit.getScheduler().runTaskAsynchronously(EmpirePlugin.instance, Runnable {
+        function.run()
+    })
+}
+fun callSyncMethod(function: Runnable){
+    Bukkit.getScheduler().callSyncMethod(EmpirePlugin.instance) {
+        function.run()
+    }
 }
 
 

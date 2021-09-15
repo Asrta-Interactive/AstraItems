@@ -20,6 +20,9 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerJoinEvent
 import org.jetbrains.annotations.NotNull
 
+/**
+ * todo переделать в PlaceholderAPI
+ */
 class FontProtocolLibEvent:IEmpireListener {
     private lateinit var protocolManager: ProtocolManager
     private lateinit var packetListener: PacketListener

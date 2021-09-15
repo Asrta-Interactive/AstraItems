@@ -2,10 +2,7 @@ package com.makeevrserg.empireprojekt.empire_items.events.villagers
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.empire_items.events.villagers.data.VillagerItem
-import com.makeevrserg.empireprojekt.empirelibs.IEmpireListener
-import com.makeevrserg.empireprojekt.empirelibs.asEmpireItemOrItem
-import com.makeevrserg.empireprojekt.empirelibs.getEmpireID
-import com.makeevrserg.empireprojekt.empirelibs.getEmpireItem
+import com.makeevrserg.empireprojekt.empirelibs.*
 
 import org.bukkit.entity.Villager
 import org.bukkit.event.EventHandler
@@ -20,6 +17,9 @@ import kotlin.random.Random
 class VillagerEvent : IEmpireListener {
 
 
+    /**
+     * У жителя создается трейд
+     */
     @EventHandler
     fun villagerAcquireTradeEvent(e: VillagerAcquireTradeEvent) {
         val villager = e.entity as Villager
@@ -33,24 +33,18 @@ class VillagerEvent : IEmpireListener {
     }
 
 
-    private fun checkForEquality(vItem: ItemStack?, tItem: ItemStack?): ItemStack? {
-        vItem ?: return vItem
-        if (vItem.getEmpireID().equals(tItem.getEmpireID()))
-            if (vItem.amount == tItem?.amount)
-                return tItem
-        return vItem
-    }
+    /**
+     * Замена предмета на аналогичный
+     */
+    private fun replaceEmpireItem(itemStack: ItemStack?): ItemStack? =
+        itemStack?.getEmpireID()?.asEmpireItem()?.clone()?.apply {
+            amount = itemStack.amount
+        } ?: itemStack
 
 
-    private fun replaceEmpireItem(itemStack: ItemStack?): ItemStack? {
-        val id = itemStack?.getEmpireID() ?: return itemStack
-        val amount = itemStack.amount
-        val newItemStack = EmpirePlugin.empireItems.empireItems[id]?.clone() ?: return itemStack
-        newItemStack.amount = amount
-        return newItemStack
-
-    }
-
+    /**
+     * Эвент взаимодействия с жителем - необходим для замены предметов
+     */
     @EventHandler
     fun villagerInteractEvent(e: PlayerInteractEntityEvent) {
         if (e.rightClicked !is Villager)
@@ -82,6 +76,9 @@ class VillagerEvent : IEmpireListener {
     }
 
 
+    /**
+     * Добавление трейда к жителю
+     */
     private fun addRecipe(villager: Villager, trade: VillagerItem) {
 
         if (villager.villagerLevel < trade.minLevel)
@@ -91,11 +88,16 @@ class VillagerEvent : IEmpireListener {
         if (trade.chance < Random.nextDouble(100.0))
             return
 
-        val mRecipe = MerchantRecipe(trade.resultItem.id.asEmpireItemOrItem()?.clone()?.apply { amount = trade.resultItem.amount } ?: return, 50)
-        mRecipe.addIngredient(trade.leftItem.id.asEmpireItemOrItem()?.clone()?.apply { amount = trade.leftItem.amount } ?: return)
+        val mRecipe =
+            MerchantRecipe(trade.resultItem.id.asEmpireItemOrItem()?.clone()?.apply { amount = trade.resultItem.amount }
+                ?: return, 50)
+        mRecipe.addIngredient(trade.leftItem.id.asEmpireItemOrItem()?.clone()?.apply {
+            amount = trade.leftItem.amount }
+            ?: return)
         mRecipe.maxUses = Random.nextInt(1, 6)
         if (trade.middleItem != null)
-            mRecipe.addIngredient(trade.middleItem.id.asEmpireItemOrItem()?.clone()?.apply { amount = trade.middleItem.amount } ?: return)
+            mRecipe.addIngredient(
+                trade.middleItem.id.asEmpireItemOrItem()?.clone()?.apply { amount = trade.middleItem.amount } ?: return)
         if (villager.recipes.contains(mRecipe))
             return
         for (vRecipe in villager.recipes)

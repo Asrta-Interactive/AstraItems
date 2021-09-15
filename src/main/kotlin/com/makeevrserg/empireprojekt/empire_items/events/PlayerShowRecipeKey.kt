@@ -1,9 +1,7 @@
 package com.makeevrserg.empireprojekt.empire_items.events
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
-import com.makeevrserg.empireprojekt.empirelibs.EmpireUtils
-import com.makeevrserg.empireprojekt.empirelibs.IEmpireListener
-import com.makeevrserg.empireprojekt.empirelibs.getEmpireID
+import com.makeevrserg.empireprojekt.empirelibs.*
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -11,7 +9,13 @@ import org.bukkit.event.entity.EntityPickupItemEvent
 import org.bukkit.event.inventory.CraftItemEvent
 import org.bukkit.inventory.ItemStack
 
+/**
+ * Показывать игроку рецепт кастомных предметов
+ */
 class PlayerShowRecipeKey : IEmpireListener {
+    /**
+     * Когда игрок поднимает предмет - даём ему рецепты
+     */
     @EventHandler
     fun playerItemPickUp(e: EntityPickupItemEvent) {
         val entity = e.entity
@@ -22,6 +26,9 @@ class PlayerShowRecipeKey : IEmpireListener {
         addPlayerRecipe(itemStack, player)
     }
 
+    /**
+     * Когда игрок крафтит
+     */
     @EventHandler
     fun craftItemEvent(e: CraftItemEvent) {
         val entity = e.whoClicked
@@ -32,26 +39,28 @@ class PlayerShowRecipeKey : IEmpireListener {
         addPlayerRecipe(itemStack, player)
     }
 
+    /**
+     * Добавить предмет в меню крафтинга
+     */
     private fun addPlayerRecipe(
         itemStack: ItemStack,
         player: Player
     ) {
-        Bukkit.getScheduler().runTaskAsynchronously(EmpirePlugin.instance, Runnable {
+        runAsyncTask {
             val mainItemId = itemStack.getEmpireID() ?: itemStack.type.name
             val mainRecipe = EmpireUtils.getRecipeKey(mainItemId)
-            if (mainRecipe!=null && player.hasDiscoveredRecipe(mainRecipe))
-                return@Runnable
+            if (mainRecipe != null && player.hasDiscoveredRecipe(mainRecipe))
+                return@runAsyncTask
 
             for (id in EmpireUtils.useInCraft(mainItemId))
-                Bukkit.getScheduler().callSyncMethod(EmpirePlugin.instance) {
+                callSyncMethod {
                     player.discoverRecipe(EmpireUtils.getRecipeKey(id) ?: return@callSyncMethod)
                 }
 
-
-            Bukkit.getScheduler().callSyncMethod(EmpirePlugin.instance) {
-                player.discoverRecipe(mainRecipe?:return@callSyncMethod )
+            callSyncMethod {
+                player.discoverRecipe(mainRecipe ?: return@callSyncMethod)
             }
-        })
+        }
     }
 
     override fun onDisable() {
