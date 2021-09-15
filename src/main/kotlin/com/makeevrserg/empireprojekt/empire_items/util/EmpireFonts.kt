@@ -38,22 +38,13 @@ data class EmpireFonts(
                 EmpirePlugin.empireFiles.fontImagesFile.getConfig(),
                 object : TypeToken<List<EmpireFont?>?>() {}.type,
                 listOf("font_images")
-            )!!
+            )?: mutableListOf()
 
 
-            val fontsInfoMap = mutableMapOf<String, EmpireFont>()
-            val fontsById = mutableMapOf<String, String>()
-            val playerFonts = mutableMapOf<String, String>()
-            for (font in fonts) {
+            val fontsInfoMap = fonts.associateBy { ":${it.id}:" }
+            val fontsById = fonts.associate { Pair(it.id,it.chars) }
+            val playerFonts = fonts.filter { !it.sendBlocked }.associate { Pair(it.id,it.chars) }
 
-                fontsInfoMap[":${font.id}:"] = font
-
-                fontsById[":${font.id}:"] = font.chars
-
-                if (!font.sendBlocked)
-                    playerFonts[":${font.id}:"] = font.chars
-
-            }
             val offsets = mapOf(
                 "l_1" to "\uF801",
                 "l_2" to "\uF802",
@@ -84,8 +75,8 @@ data class EmpireFonts(
                 "r_512" to "\uF82D",
                 "r_1024" to "\uF82E"
             )
-            for ((offset, value) in offsets)
-                fontsById[":$offset:"] = value
+//            for ((offset, value) in offsets)
+//                fontsById[":$offset:"] = value
 
             return EmpireFonts(fontsInfoMap, fontsById, playerFonts)
         }

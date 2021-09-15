@@ -7,8 +7,8 @@ import com.makeevrserg.empireprojekt.EmpirePlugin
 import org.bukkit.ChatColor
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.configuration.file.FileConfiguration
-import java.lang.Exception
 import java.lang.reflect.Type
+import kotlin.Exception
 import kotlin.random.Random
 
 /**
@@ -71,15 +71,21 @@ class EmpireYamlParser {
                 fromJson(map, type, paths)
             } catch (e: Exception) {
                 println("${EmpirePlugin.translations.FILE_WRONG_PARSE} ?${file}")
-                println(e.stackTraceToString())
+//                println(e.stackTraceToString())
                 return null
             }
         }
 
         public fun <T> fromYAML(file: FileConfiguration?, type: Type, paths: List<String>? = null): T? {
             file ?: return null
-            val map = getMap(file)
-            return returnTry<T>(map, type, paths, file.name)
+            return try {
+                val map = getMap(file)
+                returnTry<T>(map, type, paths, file.name)
+            }catch (e:Exception){
+                null
+            }
+
+
         }
 
 

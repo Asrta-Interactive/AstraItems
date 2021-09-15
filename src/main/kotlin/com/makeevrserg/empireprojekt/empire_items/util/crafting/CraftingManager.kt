@@ -28,13 +28,15 @@ class CraftingManager {
             EmpirePlugin.empireFiles.craftingFile.getConfig().getConfigurationSection("crafting_table") ?: return
         for (id in section.getKeys(false)) {
             val obj = section.getConfigurationSection(id)
-            val recipe = EmpireYamlParser.fromYAML<EmpireCraftingTableRecipe>(obj, EmpireCraftingTableRecipe::class.java) ?: continue
+            val recipe =
+                EmpireYamlParser.fromYAML<EmpireCraftingTableRecipe>(obj, EmpireCraftingTableRecipe::class.java)
+                    ?: continue
             if (recipe.result == null)
                 recipe.result = id
 
             val resultItem = recipe.result.asEmpireItemOrItem()?.clone() ?: continue
 
-            resultItem.amount=recipe.amount?:1
+            resultItem.amount = recipe.amount ?: 1
             val key = NamespacedKey(EmpirePlugin.instance, BetterConstants.CUSTOM_RECIPE_KEY.name + id)
             val shapedRecipe = ShapedRecipe(key, resultItem)
             if (recipe.pattern.size == 3)
@@ -80,12 +82,13 @@ class CraftingManager {
             EmpirePlugin.empireFiles.craftingFile.getConfig().getConfigurationSection("furnace") ?: return
         for (id in section.getKeys(false)) {
             val obj = section.getConfigurationSection(id)
-            val recipe = EmpireYamlParser.fromYAML<EmpireFurnaceRecipe>(obj, EmpireFurnaceRecipe::class.java) ?: continue
+            val recipe =
+                EmpireYamlParser.fromYAML<EmpireFurnaceRecipe>(obj, EmpireFurnaceRecipe::class.java) ?: continue
             if (recipe.result == null)
                 recipe.result = id
 
             val resultItem = recipe.result.asEmpireItemOrItem()?.clone() ?: continue
-            resultItem.amount=recipe.amount?:1
+            resultItem.amount = recipe.amount ?: 1
             val inputItem = recipe.input.asEmpireItemOrItem()?.clone() ?: continue
 
             val recipeChoise =
@@ -121,14 +124,15 @@ class CraftingManager {
             EmpirePlugin.empireFiles.craftingFile.getConfig().getConfigurationSection("shapeless") ?: return
         for (id in section.getKeys(false)) {
             val obj = section.getConfigurationSection(id)
-            val recipe = EmpireYamlParser.fromYAML<EmpireShapelessRecipe>(obj, EmpireShapelessRecipe::class.java) ?: continue
+            val recipe =
+                EmpireYamlParser.fromYAML<EmpireShapelessRecipe>(obj, EmpireShapelessRecipe::class.java) ?: continue
             if (recipe.result == null)
                 recipe.result = id
 
             val resultItem = recipe.result.asEmpireItemOrItem()?.clone() ?: continue
-            resultItem.amount = recipe.amount?:1
+            resultItem.amount = recipe.amount ?: 1
 
-            val inputItem = recipe.input.asEmpireItemOrItem()?.clone()?:continue
+            val inputItem = recipe.input.asEmpireItemOrItem()?.clone() ?: continue
 
             val key = NamespacedKey(EmpirePlugin.instance, BetterConstants.CUSTOM_RECIPE_KEY.name + id)
             val shapelessRecipe = ShapelessRecipe(key, resultItem)
@@ -158,7 +162,7 @@ class CraftingManager {
     init {
         createCraftingTableRecipes()
         createFurnaceRecipes()
-createShapelessRecipe()
+        createShapelessRecipe()
 //        val furnaceRecipe = FurnaceRecipe.new()
     }
 }

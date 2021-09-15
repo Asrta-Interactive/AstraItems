@@ -8,24 +8,21 @@ import com.makeevrserg.empireprojekt.empirelibs.EmpireYamlParser
 
 data class EmpireSound(
     @SerializedName("id")
-    val id:String,
+    val id: String,
     @SerializedName("sounds")
     val sounds: List<String>
-){
+) {
     companion object {
 
-        fun new(): List<EmpireSound>  = EmpireYamlParser.fromYAML<List<EmpireSound>>(
-                EmpirePlugin.empireFiles._soundsFile.getConfig(),
-                object : TypeToken<List<EmpireSound?>?>() {}.type,
-                listOf("sounds")
-            )!!
-        fun soundByID(list:List<EmpireSound>):Map<String,EmpireSound>{
-            val map = mutableMapOf<String,EmpireSound>()
-            list.forEach { sound ->
-                map[sound.id] = sound
-            }
-            return  map
-        }
+        fun new(): List<EmpireSound> = EmpireYamlParser.fromYAML<List<EmpireSound>>(
+            EmpirePlugin.empireFiles._soundsFile.getConfig(),
+            object : TypeToken<List<EmpireSound?>?>() {}.type,
+            listOf("sounds")
+        )?: mutableListOf()
+
+        fun soundByID(list: List<EmpireSound>): Map<String, EmpireSound> =
+            list.associateBy { it.id }
+
 
     }
 }

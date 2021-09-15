@@ -20,37 +20,50 @@ class SitEvent : IEmpireListener {
 
 
     private val sitPlayers = mutableMapOf<Player, ArmorStand>()
+
+    /**
+     * Заставляет игрока сесть
+     */
     fun sitPlayer(player: Player, loc: Location? = null) {
         val location = loc ?: player.location
+        //Сидит ли уже игрок
         if (sitPlayers.contains(player)) {
             player.sendMessage(translations.SIT_ALREADY)
             return
         }
+        //Находится ли игрок в воздухе
         if (player.isFlying) {
             player.sendMessage(translations.SIT_IN_AIR)
             return
         }
+        //Находится ли игрок в воздухе
         if (player.location.block.getRelative(BlockFace.DOWN).type == Material.AIR) {
             player.sendMessage(translations.SIT_IN_AIR)
             return
         }
-
-
-//        val chair = location.world?.spawnEntity(location.add(0.5, -1.6, 0.5), EntityType.ARMOR_STAND) as ArmorStand
+        //Создаем стул
         val chair = location.world?.spawnEntity(location.add(0.0, -1.6, 0.0), EntityType.ARMOR_STAND) as ArmorStand
         chair.setGravity(false)
         chair.isVisible = false
         chair.isInvulnerable = false
+        //Садим игрока
         chair.addPassenger(player)
+        //Добавялем игрока в список посаженных
         sitPlayers[player] = chair
 
 
     }
 
+    /**
+     * Функция заставляет игрока встать
+     */
     private fun stopSitPlayer(player: Player) {
+        //Берем текущий стул игрока
         val armorStand = sitPlayers[player] ?: return
+        //Удаляем стул и убираем игрока из списка
         armorStand.remove()
         sitPlayers.remove(player)
+        //Телепортируем чуть повыше
         player.teleport(player.location.add(0.0,1.6,0.0))
     }
     @EventHandler
@@ -68,15 +81,6 @@ class SitEvent : IEmpireListener {
     fun playerInteractEvent(e: PlayerInteractEvent) {
         if (e.action!=Action.RIGHT_CLICK_BLOCK)
             return
-//        val player = e.player
-//        val block = e.clickedBlock ?: return
-//        val blockName = block.type.name.toLowerCase()
-//
-//        when {
-//            blockName.contains("slab") -> sitPlayer(player, block.location.add(0.0,0.4,0.0))
-//            blockName.contains("stairs") -> sitPlayer(player, block.location.add(0.0,0.5,0.0))
-//            blockName.contains("carpet") -> sitPlayer(player, block.location)
-//        }
     }
 
     @EventHandler

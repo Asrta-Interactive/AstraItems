@@ -21,9 +21,14 @@ import org.bukkit.event.player.PlayerInteractEvent
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
-
+/**
+ * Эвент кастомных музыкальных дисков
+ */
 class MusicDiscsNewEvent : IEmpireListener {
 
+    /**
+     * Список активных jukebox'ов с включенной музыкой
+     */
     val activeJukeboxes: MutableMap<Location, EmpireItem> = mutableMapOf()
 
 
@@ -44,18 +49,22 @@ class MusicDiscsNewEvent : IEmpireListener {
     }
 
 
+    /**
+     * Срабатывает когда игрок пытается всунуть музкыальный диск.
+     */
     @EventHandler
     fun onJukeboxInteract(e: PlayerInteractEvent) {
         val jukebox = isJukebox(e) ?: return
-        e.isCancelled = true
 
         if (activeJukeboxes.contains(jukebox.location)) {
             stopMusic(jukebox.location)
+            e.isCancelled = true
 
         } else {
             val musicDisc = EmpirePlugin.empireItems.empireDiscs[e.item.getEmpireID() ?: return] ?: return
             e.item!!.amount -= 1
             playMusic(musicDisc, jukebox.location)
+            e.isCancelled = true
         }
     }
 
@@ -73,7 +82,6 @@ class MusicDiscsNewEvent : IEmpireListener {
     }
 
 
-
     /**
      * Включение проигрывания звука
      */
@@ -82,7 +90,7 @@ class MusicDiscsNewEvent : IEmpireListener {
         activeJukeboxes[location] = item
         getPlayerInDistance(location).forEach { player ->
             val comp = TextComponent(("Играет ${item.displayName}").HEX())
-            player.spigot().sendMessage(ChatMessageType.ACTION_BAR,comp)
+            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, comp)
 
         }
     }

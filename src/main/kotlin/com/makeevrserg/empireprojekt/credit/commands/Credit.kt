@@ -10,8 +10,10 @@ import org.bukkit.entity.Player
 
 class Credit:CommandExecutor {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+
         if (sender !is Player)
             return true
+
 
         if (!sender.hasPermission(EmpirePermissions.CREDIT)){
             sender.sendMessage(EmpirePlugin.translations.NO_PERMISSION)

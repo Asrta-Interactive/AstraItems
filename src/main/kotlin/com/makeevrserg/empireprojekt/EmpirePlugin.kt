@@ -11,12 +11,10 @@ import com.makeevrserg.empireprojekt.empire_items.items.EmpireItems
 import com.makeevrserg.empireprojekt.empire_items.util.*
 import com.makeevrserg.empireprojekt.empire_items.util.crafting.CraftingManager
 import com.makeevrserg.empireprojekt.empire_items.util.sounds.SoundManager
-import com.makeevrserg.empireprojekt.empirelibs.PluginBetaAccessCheck
-import com.makeevrserg.empireprojekt.empirelibs.database.EmpireDatabase
 import com.makeevrserg.empireprojekt.essentials.homes.EssentialsHandler
 import com.makeevrserg.empireprojekt.npc.NPCManager
-import makeevrserg.empireprojekt.emgui.data.Category
-import makeevrserg.empireprojekt.emgui.data.Settings
+import com.makeevrserg.empireprojekt.empire_items.emgui.data.Category
+import com.makeevrserg.empireprojekt.empire_items.emgui.data.Settings
 import makeevrserg.empireprojekt.random_items.RandomItems
 import org.bukkit.Bukkit
 import org.bukkit.NamespacedKey

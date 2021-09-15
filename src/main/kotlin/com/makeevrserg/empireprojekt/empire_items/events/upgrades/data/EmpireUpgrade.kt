@@ -23,7 +23,7 @@ data class EmpireUpgrade(
             EmpirePlugin.empireFiles.upgradesFile.getConfig(),
             object : TypeToken<List<EmpireUpgrade?>?>() {}.type,
             listOf("upgrades")
-        )!!
+        )?: mutableListOf()
 
         fun newMap(): Map<String, List<EmpireUpgrade>> {
 
@@ -34,6 +34,7 @@ data class EmpireUpgrade(
                     map[upgrade.id] = mutableListOf(upgrade)
                 else
                     map[upgrade.id]!!.add(upgrade)
+
 
             return map
         }

@@ -2,6 +2,7 @@ package com.makeevrserg.empireprojekt.empirelibs.menu
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import org.bukkit.Material
+import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
 
 
@@ -27,6 +28,18 @@ abstract class PaginatedMenu(playerMenuUtility: PlayerMenuUtility?) : Menu(playe
     @JvmName("getMaxPages1")
     public fun getMaxPages(): Int {
         return  slotsAmount/maxItemsPerPage
+    }
+
+    /**
+     * Standart menu handler for close/back/next
+     */
+    override fun handleMenu(e: InventoryClickEvent) {
+        if (e.slot == getPrevButtonIndex())
+            if (isFirstPage()) return
+            else loadPage(-1)
+        else if (e.slot == getNextButtonIndex())
+            if (isLastPage()) return
+            else loadPage(1)
     }
 
     /**

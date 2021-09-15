@@ -19,6 +19,7 @@ class EmpireCategoriesMenu(playerMenuUtility: PlayerMenuUtility?) :
     override var maxPages = getMaxPages()
 
     override fun handleMenu(e: InventoryClickEvent) {
+        super.handleMenu(e)
         e.currentItem ?: return
         if ((e.slot != 45) && (e.slot != 49) && (e.slot != 53))
             EmpireCategoryMenu(
@@ -27,14 +28,9 @@ class EmpireCategoriesMenu(playerMenuUtility: PlayerMenuUtility?) :
                 page
             ).open()
 
-        if (e.slot == getPrevButtonIndex())
-            if (isFirstPage()) return
-            else loadPage(-1)
+
         else if (e.slot == getBackButtonIndex())
             e.whoClicked.closeInventory()
-        else if (e.slot == getNextButtonIndex())
-            if (isLastPage()) return
-            else loadPage(1)
 
 
     }

@@ -16,9 +16,6 @@ class RandomItems {
     }
 
     private fun getMapItems() {
-        val map = mutableMapOf<String, RandomItem>()
-        for (item in randomItems ?: listOf())
-            map[item.id] = item
-        mapItems = map
+        mapItems = randomItems?.associateBy { it.id }?: mapOf()
     }
 }

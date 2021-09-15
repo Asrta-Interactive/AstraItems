@@ -45,8 +45,57 @@ class CommandManager() : CommandExecutor {
         plugin.getCommand("sit")!!.setExecutor(this)
     }
 
+    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
 
-    private fun empGive(sender: CommandSender, playerName: String, item: String, count: Int) {
+        if (sender.hasPermission(EmpirePermissions.EMPGIVE) && (label.equals("emp", true)))
+            if (args.size >= 3 && args[0].equals("give", ignoreCase = true))
+                giveItem(sender, args[1], args[2], args.getOrNull(3)?.toIntOrNull() ?: 1)
+
+        if (label.equals("emoji", ignoreCase = true))
+            sendChatEmoji(sender, args)
+
+
+        if (label.equals("sit", ignoreCase = true))
+            if (sender is Player)
+                SitEvent.instance.sitPlayer(sender)
+
+        if (label.equals("emgui", ignoreCase = true))
+            EmpireCategoriesMenu(PlayerMenuUtility(sender as Player)).open()
+
+
+        if (label.equals("emsounds", ignoreCase = true))
+            EmpireSoundsMenu(PlayerMenuUtility(sender as Player)).open()
+
+
+        if (label.equals("empack", ignoreCase = true))
+            if (sender is Player)
+                sender.setResourcePack(EmpirePlugin.empireConfig.resourcePackRef ?: return true)
+
+        if (label.equals("emreplace", ignoreCase = true))
+            if (sender is Player)
+                if (emreplace(sender))
+                    sender.sendMessage(EmpirePlugin.translations.ITEM_REPLACED)
+                else
+                    sender.sendMessage(EmpirePlugin.translations.ITEM_REPLACE_WRONG)
+
+        if (label.equals("emojis", ignoreCase = true))
+            if (sender is Player)
+                getEmojiBook(sender)
+
+        if (label.equals("ezip", ignoreCase = true) && sender.hasPermission(EmpirePermissions.EZIP))
+            eZip(sender)
+
+        if (label.equals("ereload", ignoreCase = true) && sender.hasPermission(EmpirePermissions.RELOAD))
+            eReload(sender)
+
+        return false
+    }
+
+
+    /**
+     * Выдает игроку предмет
+     */
+    private fun giveItem(sender: CommandSender, playerName: String, item: String, count: Int) {
         if (EmpirePlugin.empireItems.empireItems.containsKey(item)) {
             val player: Player = Bukkit.getPlayer(playerName) ?: return
             player.sendMessage(EmpirePlugin.translations.ITEM_GAINED + "$count $item")
@@ -59,8 +108,29 @@ class CommandManager() : CommandExecutor {
 
     }
 
+    /**
+     * Заменяет предмет в главной руке
+     */
+    fun emreplace(sender: Player): Boolean {
+        var item = sender.inventory.itemInMainHand
+        val meta = item.itemMeta ?: return false
+        val id = meta.persistentDataContainer.get(BetterConstants.EMPIRE_ID.value, PersistentDataType.STRING)
+            ?: return false
 
-    fun emoji(sender: CommandSender, args: Array<out String>) {
+        val amount = item.amount
+
+        val durability = item.durability
+        item = EmpirePlugin.empireItems.empireItems[id]?.clone() ?: return true
+        item.amount = amount
+        item.durability = durability
+        sender.inventory.setItemInMainHand(item)
+        return true
+    }
+
+    /**
+     * Преобразует сообщение с эмодзи в чат
+     */
+    fun sendChatEmoji(sender: CommandSender, args: Array<out String>) {
         if (sender !is Player)
             return
         val chat = args.joinToString(" ").HEX()
@@ -68,117 +138,48 @@ class CommandManager() : CommandExecutor {
         return
     }
 
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
 
-        if (sender.hasPermission(EmpirePermissions.EMPGIVE) && (label.equals("emp", true)))
-            if (args.size >= 3 && args[0].equals("give", ignoreCase = true)) {
-                try {
-                    val count: Int = if (args.size > 3) args[3].toInt() else 1
-                    empGive(sender, args[1], args[2], count)
-                } catch (e: NumberFormatException) {
-                    sender.sendMessage(EmpirePlugin.translations.WRONG_NUMBER)
-                }
-            }
+    /**
+     * Перезагрузка плагина
+     */
+    private fun eReload(sender: CommandSender) {
+        sender.sendMessage(EmpirePlugin.translations.RELOAD)
+        plugin.disablePlugin()
+        plugin.initPlugin()
+        sender.sendMessage(EmpirePlugin.translations.RELOAD_COMPLETE)
+    }
 
-        if (label.equals("emoji", ignoreCase = true)) {
-            emoji(sender, args)
-            return true
+    /**
+     * Создание архива
+     */
+    private fun eZip(sender: CommandSender) {
+        sender.sendMessage(EmpirePlugin.translations.ZIP_START)
+        ResourcePackNew()
+        if (ResourcePackNew.zipAll(
+                plugin.dataFolder.toString() + File.separator + "pack",
+                plugin.dataFolder.toString() + File.separator + "pack" + File.separator + "pack.zip"
+            )
+        ) {
+
+
+            sender.sendMessage(EmpirePlugin.translations.ZIP_SUCCESS)
+        } else
+            sender.sendMessage(EmpirePlugin.translations.ZIP_ERROR)
+    }
+
+    /**
+     * Создает и показывает игроку книгу с эмодзи
+     */
+    private fun getEmojiBook(sender: Player) {
+        var list = ""
+        for (emoji in EmpirePlugin.empireFonts._fontInfoValueById.keys) {
+            if (EmpirePlugin.empireFonts._fontInfoValueById[emoji]?.sendBlocked ?: continue)
+                continue
+            list += EmpireUtils.HEXPattern("&r${emoji}\n&r&f${EmpirePlugin.empireFonts._fontInfoValueById[emoji]!!.chars}&r\n")
         }
 
-        if (label.equals("sit", ignoreCase = true)) {
-            if (sender is Player)
-                SitEvent.instance.sitPlayer(sender)
-        }
-        if (label.equals("emgui", ignoreCase = true)) {
-            EmpireCategoriesMenu(PlayerMenuUtility(sender as Player)).open()
-        }
-
-        if (label.equals("emsounds", ignoreCase = true)) {
-            EmpireSoundsMenu(PlayerMenuUtility(sender as Player)).open()
-        }
-
-        if (label.equals("empack", ignoreCase = true)) {
-            if (sender is Player) {
-
-                sender.setResourcePack(EmpirePlugin.empireConfig.resourcePackRef ?: return true)
-            }
-        }
-
-        if (label.equals("emreplace", ignoreCase = true)) {
-            fun emreplace(sender: Player): Boolean {
-                var item = sender.inventory.itemInMainHand
-                val meta = item.itemMeta ?: return false
-                val id = meta.persistentDataContainer.get(BetterConstants.EMPIRE_ID.value, PersistentDataType.STRING)
-                    ?: return false
-
-                val amount = item.amount
-
-                val durability = item.durability
-                item = EmpirePlugin.empireItems.empireItems[id]?.clone() ?: return true
-                item.amount = amount
-                item.durability = durability
-                sender.inventory.setItemInMainHand(item)
-                return true
-            }
-            if (sender is Player) {
-                if (emreplace(sender))
-                    sender.sendMessage(EmpirePlugin.translations.ITEM_REPLACED)
-                else
-                    sender.sendMessage(EmpirePlugin.translations.ITEM_REPLACE_WRONG)
-
-            }
-        }
-        if (label.equals("emojis", ignoreCase = true)) {
-
-            if (sender is Player) {
-
-
-                var list = ""
-                for (emoji in EmpirePlugin.empireFonts._fontInfoValueById.keys) {
-                    if (EmpirePlugin.empireFonts._fontInfoValueById[emoji]?.sendBlocked ?: continue)
-                        continue
-                    list += EmpireUtils.HEXPattern("&r${emoji}\n&r&f${EmpirePlugin.empireFonts._fontInfoValueById[emoji]!!.chars}&r\n")
-                }
-
-                val book =
-                    EmpireUtils.getBook("RomaRoman", EmpireUtils.HEXPattern("&fЭмодзи"), mutableListOf(list), false)
-
-
-                sender.openBook(book)
-            }
-        }
-        if (label.equals("emspawn", ignoreCase = true) && sender.hasPermission(EmpirePermissions.SPAWN_ENTITY)) {
-            val p = sender as Player
-            if (args.size > 1 || args.size < 1) {
-                sender.sendMessage(EmpirePlugin.translations.WRONG_ARGS)
-                return true
-
-            }
-        }
-
-
-        if (label.equals("ezip", ignoreCase = true) && sender.hasPermission(EmpirePermissions.EZIP)) {
-            sender.sendMessage(EmpirePlugin.translations.ZIP_START)
-            ResourcePackNew()
-            if (ResourcePackNew.zipAll(
-                    plugin.dataFolder.toString() + File.separator + "pack",
-                    plugin.dataFolder.toString() + File.separator + "pack" + File.separator + "pack.zip"
-                )
-            ) {
-
-
-                sender.sendMessage(EmpirePlugin.translations.ZIP_SUCCESS)
-            } else
-                sender.sendMessage(EmpirePlugin.translations.ZIP_ERROR)
-
-        }
-
-        if (label.equals("ereload", ignoreCase = true) && sender.hasPermission(EmpirePermissions.RELOAD)) {
-            sender.sendMessage(EmpirePlugin.translations.RELOAD)
-            plugin.disablePlugin()
-            plugin.initPlugin()
-            sender.sendMessage(EmpirePlugin.translations.RELOAD_COMPLETE)
-        }
-        return false
+        val book =
+            EmpireUtils.getBook("RomaRoman", EmpireUtils.HEXPattern("&fЭмодзи"), mutableListOf(list), false)
+        sender.openBook(book)
     }
 }

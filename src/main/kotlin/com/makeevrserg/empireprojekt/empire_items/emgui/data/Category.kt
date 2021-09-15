@@ -1,4 +1,4 @@
-package makeevrserg.empireprojekt.emgui.data
+package com.makeevrserg.empireprojekt.empire_items.emgui.data
 
 import com.google.gson.reflect.TypeToken
 import com.makeevrserg.empireprojekt.EmpirePlugin
@@ -16,7 +16,7 @@ data class Category(
     companion object {
 
         fun toMap(list:List<Category>): Map<String, Category> {
-            val map = mutableMapOf<String,Category>()
+            val map = mutableMapOf<String, Category>()
             for (category in list) {
                 map[category.id] = category
             }

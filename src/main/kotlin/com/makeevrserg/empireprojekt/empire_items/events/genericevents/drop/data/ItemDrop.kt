@@ -26,7 +26,7 @@ data class ItemDrop(
                 EmpirePlugin.empireFiles.dropsFile.getConfig(),
                 object : TypeToken<List<ItemDrop?>?>() {}.type,
                 listOf("loot", path)
-            )!!
+            )?: mutableListOf()
         }
 
         fun newBlocksDrops() = getList("blocks")

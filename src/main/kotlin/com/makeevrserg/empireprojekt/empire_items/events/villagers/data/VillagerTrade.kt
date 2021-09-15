@@ -35,7 +35,7 @@ data class VillagerTrade(
                 EmpirePlugin.empireFiles.villagerTrades.getConfig(),
                 object : TypeToken<List<VillagerTrade?>?>() {}.type,
                 listOf("villager_trades")
-            )!!
+            )?: mutableListOf()
             return trades
         }
     }

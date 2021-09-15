@@ -20,6 +20,6 @@ data class EmpireCraftingTableRecipe(
             EmpirePlugin.empireFiles.craftingFile.getConfig(),
             object : TypeToken<List<EmpireCraftingTableRecipe?>?>() {}.type,
             listOf("crafting_table")
-        )!!
+        )?: mutableListOf()
     }
 }

@@ -11,33 +11,28 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.loot.Lootable
 import kotlin.random.Random
 
+/**
+ * Книжки с лором
+ * todo - передалть инициализацию и Listener
+ */
 class LoreBooksEvent : Listener {
     private val books: MutableList<ItemStack> = mutableListOf()
 
-    init {
-        if (initBooks())
-            EmpirePlugin.instance.server.pluginManager.registerEvents(this, EmpirePlugin.instance)
-    }
-
-    fun onDisable() {
-        PlayerInteractEvent.getHandlerList().unregister(this)
-    }
-
 
     @EventHandler
-    fun onPlayerOpenNewChestEvent(e:PlayerInteractEvent){
-        if (e.action!=Action.RIGHT_CLICK_BLOCK)
+    fun onPlayerOpenNewChestEvent(e: PlayerInteractEvent) {
+        if (e.action != Action.RIGHT_CLICK_BLOCK)
             return
         if (books.isEmpty())
             return
 
-        val block = e.clickedBlock?:return
+        val block = e.clickedBlock ?: return
         block.state
         if (block.state !is Chest)
             return
         val chest = block.state as Chest
         val lootable = chest as Lootable
-        lootable.lootTable?:return
+        lootable.lootTable ?: return
         chest.blockInventory.addItem(books[Random.nextInt(books.size)])
     }
 
@@ -58,6 +53,19 @@ class LoreBooksEvent : Listener {
         return true
 
     }
+
+
+    init {
+        if (initBooks())
+            EmpirePlugin.instance.server.pluginManager.registerEvents(this, EmpirePlugin.instance)
+    }
+
+
+
+    fun onDisable() {
+        PlayerInteractEvent.getHandlerList().unregister(this)
+    }
+
 
 
 }

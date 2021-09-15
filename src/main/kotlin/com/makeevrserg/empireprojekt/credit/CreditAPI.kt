@@ -6,128 +6,142 @@ import com.makeevrserg.empireprojekt.credit.data.CreditPlayer
 import org.bukkit.entity.Player
 import java.math.BigDecimal
 
-class CreditAPI {
-    companion object {
+object CreditAPI {
 
-        fun getCreditAmount(player: Player?): Int {
-            return CreditPlayer.getPlayer(player)?.credit ?: 0
-        }
 
-        fun getEssentialsPlayer(player: Player): User? {
-            return EmpireCredit.essentials.getUser(player)
-        }
+    /**
+     * Получение кредита у игрока. Если кредита нет - возвращаем 0
+     */
+    fun getCreditAmount(player: Player?): Int {
+        return CreditPlayer.getPlayer(player)?.credit ?: 0
+    }
 
-        fun getPlayerBalance(player: Player): BigDecimal? {
-            return getEssentialsPlayer(player)?.money
-        }
+    /**
+     * Получение игрока как Essentials
+     */
+    fun getEssentialsPlayer(player: Player): User? {
+        return EmpireCredit.essentials.getUser(player)
+    }
 
-        fun hasCredit(player: Player): Boolean {
-            val creditPlayer = CreditPlayer.getPlayer(player.uniqueId.toString())
-                ?: return false
-            if (creditPlayer.credit > 0)
-                return true
-            return false
-        }
+    /**
+     * Получение текущего баланса игрока
+     */
+    fun getPlayerBalance(player: Player): BigDecimal? {
+        return getEssentialsPlayer(player)?.money
+    }
 
-        public fun savePlayerConfig(creditPlayer: CreditPlayer) {
-            val fileConfig = EmpireCredit.configFile.getConfig()
-            fileConfig.set("players.${creditPlayer.uuid}.bank", creditPlayer.bank)
-            fileConfig.set("players.${creditPlayer.uuid}.name", creditPlayer.name)
-            fileConfig.set("players.${creditPlayer.uuid}.credit", creditPlayer.credit)
-            fileConfig.set("players.${creditPlayer.uuid}.unix", creditPlayer.unix)
-            fileConfig.set("players.${creditPlayer.uuid}.uuid", creditPlayer.uuid)
-            EmpireCredit.configFile.saveConfig()
-        }
-
-        private fun saveCreditInfo(player: Player, amount: Int,updateTime:Boolean=false) {
-            val creditPlayer = CreditPlayer.getPlayer(player) ?: CreditPlayer(
-                uuid = player.uniqueId.toString(),
-                name = player.name,
-                credit = amount
-            )
-            if (updateTime)
-                creditPlayer.unix = System.currentTimeMillis()
-            creditPlayer.credit = amount
-            savePlayerConfig(creditPlayer)
-        }
-
-        private fun canHaveCredit(player: Player, amount: BigDecimal): Boolean {
-            if (hasCredit(player))
-                return false
-            val balance = getPlayerBalance(player) ?: return false
-            if (balance < EmpireCredit.config.minAmountForCredit.toBigDecimal())
-                return false
+    /**
+     * Проверка на наличие кредита у игрока
+     */
+    fun hasCredit(player: Player): Boolean {
+        val creditPlayer = CreditPlayer.getPlayer(player.uniqueId.toString())
+            ?: return false
+        if (creditPlayer.credit > 0)
             return true
+        return false
+    }
 
-        }
+    /**
+     * Сохранение информации об игроке
+     */
+    fun savePlayerConfig(creditPlayer: CreditPlayer) {
+        val fileConfig = EmpireCredit.configFile.getConfig()
+        fileConfig.set("players.${creditPlayer.uuid}.bank", creditPlayer.bank)
+        fileConfig.set("players.${creditPlayer.uuid}.name", creditPlayer.name)
+        fileConfig.set("players.${creditPlayer.uuid}.credit", creditPlayer.credit)
+        fileConfig.set("players.${creditPlayer.uuid}.unix", creditPlayer.unix)
+        fileConfig.set("players.${creditPlayer.uuid}.uuid", creditPlayer.uuid)
+        EmpireCredit.configFile.saveConfig()
+    }
 
-        public fun giveCredit(player: Player, amountStr: String) {
-            val amount = amountStr.toBigDecimalOrNull() ?: return
-            if (!canHaveCredit(player, amount)) {
-                player.sendMessage(EmpirePlugin.translations.CANT_HAVE_CREDIT)
-                player.sendMessage(
-                    EmpirePlugin.translations.MIN_FOR_CREDIT.replace(
-                        "%amount%",
-                        EmpireCredit.config.minAmountForCredit.toString()
-                    )
-                )
-                return
-            }
-            getEssentialsPlayer(player)!!.giveMoney(amount)
-            saveCreditInfo(player, amount.toInt(),true)
-            player.sendMessage(EmpirePlugin.translations.GAVE_CREDIT.replace("%amount%", amountStr))
+    /**
+     * Сохранение информации о кредите игрока
+     */
+    private fun saveCreditInfo(player: Player, amount: Int, updateTime: Boolean = false) {
+        //Берем класс или создаем новый объект
+        val creditPlayer = CreditPlayer.getPlayer(player) ?: CreditPlayer(
+            uuid = player.uniqueId.toString(),
+            name = player.name,
+            credit = amount
+        )
+        if (updateTime)
+            creditPlayer.unix = System.currentTimeMillis()
+        creditPlayer.credit = amount
+        savePlayerConfig(creditPlayer)
+    }
 
-        }
-
-        public fun getPercentOfCredit(player: Player): Double? {
-            val creditPlayer = CreditPlayer.getPlayer(player) ?: return null
-
-            var amountToPay = creditPlayer.credit * EmpireCredit.config.creditTax
-            if (amountToPay>200)
-                amountToPay = EmpireCredit.config.creditWithdrawTax
-                    ?: 25.0 / 100 * creditPlayer.credit
-            val essPlayer = getEssentialsPlayer(player)?:return null
-            if (BankAPI.getBankAmount(player)>amountToPay)
-                BankAPI.withdrawMoney(player,amountToPay.toInt().toString())
-
-            if (amountToPay>essPlayer.money.toInt())
-                amountToPay = essPlayer.money.toDouble()
-            if (amountToPay<1)
-                return null
-            return amountToPay
-        }
-
-        public fun repayCredit(player: Player, amount: Int? = null) {
-            if (!hasCredit(player)) {
-                player.sendMessage(EmpirePlugin.translations.NO_ACTIVE_CREDIT)
-                return
-            }
-            val creditPlayer = CreditPlayer.getPlayer(player) ?: return
-            val essPlayer = getEssentialsPlayer(player) ?: return
-            if (essPlayer.money.toInt() < amount?.toDouble() ?: (creditPlayer.credit * EmpireCredit.config.creditTax)) {
-                player.sendMessage(EmpirePlugin.translations.NOT_ENOUGH_MONEY)
-                return
-            }
-
-
-            essPlayer.takeMoney(
-                amount?.toBigDecimal() ?: (creditPlayer.credit * EmpireCredit.config.creditTax).toBigDecimal()
-            )
-
-            if (amount != null)
-                saveCreditInfo(player, (creditPlayer.credit - amount / EmpireCredit.config.creditTax).toInt())
-            else
-                saveCreditInfo(player, 0)
-
-            val paid = if (amount == null) creditPlayer.credit * EmpireCredit.config.creditTax else amount
-            player.sendMessage(
-                EmpirePlugin.translations.PAID_CREDIT.replace(
-                    "%amount%",
-                    (paid).toString()
-                )
-            )
-
-        }
+    /**
+     * Может ли игрок взять новый кредит
+     */
+    private fun canHaveCredit(player: Player, amount: BigDecimal): Boolean {
+        //Имеет ли уже кредит
+        if (hasCredit(player))
+            return false
+        //Проверяем, больше ли баланс минимума для кредита
+        val balance = getPlayerBalance(player) ?: return false
+        if (balance < EmpireCredit.config.minAmountForCredit.toBigDecimal())
+            return false
+        //Проверяем меньше ли баланс чем желаемый кредит
+        if (balance < amount)
+            return false
+        return true
 
     }
+
+    /**
+     * Выдача кредита игроку
+     */
+    fun giveCredit(player: Player, amountStr: String) {
+        //Желаемое количество
+        val amount = amountStr.toBigDecimalOrNull() ?: return
+        //Проверяем, может ли иметь кредит
+        if (!canHaveCredit(player, amount)) {
+            player.sendMessage(EmpirePlugin.translations.CANT_HAVE_CREDIT)
+            player.sendMessage(
+                EmpirePlugin.translations.MIN_FOR_CREDIT.replace(
+                    "%amount%",
+                    EmpireCredit.config.minAmountForCredit.toString()
+                )
+            )
+            return
+        }
+        //Даем деньги и сохраняем конфиг
+        getEssentialsPlayer(player)!!.giveMoney(amount)
+        saveCreditInfo(player, amount.toInt(), true)
+        player.sendMessage(EmpirePlugin.translations.GAVE_CREDIT.replace("%amount%", amountStr))
+
+    }
+
+    /**
+     * Выплата кредита игроком
+     */
+    fun repayCredit(player: Player, amount: Int = getCreditAmount(player)) {
+        //Если нет кредита - возвращаемся
+        if (!hasCredit(player)) {
+            player.sendMessage(EmpirePlugin.translations.NO_ACTIVE_CREDIT)
+            return
+        }
+
+        //Берем кредитный класс игрока
+        val creditPlayer = CreditPlayer.getPlayer(player) ?: return
+        //Ссылка на Essentials
+        val essPlayer = getEssentialsPlayer(player) ?: return
+
+        //Проверяем хватает ли у игрока денег
+        if (essPlayer.money.toInt() < amount) {
+            player.sendMessage(EmpirePlugin.translations.NOT_ENOUGH_MONEY)
+            return
+        }
+        //Выдаем кредит и сохраняем конфиги
+        essPlayer.takeMoney(amount.toBigDecimal())
+        saveCreditInfo(player, (creditPlayer.credit - amount / EmpireCredit.config.creditTax).toInt())
+        player.sendMessage(
+            EmpirePlugin.translations.PAID_CREDIT.replace(
+                "%amount%",
+                (amount).toString()
+            )
+        )
+
+    }
+
 }
