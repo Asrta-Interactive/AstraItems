@@ -4,7 +4,6 @@ import com.makeevrserg.empireprojekt.credit.EmpireCredit
 import com.makeevrserg.empireprojekt.empire_items.commands.CommandManager
 import com.makeevrserg.empireprojekt.empire_items.events.GenericListener
 import com.makeevrserg.empireprojekt.empire_items.events.blocks.MushroomBlockEventHandler
-import com.makeevrserg.empireprojekt.empire_items.events.decorations.DecorationBlockEventHandler
 import com.makeevrserg.empireprojekt.empire_items.events.genericevents.drop.ItemDropManager
 import com.makeevrserg.empireprojekt.empire_items.events.upgrades.UpgradesManager
 import com.makeevrserg.empireprojekt.empire_items.items.EmpireItems
@@ -138,10 +137,7 @@ class EmpirePlugin : JavaPlugin() {
      */
     private lateinit var mushroomBlockEventHandler: MushroomBlockEventHandler
 
-    /**
-     * Event handler for decoration blocks
-     */
-    private lateinit var decorationBlockEventHandler: DecorationBlockEventHandler
+
 
 
     /**
@@ -187,7 +183,7 @@ class EmpirePlugin : JavaPlugin() {
 
         randomItems = RandomItems()
         mushroomBlockEventHandler = MushroomBlockEventHandler()
-        decorationBlockEventHandler = DecorationBlockEventHandler()
+
 //        _empireCrafts = EmpireCrafts()
 
 

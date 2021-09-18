@@ -1,9 +1,10 @@
 package com.makeevrserg.empireprojekt.empire_items.events.empireevents
 
 import com.destroystokyo.paper.ParticleBuilder
+import com.makeevrserg.empireprojekt.empire_items.api.ItemsAPI.getEmpireID
 import com.makeevrserg.empireprojekt.empire_items.util.BetterConstants
 import com.makeevrserg.empireprojekt.empirelibs.IEmpireListener
-import com.makeevrserg.empireprojekt.empirelibs.getEmpireID
+
 import net.md_5.bungee.api.ChatMessageType
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.TextComponent

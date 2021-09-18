@@ -1,7 +1,7 @@
 package com.makeevrserg.empireprojekt.empire_items.events.genericevents.drop
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
-import com.makeevrserg.empireprojekt.empire_items.events.blocks.MushroomBlockApi
+import com.makeevrserg.empireprojekt.empire_items.api.MushroomBlockApi
 import com.makeevrserg.empireprojekt.empire_items.events.genericevents.drop.data.ItemDrop
 import com.makeevrserg.empireprojekt.empirelibs.IEmpireListener
 import org.bukkit.Location

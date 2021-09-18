@@ -1,6 +1,8 @@
 package com.makeevrserg.empireprojekt.empire_items.events
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
+import com.makeevrserg.empireprojekt.empire_items.api.ItemsAPI
+import com.makeevrserg.empireprojekt.empire_items.api.ItemsAPI.getEmpireID
 import com.makeevrserg.empireprojekt.empirelibs.*
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
@@ -48,13 +50,13 @@ class PlayerShowRecipeKey : IEmpireListener {
     ) {
         runAsyncTask {
             val mainItemId = itemStack.getEmpireID() ?: itemStack.type.name
-            val mainRecipe = EmpireUtils.getRecipeKey(mainItemId)
+            val mainRecipe = ItemsAPI.getRecipeKey(mainItemId)
             if (mainRecipe != null && player.hasDiscoveredRecipe(mainRecipe))
                 return@runAsyncTask
 
-            for (id in EmpireUtils.useInCraft(mainItemId))
+            for (id in ItemsAPI.useInCraft(mainItemId))
                 callSyncMethod {
-                    player.discoverRecipe(EmpireUtils.getRecipeKey(id) ?: return@callSyncMethod)
+                    player.discoverRecipe(ItemsAPI.getRecipeKey(id) ?: return@callSyncMethod)
                 }
 
             callSyncMethod {

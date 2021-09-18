@@ -1,5 +1,6 @@
 package com.makeevrserg.empireprojekt.essentials
 
+import com.makeevrserg.empireprojekt.empire_items.api.ItemsAPI
 import com.makeevrserg.empireprojekt.empirelibs.EmpireUtils
 import com.makeevrserg.empireprojekt.empirelibs.IEmpireListener
 import org.bukkit.Material
@@ -19,7 +20,7 @@ class AutoBlockChangeEvent : IEmpireListener {
         val player = e.player
         val blockPlaced = e.blockPlaced
         val itemInHand = player.inventory.itemInMainHand
-        if (EmpireUtils.getEmpireID(itemInHand) != null)
+        if (ItemsAPI.getEmpireID(itemInHand) != null)
             return
         if (blockPlaced.type != itemInHand.type)
             return

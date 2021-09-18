@@ -1,6 +1,9 @@
 package com.makeevrserg.empireprojekt.empire_items.events.villagers
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
+import com.makeevrserg.empireprojekt.empire_items.api.ItemsAPI.asEmpireItem
+import com.makeevrserg.empireprojekt.empire_items.api.ItemsAPI.asEmpireItemOrItem
+import com.makeevrserg.empireprojekt.empire_items.api.ItemsAPI.getEmpireID
 import com.makeevrserg.empireprojekt.empire_items.events.villagers.data.VillagerItem
 import com.makeevrserg.empireprojekt.empirelibs.*
 
@@ -22,6 +25,8 @@ class VillagerEvent : IEmpireListener {
      */
     @EventHandler
     fun villagerAcquireTradeEvent(e: VillagerAcquireTradeEvent) {
+        if (e.entity !is Villager)
+            return
         val villager = e.entity as Villager
         val trades = VillagerManager.villagerTradeByProfession[villager.profession.name] ?: return
         if (e.isCancelled)

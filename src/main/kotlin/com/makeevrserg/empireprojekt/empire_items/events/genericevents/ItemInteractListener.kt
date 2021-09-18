@@ -1,8 +1,9 @@
 package com.makeevrserg.empireprojekt.empire_items.events.genericevents
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
+import com.makeevrserg.empireprojekt.empire_items.api.ItemsAPI.getEmpireID
 import com.makeevrserg.empireprojekt.empirelibs.IEmpireListener
-import com.makeevrserg.empireprojekt.empirelibs.getEmpireID
+
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler

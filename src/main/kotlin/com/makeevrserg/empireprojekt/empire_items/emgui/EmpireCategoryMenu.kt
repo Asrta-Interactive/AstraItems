@@ -4,6 +4,7 @@ import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.empirelibs.menu.PaginatedMenu
 import com.makeevrserg.empireprojekt.empirelibs.menu.PlayerMenuUtility
 import com.makeevrserg.empireprojekt.empirelibs.EmpireUtils
+import com.makeevrserg.empireprojekt.empirelibs.FileManager
 import org.bukkit.Material
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
@@ -18,6 +19,8 @@ class EmpireCategoryMenu(
     override var maxItemsPerPage: Int = 45
     override var slotsAmount: Int = EmpirePlugin.instance.guiCategories.values.elementAt(slot).items.size
     override var maxPages: Int = getMaxPages()
+    override var menuName: String =
+        EmpireUtils.HEXPattern(EmpirePlugin.instance.guiCategories.values.elementAt(slot).title)
     private fun playInventorySound() {
         playerMenuUtility.player.playSound(
             playerMenuUtility.player.location,
@@ -32,8 +35,6 @@ class EmpireCategoryMenu(
     }
 
 
-    override var menuName: String =
-        EmpireUtils.HEXPattern(EmpirePlugin.instance.guiCategories.values.elementAt(slot).title)
 
 
     override fun handleMenu(e: InventoryClickEvent) {

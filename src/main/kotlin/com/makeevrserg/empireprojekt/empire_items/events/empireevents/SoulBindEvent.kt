@@ -2,7 +2,7 @@ package com.makeevrserg.empireprojekt.empire_items.events.empireevents
 
 import com.makeevrserg.empireprojekt.empire_items.util.BetterConstants
 import com.makeevrserg.empireprojekt.empirelibs.IEmpireListener
-import com.makeevrserg.empireprojekt.empirelibs.getEmpireID
+
 import org.bukkit.Location
 import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.PlayerDeathEvent

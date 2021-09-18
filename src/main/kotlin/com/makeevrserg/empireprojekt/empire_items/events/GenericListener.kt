@@ -1,5 +1,6 @@
 package com.makeevrserg.empireprojekt.empire_items.events
 
+import com.makeevrserg.empireprojekt.empire_items.events.decorations.DecorationBlockPlaceEvent
 import com.makeevrserg.empireprojekt.empire_items.events.empireevents.*
 import com.makeevrserg.empireprojekt.empire_items.events.genericevents.BookSignEvent
 import com.makeevrserg.empireprojekt.empire_items.events.genericevents.ExperienceRepairEvent
@@ -48,6 +49,8 @@ class GenericListener() : IEventManager {
         ItemInteractListener().onEnable(this)
         VillagerEvent().onEnable(this)
         PlayerShowRecipeKey().onEnable(this)
+
+        DecorationBlockPlaceEvent().onEnable(this)
 
     }
 

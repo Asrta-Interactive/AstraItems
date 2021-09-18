@@ -1,5 +1,7 @@
 package com.makeevrserg.empireprojekt.empirelibs.menu
 
+import com.makeevrserg.empireprojekt.empirelibs.callSyncMethod
+import com.makeevrserg.empireprojekt.empirelibs.runAsyncTask
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
@@ -46,9 +48,13 @@ public abstract class Menu(open var playerMenuUtility: PlayerMenuUtility) :Inven
      * Open inventory method for Menu class
      */
     fun open() {
-        inventory = Bukkit.createInventory(this, menuSize, menuName)
-        setMenuItems()
-        playerMenuUtility.player.openInventory(inventory)
+        runAsyncTask{
+            inventory = Bukkit.createInventory(this, menuSize, menuName)
+            setMenuItems()
+            callSyncMethod{
+                playerMenuUtility.player.openInventory(inventory)
+            }
+        }
     }
 
     override fun getInventory() = inventory

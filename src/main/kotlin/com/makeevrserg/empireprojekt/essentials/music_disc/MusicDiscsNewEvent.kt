@@ -1,10 +1,10 @@
 package com.makeevrserg.empireprojekt.essentials.music_disc
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
+import com.makeevrserg.empireprojekt.empire_items.api.ItemsAPI.asEmpireItem
+import com.makeevrserg.empireprojekt.empire_items.api.ItemsAPI.getEmpireID
 import com.makeevrserg.empireprojekt.empirelibs.HEX
 import com.makeevrserg.empireprojekt.empirelibs.IEmpireListener
-import com.makeevrserg.empireprojekt.empirelibs.asEmpireItem
-import com.makeevrserg.empireprojekt.empirelibs.getEmpireID
 import com.makeevrserg.empireprojekt.items.data.EmpireItem
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.ChatMessageType

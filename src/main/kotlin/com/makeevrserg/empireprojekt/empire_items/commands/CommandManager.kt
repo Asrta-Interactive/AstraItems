@@ -4,7 +4,6 @@ import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.essentials.sit.SitEvent
 import com.makeevrserg.empireprojekt.empirelibs.menu.PlayerMenuUtility
 import com.makeevrserg.empireprojekt.empire_items.emgui.EmpireCategoriesMenu
-import com.makeevrserg.empireprojekt.empire_items.emgui.EmpireSoundsMenu
 import com.makeevrserg.empireprojekt.empire_items.util.BetterConstants
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
@@ -13,9 +12,11 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.persistence.PersistentDataType
 import com.makeevrserg.empireprojekt.empire_items.util.EmpirePermissions
-import com.makeevrserg.empireprojekt.empire_items.util.ResourcePackNew
+import com.makeevrserg.empireprojekt.empire_items.util.resource_pack.ResourcePackGenerator
+import com.makeevrserg.empireprojekt.empire_items.util.resource_pack.Zipper
 import com.makeevrserg.empireprojekt.empirelibs.EmpireUtils
 import com.makeevrserg.empireprojekt.empirelibs.HEX
+import com.makeevrserg.empireprojekt.empirelibs.runAsyncTask
 import java.io.File
 
 class CommandManager() : CommandExecutor {
@@ -60,11 +61,7 @@ class CommandManager() : CommandExecutor {
                 SitEvent.instance.sitPlayer(sender)
 
         if (label.equals("emgui", ignoreCase = true))
-            EmpireCategoriesMenu(PlayerMenuUtility(sender as Player)).open()
-
-
-        if (label.equals("emsounds", ignoreCase = true))
-            EmpireSoundsMenu(PlayerMenuUtility(sender as Player)).open()
+                EmpireCategoriesMenu(PlayerMenuUtility(sender as Player)).open()
 
 
         if (label.equals("empack", ignoreCase = true))
@@ -83,7 +80,10 @@ class CommandManager() : CommandExecutor {
                 getEmojiBook(sender)
 
         if (label.equals("ezip", ignoreCase = true) && sender.hasPermission(EmpirePermissions.EZIP))
-            eZip(sender)
+            runAsyncTask {
+                eZip(sender)
+            }
+
 
         if (label.equals("ereload", ignoreCase = true) && sender.hasPermission(EmpirePermissions.RELOAD))
             eReload(sender)
@@ -154,8 +154,8 @@ class CommandManager() : CommandExecutor {
      */
     private fun eZip(sender: CommandSender) {
         sender.sendMessage(EmpirePlugin.translations.ZIP_START)
-        ResourcePackNew()
-        if (ResourcePackNew.zipAll(
+        ResourcePackGenerator()
+        if (Zipper.zipAll(
                 plugin.dataFolder.toString() + File.separator + "pack",
                 plugin.dataFolder.toString() + File.separator + "pack" + File.separator + "pack.zip"
             )

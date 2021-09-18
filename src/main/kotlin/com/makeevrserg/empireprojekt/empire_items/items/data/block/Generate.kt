@@ -19,5 +19,5 @@ data class Generate(
     @SerializedName("replace_blocks")
     val replaceBlocks:Map<String,Double>,
     @SerializedName("world")
-    val world:String
+    val world:String?
 )

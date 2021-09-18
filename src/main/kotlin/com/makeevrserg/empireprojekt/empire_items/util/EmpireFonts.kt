@@ -42,8 +42,8 @@ data class EmpireFonts(
 
 
             val fontsInfoMap = fonts.associateBy { ":${it.id}:" }
-            val fontsById = fonts.associate { Pair(it.id,it.chars) }
-            val playerFonts = fonts.filter { !it.sendBlocked }.associate { Pair(it.id,it.chars) }
+            val fontsById = fonts.associate { Pair(":${it.id}:",it.chars) }.toMutableMap()
+            val playerFonts = fonts.filter { !it.sendBlocked }.associate { Pair(":${it.id}:",it.chars) }
 
             val offsets = mapOf(
                 "l_1" to "\uF801",
@@ -75,8 +75,8 @@ data class EmpireFonts(
                 "r_512" to "\uF82D",
                 "r_1024" to "\uF82E"
             )
-//            for ((offset, value) in offsets)
-//                fontsById[":$offset:"] = value
+            for ((offset, value) in offsets)
+                fontsById[":$offset:"] = value
 
             return EmpireFonts(fontsInfoMap, fontsById, playerFonts)
         }

@@ -1,13 +1,15 @@
 package com.makeevrserg.empireprojekt.empire_items.util.crafting
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
+import com.makeevrserg.empireprojekt.empire_items.api.ItemsAPI.asEmpireItemOrItem
+import com.makeevrserg.empireprojekt.empire_items.api.ItemsAPI.getEmpireID
 import com.makeevrserg.empireprojekt.empire_items.util.BetterConstants
 import com.makeevrserg.empireprojekt.empire_items.util.crafting.data.EmpireCraftingTableRecipe
 import com.makeevrserg.empireprojekt.empire_items.util.crafting.data.EmpireFurnaceRecipe
 import com.makeevrserg.empireprojekt.empire_items.util.crafting.data.EmpireShapelessRecipe
 import com.makeevrserg.empireprojekt.empirelibs.EmpireYamlParser
-import com.makeevrserg.empireprojekt.empirelibs.asEmpireItemOrItem
-import com.makeevrserg.empireprojekt.empirelibs.getEmpireID
+
+
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.NamespacedKey

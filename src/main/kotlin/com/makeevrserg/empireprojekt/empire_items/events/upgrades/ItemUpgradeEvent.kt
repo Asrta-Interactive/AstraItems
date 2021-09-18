@@ -1,6 +1,7 @@
 package com.makeevrserg.empireprojekt.empire_items.events.upgrades
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
+import com.makeevrserg.empireprojekt.empire_items.api.ItemsAPI
 import com.makeevrserg.empireprojekt.empire_items.util.BetterConstants
 import com.makeevrserg.empireprojekt.empirelibs.EmpireUtils
 import com.makeevrserg.empireprojekt.empirelibs.IEmpireListener
@@ -170,7 +171,7 @@ class ItemUpgradeEvent : IEmpireListener {
             return
         if (rawSlot != 2)
             return
-        EmpireUtils.getEmpireID((e.inventory as AnvilInventory).getItem(1) ?: return) ?: return
+        ItemsAPI.getEmpireID((e.inventory as AnvilInventory).getItem(1) ?: return) ?: return
         val itemStack: ItemStack = e.currentItem ?: return
         val itemMeta: ItemMeta = itemStack.itemMeta ?: return
 
@@ -193,7 +194,7 @@ class ItemUpgradeEvent : IEmpireListener {
         amount *= EmpirePlugin.empireConfig.itemUpgradeBreakMultiplier * amount
         (itemMeta as Damageable).damage = amount
         itemStack.itemMeta = itemMeta
-        EmpireUtils.manageWithEmpireDurability(itemStack)
+        ItemsAPI.manageWithEmpireDurability(itemStack)
 
         val location = e.whoClicked.location
         if (amount > itemStack.type.maxDurability) {

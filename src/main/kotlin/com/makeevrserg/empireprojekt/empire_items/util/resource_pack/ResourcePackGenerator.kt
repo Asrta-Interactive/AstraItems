@@ -1,8 +1,8 @@
-package com.makeevrserg.empireprojekt.empire_items.util
+package com.makeevrserg.empireprojekt.empire_items.util.resource_pack
 
 import com.google.gson.*
 import com.makeevrserg.empireprojekt.EmpirePlugin
-import com.makeevrserg.empireprojekt.empire_items.events.blocks.MushroomBlockApi
+import com.makeevrserg.empireprojekt.empire_items.api.MushroomBlockApi
 import com.makeevrserg.empireprojekt.items.data.EmpireItem
 import org.apache.commons.lang.StringEscapeUtils
 import org.bukkit.Instrument
@@ -12,7 +12,7 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
 
-class ResourcePackNew {
+class ResourcePackGenerator {
 
     private val plugin = EmpirePlugin.instance
     private fun setPrettyString(file: JsonObject): String {

@@ -1,7 +1,8 @@
 package com.makeevrserg.empireprojekt.empire_items.events.blocks.events
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
-import com.makeevrserg.empireprojekt.empire_items.events.blocks.MushroomBlockApi
+import com.makeevrserg.empireprojekt.empire_items.api.ItemsAPI
+import com.makeevrserg.empireprojekt.empire_items.api.MushroomBlockApi
 import com.makeevrserg.empireprojekt.empirelibs.EmpireUtils
 import com.makeevrserg.empireprojekt.empirelibs.IEmpireListener
 
@@ -25,7 +26,7 @@ class MushroomBlockPlaceEvent:IEmpireListener {
     fun blockPlace(e:BlockPlaceEvent){
         val player = e.player
         val block = e.block
-        val id = EmpireUtils.getEmpireID(player.inventory.itemInMainHand)
+        val id = ItemsAPI.getEmpireID(player.inventory.itemInMainHand)
         val empireBlock = EmpirePlugin.empireItems.empireBlocks[id]?:return
         val empireFacings = MushroomBlockApi.getFacingByData(empireBlock.data)?:return
         block.type = MushroomBlockApi.getMaterialByData(empireBlock.data)

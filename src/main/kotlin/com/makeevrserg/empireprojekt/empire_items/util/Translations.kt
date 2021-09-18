@@ -85,6 +85,7 @@ class Translations {
     )
     val ZIP_SUCCESS: String = translationFile.getHEXString("ZIP_SUCCESS", "#42f596Архивирование успешно завершено")
     val ZIP_ERROR: String = translationFile.getHEXString("ZIP_ERROR", "#f55442Ошибка при упакове ресурс-пака")
+    val CLEAR_ITEMS: String = translationFile.getHEXString("CLEAR_ITEMS", "#42f596Чистятся предметы...")
     val ZIP_ITEMS: String = translationFile.getHEXString("ZIP_ITEMS", "#42f596Создаются предметы...")
     val ZIP_FONTS: String = translationFile.getHEXString("ZIP_FONTS", "#42f596Создаются фонты...")
     val ZIP_SOUND: String = translationFile.getHEXString("ZIP_SOUND", "#42f596Создаются звуки...")

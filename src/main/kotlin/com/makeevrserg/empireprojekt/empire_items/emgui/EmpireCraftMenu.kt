@@ -2,13 +2,14 @@ package com.makeevrserg.empireprojekt.empire_items.emgui
 
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
+import com.makeevrserg.empireprojekt.empire_items.api.ItemsAPI
+import com.makeevrserg.empireprojekt.empire_items.api.ItemsAPI.asEmpireItem
 import com.makeevrserg.empireprojekt.empire_items.events.genericevents.drop.data.ItemDrop
 import com.makeevrserg.empireprojekt.empire_items.events.upgrades.ItemUpgradeEvent
 import com.makeevrserg.empireprojekt.empire_items.events.villagers.VillagerManager
 import com.makeevrserg.empireprojekt.empire_items.util.EmpirePermissions
 import com.makeevrserg.empireprojekt.empire_items.util.crafting.CraftingManager
 import com.makeevrserg.empireprojekt.empirelibs.EmpireUtils
-import com.makeevrserg.empireprojekt.empirelibs.asEmpireItem
 import com.makeevrserg.empireprojekt.empirelibs.menu.PaginatedMenu
 import com.makeevrserg.empireprojekt.empirelibs.menu.PlayerMenuUtility
 import org.bukkit.Bukkit
@@ -67,7 +68,7 @@ class EmpireCraftMenu(
             }
         } else if (arrayOf(11, 12, 13, 20, 21, 22, 29, 30, 31, 36, 37, 38, 39, 40, 41, 42, 43, 44).contains(e.slot)) {
             val itemStack = inventory.getItem(e.slot) ?: return
-            val id = EmpireUtils.getEmpireID(itemStack) ?: itemStack.type.name
+            val id = ItemsAPI.getEmpireID(itemStack) ?: itemStack.type.name
             playerMenuUtility.previousItems.add(item)
             EmpireCraftMenu(playerMenuUtility, slot, categoryPage, id, 0).open()
 

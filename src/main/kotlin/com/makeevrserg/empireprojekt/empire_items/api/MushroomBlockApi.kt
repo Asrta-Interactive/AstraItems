@@ -1,4 +1,4 @@
-package com.makeevrserg.empireprojekt.empire_items.events.blocks
+package com.makeevrserg.empireprojekt.empire_items.api
 
 import com.google.gson.annotations.SerializedName
 import org.bukkit.Material
@@ -11,6 +11,7 @@ class MushroomBlockApi {
 
 
     data class Apply(val model:String?)
+
     data class Multipart(
         @SerializedName("when")
         var facing: Map<String, Boolean> = getFaceMap(),
