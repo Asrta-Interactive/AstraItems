@@ -4,9 +4,13 @@ import com.makeevrserg.empireprojekt.empire_items.api.DecorationBlockAPI
 import com.makeevrserg.empireprojekt.empire_items.api.ItemsAPI.getEmpireID
 import com.makeevrserg.empireprojekt.empirelibs.IEmpireListener
 import org.bukkit.Material
+import org.bukkit.entity.ItemFrame
 import org.bukkit.event.EventHandler
 import org.bukkit.event.block.Action
 import org.bukkit.event.block.BlockPlaceEvent
+import org.bukkit.event.entity.EntityDamageByEntityEvent
+import org.bukkit.event.entity.EntityInteractEvent
+import org.bukkit.event.player.PlayerInteractEntityEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
 

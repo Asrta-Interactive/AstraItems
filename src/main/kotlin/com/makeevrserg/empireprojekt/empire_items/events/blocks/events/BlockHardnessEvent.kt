@@ -1,6 +1,7 @@
 package com.makeevrserg.empireprojekt.empire_items.events.blocks.events
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
+import com.makeevrserg.empireprojekt.empire_items.api.ItemsAPI
 import com.makeevrserg.empireprojekt.empire_items.api.MushroomBlockApi
 import com.makeevrserg.empireprojekt.empirelibs.IEmpireListener
 import net.minecraft.core.BlockPosition
@@ -72,8 +73,8 @@ class BlockHardnessEvent : IEmpireListener {
         val block = e.player.getTargetBlock(null, 100)
         val player = e.player
         val data = MushroomBlockApi.getBlockData(block) ?: return
-        val id = EmpirePlugin.empireItems.empireBlocksByData[data] ?: return
-        val empireBlock = EmpirePlugin.empireItems.empireBlocks[id] ?: return
+        val id = ItemsAPI.getEmpireBlockIdByData(data)?: return
+        val empireBlock = ItemsAPI.getEmpireBlockInfoById(id)?: return
         empireBlock.hardness?:return
         val digMultiplier = e.player.inventory.itemInMainHand.enchantments[Enchantment.DIG_SPEED] ?: 1
         val time = (System.currentTimeMillis().minus(blockDamageMap[e.player]?.time ?: return) / 10.0) * digMultiplier

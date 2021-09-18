@@ -2,6 +2,7 @@ package com.makeevrserg.empireprojekt.empire_items.util.resource_pack
 
 import com.google.gson.*
 import com.makeevrserg.empireprojekt.EmpirePlugin
+import com.makeevrserg.empireprojekt.empire_items.api.ItemsAPI
 import com.makeevrserg.empireprojekt.empire_items.api.MushroomBlockApi
 import com.makeevrserg.empireprojekt.items.data.EmpireItem
 import org.apache.commons.lang.StringEscapeUtils
@@ -254,8 +255,8 @@ class ResourcePackGenerator {
 
 
     private fun generateItems() {
-        val items = EmpirePlugin.empireItems.itemsInfo
-        for (item in items) {
+        val items = ItemsAPI.getEmpireItemsInfo()
+        for ((id,item) in items) {
             val filePath = getMinecraftItemModelPath(item.material)
             val minecraftModelFile = File(filePath)
             if (!minecraftModelFile.exists()) {
@@ -346,9 +347,8 @@ class ResourcePackGenerator {
 
 
 
-        for (item in EmpirePlugin.empireItems.itemsInfo) {
-            val id = item.id
-            val empireBlock = EmpirePlugin.empireItems.empireBlocks[id] ?: continue
+        for ((id,item) in ItemsAPI.getEmpireItemsInfo()) {
+            val empireBlock = ItemsAPI.getEmpireBlockInfoById(id) ?: continue
             val multipart = MushroomBlockApi.getFacingByData(empireBlock.data) ?: continue
             multipart.apply = MushroomBlockApi.Apply("${item.namespace}:${item.modelPath ?: "auto_generated/${id}"}")
 

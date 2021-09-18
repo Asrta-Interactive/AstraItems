@@ -69,6 +69,13 @@
             <id>everything</id>
             <url>http://repo.citizensnpcs.co/</url>
         </repository>
+
+
+
+
+
+
+
     </repositories>
 
     <build>
@@ -172,6 +179,12 @@
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
+
+
+
+
+
+
     </dependencies>
 
 </project>

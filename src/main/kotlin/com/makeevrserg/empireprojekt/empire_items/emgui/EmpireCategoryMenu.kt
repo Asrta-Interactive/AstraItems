@@ -1,6 +1,7 @@
 package com.makeevrserg.empireprojekt.empire_items.emgui
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
+import com.makeevrserg.empireprojekt.empire_items.api.ItemsAPI
 import com.makeevrserg.empireprojekt.empirelibs.menu.PaginatedMenu
 import com.makeevrserg.empireprojekt.empirelibs.menu.PlayerMenuUtility
 import com.makeevrserg.empireprojekt.empirelibs.EmpireUtils
@@ -21,6 +22,7 @@ class EmpireCategoryMenu(
     override var maxPages: Int = getMaxPages()
     override var menuName: String =
         EmpireUtils.HEXPattern(EmpirePlugin.instance.guiCategories.values.elementAt(slot).title)
+
     private fun playInventorySound() {
         playerMenuUtility.player.playSound(
             playerMenuUtility.player.location,
@@ -33,8 +35,6 @@ class EmpireCategoryMenu(
     init {
         playInventorySound()
     }
-
-
 
 
     override fun handleMenu(e: InventoryClickEvent) {
@@ -79,9 +79,13 @@ class EmpireCategoryMenu(
 
             val menuItem: String = EmpirePlugin.instance.guiCategories.values.elementAt(slot).items[index]
 
-            val itemStack: ItemStack = EmpirePlugin.empireItems.empireItems[menuItem]?.clone() ?: (ItemStack(
-                Material.getMaterial(menuItem) ?: Material.PAPER
-            ))
+            val itemStack: ItemStack = ItemsAPI.getEmpireItemStackOrItemStack(menuItem)?.clone() ?: (ItemStack(
+                Material.PAPER
+            )).apply {
+                val meta = itemMeta
+                meta?.setDisplayName(menuItem) ?: return@apply
+                itemMeta = meta
+            }
 
             inventory.setItem(i, itemStack.clone())
         }

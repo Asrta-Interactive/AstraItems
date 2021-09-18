@@ -65,8 +65,6 @@ data class EmpireItem(
 
 
 
-
-
     private fun addItemFlags(itemMeta: ItemMeta) {
         for (flag in itemFlags ?: return) {
             itemMeta.addItemFlags(valueOfOrNull(flag) ?: continue)

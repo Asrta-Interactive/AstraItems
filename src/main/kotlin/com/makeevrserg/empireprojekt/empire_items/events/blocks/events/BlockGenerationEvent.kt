@@ -1,6 +1,7 @@
 package com.makeevrserg.empireprojekt.empire_items.events.blocks.events
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
+import com.makeevrserg.empireprojekt.empire_items.api.ItemsAPI
 import com.makeevrserg.empireprojekt.empire_items.api.MushroomBlockApi
 import com.makeevrserg.empireprojekt.empirelibs.IEmpireListener
 import com.makeevrserg.empireprojekt.empirelibs.callSyncMethod
@@ -21,7 +22,7 @@ import kotlin.random.Random
 
 class BlockGenerationEvent : IEmpireListener {
 
-    val blocks = EmpirePlugin.empireItems.empireBlocks
+    val blocks = ItemsAPI.getEmpireBlocks()
     private val activeChunks = mutableListOf<Chunk>()
     private var inactiveChunks = mutableListOf<Chunk>()
     private val activeTasks = mutableListOf<BukkitTask>()

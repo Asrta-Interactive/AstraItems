@@ -5,6 +5,10 @@ import com.makeevrserg.empireprojekt.empire_items.util.BetterConstants
 import com.makeevrserg.empireprojekt.empire_items.util.crafting.CraftingManager
 import com.makeevrserg.empireprojekt.empirelibs.EmpireUtils
 import com.makeevrserg.empireprojekt.empirelibs.FileManager
+import com.makeevrserg.empireprojekt.items.data.EmpireItem
+import com.makeevrserg.empireprojekt.items.data.block.Block
+import com.makeevrserg.empireprojekt.items.data.decoration.Decoration
+import com.makeevrserg.empireprojekt.items.data.interact.Interact
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.inventory.ItemStack
@@ -13,28 +17,77 @@ import org.bukkit.persistence.PersistentDataType
 
 object ItemsAPI {
 
-    /**
-     * Список локаций предметов.
-     * Предмет - Файл, в котором он лежит
-     */
-    private val itemLocation = mutableMapOf<String,FileManager>()
-    fun clearLocation() = itemLocation.clear()
-    fun addLocation(itemId:String,file:FileManager){
-        itemLocation[itemId] = file
+
+    private var empireItemStackById: MutableMap<String, ItemStack> = mutableMapOf()
+    private var empireBlockInfoById: MutableMap<String, Block> = mutableMapOf()
+    private var empireDecorationInfoById: MutableMap<String, Decoration> = mutableMapOf()
+    private var empireBlockIdByData: MutableMap<Int, String> = mutableMapOf()
+    private var empireItemsInfoById: MutableMap<String, EmpireItem> = mutableMapOf()
+    private var empireEventsById: MutableMap<String, List<Interact>> = mutableMapOf()
+    private var empireDiscsById: MutableMap<String, EmpireItem> = mutableMapOf()
+
+
+    fun clear(){
+        empireItemStackById.clear()
+        empireBlockInfoById.clear()
+        empireDecorationInfoById.clear()
+        empireBlockIdByData.clear()
+        empireItemsInfoById.clear()
+        empireEventsById.clear()
+        empireDiscsById.clear()
     }
+    fun init(empireItemsInfo:List<EmpireItem>){
+        empireItemStackById = empireItemsInfo.filter { it.getItemStack()!=null }.associate { Pair(it.id,it.getItemStack()!!) }.toMutableMap()
+        empireBlockInfoById = empireItemsInfo.filter { it.block!=null }.associate { Pair(it.id,it.block!!) }.toMutableMap()
+        empireDecorationInfoById = empireItemsInfo.filter { it.decoration!=null }.associate { Pair(it.id,it.decoration!!) }.toMutableMap()
+        empireBlockIdByData = empireItemsInfo.filter { it.block!=null }.associate { Pair(it.block!!.data,it.id) }.toMutableMap()
+        empireItemsInfoById = empireItemsInfo.associateBy { it.id }.toMutableMap()
+        empireEventsById = empireItemsInfo.filter { it.interact!=null }.associate { Pair(it.id,it.interact!!) }.toMutableMap()
+        empireDiscsById = empireItemsInfo.filter { it.musicDisc!=null }.associateBy { it.id }.toMutableMap()
+    }
+
+
+    fun getEmpireItemStacks() = empireItemStackById
+    fun getEmpireItemsInfo() = empireItemsInfoById
+    fun getEmpireBlocks() = empireBlockInfoById
+    fun getEmpireBlockIdByData(data:Int) = empireBlockIdByData[data]
+    fun getEventByItemId(id:String) = empireEventsById[id]
+    fun getEmpireItemStack(id: String?): ItemStack? {
+        return empireItemStackById[id ?: return null]
+    }
+
+    fun getEmpireItemStackOrItemStack(id: String): ItemStack? {
+        return empireItemStackById[id] ?: ItemStack(Material.getMaterial(id) ?: return null)
+    }
+
+    fun getEmpireItemInfo(id: String) = empireItemsInfoById[id]
+    fun getEmpireBlockInfoById(id: String) = empireBlockInfoById[id]
+    fun isEmpireItem(id: String) = empireItemsInfoById.containsKey(id)
+
+
+    fun String?.getEmpireItem() = getEmpireItemStack(this)
+    fun String?.asEmpireItem() = getEmpireItemStack(this)
+
+    fun String?.asEmpireItemOrItem(): ItemStack? {
+        return this.asEmpireItem() ?: ItemStack(Material.getMaterial(this ?: return null) ?: return null)
+    }
+
+    @JvmName("getEmpireID1")
+    fun ItemStack?.getEmpireID(): String? {
+        return getEmpireID(this)
+    }
+
 
     fun getRecipeKey(id: String?): NamespacedKey? {
         id ?: return null
-        if (!EmpirePlugin.empireItems.empireItems.containsKey(id))
+        if (isEmpireItem(id))
             return null
         return NamespacedKey(EmpirePlugin.instance, BetterConstants.CUSTOM_RECIPE_KEY.name + id)
     }
 
     fun useInCraft(item: String): MutableSet<String> {
-        val itemStack = EmpirePlugin.empireItems.empireItems[item] ?: ItemStack(
-            Material.getMaterial(item) ?: return mutableSetOf()
-        )
         val set = mutableSetOf<String>()
+        val itemStack = getEmpireItemStackOrItemStack(item) ?: return set
 
         for (itemResult in EmpirePlugin.instance.recipies.keys) {
             val itemRecipies: CraftingManager.EmpireRecipe =
@@ -48,14 +101,6 @@ object ItemsAPI {
         }
         return set
 
-    }
-
-    fun getItemStackByID(id: String): ItemStack? {
-        return EmpirePlugin.empireItems.empireItems[id] ?: ItemStack(Material.getMaterial(id) ?: return null)
-    }
-
-    fun getItemStackByName(str: String): ItemStack {
-        return EmpirePlugin.empireItems.empireItems[str] ?: ItemStack(Material.getMaterial(str) ?: Material.PAPER)
     }
 
 
@@ -96,21 +141,4 @@ object ItemsAPI {
 
     }
 
-    fun String?.getEmpireItem(): ItemStack? {
-        return EmpirePlugin.empireItems.empireItems[this]
-    }
-
-
-    fun String?.asEmpireItem(): ItemStack? {
-        return EmpirePlugin.empireItems.empireItems[this]
-    }
-
-    fun String?.asEmpireItemOrItem(): ItemStack? {
-        return this.asEmpireItem() ?: ItemStack(Material.getMaterial(this ?: return null) ?: return null)
-    }
-
-    @JvmName("getEmpireID1")
-    fun ItemStack?.getEmpireID(): String? {
-        return getEmpireID(this)
-    }
 }

@@ -16,7 +16,7 @@ import kotlin.math.floor
 
 object DecorationBlockAPI {
 
-    private fun decorationByID(id: String) = EmpirePlugin.empireItems.empireDecorations[id]
+    private fun decorationByID(id: String) = ItemsAPI.getEmpireItemInfo(id)?.decoration
 
 
     fun checkForBoundingBox(decoration: Decoration, location: Location): Boolean {
@@ -113,6 +113,7 @@ object DecorationBlockAPI {
                 if (getRotation(it))
                     itemFrame.setFacingDirection(fotateMap[it] ?: return@forEach)
             }
+
 
         val flipMap = mapOf(
             0 to Rotation.FLIPPED,

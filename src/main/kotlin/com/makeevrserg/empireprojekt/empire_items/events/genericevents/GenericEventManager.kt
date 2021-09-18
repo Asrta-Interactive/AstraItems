@@ -2,6 +2,7 @@ package com.makeevrserg.empireprojekt.empire_items.events.genericevents
 
 import com.destroystokyo.paper.ParticleBuilder
 import com.makeevrserg.empireprojekt.EmpirePlugin
+import com.makeevrserg.empireprojekt.empire_items.api.ItemsAPI
 import com.makeevrserg.empireprojekt.items.data.interact.CommandEvent
 import com.makeevrserg.empireprojekt.items.data.interact.ParticleEvent
 import com.makeevrserg.empireprojekt.items.data.interact.PotionEffectEvent
@@ -103,7 +104,7 @@ class GenericEventManager {
             val humanEntity = p as HumanEntity
             if (humanEntity.hasCooldown(p.inventory.itemInMainHand.type))
                 return
-            val events = EmpirePlugin.empireItems.empireEvents[id] ?: return
+            val events = ItemsAPI.getEventByItemId(id) ?: return
             for (event in events) {
                 event.eventList ?: return
                 if (eventName !in event.eventList)

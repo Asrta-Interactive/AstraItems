@@ -37,7 +37,7 @@ class EmpireCraftMenu(
 
 
     private fun getItemName(): String {
-        val meta = EmpirePlugin.empireItems.empireItems[item]?.itemMeta
+        val meta = ItemsAPI.getEmpireItemStack(item)?.itemMeta
         return meta?.displayName ?: item
     }
 
@@ -76,7 +76,7 @@ class EmpireCraftMenu(
             if (!playerMenuUtility.player.hasPermission("empireitems.give"))
                 return
             playerMenuUtility.player.inventory
-                .addItem(EmpirePlugin.empireItems.empireItems[item] ?: ItemStack(Material.getMaterial(item) ?: return))
+                .addItem(ItemsAPI.getEmpireItemStackOrItemStack(item) ?: return)
         } else if (e.slot == getNextButtonIndex()) {
             if (isLastPage())
                 return
@@ -142,10 +142,8 @@ class EmpireCraftMenu(
     }
 
     private fun useInCraft(item: String): Set<String> {
-        val itemStack = EmpirePlugin.empireItems.empireItems[item]?.clone() ?: ItemStack(
-            Material.getMaterial(item) ?: return mutableSetOf()
-        )
         val set = mutableSetOf<String>()
+        val itemStack = ItemsAPI.getEmpireItemStackOrItemStack(item)?:return set
 
         for (itemResult in EmpirePlugin.instance.recipies.keys) {
             val itemRecipies: CraftingManager.EmpireRecipe =
@@ -174,8 +172,7 @@ class EmpireCraftMenu(
                 return
             inventory.setItem(
                 invPosition++,
-                EmpirePlugin.empireItems.empireItems[itemsToCraft[index]]
-                    ?: ItemStack(Material.getMaterial(itemsToCraft[index]) ?: continue)
+                ItemsAPI.getEmpireItemStackOrItemStack(itemsToCraft[index])?:continue
             )
         }
     }
@@ -183,13 +180,13 @@ class EmpireCraftMenu(
 
     private fun setWorkbenchButton() {
         inventory.setItem(
-            7,EmpirePlugin.instance.guiSettings.craftingTableButton.asEmpireItem()?:return
+            7, EmpirePlugin.instance.guiSettings.craftingTableButton.asEmpireItem() ?: return
         )
     }
 
     private fun setFurnaceButton() {
         inventory.setItem(
-            8, EmpirePlugin.instance.guiSettings.furnaceButton.asEmpireItem()?:return
+            8, EmpirePlugin.instance.guiSettings.furnaceButton.asEmpireItem() ?: return
         )
     }
 
@@ -210,10 +207,10 @@ class EmpireCraftMenu(
             return false
         }
 
-        val itemStack = EmpirePlugin.instance.guiSettings.dropButton.asEmpireItem()?.clone()?:return null
+        val itemStack = EmpirePlugin.instance.guiSettings.dropButton.asEmpireItem()?.clone() ?: return null
         val itemMeta = itemStack.itemMeta
         val upgrades = EmpirePlugin.upgradeManager._upgradesMap[item] ?: return null
-        itemMeta!!.setDisplayName(EmpirePlugin.translations.ITEM_INFO_DROP_COLOR+EmpirePlugin.translations.ITEM_INFO_IMPROVING)
+        itemMeta!!.setDisplayName(EmpirePlugin.translations.ITEM_INFO_DROP_COLOR + EmpirePlugin.translations.ITEM_INFO_IMPROVING)
         val lore = itemMeta.lore ?: mutableListOf()
         for (upgrade in upgrades) {
             if (!containValue(ItemUpgradeEvent.attrMap[upgrade.attribute.name] ?: continue, lore))
@@ -228,10 +225,10 @@ class EmpireCraftMenu(
     }
 
     private fun setDrop(): ItemStack? {
-        val itemStack = EmpirePlugin.instance.guiSettings.dropButton.asEmpireItem()?.clone()?:return null
+        val itemStack = EmpirePlugin.instance.guiSettings.dropButton.asEmpireItem()?.clone() ?: return null
         val itemMeta = itemStack.itemMeta
 
-        itemMeta!!.setDisplayName(EmpirePlugin.translations.ITEM_INFO_DROP_COLOR+EmpirePlugin.translations.ITEM_INFO_DROP)
+        itemMeta!!.setDisplayName(EmpirePlugin.translations.ITEM_INFO_DROP_COLOR + EmpirePlugin.translations.ITEM_INFO_DROP)
         val everyDropByItem: MutableMap<String, MutableList<ItemDrop>> =
             EmpirePlugin.dropManager.everyDropByItem
         everyDropByItem[item] ?: return null
@@ -245,10 +242,10 @@ class EmpireCraftMenu(
     }
 
     private fun setBlockGenerate(): ItemStack? {
-        val itemStack = EmpirePlugin.instance.guiSettings.dropButton.asEmpireItem()?.clone()?:return null
+        val itemStack = EmpirePlugin.instance.guiSettings.dropButton.asEmpireItem()?.clone() ?: return null
         val itemMeta = itemStack.itemMeta
         itemMeta!!.setDisplayName(EmpirePlugin.translations.ITEM_INFO_GENERATE)
-        val itemInfo = EmpirePlugin.empireItems.empireBlocks[item] ?: return null
+        val itemInfo = ItemsAPI.getEmpireItemInfo(item)?.block?: return null
         val generate = itemInfo.generate ?: return null
         val lore = mutableListOf<String>()
         lore.add("${EmpirePlugin.translations.ITEM_INFO_DROP_COLOR}Макс в чанке: ${generate.maxPerChunk}")
@@ -257,23 +254,23 @@ class EmpireCraftMenu(
         lore.add("${EmpirePlugin.translations.ITEM_INFO_DROP_COLOR}Появляется на высоте: [${generate.minY};${generate.maxY}]")
         lore.add("${EmpirePlugin.translations.ITEM_INFO_DROP_COLOR}Количество в месторождении: [${generate.minPerDeposite};${generate.maxPerDeposite}]")
         itemMeta.lore = lore
-        itemMeta.setDisplayName(EmpirePlugin.translations.ITEM_INFO_DROP_COLOR+EmpirePlugin.translations.ITEM_INFO_GENERATE)
+        itemMeta.setDisplayName(EmpirePlugin.translations.ITEM_INFO_DROP_COLOR + EmpirePlugin.translations.ITEM_INFO_GENERATE)
         itemStack.itemMeta = itemMeta
         return itemStack
     }
 
     private fun setNPCSell(): ItemStack? {
-        val itemStack = EmpirePlugin.instance.guiSettings.dropButton.asEmpireItem()?.clone()?:return null
+        val itemStack = EmpirePlugin.instance.guiSettings.dropButton.asEmpireItem()?.clone() ?: return null
         val itemMeta = itemStack.itemMeta
         itemMeta!!.setDisplayName(EmpirePlugin.translations.ITEM_INFO_GENERATE)
-        val villagers = VillagerManager.professionsByItem(item)?: return null
+        val villagers = VillagerManager.professionsByItem(item) ?: return null
         val lore = mutableListOf<String>()
         for (villager in villagers)
             lore.add("${EmpirePlugin.translations.ITEM_INFO_DROP_COLOR}$villager")
 
 
         itemMeta.lore = lore
-        itemMeta.setDisplayName(EmpirePlugin.translations.ITEM_INFO_DROP_COLOR+EmpirePlugin.translations.ITEM_INFO_VILLAGER_BUY)
+        itemMeta.setDisplayName(EmpirePlugin.translations.ITEM_INFO_DROP_COLOR + EmpirePlugin.translations.ITEM_INFO_VILLAGER_BUY)
         itemStack.itemMeta = itemMeta
         return itemStack
     }
@@ -286,7 +283,7 @@ class EmpireCraftMenu(
             25,
 
             Bukkit.getRecipe(NamespacedKey(EmpirePlugin.instance, item))?.result
-                ?: EmpirePlugin.empireItems.empireItems[item]
+                ?:ItemsAPI.getEmpireItemStack(item)
                 ?: ItemStack(
                     Material.getMaterial(item) ?: Material.PAPER
                 )
@@ -311,7 +308,7 @@ class EmpireCraftMenu(
         if (playerMenuUtility.player.hasPermission(EmpirePermissions.EMPGIVE))
             inventory.setItem(
                 34,
-                EmpirePlugin.instance.guiSettings.giveButton.asEmpireItem()?:return
+                EmpirePlugin.instance.guiSettings.giveButton.asEmpireItem() ?: return
             )
 
 

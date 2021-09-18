@@ -1,6 +1,7 @@
 package com.makeevrserg.empireprojekt.empirelibs.menu
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
+import com.makeevrserg.empireprojekt.empire_items.api.ItemsAPI
 import org.bukkit.Material
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
@@ -83,8 +84,7 @@ abstract class PaginatedMenu(playerMenuUtility: PlayerMenuUtility?) : Menu(playe
     private fun setManageButton(page: String, id: String?): ItemStack {
 
         id ?: return ItemStack(Material.PAPER)
-        val items = EmpirePlugin.empireItems.empireItems
-        val itemStack = items[id] ?: ItemStack(Material.PAPER)
+        val itemStack = ItemsAPI.getEmpireItemStack(id) ?: ItemStack(Material.PAPER)
         val itemMeta = itemStack.itemMeta?:return itemStack
         itemMeta.setDisplayName(page)
         itemStack.itemMeta = itemMeta

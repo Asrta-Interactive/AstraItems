@@ -26,8 +26,8 @@ class MushroomBlockPlaceEvent:IEmpireListener {
     fun blockPlace(e:BlockPlaceEvent){
         val player = e.player
         val block = e.block
-        val id = ItemsAPI.getEmpireID(player.inventory.itemInMainHand)
-        val empireBlock = EmpirePlugin.empireItems.empireBlocks[id]?:return
+        val id = ItemsAPI.getEmpireID(player.inventory.itemInMainHand)?:return
+        val empireBlock = ItemsAPI.getEmpireBlockInfoById(id)?:return
         val empireFacings = MushroomBlockApi.getFacingByData(empireBlock.data)?:return
         block.type = MushroomBlockApi.getMaterialByData(empireBlock.data)
         val facing = block.blockData as MultipleFacing

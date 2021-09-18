@@ -1,6 +1,7 @@
 package com.makeevrserg.empireprojekt.essentials.music_disc
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
+import com.makeevrserg.empireprojekt.empire_items.api.ItemsAPI
 import com.makeevrserg.empireprojekt.empire_items.api.ItemsAPI.asEmpireItem
 import com.makeevrserg.empireprojekt.empire_items.api.ItemsAPI.getEmpireID
 import com.makeevrserg.empireprojekt.empirelibs.HEX
@@ -61,7 +62,7 @@ class MusicDiscsNewEvent : IEmpireListener {
             e.isCancelled = true
 
         } else {
-            val musicDisc = EmpirePlugin.empireItems.empireDiscs[e.item.getEmpireID() ?: return] ?: return
+            val musicDisc = ItemsAPI.getEmpireItemInfo(e.item.getEmpireID()?:return)?: return
             e.item!!.amount -= 1
             playMusic(musicDisc, jukebox.location)
             e.isCancelled = true

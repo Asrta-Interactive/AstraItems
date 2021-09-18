@@ -30,7 +30,7 @@ class EmpireYamlParser {
             return map
         }
 
-        private fun getMap(fc: FileConfiguration?): MutableMap<String, Any>? {
+        fun getMap(fc: FileConfiguration?): MutableMap<String, Any>? {
             fc ?: return null
 
             val map = mutableMapOf<String, Any>()
@@ -65,7 +65,7 @@ class EmpireYamlParser {
             map: MutableMap<String, Any>?,
             type: Type,
             paths: List<String>?,
-            file: String
+            file: String?=null
         ): T? {
             return try {
                 fromJson(map, type, paths)
@@ -74,6 +74,16 @@ class EmpireYamlParser {
 //                println(e.stackTraceToString())
                 return null
             }
+        }
+
+        public fun <T> fromExistedMap(map:MutableMap<String, Any>?, type: Type, paths: List<String>? = null): T? {
+            return try {
+                returnTry<T>(map, type, paths)
+            }catch (e:Exception){
+                null
+            }
+
+
         }
 
         public fun <T> fromYAML(file: FileConfiguration?, type: Type, paths: List<String>? = null): T? {

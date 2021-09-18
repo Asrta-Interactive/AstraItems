@@ -2,6 +2,7 @@ package com.makeevrserg.empireprojekt.empire_items.commands
 
 import com.makeevrserg.empireprojekt.npc.NPCManager
 import com.makeevrserg.empireprojekt.EmpirePlugin
+import com.makeevrserg.empireprojekt.empire_items.api.ItemsAPI
 import com.makeevrserg.empireprojekt.empirelibs.withEntry
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -9,7 +10,7 @@ import org.bukkit.command.TabCompleter
 
 class EmpireTabCompleter() : TabCompleter {
 
-    val empireItems = EmpirePlugin.empireItems.empireItems.keys.toList()
+    val empireItems =ItemsAPI.getEmpireItemsInfo().keys.toList()
 
     //Доделать
     override fun onTabComplete(

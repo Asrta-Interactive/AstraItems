@@ -1,6 +1,7 @@
 package com.makeevrserg.empireprojekt.empire_items.commands
 
 import com.makeevrserg.empireprojekt.EmpirePlugin
+import com.makeevrserg.empireprojekt.empire_items.api.ItemsAPI
 import com.makeevrserg.empireprojekt.essentials.sit.SitEvent
 import com.makeevrserg.empireprojekt.empirelibs.menu.PlayerMenuUtility
 import com.makeevrserg.empireprojekt.empire_items.emgui.EmpireCategoriesMenu
@@ -61,7 +62,7 @@ class CommandManager() : CommandExecutor {
                 SitEvent.instance.sitPlayer(sender)
 
         if (label.equals("emgui", ignoreCase = true))
-                EmpireCategoriesMenu(PlayerMenuUtility(sender as Player)).open()
+            EmpireCategoriesMenu(PlayerMenuUtility(sender as Player)).open()
 
 
         if (label.equals("empack", ignoreCase = true))
@@ -96,11 +97,11 @@ class CommandManager() : CommandExecutor {
      * Выдает игроку предмет
      */
     private fun giveItem(sender: CommandSender, playerName: String, item: String, count: Int) {
-        if (EmpirePlugin.empireItems.empireItems.containsKey(item)) {
+        if (ItemsAPI.isEmpireItem(item)) {
             val player: Player = Bukkit.getPlayer(playerName) ?: return
             player.sendMessage(EmpirePlugin.translations.ITEM_GAINED + "$count $item")
             sender.sendMessage(EmpirePlugin.translations.ITEM_GIVE + " $item:$count -> $playerName")
-            val itemStack = EmpirePlugin.empireItems.empireItems[item]?.clone() ?: return
+            val itemStack = ItemsAPI.getEmpireItemStack(item)?.clone() ?: return
             itemStack.amount = count
             player.inventory.addItem(itemStack)
         } else
@@ -120,7 +121,7 @@ class CommandManager() : CommandExecutor {
         val amount = item.amount
 
         val durability = item.durability
-        item = EmpirePlugin.empireItems.empireItems[id]?.clone() ?: return true
+        item = ItemsAPI.getEmpireItemStack(id)?.clone() ?: return true
         item.amount = amount
         item.durability = durability
         sender.inventory.setItemInMainHand(item)
@@ -147,6 +148,7 @@ class CommandManager() : CommandExecutor {
         plugin.disablePlugin()
         plugin.initPlugin()
         sender.sendMessage(EmpirePlugin.translations.RELOAD_COMPLETE)
+
     }
 
     /**
