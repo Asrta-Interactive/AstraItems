@@ -257,6 +257,8 @@ class ResourcePackGenerator {
     private fun generateItems() {
         val items = ItemsAPI.getEmpireItemsInfo()
         for ((id,item) in items) {
+            if (item.customModelData==0)
+                continue
             val filePath = getMinecraftItemModelPath(item.material)
             val minecraftModelFile = File(filePath)
             if (!minecraftModelFile.exists()) {

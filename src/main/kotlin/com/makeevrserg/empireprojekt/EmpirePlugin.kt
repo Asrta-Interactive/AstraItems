@@ -238,10 +238,6 @@ class EmpirePlugin : JavaPlugin() {
             }
         }
 
-
-//        database.onDisable()
-//        empireRating.onDisable()
-
         empireCredit.onDisable()
 
         npcManager!!.onDisable()

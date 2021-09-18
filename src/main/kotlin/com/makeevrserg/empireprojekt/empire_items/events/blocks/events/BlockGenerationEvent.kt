@@ -162,23 +162,22 @@ class BlockGenerationEvent : IEmpireListener {
     }
 
     private fun removeChunkFromTask(chunk: Chunk) {
-        runAsyncTask {
-            synchronized(this) {
-                inactiveChunks.remove(chunk)
-                activeChunks.remove(chunk)
-                if (inactiveChunks.isNotEmpty()) {
-                    val newChunk = inactiveChunks.elementAt(0)
-                    inactiveChunks.removeAt(0)
-                    if (activeChunks.size < 5) {
-                        activeChunks.add(newChunk)
-                        generateChunk(newChunk)
-                    }
+        synchronized(this) {
+            inactiveChunks.remove(chunk)
+            activeChunks.remove(chunk)
+            if (inactiveChunks.isNotEmpty()) {
+                val newChunk = inactiveChunks.elementAt(0)
+                inactiveChunks.removeAt(0)
+                if (activeChunks.size < 2) {
+                    activeChunks.add(newChunk)
+                    generateChunk(newChunk)
                 }
-                for (task in activeTasks.toList())
-                    if (!Bukkit.getScheduler().pendingTasks.contains(task))
-                        activeTasks.remove(task)
             }
+            for (task in activeTasks.toList())
+                if (!Bukkit.getScheduler().pendingTasks.contains(task))
+                    activeTasks.remove(task)
         }
+
     }
 
     @EventHandler
@@ -224,7 +223,7 @@ class BlockGenerationEvent : IEmpireListener {
     @EventHandler
     fun playerJoinEvent(e: PlayerQuitEvent) {
 
-                removeChunkFromTask(e.player.location.chunk)
+        removeChunkFromTask(e.player.location.chunk)
 
     }
 
