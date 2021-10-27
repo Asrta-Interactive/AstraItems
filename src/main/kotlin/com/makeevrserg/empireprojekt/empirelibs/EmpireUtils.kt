@@ -2,13 +2,9 @@ package com.makeevrserg.empireprojekt.empirelibs
 
 import com.google.gson.JsonParser
 import com.makeevrserg.empireprojekt.EmpirePlugin
-import com.makeevrserg.empireprojekt.empire_items.util.BetterConstants
-import com.makeevrserg.empireprojekt.empire_items.util.crafting.CraftingManager
-import com.makeevrserg.empireprojekt.items.data.EmpireItem
 import net.md_5.bungee.api.ChatColor
 import org.bukkit.Bukkit
 import org.bukkit.Material
-import org.bukkit.NamespacedKey
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer
@@ -16,8 +12,6 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.BookMeta
-import org.bukkit.inventory.meta.ItemMeta
-import org.bukkit.persistence.PersistentDataType
 import org.bukkit.plugin.IllegalPluginAccessException
 import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.scheduler.BukkitTask
@@ -87,9 +81,13 @@ fun valueOfOrNull(value: String): ItemFlag? {
 
 fun runAsyncTask(function: Runnable): BukkitTask? {
     return try {
-        Bukkit.getScheduler().runTaskAsynchronously(EmpirePlugin.instance, Runnable {
+        val id = System.currentTimeMillis()
+        val taskRef = Bukkit.getScheduler().runTaskAsynchronously(EmpirePlugin.instance, Runnable {
             function.run()
+            EmpirePlugin.onBukkitTaskEnded(id)
         })
+        EmpirePlugin.onBukkitTaskAdded(id,taskRef)
+        return taskRef
     } catch (e: IllegalPluginAccessException) {
         println("${ChatColor.RED} Trying to create thread while disabling")
         null
@@ -100,6 +98,7 @@ fun runAsyncTask(function: Runnable): BukkitTask? {
 fun callSyncMethod(function: Runnable): Future<Unit>? {
 
     return try {
+
         Bukkit.getScheduler().callSyncMethod(EmpirePlugin.instance) {
             function.run()
         }
@@ -110,9 +109,6 @@ fun callSyncMethod(function: Runnable): Future<Unit>? {
 }
 
 
-fun BukkitRunnable.runTaskAsynchronously() {
-    this.runTaskAsynchronously(EmpirePlugin.instance)
-}
 
 /**
  * Utils class

@@ -33,8 +33,13 @@ class DecorationBlockPlaceEvent : IEmpireListener {
         val block = e.clickedBlock?:return
         if (block.type!=Material.BARRIER)
             return
-        if (e.action==Action.LEFT_CLICK_BLOCK && e.hand==EquipmentSlot.HAND)
+
+        if ( e.action==Action.LEFT_CLICK_BLOCK && e.hand==EquipmentSlot.HAND)
             DecorationBlockAPI.breakItem(block.location)
+
+
+        if (player.isSneaking && e.action==Action.RIGHT_CLICK_BLOCK && e.hand==EquipmentSlot.HAND)
+            DecorationBlockAPI.rotateBlock(block.location)
 
 
 

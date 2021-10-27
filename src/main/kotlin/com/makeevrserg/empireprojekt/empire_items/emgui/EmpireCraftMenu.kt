@@ -1,6 +1,7 @@
 package com.makeevrserg.empireprojekt.empire_items.emgui
 
 
+import com.earth2me.essentials.Essentials
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.empire_items.api.ItemsAPI
 import com.makeevrserg.empireprojekt.empire_items.api.ItemsAPI.asEmpireItem
@@ -10,8 +11,11 @@ import com.makeevrserg.empireprojekt.empire_items.events.villagers.VillagerManag
 import com.makeevrserg.empireprojekt.empire_items.util.EmpirePermissions
 import com.makeevrserg.empireprojekt.empire_items.util.crafting.CraftingManager
 import com.makeevrserg.empireprojekt.empirelibs.EmpireUtils
+import com.makeevrserg.empireprojekt.empirelibs.HEX
 import com.makeevrserg.empireprojekt.empirelibs.menu.PaginatedMenu
 import com.makeevrserg.empireprojekt.empirelibs.menu.PlayerMenuUtility
+import com.makeevrserg.empireprojekt.empirelibs.runAsyncTask
+import com.makeevrserg.empireprojekt.essentials.homes.EssentialsHandler
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
@@ -73,10 +77,20 @@ class EmpireCraftMenu(
             EmpireCraftMenu(playerMenuUtility, slot, categoryPage, id, 0).open()
 
         } else if (e.slot == 34) {
-            if (!playerMenuUtility.player.hasPermission("empireitems.give"))
-                return
-            playerMenuUtility.player.inventory
-                .addItem(ItemsAPI.getEmpireItemStackOrItemStack(item) ?: return)
+            if (playerMenuUtility.player.hasPermission("empireitems.give")) {
+                playerMenuUtility.player.inventory
+                    .addItem(ItemsAPI.getEmpireItemStackOrItemStack(item) ?: return)
+            } else if (playerMenuUtility.player.hasPermission("empire_items.${playerMenuUtility.categoryId}")) {
+                runAsyncTask {
+                    val ess = (Bukkit.getPluginManager().getPlugin("Essentials") ?: return@runAsyncTask) as Essentials
+                    if (ess.getUser(playerMenuUtility.player).money > 100.toBigDecimal()) {
+                        ess.getUser(playerMenuUtility.player).takeMoney(100.toBigDecimal())
+                        playerMenuUtility.player.inventory
+                            .addItem(ItemsAPI.getEmpireItemStackOrItemStack(item) ?: return@runAsyncTask)
+                    } else playerMenuUtility.player.sendMessage(EmpirePlugin.translations.NOT_ENOUGH_MONEY)
+                }
+            }
+
         } else if (e.slot == getNextButtonIndex()) {
             if (isLastPage())
                 return
@@ -143,7 +157,7 @@ class EmpireCraftMenu(
 
     private fun useInCraft(item: String): Set<String> {
         val set = mutableSetOf<String>()
-        val itemStack = ItemsAPI.getEmpireItemStackOrItemStack(item)?:return set
+        val itemStack = ItemsAPI.getEmpireItemStackOrItemStack(item) ?: return set
 
         for (itemResult in EmpirePlugin.instance.recipies.keys) {
             val itemRecipies: CraftingManager.EmpireRecipe =
@@ -172,7 +186,7 @@ class EmpireCraftMenu(
                 return
             inventory.setItem(
                 invPosition++,
-                ItemsAPI.getEmpireItemStackOrItemStack(itemsToCraft[index])?:continue
+                ItemsAPI.getEmpireItemStackOrItemStack(itemsToCraft[index]) ?: continue
             )
         }
     }
@@ -245,7 +259,7 @@ class EmpireCraftMenu(
         val itemStack = EmpirePlugin.instance.guiSettings.dropButton.asEmpireItem()?.clone() ?: return null
         val itemMeta = itemStack.itemMeta
         itemMeta!!.setDisplayName(EmpirePlugin.translations.ITEM_INFO_GENERATE)
-        val itemInfo = ItemsAPI.getEmpireItemInfo(item)?.block?: return null
+        val itemInfo = ItemsAPI.getEmpireItemInfo(item)?.block ?: return null
         val generate = itemInfo.generate ?: return null
         val lore = mutableListOf<String>()
         lore.add("${EmpirePlugin.translations.ITEM_INFO_DROP_COLOR}Макс в чанке: ${generate.maxPerChunk}")
@@ -283,7 +297,7 @@ class EmpireCraftMenu(
             25,
 
             Bukkit.getRecipe(NamespacedKey(EmpirePlugin.instance, item))?.result
-                ?:ItemsAPI.getEmpireItemStack(item)
+                ?: ItemsAPI.getEmpireItemStack(item)
                 ?: ItemStack(
                     Material.getMaterial(item) ?: Material.PAPER
                 )
@@ -310,6 +324,18 @@ class EmpireCraftMenu(
                 34,
                 EmpirePlugin.instance.guiSettings.giveButton.asEmpireItem() ?: return
             )
+        else if (playerMenuUtility.player.hasPermission(
+                "empire_items.${playerMenuUtility.categoryId}"
+            )
+        ) inventory.setItem(
+            34,
+            EmpirePlugin.instance.guiSettings.giveButton.asEmpireItem()?.clone()?.apply {
+                val meta = itemMeta
+                meta?.setDisplayName("#32a850Можно купить".HEX())
+                meta?.lore = listOf("#3295a8Купить за 100".HEX())
+                this.itemMeta = meta
+            } ?: return
+        )
 
 
         setRecipe()

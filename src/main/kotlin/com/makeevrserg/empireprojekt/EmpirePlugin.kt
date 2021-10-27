@@ -23,11 +23,35 @@ import org.bukkit.inventory.ShapedRecipe
 import org.bukkit.inventory.ShapelessRecipe
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.plugin.java.JavaPlugin
+import org.bukkit.scheduler.BukkitTask
 
 
 class EmpirePlugin : JavaPlugin() {
 
     companion object {
+        private val activeTasksList = mutableMapOf<Long,BukkitTask>()
+
+        /**
+         * Добавляем ссылка на таск
+         */
+        fun onBukkitTaskAdded(id: Long, taskRef: BukkitTask) {
+            activeTasksList[id] = taskRef
+        }
+
+        /**
+         * Отключаем таск и выкидываем его из списка
+         */
+        fun onBukkitTaskEnded(id: Long) {
+            val task = activeTasksList[id]
+            task?.cancel()
+            activeTasksList.remove(id)
+        }
+        private fun clearAllTasks(){
+            for ((key,task) in activeTasksList)
+                task.cancel()
+            activeTasksList.clear()
+
+        }
 
         /**
          *Plugin instance
@@ -238,11 +262,11 @@ class EmpirePlugin : JavaPlugin() {
             }
         }
 
+        genericListener.onDisable()
+        mushroomBlockEventHandler.onDisable()
         empireCredit.onDisable()
 
         npcManager!!.onDisable()
-        genericListener.onDisable()
-        mushroomBlockEventHandler.onDisable()
         server.scheduler.cancelTasks(this)
         val ite = server.recipeIterator()
         var recipe: Recipe?
@@ -259,6 +283,7 @@ class EmpirePlugin : JavaPlugin() {
             ) ?: continue
             if (empireCraftingManager.empireRecipies.contains(id)) ite.remove()
         }
+        clearAllTasks()
 
 
     }

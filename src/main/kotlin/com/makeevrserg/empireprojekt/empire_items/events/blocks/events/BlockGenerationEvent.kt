@@ -3,14 +3,23 @@ package com.makeevrserg.empireprojekt.empire_items.events.blocks.events
 import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.empire_items.api.ItemsAPI
 import com.makeevrserg.empireprojekt.empire_items.api.MushroomBlockApi
+import com.makeevrserg.empireprojekt.empirelibs.ETimer
 import com.makeevrserg.empireprojekt.empirelibs.IEmpireListener
 import com.makeevrserg.empireprojekt.empirelibs.callSyncMethod
 import com.makeevrserg.empireprojekt.empirelibs.runAsyncTask
+import net.minecraft.core.BlockPosition
+import net.minecraft.server.MinecraftServer
+import net.minecraft.world.level.block.state.IBlockData
 import org.bukkit.Bukkit
 import org.bukkit.Chunk
 import org.bukkit.Location
 import org.bukkit.Material
+import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
+import org.bukkit.craftbukkit.v1_17_R1.CraftWorld
+import org.bukkit.craftbukkit.v1_17_R1.block.CraftBlock
+import org.bukkit.craftbukkit.v1_17_R1.block.data.type.CraftWall
+import org.bukkit.craftbukkit.v1_17_R1.util.CraftMagicNumbers
 import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
@@ -22,10 +31,13 @@ import kotlin.random.Random
 
 class BlockGenerationEvent : IEmpireListener {
 
-    val blocks = ItemsAPI.getEmpireBlocks()
-    private val activeChunks = mutableListOf<Chunk>()
-    private var inactiveChunks = mutableListOf<Chunk>()
-    private val activeTasks = mutableListOf<BukkitTask>()
+
+    private var blockQueue = mutableListOf<QueuedBlock>()
+    private var activeTasks = 0
+    private fun changeActiveTasks(i: Int = 0) = synchronized(this) {
+        activeTasks += i
+        return@synchronized activeTasks
+    }
 
     /**
      * Получаем список координат блоков, которые необходимо будет заменить
@@ -49,18 +61,51 @@ class BlockGenerationEvent : IEmpireListener {
         return faces[Random.nextInt(faces.size)]
     }
 
-    //Заменяем блок на сгенерированный
-    private fun replaceBlock(blockLoc: Location, material: Material, facing: MushroomBlockApi.Multipart) {
+    data class QueuedBlock(
+        val l: Location,
+        val m: Material,
+        val f: MushroomBlockApi.Multipart
+    )
 
-        callSyncMethod {
-            val chunkBlock = blockLoc.block
-            chunkBlock.type = material
-            val blockFacing = MushroomBlockApi.getMultipleFacing(chunkBlock) ?: return@callSyncMethod
-            for (f in facing.facing)
-                blockFacing.setFace(BlockFace.valueOf(f.key.uppercase()), f.value)
-            chunkBlock.blockData = blockFacing
+    private fun addBlockToQueue(l: Location, m: Material, f: MushroomBlockApi.Multipart) {
+        synchronized(this) {
+            blockQueue.add(QueuedBlock(l, m, f))
         }
+    }
 
+    private fun getQueuedBlock() = synchronized(this) {
+        val block = blockQueue.firstOrNull() ?: return@synchronized null
+        blockQueue.removeAt(0)
+        return@synchronized block
+    }
+
+    private fun generateBlock() {
+        if (activeTasks >= 1)
+            return
+        if (MinecraftServer.getServer().recentTps.firstOrNull()?:0.0<19.7)
+            return
+        val block = getQueuedBlock() ?: return
+        println("Generating block at [${block.l.x};${block.l.y};${block.l.z}] ActiveTasks=${activeTasks} queue=${blockQueue.size}")
+        synchronized(this) {
+            EmpirePlugin.empireFiles.tempChunks.getConfig().set(block.l.chunk.toString(), true)
+            EmpirePlugin.empireFiles.tempChunks.saveConfig()
+        }
+        replaceBlock(block)
+    }
+
+    //Заменяем блок на сгенерированный
+    private fun replaceBlock(b: QueuedBlock) {
+        changeActiveTasks(1)
+        ETimer.timer("replaceBlockSingle")
+        val chunkBlock = b.l.block
+        chunkBlock.type = b.m
+        val blockFacing = MushroomBlockApi.getMultipleFacing(chunkBlock) ?: return
+        for (f in b.f.facing)
+            blockFacing.setFace(BlockFace.valueOf(f.key.uppercase()), f.value)
+        chunkBlock.blockData = blockFacing
+        ETimer.timer("replaceBlockSingle")
+        changeActiveTasks(-1)
+        generateBlock()
 
     }
 
@@ -69,20 +114,9 @@ class BlockGenerationEvent : IEmpireListener {
      */
     private fun generateChunk(chunk: Chunk) {
 
-        //Добавляем чанк в список сгенериированных
-        synchronized(this) {
-            EmpirePlugin.empireFiles.tempChunks.getConfig().set(chunk.toString(), true)
-            EmpirePlugin.empireFiles.tempChunks.saveConfig()
-        }
-
-
-        val task = runAsyncTask {
-            //Если включен дебаг - Отправляем сообщение на сервер о нынешнем генерированном чанке
-            if (EmpirePlugin.empireConfig.generatingDebug)
-                println("Generating blocks in ${chunk}*16. ${inactiveChunks.size} chunks in queue. Current chunks: ${activeChunks.size}; Current Threads: ${activeTasks.size}")
-
-
-            for ((_, block) in blocks) {
+        runAsyncTask {
+            println("GenerateChunk ActiveTasks=${activeTasks} queue=${blockQueue.size}")
+            for ((_, block) in ItemsAPI.getEmpireBlocks()) {
                 //Надо ли генерировать блок
                 val generate = block.generate ?: continue
                 //Если указан мир и он не равен миру чанка - пропускаем
@@ -112,7 +146,7 @@ class BlockGenerationEvent : IEmpireListener {
                 //Записываем сгенерированное количество
                 var generatedAmount = 0
 
-                //todo Здесь что-то не так. Надо пересмотреть, как можно переделать циклы
+
                 for (i in 0 until deposits) {
                     //Проверяем на максимальное количество в чанке
                     if (generatedAmount >= generate.maxPerChunk)
@@ -140,12 +174,11 @@ class BlockGenerationEvent : IEmpireListener {
                         generatedAmount += depositeAmount
                         var faceBlock = blockToReplace.block
 
+
                         for (i_ in 0 until depositeAmount) {
                             faceBlock = faceBlock.getRelative(getRandomBlockFace())
-                            replaceBlock(faceBlock.location.clone(), material, facing)
-
+                            addBlockToQueue(faceBlock.location.clone(), material, facing)
                         }
-
 
                     }
 
@@ -154,42 +187,19 @@ class BlockGenerationEvent : IEmpireListener {
 
 
             }
-            removeChunkFromTask(chunk)
+
+
         }
-        activeTasks.add(task ?: return)
-
-
     }
 
-    private fun removeChunkFromTask(chunk: Chunk) {
-        synchronized(this) {
-            inactiveChunks.remove(chunk)
-            activeChunks.remove(chunk)
-            if (inactiveChunks.isNotEmpty()) {
-                val newChunk = inactiveChunks.elementAt(0)
-                inactiveChunks.removeAt(0)
-                if (activeChunks.size < 2) {
-                    activeChunks.add(newChunk)
-                    generateChunk(newChunk)
-                }
-            }
-            for (task in activeTasks.toList())
-                if (!Bukkit.getScheduler().pendingTasks.contains(task))
-                    activeTasks.remove(task)
-        }
-
-    }
-
-    @EventHandler
-    private fun chunkUnloadEvent(e: ChunkUnloadEvent) {
-
-        removeChunkFromTask(e.chunk)
-
-
-    }
+    val gap = 100L
+    var lastGenerateTime = System.currentTimeMillis()
 
     @EventHandler
     private fun chunkLoadEvent(e: ChunkLoadEvent) {
+        if (System.currentTimeMillis() - lastGenerateTime < gap)
+            return
+        lastGenerateTime = System.currentTimeMillis()
         val chunk = e.chunk
 
         //Если чанк есть в конфиге - значит он уже генерировался
@@ -200,43 +210,20 @@ class BlockGenerationEvent : IEmpireListener {
         if (!e.isNewChunk && EmpirePlugin.empireConfig.generateOnlyOnNewChunks)
             return
         //Проверяем максимальный размер неактивных чанков
-        if (inactiveChunks.size > 300) {
-            inactiveChunks = inactiveChunks.drop(200).toMutableList()
+        if (blockQueue.size > 300) {
+            blockQueue = blockQueue.drop(200).toMutableList()
             return
         }
-        //Проверяем размер активных чанков
-        if (activeChunks.size < 2) {
-            activeChunks.add(chunk)
-            generateChunk(chunk)
-        } else
-            inactiveChunks.add(chunk)
-
-
+        generateChunk(chunk)
+        generateBlock()
     }
 
-    @EventHandler
-    fun playerJoinEvent(e: PlayerJoinEvent) {
-        removeChunkFromTask(e.player.location.chunk)
-
-    }
-
-    @EventHandler
-    fun playerJoinEvent(e: PlayerQuitEvent) {
-
-        removeChunkFromTask(e.player.location.chunk)
-
-    }
 
     override fun onDisable() {
         ChunkLoadEvent.getHandlerList().unregister(this)
         ChunkUnloadEvent.getHandlerList().unregister(this)
         PlayerJoinEvent.getHandlerList().unregister(this)
         PlayerQuitEvent.getHandlerList().unregister(this)
-        if (activeChunks.isNotEmpty())
-            for (chunk in activeChunks.toList())
-                removeChunkFromTask(chunk)
 
-        for (task in activeTasks)
-            task.cancel()
     }
 }

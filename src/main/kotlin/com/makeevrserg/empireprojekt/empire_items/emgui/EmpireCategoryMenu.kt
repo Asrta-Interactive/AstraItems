@@ -34,6 +34,7 @@ class EmpireCategoryMenu(
 
     init {
         playInventorySound()
+        playerMenuUtility.categoryId = EmpirePlugin.instance.guiCategories.keys.elementAt(slot)
     }
 
 

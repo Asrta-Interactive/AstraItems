@@ -11,7 +11,7 @@ class MushroomBlockEventHandler() : IEventManager {
 
     init {
         if (EmpirePlugin.empireConfig.generateBlocks)
-            BlockGenerationEvent().onEnable(this)
+            BlockGenerationEvent2().onEnable(this)
         MushroomBlockPlaceEvent().onEnable(this)
         MushroomCancelEvent().onEnable(this)
         MushroomBlockBreakEvent().onEnable(this)

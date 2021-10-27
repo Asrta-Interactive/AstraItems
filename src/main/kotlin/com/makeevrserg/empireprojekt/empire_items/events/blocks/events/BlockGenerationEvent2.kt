@@ -158,6 +158,7 @@ class BlockGenerationEvent2 : IEmpireListener {
     }
     @EventHandler
     private fun chunkUnloadEvent(e:ChunkUnloadEvent){
+
         inactiveChunks.remove(e.chunk)
     }
 

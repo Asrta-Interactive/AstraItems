@@ -55,6 +55,16 @@ object DecorationBlockAPI {
 
     }
 
+    fun rotateBlock(location: Location) {
+        val decor = getDecorationByBoundingBox(location) ?: return
+        if (decor !is ItemFrame)
+            return
+        val itemFrame = decor as ItemFrame
+        val rotation = itemFrame.rotation
+        val index = Rotation.values().indexOf(rotation)+1
+        val newRotation = Rotation.values().elementAtOrNull(index)?:Rotation.values().first()
+        itemFrame.rotation = newRotation
+    }
     fun breakItem(location: Location) {
         val decor = getDecorationByBoundingBox(location) ?: return
         if (decor !is ItemFrame)

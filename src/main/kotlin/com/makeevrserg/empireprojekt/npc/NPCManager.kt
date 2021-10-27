@@ -7,22 +7,21 @@ import com.makeevrserg.empireprojekt.npc.data.NPCConfig
 import com.makeevrserg.empireprojekt.npc.interact.EventManager
 import com.makeevrserg.empireprojekt.empirelibs.EmpireUtils
 import com.makeevrserg.empireprojekt.empirelibs.FileManager
-import com.makeevrserg.empireprojekt.empirelibs.runTaskAsynchronously
+import com.makeevrserg.empireprojekt.empirelibs.HEX
+import com.makeevrserg.empireprojekt.empirelibs.runAsyncTask
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.entity.Player
-import org.bukkit.scheduler.BukkitTask
-import kotlin.math.abs
 
 class NPCManager {
     companion object {
 
         fun playerQuitEvent(player: Player) {
-            EmpireUtils.EmpireRunnable {
+            runAsyncTask {
                 for (npc in abstractNPCList)
                     npc.hideNPCForPlayer(player)
-                playerSpawnedNpcs[player]?.clear() ?: return@EmpireRunnable
-            }.runTaskAsynchronously()
+                playerSpawnedNpcs[player]?.clear() ?: return@runAsyncTask
+            }
         }
 
         private fun Player.hideNPC(npc: AbstractNPC) {
@@ -38,19 +37,23 @@ class NPCManager {
         }
 
         private fun Player.trackNPC(npc: AbstractNPC) {
-            EmpireUtils.EmpireRunnable {
                 npc.trackPlayer(this)
-            }.runTaskAsynchronously()
         }
 
 
         fun playerMoveEvent(p: Player) {
-            EmpireUtils.EmpireRunnable {
+            if (isThreadActive.contains(p.name))
+                return
+            isThreadActive.add(p.name)
+
+            runAsyncTask {
                 for (npc in abstractNPCList) {
                     if (p.location.world != npc.location.world)
                         continue
                     val dist = p.location.distance(npc.location)
                     synchronized(this) {
+                        if (!abstractNPCList.contains(npc))
+                            return@synchronized
                         when {
                             dist > npcConfig.radiusHide -> p.hideNPC(npc)
                             dist > npcConfig.radiusTrack -> p.showNPC(npc)
@@ -61,18 +64,22 @@ class NPCManager {
                         }
                     }
                 }
-            }.runTaskAsynchronously()
+                synchronized(this) {
+                    isThreadActive.remove(p.name)
+                }
+            }
         }
 
         fun playerJoinEvent(player: Player) {
-            EmpireUtils.EmpireRunnable {
+            runAsyncTask {
                 for (npc in abstractNPCList)
                     npc.showNPCToPlayer(player)
                 playerSpawnedNpcs[player] = mutableSetOf()
-            }.runTaskAsynchronously()
+            }
         }
-        fun createNPC(id:String,location: Location){
-            val npc = EmpireNPC(id=id,location = location)
+
+        fun createNPC(id: String, location: Location) {
+            val npc = EmpireNPC(id = id, location = location)
             val abstractNPC = AbstractNPC(npc)
             abstractNPC.spawnNPC()
             empireNPCList.add(npc)
@@ -81,9 +88,100 @@ class NPCManager {
             abstractNPCByName[id] = abstractNPC
             saveNPC(npc)
         }
-        fun saveNPC(npc:EmpireNPC){
+
+        fun deleteNPC(id: String) {
+            val npc = abstractNPCByName[id] ?: return
+            fileManager.getConfig().set("npcs.$id", null)
+            fileManager.saveConfig()
+            updateNPC(npc)
+
+        }
+
+
+        fun removeNpcPhrase(npcId: String?, index: String?) {
+            val oldNpc = abstractNPCByName[npcId] ?: return
+            val empireNpc = oldNpc.npc
+            val _index = index?.toIntOrNull() ?: empireNpc.phrases?.size ?: 0
+            println(npcId)
+            println(_index)
+            if (_index >= empireNpc.phrases?.size ?: 0 && empireNpc.phrases?.isNotEmpty() == true)
+                empireNpc.phrases.removeLast()
+            else if (_index >= 0 && empireNpc.phrases?.isNotEmpty() == true)
+                empireNpc.phrases.removeAt(_index)
+            val newNpc = AbstractNPC(empireNpc)
+            updateNPC(oldNpc, newNpc)
+            saveNPC(empireNpc)
+        }
+
+        fun addNpcPhrase(npcId: String?, line: String?) {
+            val oldNpc = abstractNPCByName[npcId] ?: return
+            val empireNpc = oldNpc.npc
+            if (line?.isEmpty() == true)
+                return
+            empireNpc.phrases?.add(line?.HEX() ?: return)
+            val newNpc = AbstractNPC(empireNpc)
+            updateNPC(oldNpc, newNpc)
+            saveNPC(empireNpc)
+        }
+
+
+        fun addNpcName(npcId: String?, line: String?) {
+            val oldNpc = abstractNPCByName[npcId] ?: return
+            val empireNpc = oldNpc.npc
+            if (line?.isEmpty() == true)
+                return
+            empireNpc.lines?.add(line?.HEX() ?: return)
+            val newNpc = AbstractNPC(empireNpc)
+            updateNPC(oldNpc, newNpc)
+            saveNPC(empireNpc)
+        }
+
+        fun removeNpcName(npcId: String?, index: String?) {
+            val oldNpc = abstractNPCByName[npcId] ?: return
+            val empireNpc = oldNpc.npc
+            val _index = index?.toIntOrNull() ?: empireNpc.lines?.size ?: 0
+            println(npcId)
+            println(_index)
+            if (_index >= empireNpc.lines?.size ?: 0 && empireNpc.lines?.isNotEmpty() == true)
+                empireNpc.lines.removeLast()
+            else if (_index >= 0 && empireNpc.lines?.isNotEmpty() == true)
+                empireNpc.lines.removeAt(_index)
+            val newNpc = AbstractNPC(empireNpc)
+            updateNPC(oldNpc, newNpc)
+            saveNPC(empireNpc)
+        }
+
+        fun changeName(npcId: String?, name: String) {
+
+            val oldNpc = abstractNPCByName[npcId] ?: return
+            val empireNpc = oldNpc.npc
+            empireNpc.name = name.HEX()
+
+            val newNpc = AbstractNPC(empireNpc)
+            updateNPC(oldNpc, newNpc)
+            saveNPC(empireNpc)
+        }
+
+        fun updateNPC(old: AbstractNPC, new: AbstractNPC? = null) {
+            old.onDisable()
+            empireNPCList.remove(old.npc)
+            abstractNPCList.remove(old)
+            abstractNPCByID.remove(old.id)
+            abstractNPCByName.remove(old.npc.id)
+            old.onDisable()
+
+            new ?: return
+            new.spawnNPC()
+            empireNPCList.add(new.npc)
+            abstractNPCList.add(new)
+            abstractNPCByID[new.id] = new
+            abstractNPCByName[new.npc.id] = new
+        }
+
+        fun saveNPC(npc: EmpireNPC) {
             EmpireNPC.save(npc)
         }
+
 
         /**
          * File with config and NPCS
@@ -120,16 +218,20 @@ class NPCManager {
          */
         val playerSpawnedNpcs: MutableMap<Player, MutableSet<AbstractNPC>> = mutableMapOf()
 
-
+        /**
+         * List of active npc track threads for player
+         */
+        val isThreadActive: MutableList<String> = mutableListOf()
 
     }
 
-    private fun clearListAndMap(){
+    private fun clearListAndMap() {
         empireNPCList.clear()
         abstractNPCList.clear()
         abstractNPCByID.clear()
         abstractNPCByName.clear()
         playerSpawnedNpcs.clear()
+        isThreadActive.clear()
     }
 
     private lateinit var eventManager: EventManager

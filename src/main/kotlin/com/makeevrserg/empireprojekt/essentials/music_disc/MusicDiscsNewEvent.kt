@@ -63,6 +63,7 @@ class MusicDiscsNewEvent : IEmpireListener {
 
         } else {
             val musicDisc = ItemsAPI.getEmpireItemInfo(e.item.getEmpireID()?:return)?: return
+            musicDisc.musicDisc?:return
             e.item!!.amount -= 1
             playMusic(musicDisc, jukebox.location)
             e.isCancelled = true

@@ -11,5 +11,6 @@ class EmpirePermissions{
         const val SPAWN_ENTITY: String = "empireitems.spawn_entity"
         const val GET_RANDOM_ITEM: String = "empireitems.random_item"
         const val FIXED_ITEM_FRAME: String = "empireitems.change_itemframe_fixed"
+        const val CREATE_NPC: String = "empireitems.create_npc"
     }
 }

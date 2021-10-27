@@ -9,7 +9,7 @@ import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.npc.NPCManager
 import com.makeevrserg.empireprojekt.empirelibs.EmpireUtils
 import com.makeevrserg.empireprojekt.empirelibs.IEmpireListener
-import com.makeevrserg.empireprojekt.empirelibs.runTaskAsynchronously
+import com.makeevrserg.empireprojekt.empirelibs.runAsyncTask
 import org.bukkit.Bukkit
 
 class ProtocolLibPacketListener:IEmpireListener {
@@ -28,7 +28,7 @@ class ProtocolLibPacketListener:IEmpireListener {
                 val packet = event.packet
                 val player = event.player
 
-                EmpireUtils.EmpireRunnable{
+                runAsyncTask{
                     for (i in 0 until packet.enumEntityUseActions.size()) {
                         if (!packet.enumEntityUseActions.read(i).action.toString().equals("INTERACT", ignoreCase = true))
                             continue
@@ -43,7 +43,6 @@ class ProtocolLibPacketListener:IEmpireListener {
                                 npcID = packet.integers.read(j)
                         npcID ?: continue
                         Bukkit.getScheduler().callSyncMethod(EmpirePlugin.instance) {
-                            println("Protocol notice")
                             EmpirePlugin.instance.server.pluginManager.callEvent(
                                 RightClickNPC(
                                     player,
@@ -53,7 +52,7 @@ class ProtocolLibPacketListener:IEmpireListener {
                         }
 
                     }
-                }.runTaskAsynchronously()
+                }
 
 
 

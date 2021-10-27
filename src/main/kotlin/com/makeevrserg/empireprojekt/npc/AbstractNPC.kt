@@ -5,6 +5,7 @@ import com.makeevrserg.empireprojekt.EmpirePlugin
 import com.makeevrserg.empireprojekt.npc.data.EmpireNPC
 import com.makeevrserg.empireprojekt.npc.data.Skin
 import com.makeevrserg.empireprojekt.empirelibs.EmpireUtils
+import com.makeevrserg.empireprojekt.empirelibs.HEX
 import com.mojang.authlib.GameProfile
 import com.mojang.authlib.properties.Property
 import net.minecraft.network.chat.IChatBaseComponent
@@ -18,6 +19,7 @@ import org.bukkit.craftbukkit.v1_17_R1.CraftServer
 import org.bukkit.craftbukkit.v1_17_R1.CraftWorld
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftArmorStand
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer
+import org.bukkit.craftbukkit.v1_17_R1.util.CraftChatMessage
 import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
@@ -74,7 +76,8 @@ class AbstractNPC(val npc: EmpireNPC) {
         val server: MinecraftServer = (Bukkit.getServer() as CraftServer).server
         nmsNpc = EntityPlayer(server, world, profile)
         nmsNpc.setLocation(npc.location)
-        nmsNpc.listName = IChatBaseComponent.a(npc.name ?: "")
+        val nm = CraftChatMessage.fromString(npc.name?.HEX() ?: "")
+        nmsNpc.listName = nm[0]
 
         if (npc.skin != null)
             setSkin(npc.skin!!)
@@ -84,7 +87,7 @@ class AbstractNPC(val npc: EmpireNPC) {
     }
 
 
-    fun despawnNPC(){
+    fun despawnNPC() {
         hideNPCFromOnlinePlayers()
     }
 
@@ -141,6 +144,7 @@ class AbstractNPC(val npc: EmpireNPC) {
 //        hideNPCFromOnlinePlayers()
 //        nmsNpc.setLocation(l)
         npc.location = l
+
         despawnNPC()
         spawnNPC()
         NPCManager.saveNPC(npc)
@@ -162,17 +166,17 @@ class AbstractNPC(val npc: EmpireNPC) {
                 nmsNpc
             )
         )//WARNING EnumPlayerInfoAction.a==EnumPlayerInfoAction.ADD_PLAYER
-        Bukkit.getScheduler().runTaskLaterAsynchronously(
-            EmpirePlugin.instance,
-            Runnable {
-                connection.sendPacket(
-                    PacketPlayOutPlayerInfo(
-                        PacketPlayOutPlayerInfo.EnumPlayerInfoAction.e,
-                        nmsNpc
-                    )
-                )
-            }, NPCManager.npcConfig.npcRemoveListTime
-        )
+//        Bukkit.getScheduler().runTaskLaterAsynchronously(
+//            EmpirePlugin.instance,
+//            Runnable {
+//                connection.sendPacket(
+//                    PacketPlayOutPlayerInfo(
+//                        PacketPlayOutPlayerInfo.EnumPlayerInfoAction.e,
+//                        nmsNpc
+//                    )
+//                )
+//            }, NPCManager.npcConfig.npcRemoveListTime
+//        )
     }
 
     /**
@@ -317,6 +321,7 @@ class AbstractNPC(val npc: EmpireNPC) {
         removeArmorStands()
         hideNPCFromOnlinePlayers()
         despawnNPC()
+
     }
 
 }

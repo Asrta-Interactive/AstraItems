@@ -8,10 +8,10 @@ import org.bukkit.Location
 
 data class EmpireNPC(
     val id: String,
-    val name: String? = null,
-    val lines: List<String>? = null,
-    val phrases: List<String>? = null,
-    val commands: List<CommandEvent>? = null,
+    var name: String? = null,
+    val lines: MutableList<String>? = null,
+    val phrases: MutableList<String>? = null,
+    val commands: MutableList<CommandEvent>? = null,
     var skin: Skin? = null,
     var location: Location
 ) {
@@ -30,9 +30,9 @@ data class EmpireNPC(
             return EmpireNPC(
                 id = id,
                 name = name,
-                lines = lines,
-                phrases = phrases,
-                commands = commands,
+                lines = lines.toMutableList(),
+                phrases = phrases.toMutableList(),
+                commands = commands.toMutableList(),
                 skin = skin,
                 location = location
             )
@@ -42,8 +42,11 @@ data class EmpireNPC(
             val config = NPCManager.fileManager.getConfig()
             val path = "npcs.${npc.id}"
             config.set("$path.location",npc.location)
+            config.set("$path.name",npc.name)
             config.set("$path.skin.value",npc.skin?.value)
             config.set("$path.skin.signature",npc.skin?.signature)
+            config.set("$path.phrases",npc.phrases)
+            config.set("$path.lines",npc.lines)
             NPCManager.fileManager.saveConfig()
         }
 
