@@ -5,39 +5,31 @@ import com.makeevrserg.empireprojekt.empire_items.api.ItemsAPI
 import com.makeevrserg.empireprojekt.empire_items.api.MushroomBlockApi
 import com.makeevrserg.empireprojekt.empirelibs.ETimer
 import com.makeevrserg.empireprojekt.empirelibs.IEmpireListener
-import com.makeevrserg.empireprojekt.empirelibs.callSyncMethod
 import com.makeevrserg.empireprojekt.empirelibs.runAsyncTask
-import net.minecraft.core.BlockPosition
 import net.minecraft.server.MinecraftServer
-import net.minecraft.world.level.block.state.IBlockData
 import org.bukkit.Bukkit
 import org.bukkit.Chunk
 import org.bukkit.Location
 import org.bukkit.Material
-import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
-import org.bukkit.craftbukkit.v1_17_R1.CraftWorld
-import org.bukkit.craftbukkit.v1_17_R1.block.CraftBlock
-import org.bukkit.craftbukkit.v1_17_R1.block.data.type.CraftWall
-import org.bukkit.craftbukkit.v1_17_R1.util.CraftMagicNumbers
 import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.event.world.ChunkLoadEvent
 import org.bukkit.event.world.ChunkUnloadEvent
-import org.bukkit.plugin.IllegalPluginAccessException
-import org.bukkit.scheduler.BukkitTask
 import kotlin.random.Random
 
 class BlockGenerationEvent : IEmpireListener {
 
+    companion object{
+        private val MAX_QUEUE_SIZE = 300
+        private val GENERATE_BLOCK_GAP_TICK = 10L
+        private val TPS_TRESHHOLD = 19.9
+        private val CHUNK_LOAD_GAP = 100L
+        private var currentChunkLoadGap = System.currentTimeMillis()
+    }
 
     private var blockQueue = mutableListOf<QueuedBlock>()
-    private var activeTasks = 0
-    private fun changeActiveTasks(i: Int = 0) = synchronized(this) {
-        activeTasks += i
-        return@synchronized activeTasks
-    }
 
     /**
      * Получаем список координат блоков, которые необходимо будет заменить
@@ -79,13 +71,12 @@ class BlockGenerationEvent : IEmpireListener {
         return@synchronized block
     }
 
+
     private fun generateBlock() {
-        if (activeTasks >= 1)
-            return
-        if (MinecraftServer.getServer().recentTps.firstOrNull()?:0.0<19.7)
+        if (MinecraftServer.getServer().recentTps.firstOrNull() ?: 0.0 < TPS_TRESHHOLD)
             return
         val block = getQueuedBlock() ?: return
-        println("Generating block at [${block.l.x};${block.l.y};${block.l.z}] ActiveTasks=${activeTasks} queue=${blockQueue.size}")
+        println("Generating block at [${block.l.x};${block.l.y};${block.l.z}] queue=${blockQueue.size}")
         synchronized(this) {
             EmpirePlugin.empireFiles.tempChunks.getConfig().set(block.l.chunk.toString(), true)
             EmpirePlugin.empireFiles.tempChunks.saveConfig()
@@ -95,18 +86,14 @@ class BlockGenerationEvent : IEmpireListener {
 
     //Заменяем блок на сгенерированный
     private fun replaceBlock(b: QueuedBlock) {
-        changeActiveTasks(1)
         ETimer.timer("replaceBlockSingle")
         val chunkBlock = b.l.block
-        chunkBlock.type = b.m
+        chunkBlock.setType(b.m, false)
         val blockFacing = MushroomBlockApi.getMultipleFacing(chunkBlock) ?: return
         for (f in b.f.facing)
             blockFacing.setFace(BlockFace.valueOf(f.key.uppercase()), f.value)
         chunkBlock.blockData = blockFacing
         ETimer.timer("replaceBlockSingle")
-        changeActiveTasks(-1)
-        generateBlock()
-
     }
 
     /**
@@ -115,7 +102,6 @@ class BlockGenerationEvent : IEmpireListener {
     private fun generateChunk(chunk: Chunk) {
 
         runAsyncTask {
-            println("GenerateChunk ActiveTasks=${activeTasks} queue=${blockQueue.size}")
             for ((_, block) in ItemsAPI.getEmpireBlocks()) {
                 //Надо ли генерировать блок
                 val generate = block.generate ?: continue
@@ -192,14 +178,11 @@ class BlockGenerationEvent : IEmpireListener {
         }
     }
 
-    val gap = 100L
-    var lastGenerateTime = System.currentTimeMillis()
-
     @EventHandler
     private fun chunkLoadEvent(e: ChunkLoadEvent) {
-        if (System.currentTimeMillis() - lastGenerateTime < gap)
+        if (System.currentTimeMillis() - currentChunkLoadGap< CHUNK_LOAD_GAP)
             return
-        lastGenerateTime = System.currentTimeMillis()
+        currentChunkLoadGap = System.currentTimeMillis()
         val chunk = e.chunk
 
         //Если чанк есть в конфиге - значит он уже генерировался
@@ -210,20 +193,24 @@ class BlockGenerationEvent : IEmpireListener {
         if (!e.isNewChunk && EmpirePlugin.empireConfig.generateOnlyOnNewChunks)
             return
         //Проверяем максимальный размер неактивных чанков
-        if (blockQueue.size > 300) {
-            blockQueue = blockQueue.drop(200).toMutableList()
-            return
+        if (blockQueue.size > MAX_QUEUE_SIZE) {
+            blockQueue = blockQueue.drop(blockQueue.size - MAX_QUEUE_SIZE).toMutableList()
         }
         generateChunk(chunk)
-        generateBlock()
     }
 
+
+
+    val task = Bukkit.getScheduler().runTaskTimer(EmpirePlugin.instance, Runnable {
+        generateBlock()
+    }, 0L, GENERATE_BLOCK_GAP_TICK)
 
     override fun onDisable() {
         ChunkLoadEvent.getHandlerList().unregister(this)
         ChunkUnloadEvent.getHandlerList().unregister(this)
         PlayerJoinEvent.getHandlerList().unregister(this)
         PlayerQuitEvent.getHandlerList().unregister(this)
+        task.cancel()
 
     }
 }

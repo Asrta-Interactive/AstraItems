@@ -46,10 +46,15 @@ class EmpirePlugin : JavaPlugin() {
             task?.cancel()
             activeTasksList.remove(id)
         }
-        private fun clearAllTasks(){
+        fun clearAllTasks(){
             for ((key,task) in activeTasksList)
                 task.cancel()
             activeTasksList.clear()
+            for (task in Bukkit.getScheduler().pendingTasks)
+                task.cancel()
+            for(worker in Bukkit.getScheduler().activeWorkers) try{
+                worker.thread.stop()
+            }catch (e:Exception){}
 
         }
 

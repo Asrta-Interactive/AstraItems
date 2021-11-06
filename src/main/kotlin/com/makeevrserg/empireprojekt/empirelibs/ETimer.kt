@@ -3,10 +3,10 @@ package com.makeevrserg.empireprojekt.empirelibs
 object ETimer {
     private val timers = mutableMapOf<String,Long>()
     fun startTimer(key:String){
-        timers[key] = System.currentTimeMillis()
+        timers[key] = System.nanoTime()
     }
     fun endTimer(key:String){
-        println("Task $key enden in ${(System.currentTimeMillis().minus(timers[key]?:return))/1000.0}")
+        println("Task $key enden in ${(System.nanoTime().minus(timers[key]?:return))/10000.0}")
         timers.remove(key)
     }
     fun timer(key: String){
