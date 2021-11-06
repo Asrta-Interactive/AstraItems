@@ -181,6 +181,11 @@
         </dependency>
 
 
+        <dependency>
+            <groupId>com.astrainteractive</groupId>
+            <artifactId>astralibs</artifactId>
+            <version>1.0.4</version>
+        </dependency>
 
 
 
