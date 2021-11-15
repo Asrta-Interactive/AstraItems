@@ -7,7 +7,7 @@ import com.comphenix.protocol.ProtocolLibrary
 import com.comphenix.protocol.ProtocolManager
 import com.comphenix.protocol.events.*
 import com.astrainteractive.empireprojekt.EmpirePlugin
-import com.astrainteractive.empireprojekt.astralibs.EmpireUtils
+import com.astrainteractive.empireprojekt.empire_items.util.EmpireUtils
 
 
 import me.clip.placeholderapi.PlaceholderAPI

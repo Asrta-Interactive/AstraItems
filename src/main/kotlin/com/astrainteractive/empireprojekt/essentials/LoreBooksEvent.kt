@@ -2,7 +2,7 @@ package com.astrainteractive.empireprojekt.essentials
 
 import com.astrainteractive.astralibs.AstraUtils
 import com.astrainteractive.empireprojekt.EmpirePlugin
-import com.astrainteractive.empireprojekt.astralibs.EmpireUtils
+import com.astrainteractive.empireprojekt.empire_items.util.EmpireUtils
 import org.bukkit.block.Chest
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener

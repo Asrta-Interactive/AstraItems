@@ -8,7 +8,7 @@ import com.astrainteractive.empireprojekt.items.data.interact.ParticleEvent
 import com.astrainteractive.empireprojekt.items.data.interact.PotionEffectEvent
 import com.astrainteractive.empireprojekt.empire_items.items.data.interact.Sound
 import com.astrainteractive.empireprojekt.empire_items.util.BetterConstants
-import com.astrainteractive.empireprojekt.astralibs.EmpireUtils
+import com.astrainteractive.empireprojekt.empire_items.util.EmpireUtils
 import me.clip.placeholderapi.PlaceholderAPI
 import org.bukkit.Bukkit
 import org.bukkit.Particle

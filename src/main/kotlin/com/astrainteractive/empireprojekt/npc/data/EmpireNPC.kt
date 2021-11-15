@@ -4,7 +4,6 @@ package com.astrainteractive.empireprojekt.npc.data
 import com.astrainteractive.astralibs.AstraUtils
 import com.astrainteractive.astralibs.getHEXStringList
 import com.astrainteractive.empireprojekt.npc.NPCManager
-import com.astrainteractive.empireprojekt.astralibs.EmpireUtils
 import org.bukkit.Location
 
 data class EmpireNPC(

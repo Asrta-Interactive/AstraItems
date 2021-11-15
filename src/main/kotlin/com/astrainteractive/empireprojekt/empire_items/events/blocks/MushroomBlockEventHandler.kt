@@ -11,7 +11,7 @@ class MushroomBlockEventHandler() : IAstraManager {
 
     init {
         if (EmpirePlugin.empireConfig.generateBlocks)
-            BlockGenerationEvent2().onEnable(this)
+            BlockGenerationEvent().onEnable(this)
         MushroomBlockPlaceEvent().onEnable(this)
         MushroomCancelEvent().onEnable(this)
         MushroomBlockBreakEvent().onEnable(this)

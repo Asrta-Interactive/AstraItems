@@ -7,8 +7,8 @@ import com.astrainteractive.empireprojekt.items.data.decoration.Decoration
 import com.astrainteractive.empireprojekt.items.data.interact.Interact
 import com.astrainteractive.empireprojekt.empire_items.items.data.interact.Sound
 import com.astrainteractive.empireprojekt.empire_items.util.BetterConstants
-import com.astrainteractive.empireprojekt.astralibs.EmpireUtils
-import com.astrainteractive.empireprojekt.astralibs.valueOfOrNull
+import com.astrainteractive.empireprojekt.empire_items.util.EmpireUtils
+import com.astrainteractive.empireprojekt.empire_items.util.valueOfOrNull
 import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.NamespacedKey

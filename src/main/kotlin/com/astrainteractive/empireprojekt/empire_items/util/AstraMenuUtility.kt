@@ -6,9 +6,9 @@ import com.astrainteractive.astralibs.menu.Menu
 import com.astrainteractive.astralibs.menu.PaginatedMenu
 import com.astrainteractive.astralibs.runAsyncTask
 import com.astrainteractive.empireprojekt.EmpirePlugin
-import com.astrainteractive.empireprojekt.astralibs.setDisplayName
 import com.astrainteractive.empireprojekt.empire_items.api.ItemsAPI
 import com.astrainteractive.empireprojekt.empire_items.api.ItemsAPI.asEmpireItem
+import com.astrainteractive.empireprojekt.empire_items.util.setDisplayName
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player

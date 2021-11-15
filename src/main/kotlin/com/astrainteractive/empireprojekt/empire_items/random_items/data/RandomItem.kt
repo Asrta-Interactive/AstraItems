@@ -6,8 +6,8 @@ import com.google.gson.annotations.SerializedName
 import com.google.gson.reflect.TypeToken
 import com.astrainteractive.empireprojekt.EmpirePlugin
 import com.astrainteractive.empireprojekt.empire_items.util.BetterConstants
-import com.astrainteractive.empireprojekt.astralibs.EmpireUtils
-import com.astrainteractive.empireprojekt.astralibs.valueOfOrNull
+import com.astrainteractive.empireprojekt.empire_items.util.EmpireUtils
+import com.astrainteractive.empireprojekt.empire_items.util.valueOfOrNull
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.attribute.Attribute

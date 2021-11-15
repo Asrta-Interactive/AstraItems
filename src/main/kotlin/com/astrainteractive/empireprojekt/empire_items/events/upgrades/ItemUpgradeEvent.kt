@@ -5,7 +5,6 @@ import com.astrainteractive.astralibs.IAstraListener
 import com.astrainteractive.empireprojekt.EmpirePlugin
 import com.astrainteractive.empireprojekt.empire_items.api.ItemsAPI
 import com.astrainteractive.empireprojekt.empire_items.util.BetterConstants
-import com.astrainteractive.empireprojekt.astralibs.EmpireUtils
 import org.bukkit.Particle
 import org.bukkit.attribute.Attribute
 import org.bukkit.attribute.AttributeModifier
@@ -37,7 +36,6 @@ class ItemUpgradeEvent : IAstraListener {
             "GENERIC_ARMOR" to "Броня",
             "GENERIC_ARMOR_TOUGHNESS" to "Прочность брони",
             "GENERIC_MOVEMENT_SPEED" to "Скорость"
-
         )
     }
 

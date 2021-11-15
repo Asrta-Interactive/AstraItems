@@ -16,9 +16,9 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.persistence.PersistentDataType
 import com.astrainteractive.empireprojekt.empire_items.util.EmpirePermissions
+import com.astrainteractive.empireprojekt.empire_items.util.EmpireUtils
 import com.astrainteractive.empireprojekt.empire_items.util.resource_pack.ResourcePackGenerator
 import com.astrainteractive.empireprojekt.empire_items.util.resource_pack.Zipper
-import com.astrainteractive.empireprojekt.astralibs.EmpireUtils
 import java.io.File
 
 class CommandManager() : CommandExecutor {

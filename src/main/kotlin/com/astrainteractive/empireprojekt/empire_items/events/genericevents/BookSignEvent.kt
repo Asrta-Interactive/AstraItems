@@ -2,7 +2,7 @@ package com.astrainteractive.empireprojekt.empire_items.events.genericevents
 
 import com.astrainteractive.astralibs.AstraUtils
 import com.astrainteractive.astralibs.IAstraListener
-import com.astrainteractive.empireprojekt.astralibs.EmpireUtils
+import com.astrainteractive.empireprojekt.empire_items.util.EmpireUtils
 import org.bukkit.event.EventHandler
 import org.bukkit.event.block.SignChangeEvent
 import org.bukkit.event.player.PlayerEditBookEvent

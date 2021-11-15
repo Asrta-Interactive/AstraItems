@@ -6,7 +6,6 @@ import com.google.gson.JsonParser
 import com.astrainteractive.empireprojekt.EmpirePlugin
 import com.astrainteractive.empireprojekt.npc.data.EmpireNPC
 import com.astrainteractive.empireprojekt.npc.data.Skin
-import com.astrainteractive.empireprojekt.astralibs.EmpireUtils
 import com.mojang.authlib.GameProfile
 import com.mojang.authlib.properties.Property
 import net.minecraft.network.protocol.game.*
