@@ -1,10 +1,10 @@
 package com.astrainteractive.empireprojekt.empire_items.commands
 
 import com.astrainteractive.astralibs.AstraLibs
+import com.astrainteractive.astralibs.registerCommand
 import com.astrainteractive.empireprojekt.EmpirePlugin
 import com.astrainteractive.empireprojekt.empire_items.api.items.data.ItemManager.getAstraID
 import com.astrainteractive.empireprojekt.empire_items.api.items.data.ItemManager.getItemStack
-import com.astrainteractive.empireprojekt.empire_items.util.registerCommand
 import org.bukkit.entity.Player
 
 class Emreplace {

@@ -28,36 +28,6 @@ import java.util.concurrent.Future
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
-
-
-fun ItemStack.setDisplayName(name:String){
-    val meta = itemMeta
-    meta?.setDisplayName(name.HEX())
-    itemMeta = meta
-}
-
-fun AstraLibs.registerCommand(
-    alias: String,
-    permission: String? = null,
-    callback: (CommandSender, args: Array<out String>) -> Unit
-) =
-    AstraLibs.instance.getCommand(alias)?.setExecutor { sender, command, label, args ->
-        if (permission != null && !sender.hasPermission(permission))
-            return@setExecutor true
-        callback(sender, args)
-        return@setExecutor true
-    }
-
-fun AstraLibs.registerTabCompleter(
-    alias: String,
-    permission: String? = null,
-    callback: (CommandSender, args: Array<out String>) -> List<String>
-) =
-    AstraLibs.instance.getCommand(alias)?.setTabCompleter { commandSender, command, s, strings ->
-        return@setTabCompleter callback(commandSender,strings)
-    }
-
-
 /**
  * Utils class
  */

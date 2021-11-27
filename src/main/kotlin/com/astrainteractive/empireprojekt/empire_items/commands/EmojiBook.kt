@@ -2,10 +2,10 @@ package com.astrainteractive.empireprojekt.empire_items.commands
 
 import com.astrainteractive.astralibs.AstraLibs
 import com.astrainteractive.astralibs.AstraUtils
+import com.astrainteractive.astralibs.registerCommand
 import com.astrainteractive.astralibs.runAsyncTask
 import com.astrainteractive.empireprojekt.empire_items.api.font.FontManager
 import com.astrainteractive.empireprojekt.empire_items.util.EmpireUtils
-import com.astrainteractive.empireprojekt.empire_items.util.registerCommand
 import org.bukkit.entity.Player
 
 class EmojiBook {

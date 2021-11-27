@@ -1,11 +1,11 @@
 package com.astrainteractive.empireprojekt.empire_items.commands
 
 import com.astrainteractive.astralibs.AstraLibs
+import com.astrainteractive.astralibs.registerCommand
+import com.astrainteractive.astralibs.registerTabCompleter
 import com.astrainteractive.empireprojekt.EmpirePlugin
 import com.astrainteractive.empireprojekt.empire_items.api.items.data.ItemManager
 import com.astrainteractive.empireprojekt.empire_items.api.items.data.ItemManager.toAstraItemOrItem
-import com.astrainteractive.empireprojekt.empire_items.util.registerCommand
-import com.astrainteractive.empireprojekt.empire_items.util.registerTabCompleter
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor

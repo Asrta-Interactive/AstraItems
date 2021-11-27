@@ -1,9 +1,9 @@
 package com.astrainteractive.empireprojekt.empire_items.commands
 
 import com.astrainteractive.astralibs.AstraLibs
+import com.astrainteractive.astralibs.registerCommand
 import com.astrainteractive.empireprojekt.EmpirePlugin
 import com.astrainteractive.empireprojekt.empire_items.util.EmpirePermissions
-import com.astrainteractive.empireprojekt.empire_items.util.registerCommand
 
 /**
  * Reload command handler

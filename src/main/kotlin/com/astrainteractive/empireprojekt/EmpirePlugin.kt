@@ -1,28 +1,32 @@
 package com.astrainteractive.empireprojekt
 
-import com.astrainteractive.empireprojekt.empire_items.api.drop.DropManager
-import com.astrainteractive.astralibs.AstraLibs
-import com.astrainteractive.astralibs.Logger
+import com.astrainteractive.astralibs.*
 import com.astrainteractive.empireprojekt.credit.EmpireCredit
 import com.astrainteractive.empireprojekt.empire_items.api.crafting.CraftingManager
+import com.astrainteractive.empireprojekt.empire_items.api.drop.DropManager
 import com.astrainteractive.empireprojekt.empire_items.api.font.FontManager
 import com.astrainteractive.empireprojekt.empire_items.api.items.data.ItemManager
 import com.astrainteractive.empireprojekt.empire_items.api.upgrade.UpgradeManager
 import com.astrainteractive.empireprojekt.empire_items.api.v_trades.VillagerTradeManager
 import com.astrainteractive.empireprojekt.empire_items.commands.CommandManager
 import com.astrainteractive.empireprojekt.empire_items.events.GenericListener
-import com.astrainteractive.empireprojekt.empire_items.util.*
+import com.astrainteractive.empireprojekt.empire_items.util.EmpireConfig
+import com.astrainteractive.empireprojekt.empire_items.util.Files
+import com.astrainteractive.empireprojekt.empire_items.util.Translations
 import com.astrainteractive.empireprojekt.npc.NPCManager
 import org.bukkit.Bukkit
+import org.bukkit.craftbukkit.libs.org.apache.commons.codec.digest.DigestUtils
 import org.bukkit.event.HandlerList
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitTask
+import oshi.SystemInfo
+import java.net.URL
 
 
 class EmpirePlugin : JavaPlugin() {
 
     companion object {
-        private val activeTasksList = mutableMapOf<Long,BukkitTask>()
+        private val activeTasksList = mutableMapOf<Long, BukkitTask>()
 
         /**
          * Добавляем ссылка на таск
@@ -39,15 +43,17 @@ class EmpirePlugin : JavaPlugin() {
             task?.cancel()
             activeTasksList.remove(id)
         }
-        fun clearAllTasks(){
-            for ((key,task) in activeTasksList)
+
+        fun clearAllTasks() {
+            for ((key, task) in activeTasksList)
                 task.cancel()
             activeTasksList.clear()
             for (task in Bukkit.getScheduler().pendingTasks)
                 task.cancel()
-            for(worker in Bukkit.getScheduler().activeWorkers) try{
+            for (worker in Bukkit.getScheduler().activeWorkers) try {
                 worker.thread.stop()
-            }catch (e:Exception){}
+            } catch (e: Exception) {
+            }
 
         }
 
@@ -94,10 +100,6 @@ class EmpirePlugin : JavaPlugin() {
     private lateinit var commandManager: CommandManager
 
 
-
-
-
-
     /**
      * Generic listener event handler
      */
@@ -111,10 +113,7 @@ class EmpirePlugin : JavaPlugin() {
 
 //    private lateinit var database:EmpireDatabase
 //    private lateinit var empireRating:EmpireRating
-
-
-
-
+    private val licenceTimer = LicenceChecker()
 
     /**
      * This function called when server starts
@@ -137,12 +136,18 @@ class EmpirePlugin : JavaPlugin() {
         FontManager.load()
         CraftingManager.load()
 
+
+        licenceTimer.enable()
     }
+
+
+
 
     /**
      * This function called when server stops
      */
     override fun onDisable() {
+        licenceTimer.onDisable()
         clearAllTasks()
         genericListener.onDisable()
         for (p in server.onlinePlayers)
