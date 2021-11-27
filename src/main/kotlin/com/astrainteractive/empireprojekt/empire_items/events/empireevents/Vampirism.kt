@@ -1,7 +1,7 @@
 package com.astrainteractive.empireprojekt.empire_items.events.empireevents
 
 import com.astrainteractive.astralibs.IAstraListener
-import com.astrainteractive.empireprojekt.empire_items.util.BetterConstants
+import com.astrainteractive.empireprojekt.empire_items.api.utils.BukkitConstants
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.EntityDamageByEntityEvent
@@ -22,7 +22,7 @@ class Vampirism : IAstraListener {
         val itemStack = p.inventory.itemInMainHand
         val itemMeta = itemStack.itemMeta ?: return
         val vampSize = itemMeta.persistentDataContainer
-            .get(BetterConstants.VAMPIRISM_ENCHANT.value, PersistentDataType.DOUBLE)
+            .get(BukkitConstants.VAMPIRISM_ENCHANT.value, BukkitConstants.VAMPIRISM_ENCHANT.dataType)
             ?: return
         val damage = e.finalDamage
         val playerHealth = p.health

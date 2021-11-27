@@ -2,10 +2,10 @@ package com.astrainteractive.empireprojekt.essentials.music_disc
 
 import com.astrainteractive.astralibs.HEX
 import com.astrainteractive.astralibs.IAstraListener
-import com.astrainteractive.empireprojekt.empire_items.api.ItemsAPI
-import com.astrainteractive.empireprojekt.empire_items.api.ItemsAPI.asEmpireItem
-import com.astrainteractive.empireprojekt.empire_items.api.ItemsAPI.getEmpireID
-import com.astrainteractive.empireprojekt.items.data.EmpireItem
+import com.astrainteractive.empireprojekt.empire_items.api.items.data.AstraItem
+import com.astrainteractive.empireprojekt.empire_items.api.items.data.ItemManager
+import com.astrainteractive.empireprojekt.empire_items.api.items.data.ItemManager.getAstraID
+import com.astrainteractive.empireprojekt.empire_items.api.items.data.ItemManager.toAstraItemOrItem
 import net.md_5.bungee.api.ChatMessageType
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Location
@@ -26,7 +26,7 @@ class MusicDiscsNewEvent : IAstraListener {
     /**
      * Список активных jukebox'ов с включенной музыкой
      */
-    val activeJukeboxes: MutableMap<Location, EmpireItem> = mutableMapOf()
+    val activeJukeboxes: MutableMap<Location, AstraItem> = mutableMapOf()
 
 
     @EventHandler
@@ -41,8 +41,8 @@ class MusicDiscsNewEvent : IAstraListener {
         stopMusic(e.block.location)
     }
 
-    fun dropDisc(location: Location, item: EmpireItem?) {
-        location.world?.dropItem(location.add(0.0, 1.0, 0.0), item?.id.asEmpireItem() ?: return)
+    fun dropDisc(location: Location, item: AstraItem?) {
+        location.world?.dropItem(location.add(0.0, 1.0, 0.0), item?.id.toAstraItemOrItem() ?: return)
     }
 
 
@@ -58,7 +58,7 @@ class MusicDiscsNewEvent : IAstraListener {
             e.isCancelled = true
 
         } else {
-            val musicDisc = ItemsAPI.getEmpireItemInfo(e.item.getEmpireID()?:return)?: return
+            val musicDisc = ItemManager.getItemInfo(e.item?.getAstraID())?: return
             musicDisc.musicDisc?:return
             e.item!!.amount -= 1
             playMusic(musicDisc, jukebox.location)
@@ -83,8 +83,9 @@ class MusicDiscsNewEvent : IAstraListener {
     /**
      * Включение проигрывания звука
      */
-    fun playMusic(item: EmpireItem, location: Location) {
-        location.world?.playSound(location, "${item.namespace}:${item.musicDisc!!.song}", 2f, 1f)
+    fun playMusic(item: AstraItem, location: Location) {
+        println("${item.namespace}:${item.musicDisc!!.name}")
+        location.world?.playSound(location, "${item.namespace}:${item.musicDisc!!.name}", 2f, 1f)
         activeJukeboxes[location] = item
         getPlayerInDistance(location).forEach { player ->
             val comp = TextComponent(("Играет ${item.displayName}").HEX())
@@ -99,7 +100,7 @@ class MusicDiscsNewEvent : IAstraListener {
     fun stopMusic(location: Location) {
         val item = activeJukeboxes[location] ?: return
         for (player in getPlayerInDistance(location))
-            player.stopSound("${item.namespace}:${item.musicDisc!!.song}")
+            player.stopSound("${item.namespace}:${item.musicDisc!!.name}")
         activeJukeboxes.remove(location)
         dropDisc(location, item)
     }

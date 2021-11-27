@@ -1,0 +1,63 @@
+package com.astrainteractive.empireprojekt.empire_items.api.utils
+
+import com.astrainteractive.astralibs.AstraLibs
+import org.bukkit.NamespacedKey
+import org.bukkit.attribute.Attribute
+import org.bukkit.persistence.PersistentDataType
+
+
+data class BukkitConstant<T, Z>(
+    val value: NamespacedKey,
+    val dataType: PersistentDataType<T, Z>
+) {
+    constructor(key: String, dataType: PersistentDataType<T, Z>) : this(
+        NamespacedKey(AstraLibs.instance, key),
+        dataType
+    )
+}
+
+object BukkitConstants {
+    fun CUSTOM_DURABILITY() =
+        BukkitConstant(NamespacedKey(AstraLibs.instance, "CUSTOM_DURABILITY"), PersistentDataType.INTEGER)
+
+    fun MAX_CUSTOM_DURABILITY() =
+        BukkitConstant(NamespacedKey(AstraLibs.instance, "MAX_CUSTOM_DURABILITY"), PersistentDataType.INTEGER)
+
+    fun ASTRA_ID() = BukkitConstant(NamespacedKey(AstraLibs.instance, "ASTRA_ID"), PersistentDataType.STRING)
+    fun ASTRA_ATTRIBUTE(attr: Attribute) =
+        BukkitConstant(
+            NamespacedKey(AstraLibs.instance, ASTRA_UPGRADE + attr.name.lowercase()),
+            PersistentDataType.DOUBLE
+        )
+
+    val MOLOTOV
+        get() = BukkitConstant("MOLOTOV", PersistentDataType.INTEGER)
+
+    val GRAPPLING_HOOK
+        get() = BukkitConstant("GRAPPLING_HOOK", PersistentDataType.INTEGER)
+    val SOUL_BIND
+        get() = BukkitConstant("SOUL_BIND", PersistentDataType.INTEGER)
+    val HAMMER_ENCHANT
+        get() = BukkitConstant("HAMMER_ENCHANT", PersistentDataType.INTEGER)
+    val LAVA_WALKER_ENCHANT
+        get() = BukkitConstant("LAVA_WALKER_ENCHANT", PersistentDataType.INTEGER)
+    val VAMPIRISM_ENCHANT
+        get() = BukkitConstant("VAMPIRISM_ENCHANT", PersistentDataType.INTEGER)
+    val GRENADE_EXPLOSION_POWER
+        get() = BukkitConstant("GRENADE_EXPLOSION_POWER", PersistentDataType.INTEGER)
+    val EMPIRE_DURABILITY
+        get() = BukkitConstant("EMPIRE_DURABILITY", PersistentDataType.INTEGER)
+    val MAX_CUSTOM_DURABILITY
+        get() = BukkitConstant("MAX_CUSTOM_DURABILITY", PersistentDataType.INTEGER)
+
+    val ASTRA_UPGRADE_TIMES
+        get() = BukkitConstant(
+            NamespacedKey(AstraLibs.instance, "ASTRA_UPGRADE_TIMES".lowercase()),
+            PersistentDataType.INTEGER
+        )
+    val ASTRA_UPGRADE
+        get() = "ASTRA_UPGRADE_".lowercase()
+    val ASTRA_CRAFTING
+        get() = "ASTRA_CRAFTING".lowercase()
+
+}

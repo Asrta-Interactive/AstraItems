@@ -10,37 +10,14 @@ public class Files() {
 
     val configFile: FileManager =
         FileManager("config" + File.separator + "config.yml")
-    val guiFile: FileManager =
-        FileManager("config" + File.separator + "gui.yml")
+    val guiConfig: FileManager =
+        FileManager("config"+File.separator+"gui.yml")
     val dropsFile: FileManager =
         FileManager("config" + File.separator + "drops.yml")
-    val upgradesFile: FileManager =
-        FileManager("config" + File.separator + "upgrades.yml")
-    val fontImagesFile: FileManager =
-        FileManager("config" + File.separator + "fonts.yml")
-    val blocksFile: FileManager =
-        FileManager("config" + File.separator + "blocks.yml")
-    val craftingFile: FileManager =
-        FileManager("config" + File.separator + "crafting.yml")
-    val mobsFile: FileManager =
-        FileManager("config" + File.separator + "mobs.yml")
-
-    val loreBooks: FileManager =
-        FileManager("config" + File.separator + "lore_books.yml")
-    val npcs: FileManager =
-        FileManager("config" + File.separator + "npcs.yml")
     val tempChunks: FileManager =
         FileManager("temp" + File.separator + "generated_chunks.yml")
-    val villagerTrades: FileManager =
-        FileManager("config" + File.separator + "villager_trades.yml")
-    val randomItems: FileManager =
-        FileManager("config" + File.separator + "random_items.yml")
-
-
 
     val empireItemsFiles: MutableList<FileManager> = mutableListOf()
-
-    val _soundsFile: FileManager = FileManager("config" + File.separator + "sounds.yml")
 
 
     init {

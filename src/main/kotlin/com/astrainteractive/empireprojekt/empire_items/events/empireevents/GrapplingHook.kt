@@ -1,9 +1,9 @@
 package com.astrainteractive.empireprojekt.empire_items.events.empireevents
 
 import com.astrainteractive.astralibs.IAstraListener
+import com.astrainteractive.empireprojekt.empire_items.api.items.data.ItemManager.getAstraID
+import com.astrainteractive.empireprojekt.empire_items.api.utils.BukkitConstants
 import com.destroystokyo.paper.ParticleBuilder
-import com.astrainteractive.empireprojekt.empire_items.api.ItemsAPI.getEmpireID
-import com.astrainteractive.empireprojekt.empire_items.util.BetterConstants
 
 import org.bukkit.Color
 import org.bukkit.Location
@@ -23,7 +23,7 @@ class GrapplingHook : IAstraListener {
 
 
 
-    val mapHooks = mutableMapOf<Player, Location>()
+    val mapHooks = mutableMapOf<String, Location>()
 
 
 
@@ -33,21 +33,21 @@ class GrapplingHook : IAstraListener {
     @EventHandler
     fun playerHookShootEvent(e: PlayerInteractEvent) {
         val item = e.player.inventory.itemInMainHand
-        item.getEmpireID()?:return
-        if (item.itemMeta?.persistentDataContainer?.has(BetterConstants.GRAPPLING_HOOK.value, PersistentDataType.DOUBLE)!=true)
+        item.getAstraID()?:return
+        if (item.itemMeta?.persistentDataContainer?.has(BukkitConstants.GRAPPLING_HOOK.value, PersistentDataType.DOUBLE)!=true)
             return
 
         if (e.action==Action.LEFT_CLICK_AIR || e.action==Action.LEFT_CLICK_BLOCK){
-            mapHooks.remove(e.player)
+            mapHooks.remove(e.player.name)
             return
         }
         if ((e.player as HumanEntity).hasCooldown(item.type))
             return
 
         val player = e.player
-        if (mapHooks.containsKey(player)) {
-            val location = mapHooks[player]!!.clone()
-            mapHooks.remove(player)
+        if (mapHooks.containsKey(player.name)) {
+            val location = mapHooks[player.name]!!.clone()
+            mapHooks.remove(player.name)
             val v3 = location.clone().subtract(player.location)
 
             val distance = location.clone().distance(player.location)
@@ -65,7 +65,6 @@ class GrapplingHook : IAstraListener {
                 return
             }
             val multiply = 0.4 - (distance/1000)
-            println(multiply)
             player.velocity = v3.toVector().multiply(multiply/2)
             player.addPotionEffect(PotionEffect(PotionEffectType.SLOW_FALLING,25,1,false,false,false))
             (e.player as HumanEntity).setCooldown(item.type,50)
@@ -88,7 +87,7 @@ class GrapplingHook : IAstraListener {
                 l.add(l.direction.x, l.direction.y - i / (350 * 0.9), l.direction.z)
 
             if (!l.block.isPassable) {
-                mapHooks[player] = l.add(0.0, 1.0, 0.0)
+                mapHooks[player.name] = l.add(0.0, 1.0, 0.0)
                 ParticleBuilder(Particle.SMOKE_LARGE)
                     .count(70)
                     .force(true)
@@ -103,7 +102,7 @@ class GrapplingHook : IAstraListener {
 
     @EventHandler
     fun playerLeaveEvent(e: PlayerQuitEvent) {
-        mapHooks.remove(e.player)
+        mapHooks.remove(e.player.name)
     }
 
     override fun onDisable() {

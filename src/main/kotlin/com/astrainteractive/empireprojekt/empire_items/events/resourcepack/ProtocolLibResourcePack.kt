@@ -1,6 +1,8 @@
-package makeevrserg.empireprojekt.events.resourcepack
+package com.astrainteractive.empireprojekt.empire_items.events.resourcepack
 
+import com.astrainteractive.astralibs.AstraLibs
 import com.astrainteractive.astralibs.IAstraListener
+import com.astrainteractive.empireprojekt.EmpirePlugin
 import com.comphenix.protocol.PacketType
 import com.comphenix.protocol.ProtocolLibrary
 import com.comphenix.protocol.ProtocolManager
@@ -9,12 +11,11 @@ import com.comphenix.protocol.events.PacketAdapter
 import com.comphenix.protocol.events.PacketEvent
 import com.comphenix.protocol.events.PacketListener
 import com.comphenix.protocol.wrappers.WrappedChatComponent
-import com.astrainteractive.empireprojekt.EmpirePlugin
 
 class ProtocolLibResourcePack: IAstraListener {
     private var protocolManager: ProtocolManager = ProtocolLibrary.getProtocolManager()
     private var packetListener: PacketListener = object : PacketAdapter(
-        EmpirePlugin.instance,
+        AstraLibs.instance,
         ListenerPriority.HIGHEST,
         PacketType.Play.Server.RESOURCE_PACK_SEND,
     ) {
@@ -33,10 +34,10 @@ class ProtocolLibResourcePack: IAstraListener {
     }
 
     init {
-        protocolManager.addPacketListener(packetListener)
+            protocolManager.addPacketListener(packetListener)
     }
 
     override fun onDisable() {
-        protocolManager.removePacketListener(packetListener)
+            protocolManager.removePacketListener(packetListener)
     }
 }

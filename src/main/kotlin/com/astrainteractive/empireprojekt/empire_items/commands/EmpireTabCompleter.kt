@@ -2,14 +2,15 @@ package com.astrainteractive.empireprojekt.empire_items.commands
 
 import com.astrainteractive.astralibs.withEntry
 import com.astrainteractive.empireprojekt.EmpirePlugin
-import com.astrainteractive.empireprojekt.empire_items.api.ItemsAPI
+import com.astrainteractive.empireprojekt.empire_items.api.font.FontManager
+import com.astrainteractive.empireprojekt.empire_items.api.items.data.ItemManager
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
 
 class EmpireTabCompleter() : TabCompleter {
 
-    val empireItems =ItemsAPI.getEmpireItemsInfo().keys.toList()
+    val empireItems =ItemManager.getItemsIDS()
 
     //Доделать
     override fun onTabComplete(
@@ -26,7 +27,7 @@ class EmpireTabCompleter() : TabCompleter {
             args.size == 3 -> on3Args(alias, args)
 
             (alias.equals("emoji", ignoreCase = true)) ->
-                EmpirePlugin.empireFonts.playerFonts.values.toList()
+                FontManager.playerFonts().map{it.char}
 
             else -> null
         }
@@ -41,11 +42,8 @@ class EmpireTabCompleter() : TabCompleter {
 
         return if (alias.equals("emnpc", ignoreCase = true)) {
             listOf("create", "tp", "move", "delete", "changeskin", "select").withEntry(args.lastOrNull())
-        } else if (alias.equals("erandomitem", ignoreCase = true)) {
-            val list = EmpirePlugin.instance.randomItems.getList()
-            list.withEntry(args.lastOrNull())
         } else if (alias.equals("emoji", ignoreCase = true)) {
-            return EmpirePlugin.empireFonts.playerFonts.values.toList()
+            return FontManager.playerFonts().map{it.char}
         } else {
             listOf("reload", "give").withEntry(args.lastOrNull())
         }
@@ -53,16 +51,8 @@ class EmpireTabCompleter() : TabCompleter {
 
     private fun on2Args(alias: String, args: Array<out String>): List<String>? {
 
-        if (alias.equals("erandomitem", ignoreCase = true)) {
-            val list = EmpirePlugin.instance.randomItems.getList()
-            val arg = args[0]
-            val newList = mutableListOf<String>()
-            for (id in list)
-                if (id.contains(arg, ignoreCase = true))
-                    newList.add(arg)
-            return newList.withEntry(args.lastOrNull())
-        } else if (alias.equals("emoji", ignoreCase = true)) {
-            return EmpirePlugin.empireFonts.playerFonts.values.toList()
+        if (alias.equals("emoji", ignoreCase = true)) {
+            return FontManager.playerFonts().map{it.char}
         }
 
 
@@ -75,7 +65,7 @@ class EmpireTabCompleter() : TabCompleter {
                 return listOf("<skin>")
             }
         } else if (alias.equals("emoji", ignoreCase = true)) {
-            return EmpirePlugin.empireFonts.playerFonts.values.toList()
+            return FontManager.playerFonts().map{it.char}
         } else {
             if (!args[0].equals("give", ignoreCase = true))
                 return null

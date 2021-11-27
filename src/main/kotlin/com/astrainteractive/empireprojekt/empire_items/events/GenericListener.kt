@@ -1,21 +1,26 @@
 package com.astrainteractive.empireprojekt.empire_items.events
 
+import com.astrainteractive.astraitems.events.block.BlockGenerationEvent
 import com.astrainteractive.astralibs.IAstraListener
 import com.astrainteractive.astralibs.IAstraManager
 import com.astrainteractive.astralibs.menu.MenuListener
+import com.astrainteractive.empireprojekt.empire_items.events.blocks.BlockHardnessEvent
+import com.astrainteractive.empireprojekt.empire_items.events.blocks.MushroomBlockBreakEvent
+import com.astrainteractive.empireprojekt.empire_items.events.blocks.MushroomBlockPlaceEvent
+import com.astrainteractive.empireprojekt.empire_items.events.blocks.MushroomCancelEvent
 import com.astrainteractive.empireprojekt.empire_items.events.decorations.DecorationBlockPlaceEvent
 import com.astrainteractive.empireprojekt.empire_items.events.empireevents.*
 import com.astrainteractive.empireprojekt.empire_items.events.genericevents.BookSignEvent
 import com.astrainteractive.empireprojekt.empire_items.events.genericevents.ExperienceRepairEvent
-import com.astrainteractive.empireprojekt.empire_items.events.genericevents.ItemInteractListener
+import com.astrainteractive.empireprojekt.empire_items.events.genericevents.GenericEvents
 import com.astrainteractive.empireprojekt.empire_items.events.genericevents.drop.ItemDropListener
-import com.astrainteractive.empireprojekt.empire_items.events.upgrades.ItemUpgradeEvent
+import com.astrainteractive.empireprojekt.empire_items.events.resourcepack.ProtocolLibResourcePack
+import com.astrainteractive.empireprojekt.empire_items.events.resourcepack.ResourcePackEvent
+import com.astrainteractive.empireprojekt.empire_items.events.upgrade.UpgradeEvent
 import com.astrainteractive.empireprojekt.empire_items.events.villagers.VillagerEvent
 
 import com.astrainteractive.empireprojekt.essentials.music_disc.MusicDiscsNewEvent
 import com.astrainteractive.empireprojekt.essentials.sit.SitEvent
-import makeevrserg.empireprojekt.events.resourcepack.ProtocolLibResourcePack
-import makeevrserg.empireprojekt.events.resourcepack.ResourcePackEvent
 import org.bukkit.Bukkit
 
 
@@ -44,11 +49,16 @@ class GenericListener() : IAstraManager {
         ResourcePackEvent().onEnable(this)
         ExperienceRepairEvent().onEnable(this)
         MenuListener().onEnable(this)
-        ItemUpgradeEvent().onEnable(this)
+        UpgradeEvent().onEnable(this)
         ItemDropListener().onEnable(this)
-        ItemInteractListener().onEnable(this)
+        GenericEvents().onEnable(this)
         VillagerEvent().onEnable(this)
         PlayerShowRecipeKey().onEnable(this)
+        BlockGenerationEvent().onEnable(this)
+        BlockHardnessEvent().onEnable(this)
+        MushroomBlockPlaceEvent().onEnable(this)
+        MushroomBlockBreakEvent().onEnable(this)
+        MushroomCancelEvent().onEnable(this)
 
         DecorationBlockPlaceEvent().onEnable(this)
 

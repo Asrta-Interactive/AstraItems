@@ -3,7 +3,7 @@ package com.astrainteractive.empireprojekt.empire_items.events.empireevents
 import com.astrainteractive.astralibs.IAstraListener
 import com.astrainteractive.empireprojekt.EmpirePlugin
 import com.astrainteractive.empireprojekt.EmpirePlugin.Companion.instance
-import com.astrainteractive.empireprojekt.empire_items.util.BetterConstants
+import com.astrainteractive.empireprojekt.empire_items.api.utils.BukkitConstants
 
 import com.sk89q.worldedit.bukkit.BukkitAdapter
 import com.sk89q.worldguard.WorldGuard
@@ -30,7 +30,7 @@ class MolotovEvent : IAstraListener {
         val itemStack = player.inventory.itemInMainHand
         val meta = itemStack.itemMeta ?: return
         val molotovPower =
-            meta.persistentDataContainer.get(BetterConstants.MOLOTOV.value, PersistentDataType.DOUBLE)
+            meta.persistentDataContainer.get(BukkitConstants.MOLOTOV.value, BukkitConstants.MOLOTOV.dataType)
                 ?: return
         println("Player ${player.name} threw molotov at blockLocation=${e.hitBlock?.location} playerLocation=${player.location}")
         Igniter(instance, e.hitBlock ?: return, molotovPower.toInt(), player)

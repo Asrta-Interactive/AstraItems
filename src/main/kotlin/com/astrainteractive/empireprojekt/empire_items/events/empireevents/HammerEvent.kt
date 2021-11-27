@@ -2,7 +2,7 @@ package com.astrainteractive.empireprojekt.empire_items.events.empireevents
 
 import com.astrainteractive.astralibs.IAstraListener
 import com.astrainteractive.empireprojekt.EmpirePlugin.Companion.instance
-import com.astrainteractive.empireprojekt.empire_items.util.BetterConstants
+import com.astrainteractive.empireprojekt.empire_items.api.utils.BukkitConstants
 import com.sk89q.worldedit.bukkit.BukkitAdapter
 import com.sk89q.worldedit.world.World
 import com.sk89q.worldguard.WorldGuard
@@ -62,7 +62,7 @@ class HammerEvent : IAstraListener {
         val itemStack = e.player.inventory.itemInMainHand
         val itemMeta = itemStack.itemMeta ?: return
         if (!itemMeta.persistentDataContainer
-                .has(BetterConstants.HAMMER_ENCHANT.value, PersistentDataType.DOUBLE)
+                .has(BukkitConstants.HAMMER_ENCHANT.value, BukkitConstants.HAMMER_ENCHANT.dataType)
         ) return
         val side = blockFace[e.player]
         blockFace.remove(e.player)

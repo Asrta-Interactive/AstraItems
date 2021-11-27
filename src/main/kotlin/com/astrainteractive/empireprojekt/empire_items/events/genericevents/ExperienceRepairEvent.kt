@@ -1,7 +1,7 @@
 package com.astrainteractive.empireprojekt.empire_items.events.genericevents
 
 import com.astrainteractive.astralibs.IAstraListener
-import com.astrainteractive.empireprojekt.empire_items.util.BetterConstants
+import com.astrainteractive.empireprojekt.empire_items.api.utils.BukkitConstants
 
 import org.bukkit.event.EventHandler
 import org.bukkit.event.inventory.PrepareAnvilEvent
@@ -33,15 +33,15 @@ class ExperienceRepairEvent : IAstraListener {
         val itemMeta: ItemMeta = itemStack.itemMeta ?: return
 
         val maxCustomDurability: Int = itemMeta.persistentDataContainer.get(
-            BetterConstants.MAX_CUSTOM_DURABILITY.value,
-            PersistentDataType.INTEGER
+            BukkitConstants.MAX_CUSTOM_DURABILITY.value,
+            BukkitConstants.MAX_CUSTOM_DURABILITY.dataType
         ) ?: return
 
         val damage: Short = itemStack.durability
         val empireDurability = maxCustomDurability - damage * maxCustomDurability / itemStack.type.maxDurability
         itemMeta.persistentDataContainer.set(
-            BetterConstants.EMPIRE_DURABILITY.value,
-            PersistentDataType.INTEGER,
+            BukkitConstants.EMPIRE_DURABILITY.value,
+            BukkitConstants.EMPIRE_DURABILITY.dataType,
             empireDurability
         )
         itemStack.itemMeta = itemMeta
@@ -54,13 +54,13 @@ class ExperienceRepairEvent : IAstraListener {
         itemStack ?: return
         val itemMeta: ItemMeta = itemStack.itemMeta ?: return
         var maxCustomDurability: Int = itemMeta.persistentDataContainer.get(
-            BetterConstants.MAX_CUSTOM_DURABILITY.value,
-            PersistentDataType.INTEGER
+            BukkitConstants.MAX_CUSTOM_DURABILITY.value,
+            BukkitConstants.MAX_CUSTOM_DURABILITY.dataType
         ) ?: return
 
         var empireDurability: Int = itemMeta.persistentDataContainer.get(
-            BetterConstants.EMPIRE_DURABILITY.value,
-            PersistentDataType.INTEGER
+            BukkitConstants.EMPIRE_DURABILITY.value,
+            BukkitConstants.EMPIRE_DURABILITY.dataType
         ) ?: return
 
 
@@ -76,8 +76,8 @@ class ExperienceRepairEvent : IAstraListener {
         }
 
         itemMeta.persistentDataContainer.set(
-            BetterConstants.EMPIRE_DURABILITY.value,
-            PersistentDataType.INTEGER,
+            BukkitConstants.EMPIRE_DURABILITY.value,
+            BukkitConstants.EMPIRE_DURABILITY.dataType,
             empireDurability
         )
         itemStack.itemMeta = itemMeta

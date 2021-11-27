@@ -1,7 +1,7 @@
 package com.astrainteractive.empireprojekt.empire_items.events.empireevents
 
 import com.astrainteractive.astralibs.IAstraListener
-import com.astrainteractive.empireprojekt.empire_items.util.BetterConstants
+import com.astrainteractive.empireprojekt.empire_items.api.utils.BukkitConstants
 import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
@@ -64,7 +64,7 @@ class LavaWalkerEvent : IAstraListener {
     private fun hasLaveWalker(meta: ItemMeta?): Boolean {
         meta ?: return false
         return meta.persistentDataContainer
-            .has(BetterConstants.LAVA_WALKER_ENCHANT.value, PersistentDataType.DOUBLE)
+            .has(BukkitConstants.LAVA_WALKER_ENCHANT.value, BukkitConstants.LAVA_WALKER_ENCHANT.dataType)
     }
 
     @EventHandler

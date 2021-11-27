@@ -1,10 +1,11 @@
 package com.astrainteractive.empireprojekt.empire_items.events.genericevents.drop
 
+import com.astrainteractive.empireprojekt.empire_items.api.drop.DropManager
 import com.astrainteractive.astralibs.IAstraListener
-import com.astrainteractive.empireprojekt.EmpirePlugin
-import com.astrainteractive.empireprojekt.empire_items.api.ItemsAPI
-import com.astrainteractive.empireprojekt.empire_items.api.MushroomBlockApi
-import com.astrainteractive.empireprojekt.empire_items.events.genericevents.drop.data.ItemDrop
+import com.astrainteractive.empireprojekt.empire_items.api.drop.AstraDrop
+import com.astrainteractive.empireprojekt.empire_items.api.items.BlockParser
+import com.astrainteractive.empireprojekt.empire_items.api.items.data.ItemManager
+import com.astrainteractive.empireprojekt.empire_items.api.items.data.ItemManager.getItemStack
 import org.bukkit.Location
 import org.bukkit.block.Block
 import org.bukkit.entity.Entity
@@ -20,17 +21,17 @@ class ItemDropListener : IAstraListener {
 
 
 
-    private fun dropItem(list: List<ItemDrop>, l: Location): Boolean {
+    private fun dropItem(list: List<AstraDrop>, l: Location): Boolean {
         var isDropped = false
-        for (drop: ItemDrop in list) {
+        for (drop in list) {
             val dropChance = Random.nextDouble(0.0, 100.0)
-            if (drop.chance > dropChance) {
+            if (drop.percent > dropChance) {
                 isDropped = true
-                for (i in 0 until Random.nextInt(drop.minAmount, drop.maxAmount + 1))
-                    l.world?.dropItem(
-                        l,
-                        ItemsAPI.getEmpireItemStackOrItemStack(drop.id)?:continue
-                    ) ?: return isDropped
+                val amount = Random.nextInt(drop.minAmount, drop.maxAmount + 1)
+                if (amount<=0)
+                    return isDropped
+                val item = drop.id.getItemStack(amount)?:return isDropped
+                l.world?.dropItem(l,item) ?: return isDropped
             }
         }
         return isDropped
@@ -48,11 +49,10 @@ class ItemDropListener : IAstraListener {
             blockLocations.removeAt(0)
 
 
+        val customBlockData = BlockParser.getBlockData(e.block)
+        val customBlockId =ItemManager.getBlockInfoByData(customBlockData)
 
-        val id =ItemsAPI.getEmpireBlockIdByData(MushroomBlockApi.getBlockData(e.block)?:return)
-		
-        val listDrop: List<ItemDrop> = EmpirePlugin.dropManager.itemDrops[id?:block.blockData.material.name] ?: return
-        if (dropItem(listDrop, block.location))
+        if (dropItem(DropManager.getDrops()[customBlockId?:block.blockData.material.name]?: listOf(), block.location))
             e.isDropItems = false
 
     }
@@ -61,7 +61,7 @@ class ItemDropListener : IAstraListener {
     @EventHandler
     fun onMobDeath(e: EntityDeathEvent) {
         val entity: Entity = e.entity
-        val listDrop = EmpirePlugin.dropManager.mobDrops[entity.type.name] ?: return
+        val listDrop = DropManager.getDrops()[entity.type.name] ?: return
         dropItem(listDrop, entity.location)
     }
 

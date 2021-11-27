@@ -110,6 +110,12 @@
 
 
     <dependencies>
+
+        <dependency>
+            <groupId>com.astrainteractive</groupId>
+            <artifactId>astralibs</artifactId>
+            <version>1.0.10</version>
+        </dependency>
         <!--        Essentials-->
         <dependency>
             <groupId>net.essentialsx</groupId>
@@ -181,11 +187,6 @@
         </dependency>
 
 
-        <dependency>
-            <groupId>com.astrainteractive</groupId>
-            <artifactId>astralibs</artifactId>
-            <version>1.0.4</version>
-        </dependency>
 
 
 

@@ -1,11 +1,13 @@
 package com.astrainteractive.empireprojekt.empire_items.events
 
+import com.astrainteractive.astralibs.AstraLibs
 import com.astrainteractive.astralibs.IAstraListener
 import com.astrainteractive.astralibs.callSyncMethod
 import com.astrainteractive.astralibs.runAsyncTask
-import com.astrainteractive.empireprojekt.empire_items.api.ItemsAPI
-import com.astrainteractive.empireprojekt.empire_items.api.ItemsAPI.getEmpireID
-import com.astrainteractive.empireprojekt.astralibs.*
+import com.astrainteractive.empireprojekt.empire_items.api.crafting.CraftingManager
+import com.astrainteractive.empireprojekt.empire_items.api.items.data.ItemManager.getAstraID
+import com.astrainteractive.empireprojekt.empire_items.api.utils.BukkitConstants
+import org.bukkit.NamespacedKey
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.EntityPickupItemEvent
@@ -50,18 +52,19 @@ class PlayerShowRecipeKey : IAstraListener {
         player: Player
     ) {
         runAsyncTask {
-            val mainItemId = itemStack.getEmpireID() ?: itemStack.type.name
-            val mainRecipe = ItemsAPI.getRecipeKey(mainItemId)
-            if (mainRecipe != null && player.hasDiscoveredRecipe(mainRecipe))
+            val mainItemId = itemStack.getAstraID() ?: itemStack.type.name
+            val mainRecipeKey = NamespacedKey(AstraLibs.instance, BukkitConstants.ASTRA_CRAFTING+ mainItemId)
+            if (player.hasDiscoveredRecipe(mainRecipeKey))
                 return@runAsyncTask
 
-            for (id in ItemsAPI.useInCraft(mainItemId))
+            for (id in CraftingManager.usedInCraft(mainItemId))
                 callSyncMethod {
-                    player.discoverRecipe(ItemsAPI.getRecipeKey(id) ?: return@callSyncMethod)
+                    val key = NamespacedKey(AstraLibs.instance, BukkitConstants.ASTRA_CRAFTING+ id)
+                    player.discoverRecipe(key)
                 }
 
             callSyncMethod {
-                player.discoverRecipe(mainRecipe ?: return@callSyncMethod)
+                player.discoverRecipe(mainRecipeKey)
             }
         }
     }

@@ -1,4 +1,4 @@
-package makeevrserg.empireprojekt.events.resourcepack
+package com.astrainteractive.empireprojekt.empire_items.events.resourcepack
 
 import com.astrainteractive.astralibs.IAstraListener
 import com.astrainteractive.empireprojekt.EmpirePlugin
@@ -7,9 +7,6 @@ import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerResourcePackStatusEvent
 
 class ResourcePackEvent : IAstraListener {
-
-
-
 
 
 

@@ -3,7 +3,8 @@ package com.astrainteractive.empireprojekt.empire_items.events.empireevents
 import com.astrainteractive.astralibs.IAstraListener
 import com.astrainteractive.empireprojekt.EmpirePlugin
 import com.astrainteractive.empireprojekt.EmpirePlugin.Companion.instance
-import com.astrainteractive.empireprojekt.empire_items.util.BetterConstants
+import com.astrainteractive.empireprojekt.empire_items.api.utils.BukkitConstants
+import com.astrainteractive.empireprojekt.empire_items.api.utils.getPersistentData
 import com.sk89q.worldedit.bukkit.BukkitAdapter
 import com.sk89q.worldguard.WorldGuard
 import com.sk89q.worldguard.protection.flags.Flags
@@ -29,13 +30,12 @@ class GrenadeEvent : IAstraListener {
 
         val itemStack = player.inventory.itemInMainHand
         val meta = itemStack.itemMeta ?: return
-        val explosionPower =
-            meta.persistentDataContainer.get(BetterConstants.GRENADE_EXPLOSION_POWER.value, PersistentDataType.DOUBLE)
-                ?: return
+
+        val explosionPower = meta.getPersistentData(BukkitConstants.GRENADE_EXPLOSION_POWER) ?: return
         println("Player ${player.name} threw grenade at blockLocation=${e.hitBlock?.location} playerLocation=${player.location}")
         if (!allowExplosion(instance, e.entity.location))
             return
-        generateExplosion(e.entity.location, explosionPower)
+        generateExplosion(e.entity.location, explosionPower.toDouble())
         e.entity.world.spawnParticle(Particle.SMOKE_LARGE, e.entity.location, 300, 0.0, 0.0, 0.0, 0.2)
     }
 
@@ -51,7 +51,7 @@ class GrenadeEvent : IAstraListener {
         }
 
         fun generateExplosion(location: Location, power: Double) {
-            location.world?.createExplosion(location,power.toFloat())?:return
+            location.world?.createExplosion(location, power.toFloat()) ?: return
         }
     }
 }

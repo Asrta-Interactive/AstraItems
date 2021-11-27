@@ -1,12 +1,15 @@
 package com.astrainteractive.empireprojekt.empire_items.util
 
+import com.astrainteractive.astralibs.AstraLibs
 import com.astrainteractive.astralibs.AstraUtils
 import com.astrainteractive.astralibs.HEX
 import com.google.gson.JsonParser
 import com.astrainteractive.empireprojekt.EmpirePlugin
+import com.astrainteractive.empireprojekt.empire_items.api.font.FontManager
 import net.md_5.bungee.api.ChatColor
 import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.command.CommandSender
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer
@@ -27,21 +30,32 @@ import java.util.regex.Pattern
 
 
 
-fun valueOfOrNull(value: String): ItemFlag? {
-    return try {
-        ItemFlag.valueOf(value)
-    } catch (e: IllegalArgumentException) {
-        null
-    }
-
-}
-
 fun ItemStack.setDisplayName(name:String){
     val meta = itemMeta
     meta?.setDisplayName(name.HEX())
     itemMeta = meta
 }
 
+fun AstraLibs.registerCommand(
+    alias: String,
+    permission: String? = null,
+    callback: (CommandSender, args: Array<out String>) -> Unit
+) =
+    AstraLibs.instance.getCommand(alias)?.setExecutor { sender, command, label, args ->
+        if (permission != null && !sender.hasPermission(permission))
+            return@setExecutor true
+        callback(sender, args)
+        return@setExecutor true
+    }
+
+fun AstraLibs.registerTabCompleter(
+    alias: String,
+    permission: String? = null,
+    callback: (CommandSender, args: Array<out String>) -> List<String>
+) =
+    AstraLibs.instance.getCommand(alias)?.setTabCompleter { commandSender, command, s, strings ->
+        return@setTabCompleter callback(commandSender,strings)
+    }
 
 
 /**
@@ -50,11 +64,6 @@ fun ItemStack.setDisplayName(name:String){
 object EmpireUtils {
 
 
-
-    inline fun <reified T : kotlin.Enum<T>> valueOfOrNull(key: String?): T? {
-        return java.lang.Enum.valueOf(T::class.java, key)
-
-    }
 
 
 
@@ -93,12 +102,12 @@ object EmpireUtils {
     }
 
     fun emojiPattern(_line: String): String {
-        val map = EmpirePlugin.empireFonts._fontValueById
+        val map = FontManager.fontById()
         var matcher: Matcher = emojiPattern.matcher(_line)
         var line = _line
         while (matcher.find()) {
             val emoji: String = line.substring(matcher.start(), matcher.end())
-            val toReplace: String = map[emoji] ?: emoji.replace(":", "<<>>")
+            val toReplace: String = map[emoji]?.char ?: emoji.replace(":", "<<>>")
             line = line.replace(emoji, toReplace + "")
             matcher = emojiPattern.matcher(line)
         }

@@ -1,11 +1,10 @@
 package com.astrainteractive.empireprojekt.empire_items.events.villagers
 
 import com.astrainteractive.astralibs.IAstraListener
-import com.astrainteractive.empireprojekt.empire_items.api.ItemsAPI.asEmpireItem
-import com.astrainteractive.empireprojekt.empire_items.api.ItemsAPI.asEmpireItemOrItem
-import com.astrainteractive.empireprojekt.empire_items.api.ItemsAPI.getEmpireID
-import com.astrainteractive.empireprojekt.empire_items.events.villagers.data.VillagerItem
-import com.astrainteractive.empireprojekt.astralibs.*
+import com.astrainteractive.empireprojekt.empire_items.api.items.data.ItemManager.getAstraID
+import com.astrainteractive.empireprojekt.empire_items.api.items.data.ItemManager.toAstraItemOrItem
+import com.astrainteractive.empireprojekt.empire_items.api.v_trades.TradeItem
+import com.astrainteractive.empireprojekt.empire_items.api.v_trades.VillagerTradeManager
 
 import org.bukkit.entity.Villager
 import org.bukkit.event.EventHandler
@@ -28,10 +27,10 @@ class VillagerEvent : IAstraListener {
         if (e.entity !is Villager)
             return
         val villager = e.entity as Villager
-        val trades = VillagerManager.villagerTradeByProfession[villager.profession.name] ?: return
+        val trades = VillagerTradeManager.villagerTradeByProfession(villager.profession.name) ?: return
         if (e.isCancelled)
             return
-        for (trade in trades)
+        for (trade in trades.trades)
             addRecipe(villager, trade)
 
 
@@ -42,7 +41,7 @@ class VillagerEvent : IAstraListener {
      * Замена предмета на аналогичный
      */
     private fun replaceEmpireItem(itemStack: ItemStack?): ItemStack? =
-        itemStack?.getEmpireID()?.asEmpireItem()?.clone()?.apply {
+        itemStack?.getAstraID()?.toAstraItemOrItem()?.apply {
             amount = itemStack.amount
         } ?: itemStack
 
@@ -58,7 +57,7 @@ class VillagerEvent : IAstraListener {
             return
 
         val villager = e.rightClicked as Villager
-        val trades = VillagerManager.villagerTradeByProfession[villager.profession.name] ?: return
+        val trades = VillagerTradeManager.villagerTradeByProfession(villager.profession.name) ?: return
 
         val recipes = villager.recipes.toMutableList()
         villager.recipes = mutableListOf()
@@ -84,7 +83,7 @@ class VillagerEvent : IAstraListener {
     /**
      * Добавление трейда к жителю
      */
-    private fun addRecipe(villager: Villager, trade: VillagerItem) {
+    private fun addRecipe(villager: Villager, trade: TradeItem) {
 
         if (villager.villagerLevel < trade.minLevel)
             return
@@ -94,15 +93,15 @@ class VillagerEvent : IAstraListener {
             return
 
         val mRecipe =
-            MerchantRecipe(trade.resultItem.id.asEmpireItemOrItem()?.clone()?.apply { amount = trade.resultItem.amount }
+            MerchantRecipe(trade.resultItem.id.toAstraItemOrItem()?.clone()?.apply { amount = trade.resultItem.amount }
                 ?: return, 50)
-        mRecipe.addIngredient(trade.leftItem.id.asEmpireItemOrItem()?.clone()?.apply {
+        mRecipe.addIngredient(trade.leftItem.id.toAstraItemOrItem()?.clone()?.apply {
             amount = trade.leftItem.amount }
             ?: return)
         mRecipe.maxUses = Random.nextInt(1, 6)
         if (trade.middleItem != null)
             mRecipe.addIngredient(
-                trade.middleItem.id.asEmpireItemOrItem()?.clone()?.apply { amount = trade.middleItem.amount } ?: return)
+                trade.middleItem.id.toAstraItemOrItem()?.clone()?.apply { amount = trade.middleItem.amount } ?: return)
         if (villager.recipes.contains(mRecipe))
             return
         for (vRecipe in villager.recipes)
@@ -113,13 +112,6 @@ class VillagerEvent : IAstraListener {
         recipes.add(mRecipe)
         villager.recipes = recipes
     }
-
-
-    init {
-        VillagerManager()
-    }
-
-
     override fun onDisable() {
         VillagerAcquireTradeEvent.getHandlerList().unregister(this)
         VillagerReplenishTradeEvent.getHandlerList().unregister(this)
