@@ -44,7 +44,7 @@ object ItemManager {
 
     }
     fun String?.toAstraItemOrItem(amount: Int?=1): ItemStack? {
-        return getItemStack(amount) ?: ItemStack(Material.getMaterial(this?:return null) ?: return null)?:null
+        return getItemStack(amount) ?: ItemStack(Material.getMaterial(this?:return null) ?: return null)?.apply { setAmount(amount?:1) }?:null
     }
 
     fun String?.getItemStack(amount: Int? = 1) = getItemStackByID(this,amount)

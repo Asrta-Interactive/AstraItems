@@ -2,6 +2,7 @@ package com.astrainteractive.empireprojekt.empire_items.events
 
 import com.astrainteractive.astralibs.AstraUtils
 import com.astrainteractive.astralibs.IAstraListener
+import com.astrainteractive.astralibs.Logger
 import com.comphenix.protocol.PacketType
 import com.comphenix.protocol.ProtocolLibrary
 import com.comphenix.protocol.ProtocolManager
@@ -24,11 +25,11 @@ import org.jetbrains.annotations.NotNull
 /**
  * todo переделать в PlaceholderAPI
  */
-class FontProtocolLibEvent: IAstraListener {
+class FontProtocolLibEvent : IAstraListener {
     private lateinit var protocolManager: ProtocolManager
     private lateinit var packetListener: PacketListener
-    private fun changePlayerTabName(player:Player?){
-        player?:return
+    private fun changePlayerTabName(player: Player?) {
+        player ?: return
         var format: String = EmpirePlugin.empireConfig.tabPrefix + player.name
         if (EmpirePlugin.instance.server.pluginManager.getPlugin("placeholderapi") != null)
             format = PlaceholderAPI.setPlaceholders(player, format)
@@ -39,7 +40,7 @@ class FontProtocolLibEvent: IAstraListener {
     }
 
     @EventHandler
-    fun onPlayerJoinEvent(e:PlayerJoinEvent){
+    fun onPlayerJoinEvent(e: PlayerJoinEvent) {
         val player = e.player
         Bukkit.getScheduler().runTaskAsynchronously(EmpirePlugin.instance, Runnable {
             val p = player
@@ -67,30 +68,33 @@ class FontProtocolLibEvent: IAstraListener {
 
         ) {
             override fun onPacketReceiving(event: PacketEvent) {
-                //val packet = event.packet
-                //println("Packet Receiving: " + packet.getType().name());
+                val packet = event.packet
+//                println("Packet Receiving: " + packet.getType().name());
             }
 
             override fun onPacketSending(event: PacketEvent) {
-                //println("Packet Sending: " + event.packet.getType().name());
+//                println("Packet Sending: " + event.packet.getType().name());
                 fun chatCompToEmoji(packet: PacketContainer, i: Int) {
                     val chatComponent = packet.chatComponents.read(i) ?: return
                     chatComponent.json = EmpireUtils.emojiPattern(chatComponent.json)
                     //packet.chatComponents.setReadOnly(i, false)
                     packet.chatComponents.write(i, chatComponent)
                 }
+
                 fun convertTextComponent(textComponent: TextComponent): @NotNull Component {
                     val line = EmpireUtils.emojiPattern(GsonComponentSerializer.gson().serialize(textComponent))
                     return GsonComponentSerializer.gson().deserialize(line)
                 }
+
                 fun getListComponent(translatableComponent: TranslatableComponent): MutableList<Component> {
                     val listComponent = mutableListOf<Component>()
-                    for (arg  in translatableComponent.args()) {
+                    for (arg in translatableComponent.args()) {
                         val compo = convertTextComponent(arg as TextComponent)
                         listComponent.add(compo)
                     }
                     return listComponent
                 }
+
                 val packet = event.packet
                 //println(packet.type)
                 for (i in 0 until packet.chatComponents.size()) {
@@ -99,7 +103,7 @@ class FontProtocolLibEvent: IAstraListener {
                         val obj = packet.modifier.read(j) ?: continue
                         //println(obj)
                         if (obj is TranslatableComponent)
-                            packet.modifier.write(j,obj.args(getListComponent(obj)))
+                            packet.modifier.write(j, obj.args(getListComponent(obj)))
 
                         if (obj is TextComponent)
                             packet.modifier.write(j, convertTextComponent(obj))
@@ -120,10 +124,8 @@ class FontProtocolLibEvent: IAstraListener {
     }
 
     init {
-        EmpirePlugin.instance.server.pluginManager.getPlugin("protocollib")?.let {
-            protocolManager = ProtocolLibrary.getProtocolManager()
-            initPackerListener()
-        }
+        protocolManager = ProtocolLibrary.getProtocolManager()
+        initPackerListener()
         for (player in Bukkit.getOnlinePlayers())
             changePlayerTabName(player)
 

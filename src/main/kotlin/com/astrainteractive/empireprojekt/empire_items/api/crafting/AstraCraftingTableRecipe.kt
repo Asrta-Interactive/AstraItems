@@ -5,6 +5,7 @@ import com.astrainteractive.empireprojekt.empire_items.api.items.data.ItemManage
 import com.astrainteractive.empireprojekt.empire_items.api.items.data.ItemManager.toAstraItemOrItem
 import com.astrainteractive.empireprojekt.empire_items.api.utils.BukkitConstants
 import com.astrainteractive.astralibs.AstraLibs
+import com.astrainteractive.empireprojekt.empire_items.api.utils.getPersistentData
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
@@ -29,7 +30,7 @@ data class AstraCraftingTableRecipe(
             shapedRecipe.shape(pattern[0], pattern[1])
         ingredients?.forEach { (ch, item) ->
             val itemStack = item.toAstraItemOrItem() ?: return@forEach
-            val choice: RecipeChoice = if (itemStack.getAstraID() != null)
+            val choice: RecipeChoice = if (itemStack.getAstraID() != null && itemStack.itemMeta?.getPersistentData(BukkitConstants.CRAFT_DURABILITY)==null)
                 RecipeChoice.ExactChoice(itemStack)
             else
                 RecipeChoice.MaterialChoice(itemStack.type)

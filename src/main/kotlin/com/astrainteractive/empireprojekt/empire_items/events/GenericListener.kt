@@ -22,6 +22,7 @@ import com.astrainteractive.empireprojekt.empire_items.events.villagers.Villager
 import com.astrainteractive.empireprojekt.essentials.music_disc.MusicDiscsNewEvent
 import com.astrainteractive.empireprojekt.essentials.sit.SitEvent
 import org.bukkit.Bukkit
+import org.bukkit.event.inventory.CraftItemEvent
 
 
 class GenericListener() : IAstraManager {
@@ -43,11 +44,17 @@ class GenericListener() : IAstraManager {
         LavaWalkerEvent().onEnable(this)
         HammerEvent().onEnable(this)
         MolotovEvent().onEnable(this)
+        SlimeCatchEvent().onEnable(this)
+        DeathTotemEvent().onEnable(this)
+        CatKillEvent().onEnable(this)
         SoulBindEvent().onEnable(this)
         GrenadeEvent().onEnable(this)
         GrapplingHook().onEnable(this)
+        VoidTotemEvent().onEnable(this)
         ResourcePackEvent().onEnable(this)
         ExperienceRepairEvent().onEnable(this)
+        CoreInspectEvent().onEnable(this)
+        DurabilityCraftEvent().onEnable(this)
         MenuListener().onEnable(this)
         UpgradeEvent().onEnable(this)
         ItemDropListener().onEnable(this)
@@ -65,3 +72,4 @@ class GenericListener() : IAstraManager {
     }
 
 }
+

@@ -21,9 +21,11 @@ class ResourcePack {
 
     private fun generateFont() {
         val file = File(getFontPath() + File.separator + "default.json")
+        if (file.exists())
+            file.delete()
         file.createNewFile()
         val defaultFileText = InputStreamReader(AstraLibs.instance.getResource("pack/default.json")!!).readText()
-        saveFileFromResources("pack/negative_spaces.ttf", getFontPath() + File.separator + "negative_spaces.ttf")
+        //saveFileFromResources("pack/negative_spaces.ttf", getFontPath() + File.separator + "negative_spaces.ttf")
         val providers = Gson().fromJson(defaultFileText, Providers::class.java)
         FontManager.allFonts().forEach {
             val p = Providers.Provider.fromAstraFont(it)
@@ -44,11 +46,11 @@ class ResourcePack {
     private fun mkdirs() {
         createDirectory(getAssetsFolder())
         createDirectory(getMinecraftAssetsPath())
-        recreateDirectory(getMinecraftAssetsPath() + sep +"blockstates")
-        recreateDirectory(getMinecraftAssetsPath() + sep +"font")
-        recreateDirectory(getMinecraftAssetsPath() + sep +"models${sep}item${sep}base")
-        recreateDirectory(getMinecraftAssetsPath() + sep +"models${sep}block${sep}base")
-        recreateDirectory(getMinecraftAssetsPath() + sep +"models${sep}block${sep}original")
+        recreateDirectory(getMinecraftAssetsPath() + sep + "blockstates")
+        createDirectory(getMinecraftAssetsPath() + sep + "font")
+        recreateDirectory(getMinecraftAssetsPath() + sep + "models${sep}item${sep}base")
+        recreateDirectory(getMinecraftAssetsPath() + sep + "models${sep}block${sep}base")
+        recreateDirectory(getMinecraftAssetsPath() + sep + "models${sep}block${sep}original")
 
         File(getMinecraftAssetsPath()).mkdirs()
         File(getMinecraftModelsPath()).mkdirs()
@@ -272,11 +274,12 @@ class ResourcePack {
 
     private fun deleteFolder(folder: String) = File(folder).delete()
     private fun createDirectory(folder: String) = File(folder).mkdirs()
-    private fun recreateDirectory(path: String){
+    private fun recreateDirectory(path: String) {
         deleteFilesInFolder(path)
         deleteFolder(path)
         createDirectory(path)
     }
+
     private fun createFile(file: String) = File(file).createNewFile()
 
     init {

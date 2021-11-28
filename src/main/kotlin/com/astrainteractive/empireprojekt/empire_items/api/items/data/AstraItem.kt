@@ -31,7 +31,7 @@ data class AstraItem(
     val customModelData: Int?,
     val itemFlags: List<ItemFlag>?,
     val enchantments: Map<Enchantment, Int>?,
-    val empireEnchants:Map<String,Double>?,
+    val empireEnchants:Map<String,String>?,
     val durability: Int?,
     val attributes: Map<Attribute, Double>?,
     val customTags: List<String>,
@@ -61,15 +61,28 @@ data class AstraItem(
         if (material== Material.POTION){
             (itemMeta as PotionMeta).color= Color.WHITE
         }
+        if (durability!=null){
+            itemMeta.setPersistentDataType(BukkitConstants.EMPIRE_DURABILITY,durability)
+            itemMeta.setPersistentDataType(BukkitConstants.MAX_CUSTOM_DURABILITY,durability)
+        }
         empireEnchants?.forEach { (k, v) ->
             when(k.lowercase()){
-                BukkitConstants.MOLOTOV.value.key->itemMeta.setPersistentDataType(BukkitConstants.MOLOTOV,v.toInt())
-                BukkitConstants.GRAPPLING_HOOK.value.key->itemMeta.setPersistentDataType(BukkitConstants.GRAPPLING_HOOK,v.toInt())
-                BukkitConstants.SOUL_BIND.value.key->itemMeta.setPersistentDataType(BukkitConstants.SOUL_BIND,v.toInt())
-                BukkitConstants.HAMMER_ENCHANT.value.key->itemMeta.setPersistentDataType(BukkitConstants.HAMMER_ENCHANT,v.toInt())
-                BukkitConstants.LAVA_WALKER_ENCHANT.value.key->itemMeta.setPersistentDataType(BukkitConstants.LAVA_WALKER_ENCHANT,v.toInt())
-                BukkitConstants.VAMPIRISM_ENCHANT.value.key->itemMeta.setPersistentDataType(BukkitConstants.VAMPIRISM_ENCHANT,v.toInt())
-                BukkitConstants.GRENADE_EXPLOSION_POWER.value.key->itemMeta.setPersistentDataType(BukkitConstants.GRENADE_EXPLOSION_POWER,v.toInt())
+                BukkitConstants.MOLOTOV.value.key->itemMeta.setPersistentDataType(BukkitConstants.MOLOTOV,v.toIntOrNull()?:1)
+                BukkitConstants.GRAPPLING_HOOK.value.key->itemMeta.setPersistentDataType(BukkitConstants.GRAPPLING_HOOK,v.toIntOrNull()?:0)
+                BukkitConstants.SOUL_BIND.value.key->itemMeta.setPersistentDataType(BukkitConstants.SOUL_BIND,v.toIntOrNull()?:0)
+                BukkitConstants.HAMMER_ENCHANT.value.key->itemMeta.setPersistentDataType(BukkitConstants.HAMMER_ENCHANT,v.toIntOrNull()?:0)
+                BukkitConstants.LAVA_WALKER_ENCHANT.value.key->itemMeta.setPersistentDataType(BukkitConstants.LAVA_WALKER_ENCHANT,v.toIntOrNull()?:0)
+                BukkitConstants.VAMPIRISM_ENCHANT.value.key->itemMeta.setPersistentDataType(BukkitConstants.VAMPIRISM_ENCHANT,v.toDoubleOrNull()?:0.0)
+                BukkitConstants.GRENADE_EXPLOSION_POWER.value.key->itemMeta.setPersistentDataType(BukkitConstants.GRENADE_EXPLOSION_POWER,v.toInt()?:1)
+                BukkitConstants.SLIME_CATCHER.value.key->itemMeta.setPersistentDataType(BukkitConstants.SLIME_CATCHER,v)
+                BukkitConstants.CORE_INSPECT.value.key->itemMeta.setPersistentDataType(BukkitConstants.CORE_INSPECT,v.toIntOrNull()?:5)
+                BukkitConstants.VOID_TOTEM.value.key->itemMeta.setPersistentDataType(BukkitConstants.VOID_TOTEM,v)
+                BukkitConstants.TOTEM_OF_DEATH.value.key->itemMeta.setPersistentDataType(BukkitConstants.TOTEM_OF_DEATH,v)
+                BukkitConstants.CRAFT_DURABILITY.value.key-> {
+                    itemMeta.setPersistentDataType(BukkitConstants.CRAFT_DURABILITY, v.toIntOrNull() ?: 1)
+                    itemMeta.setPersistentDataType(BukkitConstants.MAX_CUSTOM_DURABILITY, v.toIntOrNull() ?: 1)
+                    itemMeta.setPersistentDataType(BukkitConstants.EMPIRE_DURABILITY, v.toIntOrNull() ?: 1)
+                }
             }
 
 
@@ -142,7 +155,7 @@ data class AstraItem(
             val interact = Interact.getMultiInteract(section.getConfigurationSection("interact"))
             val musicDisc = PlaySound.getSinglePlaySound(section.getConfigurationSection("musicDisc"))
             val block = Block.getBlock(section.getConfigurationSection("block"))
-            val empireEnchants = section.getConfigurationSection("empire_enchants")?.getKeys(false)?.associate { Pair(it,section.getDouble("empire_enchants.$it")) }
+            val empireEnchants = section.getConfigurationSection("empire_enchants")?.getKeys(false)?.associate { Pair(it,section.getString("empire_enchants.$it")?:"0") }
             return AstraItem(
                 id = id,
                 namespace = namespace,

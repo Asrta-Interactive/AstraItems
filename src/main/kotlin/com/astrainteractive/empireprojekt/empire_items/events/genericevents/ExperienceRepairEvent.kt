@@ -2,6 +2,8 @@ package com.astrainteractive.empireprojekt.empire_items.events.genericevents
 
 import com.astrainteractive.astralibs.IAstraListener
 import com.astrainteractive.empireprojekt.empire_items.api.utils.BukkitConstants
+import com.astrainteractive.empireprojekt.empire_items.api.utils.getPersistentData
+import com.astrainteractive.empireprojekt.empire_items.api.utils.setPersistentDataType
 
 import org.bukkit.event.EventHandler
 import org.bukkit.event.inventory.PrepareAnvilEvent
@@ -32,18 +34,12 @@ class ExperienceRepairEvent : IAstraListener {
         val itemStack: ItemStack = e.result?:return
         val itemMeta: ItemMeta = itemStack.itemMeta ?: return
 
-        val maxCustomDurability: Int = itemMeta.persistentDataContainer.get(
-            BukkitConstants.MAX_CUSTOM_DURABILITY.value,
-            BukkitConstants.MAX_CUSTOM_DURABILITY.dataType
-        ) ?: return
+
+        val maxCustomDurability: Int = itemMeta.getPersistentData(BukkitConstants.MAX_CUSTOM_DURABILITY) ?: return
 
         val damage: Short = itemStack.durability
         val empireDurability = maxCustomDurability - damage * maxCustomDurability / itemStack.type.maxDurability
-        itemMeta.persistentDataContainer.set(
-            BukkitConstants.EMPIRE_DURABILITY.value,
-            BukkitConstants.EMPIRE_DURABILITY.dataType,
-            empireDurability
-        )
+        itemMeta.setPersistentDataType(BukkitConstants.EMPIRE_DURABILITY,empireDurability)
         itemStack.itemMeta = itemMeta
         val d: Int = itemStack.type.maxDurability -
                 itemStack.type.maxDurability * empireDurability / maxCustomDurability
@@ -53,15 +49,10 @@ class ExperienceRepairEvent : IAstraListener {
     private fun changeDurability(itemStack: ItemStack?, damage: Int) {
         itemStack ?: return
         val itemMeta: ItemMeta = itemStack.itemMeta ?: return
-        var maxCustomDurability: Int = itemMeta.persistentDataContainer.get(
-            BukkitConstants.MAX_CUSTOM_DURABILITY.value,
-            BukkitConstants.MAX_CUSTOM_DURABILITY.dataType
-        ) ?: return
 
-        var empireDurability: Int = itemMeta.persistentDataContainer.get(
-            BukkitConstants.EMPIRE_DURABILITY.value,
-            BukkitConstants.EMPIRE_DURABILITY.dataType
-        ) ?: return
+        var maxCustomDurability: Int = itemMeta.getPersistentData(BukkitConstants.MAX_CUSTOM_DURABILITY) ?: return
+
+        var empireDurability: Int = itemMeta.getPersistentData(BukkitConstants.EMPIRE_DURABILITY) ?: return
 
 
 
@@ -75,11 +66,7 @@ class ExperienceRepairEvent : IAstraListener {
             empireDurability = maxCustomDurability
         }
 
-        itemMeta.persistentDataContainer.set(
-            BukkitConstants.EMPIRE_DURABILITY.value,
-            BukkitConstants.EMPIRE_DURABILITY.dataType,
-            empireDurability
-        )
+        itemMeta.setPersistentDataType(BukkitConstants.EMPIRE_DURABILITY,empireDurability)
         itemStack.itemMeta = itemMeta
 
         if (maxCustomDurability==0)

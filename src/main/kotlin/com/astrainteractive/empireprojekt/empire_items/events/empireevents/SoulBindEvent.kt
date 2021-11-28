@@ -2,6 +2,7 @@ package com.astrainteractive.empireprojekt.empire_items.events.empireevents
 
 import com.astrainteractive.astralibs.IAstraListener
 import com.astrainteractive.empireprojekt.empire_items.api.utils.BukkitConstants
+import com.astrainteractive.empireprojekt.empire_items.api.utils.hasPersistentData
 
 import org.bukkit.Location
 import org.bukkit.event.EventHandler
@@ -22,7 +23,7 @@ class SoulBindEvent: IAstraListener {
         val player = e.entity
         playerDiedMap[player.uniqueId.toString()] = mutableListOf()
         for (item in e.drops.toList()){
-            if (item.itemMeta?.persistentDataContainer?.has(BukkitConstants.SOUL_BIND.value, BukkitConstants.SOUL_BIND.dataType)==true){
+            if (item.itemMeta?.hasPersistentData(BukkitConstants.SOUL_BIND)==true){
                 playerDiedMap[player.uniqueId.toString()]!!.add(item)
                 e.drops.remove(item)
             }

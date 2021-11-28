@@ -30,9 +30,9 @@ object BukkitConstants {
             PersistentDataType.DOUBLE
         )
 
+    //Кастомные эвенты
     val MOLOTOV
         get() = BukkitConstant("MOLOTOV", PersistentDataType.INTEGER)
-
     val GRAPPLING_HOOK
         get() = BukkitConstant("GRAPPLING_HOOK", PersistentDataType.INTEGER)
     val SOUL_BIND
@@ -42,14 +42,26 @@ object BukkitConstants {
     val LAVA_WALKER_ENCHANT
         get() = BukkitConstant("LAVA_WALKER_ENCHANT", PersistentDataType.INTEGER)
     val VAMPIRISM_ENCHANT
-        get() = BukkitConstant("VAMPIRISM_ENCHANT", PersistentDataType.INTEGER)
+        get() = BukkitConstant("VAMPIRISM_ENCHANT", PersistentDataType.DOUBLE)
     val GRENADE_EXPLOSION_POWER
         get() = BukkitConstant("GRENADE_EXPLOSION_POWER", PersistentDataType.INTEGER)
     val EMPIRE_DURABILITY
         get() = BukkitConstant("EMPIRE_DURABILITY", PersistentDataType.INTEGER)
     val MAX_CUSTOM_DURABILITY
         get() = BukkitConstant("MAX_CUSTOM_DURABILITY", PersistentDataType.INTEGER)
+    val CORE_INSPECT
+        get() = BukkitConstant("CORE_INSPECT", PersistentDataType.INTEGER)
+    val VOID_TOTEM
+        get() = BukkitConstant("VOID_TOTEM", PersistentDataType.STRING)
+    val TOTEM_OF_DEATH
+        get() = BukkitConstant("TOTEM_OF_DEATH", PersistentDataType.STRING)
+    val CRAFT_DURABILITY
+        get() = BukkitConstant("CRAFT_DURABILITY", PersistentDataType.INTEGER)
 
+    val SLIME_CATCHER
+    get() = BukkitConstant("SLIME_CATCHER", PersistentDataType.STRING)
+
+    //Апгрейд
     val ASTRA_UPGRADE_TIMES
         get() = BukkitConstant(
             NamespacedKey(AstraLibs.instance, "ASTRA_UPGRADE_TIMES".lowercase()),

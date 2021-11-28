@@ -33,12 +33,15 @@ class BlockGenerationEvent : IAstraListener {
         private var MAX_CHUNKS_AT_ONCE = 5
         private var currentChunkAmount = 0
     }
-    fun increaseCurrentChunk() = synchronized(this){
+
+    fun increaseCurrentChunk() = synchronized(this) {
         currentChunkAmount++
     }
-    fun decreaseCurrentChunk() = synchronized(this){
+
+    fun decreaseCurrentChunk() = synchronized(this) {
         currentChunkAmount--
     }
+
     private var blockQueue = mutableListOf<QueuedBlock>()
 
     /**
@@ -70,7 +73,7 @@ class BlockGenerationEvent : IAstraListener {
         val f: Map<String, Boolean>
     )
 
-    private fun addBlockToQueue(_blockQueue:List<QueuedBlock>) {
+    private fun addBlockToQueue(_blockQueue: List<QueuedBlock>) {
         synchronized(this) {
             blockQueue.addAll(_blockQueue)
             //Проверяем максимальный размер неактивных чанков
@@ -89,10 +92,11 @@ class BlockGenerationEvent : IAstraListener {
 
     private fun generateBlock() {
         val block = getQueuedBlock() ?: return
-        Logger.log(
-            "BlockGenerationEvent",
-            "Generating block at [${block.l.x};${block.l.y};${block.l.z}] queue=${blockQueue.size}"
-        )
+        if (EmpirePlugin.empireConfig.generatingDebug)
+            Logger.log(
+                "BlockGenerationEvent",
+                "Generating block at [${block.l.x};${block.l.y};${block.l.z}] queue=${blockQueue.size}"
+            )
         synchronized(this) {
             val tempChunks = EmpirePlugin.empireFiles.tempChunks
             tempChunks.getConfig().set(block.l.chunk.toString(), true)
@@ -101,13 +105,13 @@ class BlockGenerationEvent : IAstraListener {
         callSyncMethod {
             val time = System.currentTimeMillis()
             replaceBlock(block)
-            Logger.log("BlockGenerationEvent","Block replacing time = ${(System.currentTimeMillis()-time)}")
+            if (EmpirePlugin.empireConfig.generatingDebug)
+            Logger.log("BlockGenerationEvent", "Block replacing time = ${(System.currentTimeMillis() - time)}")
         }
     }
 
 
-
-    fun setType(block: Block, type: Material,facing: Map<String, Boolean>) {
+    fun setType(block: Block, type: Material, facing: Map<String, Boolean>) {
         val craftBlock = (block as CraftBlock)
         val generatorAccess = (craftBlock.craftWorld.handle as GeneratorAccess)
         val old: IBlockData = generatorAccess.getType(craftBlock.position)
@@ -122,7 +126,7 @@ class BlockGenerationEvent : IAstraListener {
     //Заменяем блок на сгенерированный
     private fun replaceBlock(b: QueuedBlock) {
         val chunkBlock = b.l.block
-        setType(chunkBlock, b.m,b.f)
+        setType(chunkBlock, b.m, b.f)
     }
 
     /**
@@ -164,14 +168,14 @@ class BlockGenerationEvent : IAstraListener {
             val facing = BlockParser.getFacingByData(block.data)
 
             generate.replaceBlocks?.forEach allblocks@{ (type, chance) ->
-                if (generatedAmount>deposits)
+                if (generatedAmount > deposits)
                     return@allblocks
                 var minAmount = deposits / generate.replaceBlocks.size - generatedAmount
                 if (minAmount < 0)
                     minAmount = 0
-                if (minAmount>=deposits-generatedAmount+1)
+                if (minAmount >= deposits - generatedAmount + 1)
                     return@allblocks
-                val toGenerate = Random.nextInt(minAmount, deposits - generatedAmount+1)
+                val toGenerate = Random.nextInt(minAmount, deposits - generatedAmount + 1)
                 var currentBlockGeneratedAmount = 0
                 (0 until toGenerate).forEach block@{ i ->
                     //Вероятность создания блока
@@ -188,9 +192,9 @@ class BlockGenerationEvent : IAstraListener {
                     val depositAmount = Random.nextInt(generate.minPerDeposit, generate.maxPerDeposit)
                     var faceBlock = blockToReplace.block
                     (0 until depositAmount).forEach { _ ->
-                        if (generatedAmount>deposits)
+                        if (generatedAmount > deposits)
                             return@allblocks
-                        if (currentBlockGeneratedAmount>toGenerate)
+                        if (currentBlockGeneratedAmount > toGenerate)
                             return@allblocks
                         faceBlock = faceBlock.getRelative(getRandomBlockFace())
                         currentBlocksQueue.add(QueuedBlock(faceBlock.location.clone(), material, facing))
@@ -210,7 +214,7 @@ class BlockGenerationEvent : IAstraListener {
     private fun chunkLoadEvent(e: ChunkLoadEvent) {
 //        if (System.currentTimeMillis() - currentChunkLoadGap < CHUNK_LOAD_GAP)
 //            return
-        if (currentChunkAmount> MAX_CHUNKS_AT_ONCE)
+        if (currentChunkAmount > MAX_CHUNKS_AT_ONCE)
             return
         currentChunkLoadGap = System.currentTimeMillis()
         val chunk = e.chunk

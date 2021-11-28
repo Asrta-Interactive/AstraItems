@@ -72,12 +72,13 @@ object EmpireUtils {
     }
 
     fun emojiPattern(_line: String): String {
-        val map = FontManager.fontById()
+        val map = FontManager.fontById().toMutableMap()
+        FontManager.getOffsets().forEach { (k, v) -> map[":$k:"] = v }
         var matcher: Matcher = emojiPattern.matcher(_line)
         var line = _line
         while (matcher.find()) {
             val emoji: String = line.substring(matcher.start(), matcher.end())
-            val toReplace: String = map[emoji]?.char ?: emoji.replace(":", "<<>>")
+            val toReplace: String = map[emoji] ?: emoji.replace(":", "<<>>")
             line = line.replace(emoji, toReplace + "")
             matcher = emojiPattern.matcher(line)
         }

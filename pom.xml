@@ -21,7 +21,35 @@
     </properties>
 
     <build>
+        <sourceDirectory>src/main/kotlin</sourceDirectory>
         <plugins>
+
+            <plugin>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-maven-plugin</artifactId>
+                <version>${kotlin.version}</version>
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>test-compile</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>test-compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <jvmTarget>1.8</jvmTarget>
+                </configuration>
+            </plugin>
+
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -108,7 +136,11 @@
             <id>everything</id>
             <url>http://repo.citizensnpcs.co/</url>
         </repository>
-
+<!--        CoreProtect-->
+        <repository>
+            <id>playpro-repo</id>
+            <url>https://maven.playpro.com</url>
+        </repository>
 
     </repositories>
 
@@ -117,7 +149,7 @@
         <dependency>
             <groupId>com.astrainteractive</groupId>
             <artifactId>astralibs</artifactId>
-            <version>1.0.12-1</version>
+            <version>1.0.13</version>
         </dependency>
         <!--        Essentials-->
         <dependency>
@@ -189,7 +221,13 @@
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
-
+<!--        CoreProtect-->
+        <dependency>
+            <groupId>net.coreprotect</groupId>
+            <artifactId>coreprotect</artifactId>
+            <version>20.0</version>
+            <scope>provided</scope>
+        </dependency>
 
     </dependencies>
 

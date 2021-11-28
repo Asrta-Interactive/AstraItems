@@ -14,6 +14,7 @@ class Translations {
     private val translationFile = _translationFile.getConfig()!!
 
     val PLUGIN_PREFIX: String = translationFile.getHEXString("PLUGIN_PREFIX", "#18dbd1[EmpireItems]")
+    val LOG_MESSAGE_COLOR: String = translationFile.getHEXString("LOG_MESSAGE_COLOR", "#42b0f5")
 
     //Plugin
     val RELOAD: String = translationFile.getHEXString("RELOAD", "#dbbb18Перезагрузка плагина")

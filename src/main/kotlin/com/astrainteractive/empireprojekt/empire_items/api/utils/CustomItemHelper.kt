@@ -16,3 +16,9 @@ fun <T,Z> ItemMeta?.getPersistentData(b: BukkitConstant<T, Z>)=
         b.value,
         b.dataType
     )
+
+fun <T,Z> ItemMeta?.hasPersistentData(b: BukkitConstant<T, Z>)=
+    this?.persistentDataContainer?.has(
+        b.value,
+        b.dataType
+    )

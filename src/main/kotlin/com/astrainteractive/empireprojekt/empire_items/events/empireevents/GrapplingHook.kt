@@ -3,9 +3,11 @@ package com.astrainteractive.empireprojekt.empire_items.events.empireevents
 import com.astrainteractive.astralibs.IAstraListener
 import com.astrainteractive.empireprojekt.empire_items.api.items.data.ItemManager.getAstraID
 import com.astrainteractive.empireprojekt.empire_items.api.utils.BukkitConstants
+import com.astrainteractive.empireprojekt.empire_items.api.utils.hasPersistentData
 import com.destroystokyo.paper.ParticleBuilder
 
 import org.bukkit.Color
+import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.Particle
 import org.bukkit.entity.HumanEntity
@@ -34,14 +36,14 @@ class GrapplingHook : IAstraListener {
     fun playerHookShootEvent(e: PlayerInteractEvent) {
         val item = e.player.inventory.itemInMainHand
         item.getAstraID()?:return
-        if (item.itemMeta?.persistentDataContainer?.has(BukkitConstants.GRAPPLING_HOOK.value, PersistentDataType.DOUBLE)!=true)
+        if (item.itemMeta.hasPersistentData(BukkitConstants.GRAPPLING_HOOK)!=true)
             return
 
         if (e.action==Action.LEFT_CLICK_AIR || e.action==Action.LEFT_CLICK_BLOCK){
             mapHooks.remove(e.player.name)
             return
         }
-        if ((e.player as HumanEntity).hasCooldown(item.type))
+        if (e.player.gameMode!=GameMode.CREATIVE && (e.player as HumanEntity).hasCooldown(item.type))
             return
 
         val player = e.player
