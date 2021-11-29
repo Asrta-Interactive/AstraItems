@@ -19,10 +19,9 @@ import com.astrainteractive.empireprojekt.empire_items.events.resourcepack.Resou
 import com.astrainteractive.empireprojekt.empire_items.events.upgrade.UpgradeEvent
 import com.astrainteractive.empireprojekt.empire_items.events.villagers.VillagerEvent
 
-import com.astrainteractive.empireprojekt.essentials.music_disc.MusicDiscsNewEvent
+import com.astrainteractive.empireprojekt.empire_items.events.empireevents.MusicDiscsNewEvent
 import com.astrainteractive.empireprojekt.essentials.sit.SitEvent
 import org.bukkit.Bukkit
-import org.bukkit.event.inventory.CraftItemEvent
 
 
 class GenericListener() : IAstraManager {

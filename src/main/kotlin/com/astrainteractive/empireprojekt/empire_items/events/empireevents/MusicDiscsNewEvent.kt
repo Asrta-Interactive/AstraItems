@@ -1,4 +1,4 @@
-package com.astrainteractive.empireprojekt.essentials.music_disc
+package com.astrainteractive.empireprojekt.empire_items.events.empireevents
 
 import com.astrainteractive.astralibs.HEX
 import com.astrainteractive.astralibs.IAstraListener

@@ -1,7 +1,7 @@
 main: com.astrainteractive.empireprojekt.EmpirePlugin
 name: EmpireItems
 version: '${project.version}'
-author: RatushevRoman
+author: MakeevRoman
 prefix: EmpireItems
 authors: [ MakeevRoman ]
 description: Custom items made for EmpireProjekt
