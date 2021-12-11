@@ -1,8 +1,15 @@
-resourcePack: "https://empireprojekt.ru/files/EmpireProjektPack_Light_2.zip"
-downloadResourcePackOnJoin: false
-tab_prefix: "%vault_prefix%"
-isUpgradeEnabled: true
-vampirismMultiplier: 0.05
-upgradeCostMultiplier: 1.0
-onJoinResourcePackTimeStay: 100
-sha_1: "null"
+resourcePack:
+  link: "https://empireprojekt.ru/files/EmpireProjektPack_Light_2.zip"
+  requestOnJoin: true
+  kickOnDeny: false
+empireEnchants:
+  vampirismMultiplier: 0.05
+blockGeneration:
+  debug: false
+  deepDebug: false
+  generate: true
+  onlyOnNewChunks: false
+  maxQueueSize: 5000
+  generateBlocksGapL: 2
+  maxChunksAtOnce: 5
+tabPrefix: "%vault_prefix%"

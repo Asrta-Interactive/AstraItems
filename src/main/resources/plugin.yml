@@ -11,6 +11,8 @@ softdepend: [PlaceholderAPI,ProtocolLib,WorldGuard]
 depend: []
 commands:
   ereload:
+  edice:
+  egeneration:
   erating:
   emsplash:
   emreplace:

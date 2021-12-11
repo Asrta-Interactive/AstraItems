@@ -84,7 +84,6 @@ class MusicDiscsNewEvent : IAstraListener {
      * Включение проигрывания звука
      */
     fun playMusic(item: AstraItem, location: Location) {
-        println("${item.namespace}:${item.musicDisc!!.name}")
         location.world?.playSound(location, "${item.namespace}:${item.musicDisc!!.name}", 2f, 1f)
         activeJukeboxes[location] = item
         getPlayerInDistance(location).forEach { player ->

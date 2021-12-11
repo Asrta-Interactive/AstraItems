@@ -8,6 +8,8 @@ import com.astrainteractive.empireprojekt.empire_items.api.items.data.interact.P
 import com.astrainteractive.empireprojekt.empire_items.api.items.data.block.Block
 import com.astrainteractive.empireprojekt.empire_items.api.items.data.decoration.Decoration
 import com.astrainteractive.empireprojekt.empire_items.api.items.data.interact.Interact
+import com.astrainteractive.empireprojekt.empire_items.util.EmpireUtils
+import com.astrainteractive.empireprojekt.empire_items.util.emoji
 import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.attribute.Attribute
@@ -32,6 +34,7 @@ data class AstraItem(
     val itemFlags: List<ItemFlag>?,
     val enchantments: Map<Enchantment, Int>?,
     val empireEnchants:Map<String,String>?,
+    val gun:Gun?,
     val durability: Int?,
     val attributes: Map<Attribute, Double>?,
     val customTags: List<String>,
@@ -50,6 +53,7 @@ data class AstraItem(
         itemMeta.lore = lore
         itemMeta.setCustomModelData(customModelData)
         itemMeta.setPersistentDataType(BukkitConstants.ASTRA_ID(),id)
+
         itemFlags?.forEach {
             itemMeta.addItemFlags(it) }
         enchantments?.forEach { (k, v) ->
@@ -87,6 +91,10 @@ data class AstraItem(
 
 
         }
+        gun?.let {
+            if (it.clipSize!=null)
+                itemMeta.setPersistentDataType(BukkitConstants.CLIP_SIZE,0)
+        }
         itemStack.itemMeta = itemMeta
         return itemStack
 
@@ -117,7 +125,7 @@ data class AstraItem(
          */
         private fun parseEnchantments(s: ConfigurationSection?) =
             s?.getKeys(false)?.associate { enchName ->
-                val ench = Enchantment.getByName(enchName)
+                val ench = Enchantment.getByName(enchName.uppercase())
                 val amount = s.getInt(enchName)
                 Pair(ench, amount)
             }?.filter { it.key != null } as Map<Enchantment, Int>?
@@ -140,9 +148,9 @@ data class AstraItem(
          */
         fun getItemById(section: ConfigurationSection?,namespace: String): AstraItem? {
             val id = section?.name ?: return null
-            val lore = section.getHEXStringList("lore")
+            val lore = section.getHEXStringList("lore")?.emoji()
             val generate = section.getBoolean("generate",false)
-            val displayName = section.getString("displayName")?.HEX() ?: return null
+            val displayName = section.getString("displayName")?.HEX()?.emoji() ?: return null
             val material = Material.getMaterial(section.getString("material") ?: return null) ?: return null
             val texturePath = section.getString("texturePath")?.replace(".png","")
             val modelPath = section.getString("modelPath")?.replace(".json","")
@@ -153,6 +161,7 @@ data class AstraItem(
             val attributes = parseAttributes(section.getConfigurationSection("attributes"))
             val customTags = section.getStringList("customTags")
             val interact = Interact.getMultiInteract(section.getConfigurationSection("interact"))
+            val gun = Gun.getGun(section.getConfigurationSection("gun"))
             val musicDisc = PlaySound.getSinglePlaySound(section.getConfigurationSection("musicDisc"))
             val block = Block.getBlock(section.getConfigurationSection("block"))
             val empireEnchants = section.getConfigurationSection("empire_enchants")?.getKeys(false)?.associate { Pair(it,section.getString("empire_enchants.$it")?:"0") }
@@ -170,6 +179,7 @@ data class AstraItem(
                 enchantments = enchantments,
                 durability = durability,
                 attributes = attributes,
+                gun = gun,
                 customTags = customTags,
                 interact = interact,
                 musicDisc = musicDisc,

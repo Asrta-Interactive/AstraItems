@@ -1,0 +1,68 @@
+namespace: empire_items
+yml_items:
+  shield1:
+    displayName: "&2Новый предмет"
+    material: BARRIER
+    texturePath: item/new_item
+    modelPath: item/new_item
+    customModelData: 100
+    itemFlags:
+      - HIDE_ATTRIBUTES
+    enchantements:
+      sharpness: 2
+    durability: 100
+    attributes:
+      GENERIC_ATTACK_DAMAGE: 10
+    customTags:
+      - "{tag_name: tag_value}"
+      - "tag_2"
+    block:
+      breakParticle: NETHERRACK
+      breakSound: minecraft:block.amethyst_block.break
+      placeSound: minecraft:block.amethyst_block.break
+      data: 1
+      generate:
+        generateInChunkChance: 0
+        minPerChunk: 100
+        maxPerChunk: 300
+        minPerDeposit: 50
+        maxPerDeposit: 100
+        minY: 50
+        maxY: 140
+        replace_blocks:
+          AIR: 70
+          GRASS_BLOCK: 70
+      hardness: 200
+    place_sound: minecraft:block.amethyst_block.place
+    musicDisc:
+      name: minecraft:entity.ender_dragon.growl
+      pitch: 1
+      volume: 1
+    interact:
+      event1:
+        eventList: [LEFT_CLICK_AIR]
+        cooldown: 20
+        playParticle:
+          customName1:
+            count: 100
+            name: DRAGON_BREATH
+            time: 0.1
+        playSound:
+          sound1:
+            name: minecraft:entity.ender_dragon.growl
+            pitch: 1
+            volume: 1
+        executeCommand:
+          command1:
+            asConsole: false
+            command: "home"
+        playPotionEffect:
+          effect1:
+            amplifier: 4
+            duration: 200
+            name: HEAL
+        removePotionEffect:
+          - "HEALTH_BOOST"
+
+
+

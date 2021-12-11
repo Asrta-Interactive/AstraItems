@@ -1,6 +1,7 @@
 package com.astrainteractive.empireprojekt.empire_items.api.font
 
 import com.astrainteractive.empireprojekt.empire_items.api.utils.getCustomItemsFiles
+import org.apache.commons.lang.StringEscapeUtils
 import org.bukkit.configuration.ConfigurationSection
 
 data class AstraFont(
@@ -16,6 +17,7 @@ data class AstraFont(
     companion object {
         val startChar: String
             get() = "\u3400"
+        private var count = 0x3400
         fun getFonts() = getCustomItemsFiles()?.mapNotNull {
             val fileConfig = it.getConfig()
             val section = fileConfig.getConfigurationSection("fontImages")
@@ -30,9 +32,9 @@ data class AstraFont(
             val path = s.getString("path")?:return null
             val height = s.getInt("height",10)
             val ascent = s.getInt("ascent",13)
-            val char = s.getString("char")?:return null
+            val char = (count+s.getInt("data")).toChar().toString()
             val blockSend = s.getBoolean("blockSend",false)
-            return AstraFont(
+            val f = AstraFont(
                 id = id,
                 path = path,
                 height = height,
@@ -41,6 +43,7 @@ data class AstraFont(
                 blockSend = blockSend,
                 namespace = namespace
             )
+            return f
 
         }
     }

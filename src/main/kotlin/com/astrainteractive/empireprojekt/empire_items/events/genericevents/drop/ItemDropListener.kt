@@ -6,7 +6,6 @@ import com.astrainteractive.empireprojekt.empire_items.api.drop.AstraDrop
 import com.astrainteractive.empireprojekt.empire_items.api.items.BlockParser
 import com.astrainteractive.empireprojekt.empire_items.api.items.data.ItemManager
 import com.astrainteractive.empireprojekt.empire_items.api.items.data.ItemManager.getItemStack
-import com.destroystokyo.paper.loottable.LootableInventory
 import org.bukkit.Location
 import org.bukkit.block.Block
 import org.bukkit.block.Chest
@@ -15,7 +14,6 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.block.Action
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.entity.EntityDeathEvent
-import org.bukkit.event.inventory.InventoryOpenEvent
 import org.bukkit.event.player.PlayerFishEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.loot.Lootable
@@ -50,26 +48,29 @@ class ItemDropListener : IAstraListener {
     @EventHandler
     fun onFishingEvent(e: PlayerFishEvent) {
         val caught = e.caught ?: return
-        val drops = DropManager.getDrops()["PlayerFishEvent"] ?: return
+        val drops = DropManager.getDropsFrom("PlayerFishEvent")
         dropItem(drops, caught.location)
     }
 
     @EventHandler
     fun onBlockBreak(e: BlockBreakEvent) {
         val block: Block = e.block
-        if (blockLocations.contains(block.location))
-            return
-        else
-            blockLocations.add(block.location)
-        if (blockLocations.size > 60)
-            blockLocations.removeAt(0)
-
 
         val customBlockData = BlockParser.getBlockData(e.block)
-        val customBlockId = ItemManager.getBlockInfoByData(customBlockData)
+        val customBlock = ItemManager.getBlockInfoByData(customBlockData)
+        val customBlockId = customBlock?.id
+        if (customBlock?.block?.ignoreCheck!=true) {
+            if (blockLocations.contains(block.location))
+                return
+            else
+                blockLocations.add(block.location)
+            if (blockLocations.size > 60)
+                blockLocations.removeAt(0)
+        }
+
 
         if (dropItem(
-                DropManager.getDrops()[customBlockId ?: block.blockData.material.name] ?: listOf(),
+                DropManager.getDropsFrom(customBlockId ?: block.blockData.material.name),
                 block.location
             )
         )
@@ -87,7 +88,7 @@ class ItemDropListener : IAstraListener {
         val chest = block.state as Chest
         val lootable = chest as Lootable
         lootable.lootTable?:return
-        getDrops(DropManager.getDrops()["PlayerInteractEvent"] ?: return).forEach {
+        getDrops(DropManager.getDropsFrom("PlayerInteractEvent") ?: return).forEach {
             chest.blockInventory.addItem(it)
         }
     }
@@ -95,7 +96,7 @@ class ItemDropListener : IAstraListener {
     @EventHandler
     fun onMobDeath(e: EntityDeathEvent) {
         val entity: Entity = e.entity
-        val listDrop = DropManager.getDrops()[entity.type.name] ?: return
+        val listDrop = DropManager.getDropsFrom(entity.type.name) ?: return
         dropItem(listDrop, entity.location)
     }
 

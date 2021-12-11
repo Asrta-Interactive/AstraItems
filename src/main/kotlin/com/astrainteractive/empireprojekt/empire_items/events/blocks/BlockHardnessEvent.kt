@@ -6,7 +6,7 @@ import com.astrainteractive.empireprojekt.empire_items.api.items.data.ItemManage
 import net.minecraft.core.BlockPosition
 import net.minecraft.network.protocol.game.PacketPlayOutBlockBreakAnimation
 import org.bukkit.block.Block
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer
+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -63,7 +63,7 @@ class BlockHardnessEvent : IAstraListener {
             BlockPosition(block.x, block.y, block.z),
             breakProgress
         )
-        (this as CraftPlayer).handle.b.sendPacket(packet)
+        (this as CraftPlayer).handle.b.a(packet)
     }
 
 

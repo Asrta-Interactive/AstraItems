@@ -11,6 +11,7 @@ import com.astrainteractive.empireprojekt.empire_items.api.items.data.ItemManage
 import com.astrainteractive.empireprojekt.empire_items.api.items.data.ItemManager.getAstraID
 import com.astrainteractive.empireprojekt.empire_items.api.items.data.ItemManager.toAstraItemOrItem
 import com.astrainteractive.empireprojekt.empire_items.api.upgrade.UpgradeManager
+import com.astrainteractive.empireprojekt.empire_items.api.utils.setDisplayName
 import com.astrainteractive.empireprojekt.empire_items.api.v_trades.AstraVillagerTrade
 import com.astrainteractive.empireprojekt.empire_items.api.v_trades.VillagerTradeManager
 import com.astrainteractive.empireprojekt.empire_items.util.EmpirePermissions
@@ -28,7 +29,7 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility) :
     val usedInCraftItemStacks = usedInCraftIDS.map { it.toAstraItemOrItem() }
 
 
-    override var menuName: String = itemID.toAstraItemOrItem()?.itemMeta?.displayName ?: ""
+    override var menuName: String = guiSettings.settings.workbenchText +  (itemID.toAstraItemOrItem()?.itemMeta?.displayName ?: "Крафтинг")
 
     override val menuSize: AstraMenuSize = AstraMenuSize.XL
     override val playerMenuUtility: PlayerMenuUtility = playerMenuUtility
@@ -95,10 +96,14 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility) :
         inventory.setItem(invPos++, recipe.ingredientMap[recipe.shape.getOrNull(2)?.getOrNull(0)])
         inventory.setItem(invPos++, recipe.ingredientMap[recipe.shape.getOrNull(2)?.getOrNull(1)])
         inventory.setItem(invPos++, recipe.ingredientMap[recipe.shape.getOrNull(2)?.getOrNull(2)])
+        inventory.setItem(25,inventory.getItem(25).apply { this?.amount = recipe.result.amount })
+        recipeType="Верстак"
     }
 
     fun setFurnaceRecipe(recipe: FurnaceRecipe) {
         inventory.setItem(21, recipe.input)
+        inventory.setItem(25,inventory.getItem(25).apply { this?.amount = recipe.result.amount })
+        recipeType="Печь"
     }
 
     fun setShapelessRecipe(recipe: ShapelessRecipe) {
@@ -114,8 +119,11 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility) :
         inventory.setItem(32, recipe.ingredientList.getOrNull(6))
         inventory.setItem(33, recipe.ingredientList.getOrNull(7))
         inventory.setItem(34, recipe.ingredientList.getOrNull(8))
+        inventory.setItem(25,inventory.getItem(25).apply { this?.amount = recipe.result.amount })
+        recipeType="Верстак"
     }
 
+    var recipeType="Верстак"
     fun setRecipe() {
         if (currentRecipe >= recipes?.size ?: return)
             currentRecipe = 0
@@ -181,7 +189,7 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility) :
         inventory.setItem(backButtonIndex+1,item)
     }
     fun setDropInfo(){
-        val drops = DropManager.getDrops().values.flatMap { it.filter { it.id==itemID } }
+        val drops = DropManager.getDropsById(itemID)
         if (drops.isEmpty())
             return
         val item = guiSettings.settings.moreButton.clone().apply {
@@ -203,9 +211,9 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility) :
         setVillagerInfo()
         setUpgradeInfo()
         inventory.setItem(25, itemID.toAstraItemOrItem())
-        if (recipes?.isNotEmpty() == true)
-            inventory.setItem(8, guiSettings.settings.craftingTableButton)
         setRecipe()
+        if (recipes?.isNotEmpty() == true)
+            inventory.setItem(8, guiSettings.settings.craftingTableButton.apply { setDisplayName(recipeType)})
         inventory.setItem(34, guiSettings.settings.giveButton)
 
 

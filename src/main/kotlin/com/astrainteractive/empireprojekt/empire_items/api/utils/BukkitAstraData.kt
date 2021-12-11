@@ -57,6 +57,8 @@ object BukkitConstants {
         get() = BukkitConstant("TOTEM_OF_DEATH", PersistentDataType.STRING)
     val CRAFT_DURABILITY
         get() = BukkitConstant("CRAFT_DURABILITY", PersistentDataType.INTEGER)
+    val CLIP_SIZE
+        get() = BukkitConstant("CLIP_SIZE", PersistentDataType.INTEGER)
 
     val SLIME_CATCHER
     get() = BukkitConstant("SLIME_CATCHER", PersistentDataType.STRING)

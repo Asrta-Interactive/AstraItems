@@ -4,10 +4,7 @@ import com.astrainteractive.astraitems.events.block.BlockGenerationEvent
 import com.astrainteractive.astralibs.IAstraListener
 import com.astrainteractive.astralibs.IAstraManager
 import com.astrainteractive.astralibs.menu.MenuListener
-import com.astrainteractive.empireprojekt.empire_items.events.blocks.BlockHardnessEvent
-import com.astrainteractive.empireprojekt.empire_items.events.blocks.MushroomBlockBreakEvent
-import com.astrainteractive.empireprojekt.empire_items.events.blocks.MushroomBlockPlaceEvent
-import com.astrainteractive.empireprojekt.empire_items.events.blocks.MushroomCancelEvent
+import com.astrainteractive.empireprojekt.empire_items.events.blocks.*
 import com.astrainteractive.empireprojekt.empire_items.events.decorations.DecorationBlockPlaceEvent
 import com.astrainteractive.empireprojekt.empire_items.events.empireevents.*
 import com.astrainteractive.empireprojekt.empire_items.events.genericevents.BookSignEvent
@@ -54,6 +51,7 @@ class GenericListener() : IAstraManager {
         ExperienceRepairEvent().onEnable(this)
         CoreInspectEvent().onEnable(this)
         DurabilityCraftEvent().onEnable(this)
+        GunEvent().onEnable(this)
         MenuListener().onEnable(this)
         UpgradeEvent().onEnable(this)
         ItemDropListener().onEnable(this)
@@ -61,6 +59,7 @@ class GenericListener() : IAstraManager {
         VillagerEvent().onEnable(this)
         PlayerShowRecipeKey().onEnable(this)
         BlockGenerationEvent().onEnable(this)
+//        TestEvent().onEnable(this)
         BlockHardnessEvent().onEnable(this)
         MushroomBlockPlaceEvent().onEnable(this)
         MushroomBlockBreakEvent().onEnable(this)

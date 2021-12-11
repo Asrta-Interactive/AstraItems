@@ -10,17 +10,14 @@ import com.astrainteractive.empireprojekt.empire_items.api.upgrade.UpgradeManage
 import com.astrainteractive.empireprojekt.empire_items.api.v_trades.VillagerTradeManager
 import com.astrainteractive.empireprojekt.empire_items.commands.CommandManager
 import com.astrainteractive.empireprojekt.empire_items.events.GenericListener
-import com.astrainteractive.empireprojekt.empire_items.util.EmpireConfig
+import com.astrainteractive.empireprojekt.empire_items.util.Config
 import com.astrainteractive.empireprojekt.empire_items.util.Files
 import com.astrainteractive.empireprojekt.empire_items.util.Translations
-import com.astrainteractive.empireprojekt.npc.NPCManager
+import com.astrainteractive.empireprojekt.essentials.AstraEssentials
 import org.bukkit.Bukkit
-import org.bukkit.craftbukkit.libs.org.apache.commons.codec.digest.DigestUtils
 import org.bukkit.event.HandlerList
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitTask
-import oshi.SystemInfo
-import java.net.URL
 
 
 class EmpirePlugin : JavaPlugin() {
@@ -77,21 +74,6 @@ class EmpirePlugin : JavaPlugin() {
         lateinit var translations: Translations
             private set
 
-
-        /**
-         *Config Instance
-         */
-        lateinit var empireConfig: EmpireConfig
-            private set
-
-
-        /**
-         *Npc manager instance
-         */
-        var npcManager: NPCManager? = null
-            private set
-
-
     }
 
     /**
@@ -114,6 +96,7 @@ class EmpirePlugin : JavaPlugin() {
 //    private lateinit var database:EmpireDatabase
 //    private lateinit var empireRating:EmpireRating
     private val licenceTimer = LicenceChecker()
+    private val astraEssentials = AstraEssentials()
 
     /**
      * This function called when server starts
@@ -122,9 +105,10 @@ class EmpirePlugin : JavaPlugin() {
         instance = this
         AstraLibs.create(this)
         Logger.init("AstraTemplate")
+        FontManager.load()
         translations = Translations()
         empireFiles = Files()
-        empireConfig = EmpireConfig.new()
+        Config.load()
         genericListener = GenericListener()
         commandManager = CommandManager()
         empireCredit = EmpireCredit()
@@ -133,8 +117,8 @@ class EmpirePlugin : JavaPlugin() {
         DropManager.loadDrops()
         VillagerTradeManager.load()
         UpgradeManager.loadUpgrade()
-        FontManager.load()
         CraftingManager.load()
+        astraEssentials.onEnable()
 
 
         licenceTimer.enable()
@@ -158,6 +142,7 @@ class EmpirePlugin : JavaPlugin() {
         FontManager.clear()
         CraftingManager.clear()
         HandlerList.unregisterAll()
+        astraEssentials.onDisable()
         Bukkit.getScheduler().cancelTasks(this)
 
     }

@@ -1,7 +1,7 @@
 main: com.astrainteractive.empireprojekt.EmpirePlugin
 name: EmpireItems
 version: '3.0.2'
-author: RatushevRoman
+author: MakeevRoman
 prefix: EmpireItems
 authors: [ MakeevRoman ]
 description: Custom items made for EmpireProjekt
@@ -11,6 +11,8 @@ softdepend: [PlaceholderAPI,ProtocolLib,WorldGuard]
 depend: []
 commands:
   ereload:
+  edice:
+  egeneration:
   erating:
   emsplash:
   emreplace:

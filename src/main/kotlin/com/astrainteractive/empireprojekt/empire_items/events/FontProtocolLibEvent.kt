@@ -8,6 +8,7 @@ import com.comphenix.protocol.ProtocolLibrary
 import com.comphenix.protocol.ProtocolManager
 import com.comphenix.protocol.events.*
 import com.astrainteractive.empireprojekt.EmpirePlugin
+import com.astrainteractive.empireprojekt.empire_items.util.Config
 import com.astrainteractive.empireprojekt.empire_items.util.EmpireUtils
 
 
@@ -30,7 +31,7 @@ class FontProtocolLibEvent : IAstraListener {
     private lateinit var packetListener: PacketListener
     private fun changePlayerTabName(player: Player?) {
         player ?: return
-        var format: String = EmpirePlugin.empireConfig.tabPrefix + player.name
+        var format: String = Config.tabPrefix + player.name
         if (EmpirePlugin.instance.server.pluginManager.getPlugin("placeholderapi") != null)
             format = PlaceholderAPI.setPlaceholders(player, format)
 
@@ -61,7 +62,8 @@ class FontProtocolLibEvent : IAstraListener {
             PacketType.Play.Server.SCOREBOARD_DISPLAY_OBJECTIVE,
             PacketType.Play.Server.SCOREBOARD_SCORE,
             PacketType.Play.Server.PLAYER_INFO,
-            PacketType.Play.Server.TITLE,
+            PacketType.Play.Server.SET_TITLE_TEXT,
+            PacketType.Play.Server.SET_SUBTITLE_TEXT,
             PacketType.Play.Server.CHAT,
             PacketType.Play.Server.PLAYER_LIST_HEADER_FOOTER,
             PacketType.Play.Server.OPEN_WINDOW

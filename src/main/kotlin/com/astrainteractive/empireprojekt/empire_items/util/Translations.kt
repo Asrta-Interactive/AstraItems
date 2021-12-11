@@ -1,17 +1,36 @@
 package com.astrainteractive.empireprojekt.empire_items.util
 
 import com.astrainteractive.astralibs.FileManager
-import com.astrainteractive.astralibs.getHEXString
+import com.astrainteractive.astralibs.HEX
 import com.astrainteractive.empireprojekt.EmpirePlugin
 import org.bukkit.ChatColor
+import org.bukkit.configuration.ConfigurationSection
 import java.io.File
 
-
+fun ConfigurationSection?.getHEXString(path:String,def:String): String {
+    if (this?.contains(path)==true)
+        return this.getString(path,def)?.HEX()?.emoji()!!
+    this?.set(path,def)
+    Translations.fileManager.saveConfig()
+    return def
+}
+fun getHEXString(path:String,def:String): String {
+    val c = Translations.fileManager.getConfig()
+    if (c.contains(path))
+        return c.getHEXString(path,def)
+    c.set(path,def)
+    Translations.fileManager.saveConfig()
+    return def
+}
 class Translations {
-
-    private val plugin = EmpirePlugin.instance
-    val _translationFile: FileManager = FileManager("config" + File.separator + "translations.yml")
-    private val translationFile = _translationFile.getConfig()!!
+    companion object{
+        var fileManager: FileManager = FileManager("config" + File.separator + "translations.yml")
+        private set
+    }
+    init {
+        fileManager = FileManager("config" + File.separator + "translations.yml")
+    }
+    private val translationFile = fileManager.getConfig()!!
 
     val PLUGIN_PREFIX: String = translationFile.getHEXString("PLUGIN_PREFIX", "#18dbd1[EmpireItems]")
     val LOG_MESSAGE_COLOR: String = translationFile.getHEXString("LOG_MESSAGE_COLOR", "#42b0f5")
@@ -95,11 +114,20 @@ class Translations {
 
     //Upgrades
     val ITEM_UPGRADE_NAME_COLOR: String = translationFile.getHEXString("ITEM_UPGRADE_NAME_COLOR", "#4790ad")
-    val ITEM_UPGRADE_AMOUNT_COLOR: String = translationFile.getHEXString("ITEM_UPGRADE_AMOUNT_COLOR", "#47ad5f")
+    val ITEM_UPGRADE_AMOUNT_COLOR: String = translationFile.getHEXString("ITEM_UPGRADE_AMOUNT_COLOR", "#777777")
     val ITEM_UPGRADE_UNSUCCESFULL: String =
         translationFile.getHEXString("ITEM_UPGRADE_UNSUCCESFULL", "#f55442Улучшение не прошло успешно...")
     val ITEM_UPGRADE_SUCCESFULL: String =
         translationFile.getHEXString("ITEM_UPGRADE_SUCCESFULL", "#42f596Улучшение прошло успешно...")
+    val GENERIC_MAX_HEALTH = getHEXString("GENERIC_MAX_HEALTH", "Здоровье")
+    val GENERIC_KNOCKBACK_RESISTANCE = getHEXString("GENERIC_KNOCKBACK_RESISTANCE", "Сопротивление откидыванию")
+    val GENERIC_ATTACK_DAMAGE = getHEXString("GENERIC_ATTACK_DAMAGE", "Урон")
+    val GENERIC_ATTACK_KNOCKBACK = getHEXString("GENERIC_ATTACK_KNOCKBACK", "Откидывание")
+    val GENERIC_ATTACK_SPEED = getHEXString("GENERIC_ATTACK_SPEED", "Скорость Атаки")
+    val GENERIC_ARMOR = getHEXString("GENERIC_ARMOR", "Броня")
+    val GENERIC_ARMOR_TOUGHNESS = getHEXString("GENERIC_ARMOR_TOUGHNESS", "Прочность брони")
+    val GENERIC_MOVEMENT_SPEED = getHEXString("GENERIC_MOVEMENT_SPEED", "Скорость")
+
 
     //Hooks
     val PLUGIN_PROTOCOLLIB_NOT_INSTALLED: String = translationFile.getHEXString(

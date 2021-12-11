@@ -6,6 +6,8 @@ import com.astrainteractive.empireprojekt.empire_items.api.utils.BukkitConstants
 import com.astrainteractive.empireprojekt.empire_items.api.utils.addAttribute
 import com.astrainteractive.empireprojekt.empire_items.api.utils.getPersistentData
 import com.astrainteractive.empireprojekt.empire_items.api.utils.setPersistentDataType
+import com.astrainteractive.empireprojekt.empire_items.util.Translations
+import com.astrainteractive.empireprojekt.empire_items.util.emoji
 import org.bukkit.ChatColor
 import org.bukkit.attribute.Attribute
 import org.bukkit.inventory.ItemFlag
@@ -16,16 +18,18 @@ import kotlin.random.Random
 object UpgradeManager {
 
     var list: List<AstraUpgrade> = mutableListOf()
+    val translation:Translations
+    get() = EmpirePlugin.translations
     val attrMap: Map<String, String>
         get() = mapOf(
-            "GENERIC_MAX_HEALTH" to "Здоровье",
-            "GENERIC_KNOCKBACK_RESISTANCE" to "Откидывание",
-            "GENERIC_ATTACK_DAMAGE" to "Урон",
-            "GENERIC_ATTACK_KNOCKBACK" to "Откидывание",
-            "GENERIC_ATTACK_SPEED" to "Скорость Атаки",
-            "GENERIC_ARMOR" to "Броня",
-            "GENERIC_ARMOR_TOUGHNESS" to "Прочность брони",
-            "GENERIC_MOVEMENT_SPEED" to "Скорость"
+            "GENERIC_MAX_HEALTH" to translation.GENERIC_MAX_HEALTH,
+            "GENERIC_KNOCKBACK_RESISTANCE" to translation.GENERIC_KNOCKBACK_RESISTANCE,
+            "GENERIC_ATTACK_DAMAGE" to translation.GENERIC_ATTACK_DAMAGE,
+            "GENERIC_ATTACK_KNOCKBACK" to translation.GENERIC_ATTACK_KNOCKBACK,
+            "GENERIC_ATTACK_SPEED" to translation.GENERIC_ATTACK_SPEED,
+            "GENERIC_ARMOR" to translation.GENERIC_ARMOR,
+            "GENERIC_ARMOR_TOUGHNESS" to translation.GENERIC_ARMOR_TOUGHNESS,
+            "GENERIC_MOVEMENT_SPEED" to translation.GENERIC_MOVEMENT_SPEED
         )
 
     fun ItemStack.isWeapon() = listOf("SWORD", "AXE").any { type.name.uppercase().contains(it) }
@@ -119,11 +123,11 @@ object UpgradeManager {
             val upgradeKey = BukkitConstants.ASTRA_ATTRIBUTE(it)
             var currentAttributeAmount = meta.getPersistentData(upgradeKey) ?: return@forEach
             if (hide)
-                lore.add("${EmpirePlugin.translations.ITEM_UPGRADE_AMOUNT_COLOR}${attrMap[it.name]}: ${ChatColor.MAGIC}${currentAttributeAmount.round(3)}")
+                lore.add("${attrMap[it.name]}: ${EmpirePlugin.translations.ITEM_UPGRADE_AMOUNT_COLOR}${ChatColor.MAGIC}${currentAttributeAmount.round(3)}")
             else
-                lore.add("${EmpirePlugin.translations.ITEM_UPGRADE_AMOUNT_COLOR}${attrMap[it.name]}: ${currentAttributeAmount.round(3)}")
+                lore.add("${attrMap[it.name]}: ${EmpirePlugin.translations.ITEM_UPGRADE_AMOUNT_COLOR}${currentAttributeAmount.round(3)}")
         }
-        meta.lore = lore
+        meta.lore = lore.emoji()
         resultItem.itemMeta = meta
 
         return resultItem

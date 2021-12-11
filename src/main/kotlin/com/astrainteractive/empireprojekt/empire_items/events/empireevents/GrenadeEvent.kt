@@ -1,6 +1,7 @@
 package com.astrainteractive.empireprojekt.empire_items.events.empireevents
 
 import com.astrainteractive.astralibs.IAstraListener
+import com.astrainteractive.astralibs.Logger
 import com.astrainteractive.empireprojekt.EmpirePlugin
 import com.astrainteractive.empireprojekt.EmpirePlugin.Companion.instance
 import com.astrainteractive.empireprojekt.empire_items.api.utils.BukkitConstants
@@ -32,7 +33,7 @@ class GrenadeEvent : IAstraListener {
         val meta = itemStack.itemMeta ?: return
 
         val explosionPower = meta.getPersistentData(BukkitConstants.GRENADE_EXPLOSION_POWER) ?: return
-        println("Player ${player.name} threw grenade at blockLocation=${e.hitBlock?.location} playerLocation=${player.location}")
+        Logger.log(this.javaClass.name,"Player ${player.name} threw grenade at blockLocation=${e.hitBlock?.location} playerLocation=${player.location}",logType = Logger.Type.LOG)
         if (!allowExplosion(instance, e.entity.location))
             return
         generateExplosion(e.entity.location, explosionPower.toDouble())

@@ -2,13 +2,14 @@ package com.astrainteractive.empireprojekt.empire_items.api.drop
 
 object DropManager {
 
-    private var dropsMap:MutableMap<String,List<AstraDrop>> = mutableMapOf()
+    private var dropsMap:MutableList<AstraDrop> = mutableListOf()
 
     fun clear(){
         dropsMap.clear()
     }
     fun loadDrops(){
-        dropsMap = AstraDrop.getDrops()?.toMutableMap()?: mutableMapOf()
+        dropsMap = AstraDrop.getDrops().toMutableList()
     }
-    fun getDrops() = dropsMap.toMap()
+    fun getDropsFrom(dropFrom:String) = dropsMap.filter { it.dropFrom==dropFrom }
+    fun getDropsById(id:String) = dropsMap.filter { it.id==id }
 }

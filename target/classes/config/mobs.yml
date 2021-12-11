@@ -1,5 +1,0 @@
-enderman_1:
-  name: "enderman"
-  mob: ENDERMAN
-  spawn_chane: 80
-  biomes_whitelist: []

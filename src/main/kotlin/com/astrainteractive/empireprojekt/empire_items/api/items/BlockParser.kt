@@ -1,9 +1,15 @@
 package com.astrainteractive.empireprojekt.empire_items.api.items
 
+import com.astrainteractive.astralibs.catching
+import com.astrainteractive.astralibs.catchingNoStackTrace
+import net.minecraft.world.level.GeneratorAccess
+import net.minecraft.world.level.block.state.IBlockData
 import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
 import org.bukkit.block.data.MultipleFacing
+import org.bukkit.craftbukkit.v1_18_R1.block.CraftBlock
+import org.bukkit.craftbukkit.v1_18_R1.block.data.CraftBlockData
 import java.lang.NumberFormatException
 
 object BlockParser {
@@ -25,6 +31,21 @@ object BlockParser {
             BlockFace.WEST.name.lowercase() to false
         )
 
+    fun setTypeFast(block: Block, type: Material, facing: Map<String, Boolean> = mutableMapOf()){
+        val oldCraftBlock = (block as CraftBlock)
+        val position=oldCraftBlock.position
+        val newData = type.createBlockData()
+
+        catching {
+            for (f in facing)
+                ((newData as CraftBlockData) as MultipleFacing).setFace(BlockFace.valueOf(f.key.uppercase()), f.value)
+        }
+        val newCraftBlockData: IBlockData = (newData as CraftBlockData).state
+        val generatorAccess = (oldCraftBlock.craftWorld.handle as GeneratorAccess)
+        CraftBlock.setTypeAndData(generatorAccess, position, oldCraftBlock.nms, newCraftBlockData, false)
+        generatorAccess.a(position, newCraftBlockData, 1042)
+        generatorAccess.minecraftWorld.a(position, oldCraftBlock.nms, newCraftBlockData, 3);
+    }
 
     fun getMultipleFacing(block: Block): MultipleFacing? {
         if (block.blockData !is MultipleFacing)

@@ -1,30 +1,10 @@
 package com.astrainteractive.empireprojekt.empire_items.util
 
-import com.astrainteractive.astralibs.AstraLibs
 import com.astrainteractive.astralibs.AstraUtils
-import com.astrainteractive.astralibs.HEX
-import com.google.gson.JsonParser
-import com.astrainteractive.empireprojekt.EmpirePlugin
 import com.astrainteractive.empireprojekt.empire_items.api.font.FontManager
-import net.md_5.bungee.api.ChatColor
-import org.bukkit.Bukkit
 import org.bukkit.Material
-import org.bukkit.command.CommandSender
-import org.bukkit.configuration.ConfigurationSection
-import org.bukkit.configuration.file.FileConfiguration
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer
-import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.BookMeta
-import org.bukkit.plugin.IllegalPluginAccessException
-import org.bukkit.scheduler.BukkitRunnable
-import org.bukkit.scheduler.BukkitTask
-import java.io.InputStreamReader
-import java.lang.Exception
-import java.lang.IllegalArgumentException
-import java.net.URL
-import java.util.concurrent.Future
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -87,3 +67,5 @@ object EmpireUtils {
     }
 
 }
+fun String.emoji() = EmpireUtils.emojiPattern(this)
+fun List<String>.emoji() = EmpireUtils.emojiPattern(this)

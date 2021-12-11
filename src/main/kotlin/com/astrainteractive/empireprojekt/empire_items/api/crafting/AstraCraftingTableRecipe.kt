@@ -5,6 +5,7 @@ import com.astrainteractive.empireprojekt.empire_items.api.items.data.ItemManage
 import com.astrainteractive.empireprojekt.empire_items.api.items.data.ItemManager.toAstraItemOrItem
 import com.astrainteractive.empireprojekt.empire_items.api.utils.BukkitConstants
 import com.astrainteractive.astralibs.AstraLibs
+import com.astrainteractive.astralibs.Logger
 import com.astrainteractive.empireprojekt.empire_items.api.utils.getPersistentData
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -45,7 +46,7 @@ data class AstraCraftingTableRecipe(
             Bukkit.addRecipe(shapedRecipe)
             ItemManager.addRecipe(result,shapedRecipe)
         } catch (e: IllegalStateException) {
-            println("Не удалось добавить крафт ${id} ${e.message}")
+            Logger.log(this.javaClass.name,"Не удалось добавить крафт ${id} ${e.message}",logType = Logger.Type.WARN)
         }
     }
 

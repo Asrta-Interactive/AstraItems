@@ -35,6 +35,7 @@ class GenericEvents : IAstraListener {
                 return@forEach
             if (hasCooldown(player, event, it.cooldown ?: 0))
                 return@forEach
+
             it.playCommand?.forEach { cmd ->
                 callSyncMethod {
                     if (cmd.asConsole)

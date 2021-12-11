@@ -8,6 +8,7 @@ data class Block(
     val placeSound:String?,
     val data:Int,
     val hardness:Int?,
+    val ignoreCheck:Boolean=false,
     val generate: Generate?
 ){
     companion object{
@@ -18,6 +19,7 @@ data class Block(
             val placeSound = s.getString("placeSound")
             val data = s.getInt("data")
             val hardness = s.getInt("hardness")
+            val ignoreCheck = s.getBoolean("ignoreCheck")
             val generate = Generate.getGenerate(s.getConfigurationSection("generate"))
             return Block(
                 breakParticle = breakParticle,
@@ -25,6 +27,7 @@ data class Block(
                 placeSound = placeSound,
                 data = data,
                 hardness = hardness,
+                ignoreCheck = ignoreCheck,
                 generate = generate
             )
         }

@@ -27,12 +27,9 @@ class MushroomBlockPlaceEvent: IAstraListener {
         val block = e.block
         val id = player.inventory.itemInMainHand.getAstraID()?:return
         val empireBlock = ItemManager.getItemInfo(id)?.block?:return
-        val empireFacings = BlockParser.getFacingByData(empireBlock.data)
-        block.type = BlockParser.getMaterialByData(empireBlock.data)
-        val facing = block.blockData as MultipleFacing
-        for (f in empireFacings)
-            facing.setFace(BlockFace.valueOf(f.key.uppercase()),f.value)
-        e.block.blockData = facing
+        val facing = BlockParser.getFacingByData(empireBlock.data)
+        val type = BlockParser.getMaterialByData(empireBlock.data)
+        BlockParser.setTypeFast(block,type,facing)
     }
 
 }

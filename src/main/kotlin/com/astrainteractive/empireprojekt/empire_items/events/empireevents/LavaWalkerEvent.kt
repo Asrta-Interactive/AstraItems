@@ -1,6 +1,7 @@
 package com.astrainteractive.empireprojekt.empire_items.events.empireevents
 
 import com.astrainteractive.astralibs.IAstraListener
+import com.astrainteractive.empireprojekt.empire_items.api.items.BlockParser
 import com.astrainteractive.empireprojekt.empire_items.api.utils.BukkitConstants
 import com.astrainteractive.empireprojekt.empire_items.api.utils.getPersistentData
 import com.astrainteractive.empireprojekt.empire_items.api.utils.hasPersistentData
@@ -10,8 +11,8 @@ import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
 import org.bukkit.block.data.MultipleFacing
-import org.bukkit.craftbukkit.v1_17_R1.block.CraftBlock
-import org.bukkit.craftbukkit.v1_17_R1.block.data.CraftBlockData
+import org.bukkit.craftbukkit.v1_18_R1.block.CraftBlock
+import org.bukkit.craftbukkit.v1_18_R1.block.data.CraftBlockData
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.EntityDamageEvent
@@ -29,14 +30,9 @@ class LavaWalkerEvent : IAstraListener {
         EntityDamageEvent.getHandlerList().unregister(this)
     }
 
-    fun Block.setTypeFast(type: Material) {
-        val craftBlock = (this as CraftBlock)
-        val generatorAccess = (craftBlock.craftWorld.handle as GeneratorAccess)
-        val old: IBlockData = generatorAccess.getType(craftBlock.position)
-        val craftBlockData = (type.createBlockData() as CraftBlockData)
-        generatorAccess.setTypeAndData(craftBlock.position, craftBlockData.state, 1042);
-        generatorAccess.minecraftWorld.notify(craftBlock.position, old, craftBlockData.state, 3)
-    }
+    fun Block.setTypeFast(type: Material) =
+        BlockParser.setTypeFast(this,type)
+
 
     private fun createBlocks(block: Block) {
         block.setTypeFast(Material.COBBLESTONE)

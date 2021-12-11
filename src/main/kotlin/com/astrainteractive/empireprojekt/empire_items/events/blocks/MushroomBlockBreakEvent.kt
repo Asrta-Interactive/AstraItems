@@ -26,6 +26,6 @@ class MushroomBlockBreakEvent: IAstraListener {
         val id = ItemManager.getBlockInfoByData(data)?.id?:return
         val itemStack = id.getItemStack()?:return
         e.isDropItems=false
-        block.location.world?.dropItem(block.location,itemStack)
+//        block.location.world?.dropItem(block.location,itemStack)
     }
 }

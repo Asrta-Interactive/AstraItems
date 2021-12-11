@@ -1,9 +1,10 @@
 package com.astrainteractive.empireprojekt.empire_items.commands
 
-import com.astrainteractive.astralibs.AstraUtils
-import com.astrainteractive.astralibs.HEX
-import com.astrainteractive.astralibs.runAsyncTask
+import com.astrainteractive.astraitems.events.block.BlockGenerationEvent
+import com.astrainteractive.astralibs.*
 import com.astrainteractive.empireprojekt.EmpirePlugin
+import com.astrainteractive.empireprojekt.empire_items.gui.GuiCategories
+import com.astrainteractive.empireprojekt.empire_items.util.Config
 import com.astrainteractive.empireprojekt.essentials.sit.SitEvent
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
@@ -14,6 +15,7 @@ import org.bukkit.persistence.PersistentDataType
 import com.astrainteractive.empireprojekt.empire_items.util.EmpirePermissions
 import com.astrainteractive.empireprojekt.empire_items.util.EmpireUtils
 import java.io.File
+import kotlin.random.Random
 
 class CommandManager() : CommandExecutor {
 
@@ -36,12 +38,23 @@ class CommandManager() : CommandExecutor {
         plugin.getCommand("ezip")!!.setExecutor(this)
         plugin.getCommand("empack")!!.setExecutor(this)
         plugin.getCommand("sit")!!.setExecutor(this)
+        AstraLibs.registerCommand("edice"){ sender, args->
+            if (sender !is Player)
+                return@registerCommand
+            val p = sender as Player
+            val nearestP = Bukkit.getOnlinePlayers().filter { p.location.distance(it.location)<30 }
+            nearestP.forEach { it.sendMessage("#03b6fcИгрок #fc8803${p.name} #03b6fcбросил кубик. Значение: #fc8803${Random(System.currentTimeMillis()).nextInt(1,6+1)}".HEX()) }
+
+        }
         AstraGuiCommand()
         AstraItemCommand()
         EmojiBook()
         Emreplace()
         Ezip()
         Reload()
+        AstraLibs.registerCommand("egeneration") { sender, args ->
+            sender.sendMessage("#dbac0fТекущая очередь генерирующихся блоков: #0f8ddb${BlockGenerationEvent.QueuedBlock.size()}".HEX())
+        }
     }
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
@@ -58,7 +71,7 @@ class CommandManager() : CommandExecutor {
 
         if (label.equals("empack", ignoreCase = true))
             if (sender is Player)
-                sender.setResourcePack(EmpirePlugin.empireConfig.resourcePackRef ?: return true)
+                sender.setResourcePack(Config.resourcePackLink ?: return true)
 
         return false
     }

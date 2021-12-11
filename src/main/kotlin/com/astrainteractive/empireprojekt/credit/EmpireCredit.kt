@@ -30,7 +30,6 @@ class EmpireCredit {
         config = CreditConfig.new()!!
         CommandManager()
         if (Bukkit.getServer().pluginManager.getPlugin("PlaceholderAPI")!=null) {
-            println("InitPlaceholder")
             placeholderHook = PlaceholderHook()
             placeholderHook.register()
         }

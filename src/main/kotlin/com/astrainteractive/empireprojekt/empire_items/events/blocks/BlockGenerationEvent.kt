@@ -4,33 +4,30 @@ import com.astrainteractive.astralibs.*
 import com.astrainteractive.empireprojekt.EmpirePlugin
 import com.astrainteractive.empireprojekt.empire_items.api.items.BlockParser
 import com.astrainteractive.empireprojekt.empire_items.api.items.data.ItemManager
-import net.minecraft.world.level.GeneratorAccess
-import net.minecraft.world.level.block.state.IBlockData
+import com.astrainteractive.empireprojekt.empire_items.util.Config
+import org.apache.commons.codec.digest.DigestUtils
 import org.bukkit.Bukkit
 import org.bukkit.Chunk
 import org.bukkit.Location
 import org.bukkit.Material
-import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
-import org.bukkit.block.data.MultipleFacing
-import org.bukkit.craftbukkit.v1_17_R1.block.CraftBlock
-import org.bukkit.craftbukkit.v1_17_R1.block.data.CraftBlockData
+import org.bukkit.configuration.file.FileConfiguration
+
 import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerJoinEvent
+import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.event.world.ChunkLoadEvent
 import org.bukkit.event.world.ChunkUnloadEvent
+import kotlin.concurrent.timer
 import kotlin.random.Random
 
 class BlockGenerationEvent : IAstraListener {
 
     companion object {
-        private val MAX_QUEUE_SIZE = 300
-        private val GENERATE_BLOCK_GAP_TICK = 2L
         private val TPS_TRESHHOLD = 19.9
         private val CHUNK_LOAD_GAP = 100L
         private var currentChunkLoadGap = System.currentTimeMillis()
-        private var MAX_CHUNKS_AT_ONCE = 5
         private var currentChunkAmount = 0
     }
 
@@ -42,7 +39,7 @@ class BlockGenerationEvent : IAstraListener {
         currentChunkAmount--
     }
 
-    private var blockQueue = mutableListOf<QueuedBlock>()
+//    private var blockQueue = mutableListOf<QueuedBlock>()
 
     /**
      * Получаем список координат блоков, которые необходимо будет заменить
@@ -71,68 +68,107 @@ class BlockGenerationEvent : IAstraListener {
         val l: Location,
         val m: Material,
         val f: Map<String, Boolean>
-    )
+    ) {
+        companion object {
+            private var queueFile: FileManager? = FileManager("temp/queue.yml")
+            private var config: FileConfiguration? = queueFile?.getConfig()
+            fun load() {
+                queueFile = FileManager("temp/queue.yml")
+                config = queueFile?.getConfig()
+            }
 
-    private fun addBlockToQueue(_blockQueue: List<QueuedBlock>) {
-        synchronized(this) {
-            blockQueue.addAll(_blockQueue)
-            //Проверяем максимальный размер неактивных чанков
-//            if (blockQueue.size > MAX_QUEUE_SIZE)
-//                blockQueue = blockQueue.drop(blockQueue.size - MAX_QUEUE_SIZE).toMutableList()
+            fun save() {
+                queueFile?.saveConfig()
+            }
 
+            fun close() {
+                queueFile = null
+                config = null
+            }
+
+            fun add(list: List<QueuedBlock>) {
+                list.forEach { add(it) }
+                save()
+            }
+
+            fun add(q: QueuedBlock) {
+                val c = config
+                val key = DigestUtils.sha1Hex(q.l.toString())
+                c?.set("${key}.m", q.m)
+                c?.set("${key}.f", q.f)
+                c?.set("${key}.l", q.l)
+            }
+
+
+            fun getLast(): QueuedBlock? {
+                val c = config
+                val key = (c?.getKeys(false)?.firstOrNull()) ?: return null
+                catchingNoStackTrace {
+                    val l = (c?.getLocation("${key}.l")) ?: return null
+                    val m = (c?.getObject("${key}.m", Material::class.java)) ?: return null
+                    val f = (c?.getObject("${key}.f", Map::class.java) as Map<String, Boolean>?) ?: return null
+                    c.set("$key", null)
+                    save()
+                    return QueuedBlock(l, m, f)
+                }
+                c.set("$key", null)
+                save()
+                return null
+            }
+
+            fun size(): Int = synchronized(this) {
+                catchingNoStackTrace {
+                    config?.getKeys(false)?.size
+                } ?: -1
+            }
         }
+
     }
 
+    init {
+        QueuedBlock.load()
+    }
+
+    private fun addBlockToQueue(_blockQueue: List<QueuedBlock>) =
+        synchronized(this) {
+            if (Config.generationDeepDebug)
+                Logger.log(TAG, "Adding blocks to Queue ${_blockQueue}")
+            QueuedBlock.add(_blockQueue)
+        }
+
+
     private fun getQueuedBlock() = synchronized(this) {
-        val block = blockQueue.firstOrNull() ?: return@synchronized null
-        blockQueue.removeAt(0)
-        return@synchronized block
+        return@synchronized QueuedBlock.getLast()
     }
 
 
     private fun generateBlock() {
         val block = getQueuedBlock() ?: return
-        if (EmpirePlugin.empireConfig.generatingDebug)
+        if (Config.generationDebug)
             Logger.log(
-                "BlockGenerationEvent",
-                "Generating block at [${block.l.x};${block.l.y};${block.l.z}] queue=${blockQueue.size}"
+                TAG,
+                "Generating block at [${block.l.x};${block.l.y};${block.l.z}] queue=${QueuedBlock.size()}"
             )
-        synchronized(this) {
-            val tempChunks = EmpirePlugin.empireFiles.tempChunks
-            tempChunks.getConfig().set(block.l.chunk.toString(), true)
-            tempChunks.saveConfig()
-        }
         callSyncMethod {
             val time = System.currentTimeMillis()
             replaceBlock(block)
-            if (EmpirePlugin.empireConfig.generatingDebug)
-            Logger.log("BlockGenerationEvent", "Block replacing time = ${(System.currentTimeMillis() - time)}")
+            if (Config.generationDebug)
+                Logger.log(TAG, "Block replacing time = ${(System.currentTimeMillis() - time)}")
         }
-    }
-
-
-    fun setType(block: Block, type: Material, facing: Map<String, Boolean>) {
-        val craftBlock = (block as CraftBlock)
-        val generatorAccess = (craftBlock.craftWorld.handle as GeneratorAccess)
-        val old: IBlockData = generatorAccess.getType(craftBlock.position)
-        val craftBlockData = (type.createBlockData() as CraftBlockData)
-        for (f in facing)
-            (craftBlockData as MultipleFacing).setFace(BlockFace.valueOf(f.key.uppercase()), f.value)
-
-        generatorAccess.setTypeAndData(craftBlock.position, craftBlockData.state, 1042);
-        generatorAccess.minecraftWorld.notify(craftBlock.position, old, craftBlockData.state, 3)
     }
 
     //Заменяем блок на сгенерированный
     private fun replaceBlock(b: QueuedBlock) {
         val chunkBlock = b.l.block
-        setType(chunkBlock, b.m, b.f)
+        BlockParser.setTypeFast(chunkBlock, b.m, b.f)
     }
 
     /**
      * Создание блоков в чанке
      */
     private fun generateChunk(chunk: Chunk) {
+        if (Config.generationDeepDebug)
+            Logger.log(TAG, "Generating Queue")
         val currentBlocksQueue = mutableListOf<QueuedBlock>()
 
         for (itemInfo in ItemManager.getBlocksInfos()) {
@@ -147,7 +183,7 @@ class BlockGenerationEvent : IAstraListener {
                 continue
 
             //Получаем максимальное количество блоков в месторождении
-            var deposits = Random.nextInt(generate.minPerDeposit, generate.maxPerDeposit)
+            var deposits = Random.nextInt(generate.minPerDeposit, generate.maxPerDeposit + 1)
             deposits =
                 if (deposits >= generate.maxPerChunk)
                     generate.maxPerChunk
@@ -161,45 +197,35 @@ class BlockGenerationEvent : IAstraListener {
                 )
             if (blockLocByType.isEmpty())
                 continue
-            //Записываем сгенерированное количество
-            var generatedAmount = 0
 
             val material = BlockParser.getMaterialByData(block.data)
             val facing = BlockParser.getFacingByData(block.data)
 
             generate.replaceBlocks?.forEach allblocks@{ (type, chance) ->
-                if (generatedAmount > deposits)
+                if (deposits <= 0)
                     return@allblocks
-                var minAmount = deposits / generate.replaceBlocks.size - generatedAmount
-                if (minAmount < 0)
-                    minAmount = 0
-                if (minAmount >= deposits - generatedAmount + 1)
+                //Берем список локаций по текущему блоку если они существуют
+                val replaceBlocks = blockLocByType[type] ?: return@allblocks
+                if (replaceBlocks.isEmpty())
                     return@allblocks
-                val toGenerate = Random.nextInt(minAmount, deposits - generatedAmount + 1)
-                var currentBlockGeneratedAmount = 0
+                val toGenerate = Random.nextInt(0, deposits + 1)
+
                 (0 until toGenerate).forEach block@{ i ->
                     //Вероятность создания блока
                     if (chance < Random.nextDouble(100.0))
-                        return@block
-                    //Берем список локаций по текущему блоку если они существуют
-                    val replaceBlocks = blockLocByType[type] ?: return@block
-                    if (replaceBlocks.isEmpty())
                         return@block
                     //Берем рандомную локацию из списка локация для замены
                     val blockToReplace = replaceBlocks.elementAt(Random.nextInt(replaceBlocks.size))
 
                     //Берем количество в месторождении для текущей локации
-                    val depositAmount = Random.nextInt(generate.minPerDeposit, generate.maxPerDeposit)
+                    val depositAmount = Random.nextInt(generate.minPerDeposit, generate.maxPerDeposit + 1)
                     var faceBlock = blockToReplace.block
                     (0 until depositAmount).forEach { _ ->
-                        if (generatedAmount > deposits)
-                            return@allblocks
-                        if (currentBlockGeneratedAmount > toGenerate)
+                        if (deposits <= 0)
                             return@allblocks
                         faceBlock = faceBlock.getRelative(getRandomBlockFace())
                         currentBlocksQueue.add(QueuedBlock(faceBlock.location.clone(), material, facing))
-                        currentBlockGeneratedAmount++
-                        generatedAmount++
+                        deposits--
                     }
                 }
 
@@ -212,43 +238,53 @@ class BlockGenerationEvent : IAstraListener {
 
     @EventHandler
     private fun chunkLoadEvent(e: ChunkLoadEvent) {
-//        if (System.currentTimeMillis() - currentChunkLoadGap < CHUNK_LOAD_GAP)
-//            return
-        if (currentChunkAmount > MAX_CHUNKS_AT_ONCE)
+        if (currentChunkAmount > Config.generateMaxChunksAtOnce)
             return
         currentChunkLoadGap = System.currentTimeMillis()
         val chunk = e.chunk
-
         //Если чанк есть в конфиге - значит он уже генерировался
         if (EmpirePlugin.empireFiles.tempChunks.getConfig().contains(chunk.toString()))
             return
-
-        //Проверка, включена ли генерация
-        if (!e.isNewChunk && true)
+        if (!e.isNewChunk && Config.generateOnlyOnNewChunks)
             return
-
+        if (!Config.generateBlocks)
+            return
+        synchronized(this) {
+            val tempChunks = EmpirePlugin.empireFiles.tempChunks
+            tempChunks.getConfig().set(chunk.toString(), true)
+            tempChunks.saveConfig()
+        }
         runAsyncTask {
             increaseCurrentChunk()
-            val start = System.currentTimeMillis()
             generateChunk(chunk)
-
             decreaseCurrentChunk()
         }
     }
 
-
     val task = Bukkit.getScheduler().runTaskTimer(AstraLibs.instance, Runnable {
         runAsyncTask {
-            generateBlock()
+                generateBlock()
         }
-    }, 0L, GENERATE_BLOCK_GAP_TICK)
+    }, 0L, Config.generateBlocksGap)
+
+
+    val TAG = this.javaClass.name
+    override fun onEnable(manager: IAstraManager): IAstraListener {
+        if (Config.generationDebug) {
+            Logger.log(TAG, "Генерация включена. Таймер генераций включен: ${!task.isCancelled}")
+        }
+        return super.onEnable(manager)
+    }
 
     override fun onDisable() {
         ChunkLoadEvent.getHandlerList().unregister(this)
         ChunkUnloadEvent.getHandlerList().unregister(this)
         PlayerJoinEvent.getHandlerList().unregister(this)
         PlayerQuitEvent.getHandlerList().unregister(this)
+        PlayerMoveEvent.getHandlerList().unregister(this)
         task.cancel()
+        QueuedBlock.save()
+        QueuedBlock.close()
 
     }
 }

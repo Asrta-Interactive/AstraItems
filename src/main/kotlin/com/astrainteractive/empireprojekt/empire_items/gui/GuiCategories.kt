@@ -3,7 +3,6 @@ package com.astrainteractive.empireprojekt.empire_items.gui
 import com.astrainteractive.empireprojekt.empire_items.gui.data.GuiConfig
 import com.astrainteractive.astralibs.menu.AstraMenuSize
 import com.astrainteractive.astralibs.runAsyncTask
-import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftInventory
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
