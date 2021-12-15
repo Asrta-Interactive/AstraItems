@@ -19,22 +19,23 @@ import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.PotionMeta
+import org.jetbrains.annotations.Nullable
 
 
 data class AstraItem(
-    val namespace:String,
+    val namespace: String,
     val id: String,
     val displayName: String,
     val lore: List<String>?,
-    val generate:Boolean,
+    val generate: Boolean,
     val material: Material,
     var texturePath: String?,
     var modelPath: String?,
     val customModelData: Int?,
     val itemFlags: List<ItemFlag>?,
     val enchantments: Map<Enchantment, Int>?,
-    val empireEnchants:Map<String,String>?,
-    val gun:Gun?,
+    val empireEnchants: Map<String, String>?,
+    val gun: Gun?,
     val durability: Int?,
     val attributes: Map<Attribute, Double>?,
     val customTags: List<String>,
@@ -45,44 +46,74 @@ data class AstraItem(
 ) {
 
 
-
     fun toItemStack(): ItemStack {
         val itemStack = ItemStack(material)
         val itemMeta = itemStack.itemMeta!!
         itemMeta.setDisplayName(displayName)
         itemMeta.lore = lore
         itemMeta.setCustomModelData(customModelData)
-        itemMeta.setPersistentDataType(BukkitConstants.ASTRA_ID(),id)
+        itemMeta.setPersistentDataType(BukkitConstants.ASTRA_ID(), id)
 
         itemFlags?.forEach {
-            itemMeta.addItemFlags(it) }
+            itemMeta.addItemFlags(it)
+        }
         enchantments?.forEach { (k, v) ->
             itemMeta.addEnchant(k, v, true)
         }
         attributes?.forEach { (k, v) ->
-            itemMeta.addAttribute(k,v, *EquipmentSlot.values())
+            itemMeta.addAttribute(k, v, *EquipmentSlot.values())
         }
-        if (material== Material.POTION){
-            (itemMeta as PotionMeta).color= Color.WHITE
+        if (material == Material.POTION) {
+            (itemMeta as PotionMeta).color = Color.WHITE
         }
-        if (durability!=null){
-            itemMeta.setPersistentDataType(BukkitConstants.EMPIRE_DURABILITY,durability)
-            itemMeta.setPersistentDataType(BukkitConstants.MAX_CUSTOM_DURABILITY,durability)
+        if (durability != null) {
+            itemMeta.setPersistentDataType(BukkitConstants.EMPIRE_DURABILITY, durability)
+            itemMeta.setPersistentDataType(BukkitConstants.MAX_CUSTOM_DURABILITY, durability)
         }
         empireEnchants?.forEach { (k, v) ->
-            when(k.lowercase()){
-                BukkitConstants.MOLOTOV.value.key->itemMeta.setPersistentDataType(BukkitConstants.MOLOTOV,v.toIntOrNull()?:1)
-                BukkitConstants.GRAPPLING_HOOK.value.key->itemMeta.setPersistentDataType(BukkitConstants.GRAPPLING_HOOK,v.toIntOrNull()?:0)
-                BukkitConstants.SOUL_BIND.value.key->itemMeta.setPersistentDataType(BukkitConstants.SOUL_BIND,v.toIntOrNull()?:0)
-                BukkitConstants.HAMMER_ENCHANT.value.key->itemMeta.setPersistentDataType(BukkitConstants.HAMMER_ENCHANT,v.toIntOrNull()?:0)
-                BukkitConstants.LAVA_WALKER_ENCHANT.value.key->itemMeta.setPersistentDataType(BukkitConstants.LAVA_WALKER_ENCHANT,v.toIntOrNull()?:0)
-                BukkitConstants.VAMPIRISM_ENCHANT.value.key->itemMeta.setPersistentDataType(BukkitConstants.VAMPIRISM_ENCHANT,v.toDoubleOrNull()?:0.0)
-                BukkitConstants.GRENADE_EXPLOSION_POWER.value.key->itemMeta.setPersistentDataType(BukkitConstants.GRENADE_EXPLOSION_POWER,v.toInt()?:1)
-                BukkitConstants.SLIME_CATCHER.value.key->itemMeta.setPersistentDataType(BukkitConstants.SLIME_CATCHER,v)
-                BukkitConstants.CORE_INSPECT.value.key->itemMeta.setPersistentDataType(BukkitConstants.CORE_INSPECT,v.toIntOrNull()?:5)
-                BukkitConstants.VOID_TOTEM.value.key->itemMeta.setPersistentDataType(BukkitConstants.VOID_TOTEM,v)
-                BukkitConstants.TOTEM_OF_DEATH.value.key->itemMeta.setPersistentDataType(BukkitConstants.TOTEM_OF_DEATH,v)
-                BukkitConstants.CRAFT_DURABILITY.value.key-> {
+            when (k.lowercase()) {
+                BukkitConstants.MOLOTOV.value.key -> itemMeta.setPersistentDataType(
+                    BukkitConstants.MOLOTOV,
+                    v.toIntOrNull() ?: 1
+                )
+                BukkitConstants.GRAPPLING_HOOK.value.key -> itemMeta.setPersistentDataType(
+                    BukkitConstants.GRAPPLING_HOOK,
+                    v.toIntOrNull() ?: 0
+                )
+                BukkitConstants.SOUL_BIND.value.key -> itemMeta.setPersistentDataType(
+                    BukkitConstants.SOUL_BIND,
+                    v.toIntOrNull() ?: 0
+                )
+                BukkitConstants.HAMMER_ENCHANT.value.key -> itemMeta.setPersistentDataType(
+                    BukkitConstants.HAMMER_ENCHANT,
+                    v.toIntOrNull() ?: 0
+                )
+                BukkitConstants.LAVA_WALKER_ENCHANT.value.key -> itemMeta.setPersistentDataType(
+                    BukkitConstants.LAVA_WALKER_ENCHANT,
+                    v.toIntOrNull() ?: 0
+                )
+                BukkitConstants.VAMPIRISM_ENCHANT.value.key -> itemMeta.setPersistentDataType(
+                    BukkitConstants.VAMPIRISM_ENCHANT,
+                    v.toDoubleOrNull() ?: 0.0
+                )
+                BukkitConstants.GRENADE_EXPLOSION_POWER.value.key -> itemMeta.setPersistentDataType(
+                    BukkitConstants.GRENADE_EXPLOSION_POWER,
+                    v.toInt() ?: 1
+                )
+                BukkitConstants.SLIME_CATCHER.value.key -> itemMeta.setPersistentDataType(
+                    BukkitConstants.SLIME_CATCHER,
+                    v
+                )
+                BukkitConstants.CORE_INSPECT.value.key -> itemMeta.setPersistentDataType(
+                    BukkitConstants.CORE_INSPECT,
+                    v.toIntOrNull() ?: 5
+                )
+                BukkitConstants.VOID_TOTEM.value.key -> itemMeta.setPersistentDataType(BukkitConstants.VOID_TOTEM, v)
+                BukkitConstants.TOTEM_OF_DEATH.value.key -> itemMeta.setPersistentDataType(
+                    BukkitConstants.TOTEM_OF_DEATH,
+                    v
+                )
+                BukkitConstants.CRAFT_DURABILITY.value.key -> {
                     itemMeta.setPersistentDataType(BukkitConstants.CRAFT_DURABILITY, v.toIntOrNull() ?: 1)
                     itemMeta.setPersistentDataType(BukkitConstants.MAX_CUSTOM_DURABILITY, v.toIntOrNull() ?: 1)
                     itemMeta.setPersistentDataType(BukkitConstants.EMPIRE_DURABILITY, v.toIntOrNull() ?: 1)
@@ -92,12 +123,11 @@ data class AstraItem(
 
         }
         gun?.let {
-            if (it.clipSize!=null)
-                itemMeta.setPersistentDataType(BukkitConstants.CLIP_SIZE,0)
+            if (it.clipSize != null)
+                itemMeta.setPersistentDataType(BukkitConstants.CLIP_SIZE, 0)
         }
         itemStack.itemMeta = itemMeta
         return itemStack
-
 
 
     }
@@ -108,7 +138,8 @@ data class AstraItem(
         val TAG = "AstraItem"
         private fun parseItemFlags(list: List<String>) =
             list.mapNotNull {
-                valueOfOrNull<ItemFlag>(it) }
+                valueOfOrNull<ItemFlag>(it)
+            }
 
         /**
          * yml_items.<item_id>.attributes
@@ -137,23 +168,25 @@ data class AstraItem(
 
         fun getItems(fileManager: FileManager): List<AstraItem>? {
             val fileConfig = fileManager.getConfig()
-            val namespace = fileConfig.getString("namespace","empire_items")!!
+            val namespace = fileConfig.getString("namespace", "empire_items")!!
             return fileConfig.getConfigurationSection("yml_items")?.getKeys(false)?.mapNotNull {
-                getItemById(fileConfig.getConfigurationSection("yml_items.$it"),namespace)
+                getItemById(fileConfig.getConfigurationSection("yml_items.$it"), namespace)
             }
         }
+
+
 
         /**
          * yml_items.<item_id>
          */
-        fun getItemById(section: ConfigurationSection?,namespace: String): AstraItem? {
+        fun getItemById(section: ConfigurationSection?, namespace: String): AstraItem? {
             val id = section?.name ?: return null
             val lore = section.getHEXStringList("lore")?.emoji()
-            val generate = section.getBoolean("generate",false)
+            val generate = section.getBoolean("generate", false)
             val displayName = section.getString("displayName")?.HEX()?.emoji() ?: return null
             val material = Material.getMaterial(section.getString("material") ?: return null) ?: return null
-            val texturePath = section.getString("texturePath")?.replace(".png","")
-            val modelPath = section.getString("modelPath")?.replace(".json","")
+            val texturePath = section.getString("texturePath")?.replace(".png", "")
+            val modelPath = section.getString("modelPath")?.replace(".json", "")
             val customModelData = section.getIntOrNull("customModelData")
             val itemFlags = parseItemFlags(section.getStringList("itemFlags"))
             val enchantments = parseEnchantments(section.getConfigurationSection("enchantments"))
@@ -164,7 +197,8 @@ data class AstraItem(
             val gun = Gun.getGun(section.getConfigurationSection("gun"))
             val musicDisc = PlaySound.getSinglePlaySound(section.getConfigurationSection("musicDisc"))
             val block = Block.getBlock(section.getConfigurationSection("block"))
-            val empireEnchants = section.getConfigurationSection("empire_enchants")?.getKeys(false)?.associate { Pair(it,section.getString("empire_enchants.$it")?:"0") }
+            val empireEnchants = section.getConfigurationSection("empire_enchants")?.getKeys(false)
+                ?.associate { Pair(it, section.getString("empire_enchants.$it") ?: "0") }
             return AstraItem(
                 id = id,
                 namespace = namespace,
@@ -187,8 +221,6 @@ data class AstraItem(
                 decoration = null,
                 empireEnchants = empireEnchants
             )
-
-
 
 
         }

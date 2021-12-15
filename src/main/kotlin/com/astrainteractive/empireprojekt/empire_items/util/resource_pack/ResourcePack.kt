@@ -90,6 +90,10 @@ class ResourcePack {
         if (item.block != null) {
             model.textures?.layer0 = null
         }
+        File(path.path + File.separator + "${item.id}.json").apply {
+            delete()
+            createNewFile()
+        }
         writeModel(path.path + File.separator + "${item.id}.json", model)
         if (item.material == Material.BOW) {
             for (i in 0..2) {

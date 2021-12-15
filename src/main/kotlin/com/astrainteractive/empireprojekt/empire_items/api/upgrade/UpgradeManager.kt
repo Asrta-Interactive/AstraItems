@@ -2,6 +2,7 @@ package com.astrainteractive.empireprojekt.empire_items.api.upgrade
 
 import com.astrainteractive.empireprojekt.EmpirePlugin
 import com.astrainteractive.empireprojekt.empire_items.api.items.data.ItemManager.getAstraID
+import com.astrainteractive.empireprojekt.empire_items.api.items.data.ItemManager.getItemInfo
 import com.astrainteractive.empireprojekt.empire_items.api.utils.BukkitConstants
 import com.astrainteractive.empireprojekt.empire_items.api.utils.addAttribute
 import com.astrainteractive.empireprojekt.empire_items.api.utils.getPersistentData
@@ -13,13 +14,15 @@ import org.bukkit.attribute.Attribute
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
+import kotlin.math.max
 import kotlin.random.Random
 
 object UpgradeManager {
 
     var list: List<AstraUpgrade> = mutableListOf()
-    val translation:Translations
-    get() = EmpirePlugin.translations
+    var upgradesLimitMap: Map<String, UpgradeLimit> = mutableMapOf()
+    val translation: Translations
+        get() = EmpirePlugin.translations
     val attrMap: Map<String, String>
         get() = mapOf(
             "GENERIC_MAX_HEALTH" to translation.GENERIC_MAX_HEALTH,
@@ -54,27 +57,34 @@ object UpgradeManager {
     fun addAttributes(itemStack: ItemStack, ingredient: ItemStack): ItemStack? {
         val meta = itemStack.itemMeta!!
         var upgraded = false
+        val id = itemStack.getAstraID() ?: itemStack.type.name
+        val limit = getUpgradeLimit(itemStack)
         getUpgrade(ingredient).forEach { it ->
 
-                val value = Random.nextDouble(it.addMin, it.addMax)
-                val upgradeKey = BukkitConstants.ASTRA_ATTRIBUTE(it.attribute)
-                var upgradeTimes = meta.getPersistentData(BukkitConstants.ASTRA_UPGRADE_TIMES) ?: 0
-                var currentAttributeAmount = meta.getPersistentData(upgradeKey) ?: 0.0
-                currentAttributeAmount += value
-                if (itemStack.isWeapon() && it.attribute.isWeaponAttribute()) {
-                    meta.addAttribute(it.attribute, value, itemStack.type.equipmentSlot)
-                    meta.setPersistentDataType(upgradeKey, currentAttributeAmount)
-                    upgraded = true
-                    upgradeTimes++
-                    meta.setPersistentDataType(BukkitConstants.ASTRA_UPGRADE_TIMES, upgradeTimes)
-                }
-                if (itemStack.isArmor() && it.attribute.isArmorAttribute()) {
-                    meta.addAttribute(it.attribute, value, itemStack.type.equipmentSlot)
-                    meta.setPersistentDataType(upgradeKey, currentAttributeAmount)
-                    upgraded = true
-                    upgradeTimes++
-                    meta.setPersistentDataType(BukkitConstants.ASTRA_UPGRADE_TIMES, upgradeTimes)
-                }
+            var value = Random.nextDouble(it.addMin, it.addMax)
+            val upgradeKey = BukkitConstants.ASTRA_ATTRIBUTE(it.attribute)
+            var upgradeTimes = meta.getPersistentData(BukkitConstants.ASTRA_UPGRADE_TIMES) ?: 0
+            var currentAttributeAmount = meta.getPersistentData(upgradeKey) ?: 0.0
+
+            val maxAmount = limit?.byAttribute(it.attribute) ?: currentAttributeAmount
+            if (value+currentAttributeAmount> maxAmount)
+                value = maxAmount-currentAttributeAmount
+
+            currentAttributeAmount += value
+            if (itemStack.isWeapon() && it.attribute.isWeaponAttribute()) {
+                meta.addAttribute(it.attribute, value, itemStack.type.equipmentSlot)
+                meta.setPersistentDataType(upgradeKey, currentAttributeAmount)
+                upgraded = true
+                upgradeTimes++
+                meta.setPersistentDataType(BukkitConstants.ASTRA_UPGRADE_TIMES, upgradeTimes)
+            }
+            if (itemStack.isArmor() && it.attribute.isArmorAttribute()) {
+                meta.addAttribute(it.attribute, value, itemStack.type.equipmentSlot)
+                meta.setPersistentDataType(upgradeKey, currentAttributeAmount)
+                upgraded = true
+                upgradeTimes++
+                meta.setPersistentDataType(BukkitConstants.ASTRA_UPGRADE_TIMES, upgradeTimes)
+            }
 
         }
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
@@ -91,14 +101,19 @@ object UpgradeManager {
         return upgrades
     }
 
+    fun getUpgradeLimit(id: String?) = upgradesLimitMap[id]
+    fun getUpgradeLimit(itemStack: ItemStack) =
+        getUpgradeLimit(itemStack.getAstraID()?:itemStack.type.name)
+
     fun loadUpgrade() {
         list = AstraUpgrade.getUpgrades() ?: listOf()
+        upgradesLimitMap = UpgradeLimit.getLimits().toMutableMap()
 
     }
 
 
     fun clearUpgradeLore(meta: ItemMeta): ItemMeta {
-        val lore = meta.lore?: mutableListOf()
+        val lore = meta.lore ?: mutableListOf()
         attrMap.forEach { (k, v) ->
             lore.toList().forEachIndexed { i, s ->
                 if (s.contains(v))
@@ -123,9 +138,21 @@ object UpgradeManager {
             val upgradeKey = BukkitConstants.ASTRA_ATTRIBUTE(it)
             var currentAttributeAmount = meta.getPersistentData(upgradeKey) ?: return@forEach
             if (hide)
-                lore.add("${attrMap[it.name]}: ${EmpirePlugin.translations.ITEM_UPGRADE_AMOUNT_COLOR}${ChatColor.MAGIC}${currentAttributeAmount.round(3)}")
+                lore.add(
+                    "${attrMap[it.name]}: ${EmpirePlugin.translations.ITEM_UPGRADE_AMOUNT_COLOR}${ChatColor.MAGIC}${
+                        currentAttributeAmount.round(
+                            3
+                        )
+                    }"
+                )
             else
-                lore.add("${attrMap[it.name]}: ${EmpirePlugin.translations.ITEM_UPGRADE_AMOUNT_COLOR}${currentAttributeAmount.round(3)}")
+                lore.add(
+                    "${attrMap[it.name]}: ${EmpirePlugin.translations.ITEM_UPGRADE_AMOUNT_COLOR}${
+                        currentAttributeAmount.round(
+                            3
+                        )
+                    }"
+                )
         }
         meta.lore = lore.emoji()
         resultItem.itemMeta = meta

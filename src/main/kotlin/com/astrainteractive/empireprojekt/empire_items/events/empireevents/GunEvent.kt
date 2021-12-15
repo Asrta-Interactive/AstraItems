@@ -14,14 +14,19 @@ import com.comphenix.protocol.PacketType
 import com.comphenix.protocol.ProtocolLibrary
 import com.comphenix.protocol.ProtocolManager
 import com.destroystokyo.paper.ParticleBuilder
+import net.minecraft.world.item.ItemArmor
 import org.bukkit.*
 import org.bukkit.block.BlockFace
+import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftItemStack
 import org.bukkit.entity.Entity
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.block.Action
+import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.player.*
+import org.bukkit.inventory.EntityEquipment
+import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 import java.lang.IllegalArgumentException
@@ -163,14 +168,40 @@ class GunEvent : IAstraListener {
                 break
 
             for (ent: Entity in getEntityByLocation(l, r))
-                if (ent is LivingEntity && ent != player)
-                    ent.damage((1 - i / gunInfo.bulletTrace) * gunInfo.damage)
+                if (ent is LivingEntity && ent != player) {
+
+                    val armor = getEntityArmor(ent.equipment)
+                    val damage = (1 - i / gunInfo.bulletTrace) * gunInfo.damage
+                        ent.damage(damage, player)
+                }
 
 
         }
         if (gunInfo.explosion != null && GrenadeEvent.allowExplosion(EmpirePlugin.instance, l))
             GrenadeEvent.generateExplosion(l, gunInfo.explosion.toDouble())
 
+    }
+
+    fun modifersAmount(itemStack: ItemStack?, slot: EquipmentSlot): Double {
+        var amount = 0.0
+        itemStack?.itemMeta?.attributeModifiers?.forEach { a, am ->
+            if (am?.slot != slot)
+                return@forEach
+            amount += am.amount
+        }
+        return amount
+    }
+
+    fun getEntityArmor(e: EntityEquipment?): Double {
+        e ?: return 0.0
+        return listOf(
+            modifersAmount(e.helmet, EquipmentSlot.HEAD),
+            modifersAmount(e.chestplate, EquipmentSlot.CHEST),
+            modifersAmount(e.leggings, EquipmentSlot.LEGS),
+            modifersAmount(e.boots, EquipmentSlot.FEET),
+            modifersAmount(e.itemInMainHand, EquipmentSlot.HAND),
+            modifersAmount(e.itemInOffHand, EquipmentSlot.OFF_HAND)
+        ).sum()
     }
 
     private fun getEntityByLocation(loc: Location, r: Double): MutableList<Entity> {
