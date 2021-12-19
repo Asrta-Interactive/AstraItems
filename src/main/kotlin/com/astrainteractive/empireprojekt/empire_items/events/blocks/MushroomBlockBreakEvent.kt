@@ -8,13 +8,9 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.block.BlockBreakEvent
 
 class MushroomBlockBreakEvent: IAstraListener {
-
-
-
     public override fun onDisable(){
         BlockBreakEvent.getHandlerList().unregister(this)
     }
-
     @EventHandler
     fun blockBreak(e:BlockBreakEvent){
         if (e.isCancelled)
@@ -22,10 +18,7 @@ class MushroomBlockBreakEvent: IAstraListener {
         val player = e.player
         val block = e.block
         val data = BlockParser.getBlockData(block)?:return
-
         val id = ItemManager.getBlockInfoByData(data)?.id?:return
-        val itemStack = id.getItemStack()?:return
         e.isDropItems=false
-//        block.location.world?.dropItem(block.location,itemStack)
     }
 }

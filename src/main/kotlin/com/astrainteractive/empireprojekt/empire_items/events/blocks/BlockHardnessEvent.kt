@@ -19,9 +19,6 @@ import org.bukkit.potion.PotionEffectType
 import kotlin.random.Random
 
 class BlockHardnessEvent : IAstraListener {
-
-
-
     public override fun onDisable() {
         BlockBreakEvent.getHandlerList().unregister(this)
         PlayerAnimationEvent.getHandlerList().unregister(this)
@@ -29,37 +26,34 @@ class BlockHardnessEvent : IAstraListener {
         BlockDamageEvent.getHandlerList().unregister(this)
         PlayerQuitEvent.getHandlerList().unregister(this)
     }
-
-
     data class BreakTimeID(
         val time: Long = System.currentTimeMillis(),
         val id: Int = Random.nextInt(6000)
     )
 
-    val blockDamageMap = mutableMapOf<Player, BreakTimeID>()
+    private val blockDamageMap = mutableMapOf<String, BreakTimeID>()
 
     @EventHandler
     fun playerQuitEvent(e: PlayerQuitEvent) {
-        blockDamageMap.remove(e.player)
+        blockDamageMap.remove(e.player.name)
     }
 
     @EventHandler
-    fun BlockDamageEvent(e: BlockDamageEvent) {
+    fun blockDamageEvent(e: BlockDamageEvent) {
         BlockParser.getBlockData(e.block) ?: return
-        e.player.sendBlockBreakPacket(e.block, 100)
-        blockDamageMap[e.player] = BreakTimeID()
+        blockDamageMap[e.player.name] = BreakTimeID()
         e.player.sendBlockBreakPacket(e.block, 100)
     }
 
     @EventHandler
-    fun BlockBreakEvent(e: BlockBreakEvent) {
+    fun blockBreakEvent(e: BlockBreakEvent) {
         e.player.sendBlockBreakPacket(e.block, 100)
-        blockDamageMap.remove(e.player)
+        blockDamageMap.remove(e.player.name)
     }
 
     private fun Player.sendBlockBreakPacket(block: Block, breakProgress: Int) {
         val packet = PacketPlayOutBlockBreakAnimation(
-            blockDamageMap[player]?.id ?: player?.entityId ?: return,
+            blockDamageMap[player?.name]?.id ?: player?.entityId ?: return,
             BlockPosition(block.x, block.y, block.z),
             breakProgress
         )
@@ -73,21 +67,18 @@ class BlockHardnessEvent : IAstraListener {
         val player = e.player
         val data = BlockParser.getBlockData(block) ?: return
         val itemInfo = ItemManager.getBlockInfoByData(data)?: return
-        val id = ItemManager.getBlockInfoByData(data)?.id?: return
         val empireBlock = itemInfo.block?:return
         empireBlock.hardness?:return
         val digMultiplier = e.player.inventory.itemInMainHand.enchantments[Enchantment.DIG_SPEED] ?: 1
-        val time = (System.currentTimeMillis().minus(blockDamageMap[e.player]?.time ?: return) / 10.0) * digMultiplier
+        val time = (System.currentTimeMillis().minus(blockDamageMap[e.player.name]?.time ?: return) / 10.0) * digMultiplier
         player.sendBlockBreakPacket(block, (time / empireBlock.hardness.toDouble() * 9).toInt())
         if (time > empireBlock.hardness) {
             player.breakBlock(block)
             player.sendBlockBreakPacket(block, 100)
         }
-
         player.addPotionEffect(
             PotionEffect(PotionEffectType.SLOW_DIGGING, 5, 200, false, false, false)
         )
-
     }
 
 }

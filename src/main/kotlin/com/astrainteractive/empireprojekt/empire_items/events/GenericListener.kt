@@ -1,11 +1,10 @@
 package com.astrainteractive.empireprojekt.empire_items.events
 
-import com.astrainteractive.astraitems.events.block.BlockGenerationEvent
+import com.astrainteractive.empireprojekt.empire_items.events.blocks.BlockGenerationEvent
 import com.astrainteractive.astralibs.IAstraListener
 import com.astrainteractive.astralibs.IAstraManager
 import com.astrainteractive.astralibs.menu.MenuListener
 import com.astrainteractive.empireprojekt.empire_items.events.blocks.*
-import com.astrainteractive.empireprojekt.empire_items.events.decorations.DecorationBlockPlaceEvent
 import com.astrainteractive.empireprojekt.empire_items.events.empireevents.*
 import com.astrainteractive.empireprojekt.empire_items.events.genericevents.BookSignEvent
 import com.astrainteractive.empireprojekt.empire_items.events.genericevents.ExperienceRepairEvent
@@ -49,7 +48,8 @@ class GenericListener() : IAstraManager {
         VoidTotemEvent().onEnable(this)
         ResourcePackEvent().onEnable(this)
         ExperienceRepairEvent().onEnable(this)
-        CoreInspectEvent().onEnable(this)
+        if (Bukkit.getServer().pluginManager.getPlugin("CoreProtect") != null)
+            CoreInspectEvent().onEnable(this)
         DurabilityCraftEvent().onEnable(this)
         GunEvent().onEnable(this)
         MenuListener().onEnable(this)
@@ -65,7 +65,6 @@ class GenericListener() : IAstraManager {
         MushroomBlockBreakEvent().onEnable(this)
         MushroomCancelEvent().onEnable(this)
 
-        DecorationBlockPlaceEvent().onEnable(this)
 
     }
 

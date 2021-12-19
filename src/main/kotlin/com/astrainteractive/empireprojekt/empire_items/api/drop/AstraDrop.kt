@@ -1,9 +1,7 @@
 package com.astrainteractive.empireprojekt.empire_items.api.drop
 
-import com.astrainteractive.empireprojekt.EmpirePlugin
-import com.astrainteractive.empireprojekt.empire_items.api.items.data.AstraItem
-import com.astrainteractive.empireprojekt.empire_items.api.items.data.ItemManager
 import com.astrainteractive.empireprojekt.empire_items.api.utils.getCustomItemsFiles
+import com.astrainteractive.empireprojekt.empire_items.util.YamlParser
 import org.bukkit.configuration.ConfigurationSection
 
 data class AstraDrop(
@@ -11,7 +9,7 @@ data class AstraDrop(
     val id: String,
     val minAmount: Int,
     val maxAmount: Int,
-    val percent: Double
+    val chance: Double
 ) {
 
     companion object {
@@ -32,18 +30,17 @@ data class AstraDrop(
         } ?: listOf()
 
         private fun getSingleDrop(_dropFrom: String, _itemId: String, s: ConfigurationSection?): AstraDrop? {
-            s ?: return null
-            val dromFrom = _dropFrom
-            val id = _itemId
-            val minAmount = s.getInt("minAmount", 0)
-            val maxAmount = s.getInt("maxAmount", 0)
-            val percent = s.getDouble("chance", 0.0)
+
+            val parser = YamlParser()
+            val res = parser.configurationSectionToClass<AstraDrop>(s?:return null)?:return null
+            val id = parser.fixNull(res.id,_itemId)
+            val dropFrom = parser.fixNull(res.dropFrom,_dropFrom)
             return AstraDrop(
-                dropFrom = dromFrom,
+                dropFrom = dropFrom,
                 id = id,
-                minAmount = minAmount,
-                maxAmount = maxAmount,
-                percent = percent
+                minAmount = res.minAmount,
+                maxAmount = res.maxAmount,
+                chance = res.chance
             )
         }
     }

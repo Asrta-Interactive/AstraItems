@@ -18,6 +18,7 @@ import org.bukkit.enchantments.Enchantment
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.meta.LeatherArmorMeta
 import org.bukkit.inventory.meta.PotionMeta
 import org.jetbrains.annotations.Nullable
 
@@ -31,6 +32,7 @@ data class AstraItem(
     val material: Material,
     var texturePath: String?,
     var modelPath: String?,
+    var armorColor:String?,
     val customModelData: Int?,
     val itemFlags: List<ItemFlag>?,
     val enchantments: Map<Enchantment, Int>?,
@@ -49,8 +51,6 @@ data class AstraItem(
     fun toItemStack(): ItemStack {
         val itemStack = ItemStack(material)
         val itemMeta = itemStack.itemMeta!!
-        itemMeta.setDisplayName(displayName)
-        itemMeta.lore = lore
         itemMeta.setCustomModelData(customModelData)
         itemMeta.setPersistentDataType(BukkitConstants.ASTRA_ID(), id)
 
@@ -69,6 +69,15 @@ data class AstraItem(
         if (durability != null) {
             itemMeta.setPersistentDataType(BukkitConstants.EMPIRE_DURABILITY, durability)
             itemMeta.setPersistentDataType(BukkitConstants.MAX_CUSTOM_DURABILITY, durability)
+        }
+        if (armorColor!=null && (itemMeta is LeatherArmorMeta)){
+                val color = java.awt.Color.decode(armorColor)
+            val r = color.red
+            val g = color.green
+            val b = color.blue
+            (itemMeta as LeatherArmorMeta) .setColor(Color.fromRGB(r,g,b))
+            itemMeta.addItemFlags(ItemFlag.HIDE_DYE)
+
         }
         empireEnchants?.forEach { (k, v) ->
             when (k.lowercase()) {
@@ -126,6 +135,8 @@ data class AstraItem(
             if (it.clipSize != null)
                 itemMeta.setPersistentDataType(BukkitConstants.CLIP_SIZE, 0)
         }
+        itemMeta.setDisplayName(displayName)
+        itemMeta.lore = lore
         itemStack.itemMeta = itemMeta
         return itemStack
 
@@ -191,6 +202,7 @@ data class AstraItem(
             val itemFlags = parseItemFlags(section.getStringList("itemFlags"))
             val enchantments = parseEnchantments(section.getConfigurationSection("enchantments"))
             val durability = section.getIntOrNull("durability")
+            val armorColor = section.getString("armorColor")
             val attributes = parseAttributes(section.getConfigurationSection("attributes"))
             val customTags = section.getStringList("customTags")
             val interact = Interact.getMultiInteract(section.getConfigurationSection("interact"))
@@ -210,6 +222,7 @@ data class AstraItem(
                 modelPath = modelPath,
                 customModelData = customModelData,
                 itemFlags = itemFlags,
+                armorColor = armorColor,
                 enchantments = enchantments,
                 durability = durability,
                 attributes = attributes,

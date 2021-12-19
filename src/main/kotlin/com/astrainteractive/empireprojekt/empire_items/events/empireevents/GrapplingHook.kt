@@ -25,7 +25,7 @@ class GrapplingHook : IAstraListener {
 
 
 
-    val mapHooks = mutableMapOf<String, Location>()
+    private val mapHooks = mutableMapOf<String, Location>()
 
 
 

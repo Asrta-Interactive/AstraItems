@@ -1,9 +1,7 @@
 package com.astrainteractive.empireprojekt.empire_items.commands
 
-import com.astrainteractive.astraitems.events.block.BlockGenerationEvent
 import com.astrainteractive.astralibs.*
 import com.astrainteractive.empireprojekt.EmpirePlugin
-import com.astrainteractive.empireprojekt.empire_items.gui.GuiCategories
 import com.astrainteractive.empireprojekt.empire_items.util.Config
 import com.astrainteractive.empireprojekt.essentials.sit.SitEvent
 import org.bukkit.Bukkit
@@ -11,10 +9,6 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import org.bukkit.persistence.PersistentDataType
-import com.astrainteractive.empireprojekt.empire_items.util.EmpirePermissions
-import com.astrainteractive.empireprojekt.empire_items.util.EmpireUtils
-import java.io.File
 import kotlin.random.Random
 
 class CommandManager() : CommandExecutor {
@@ -53,7 +47,7 @@ class CommandManager() : CommandExecutor {
         Ezip()
         Reload()
         AstraLibs.registerCommand("egeneration") { sender, args ->
-            sender.sendMessage("#dbac0fТекущая очередь генерирующихся блоков: #0f8ddb${BlockGenerationEvent.QueuedBlock.size()}".HEX())
+//            sender.sendMessage("#dbac0fТекущая очередь генерирующихся блоков: #0f8ddb${BlockGenerationEvent.que}".HEX())
         }
     }
 

@@ -44,7 +44,7 @@ class UpgradeEvent:IAstraListener {
         if (rawSlot != 2)
             return
 
-        val isUpgrade = UpgradeManager.getUpgrade((e.inventory as AnvilInventory).getItem(1)?:return).isNotEmpty()
+        val isUpgrade = UpgradeManager.getAvailableUpgradesForItemStack((e.inventory as AnvilInventory).getItem(1)?:return).isNotEmpty()
         if (!isUpgrade)
             return
         UpgradeManager.setUpgradeLore((e.inventory as AnvilInventory).getItem(2)?:return,false)

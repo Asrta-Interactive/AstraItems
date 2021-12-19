@@ -11,16 +11,9 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.block.BlockPlaceEvent
 
 class MushroomBlockPlaceEvent: IAstraListener {
-
-
-
-
-
-
     public override fun onDisable(){
         BlockPlaceEvent.getHandlerList().unregister(this)
     }
-
     @EventHandler
     fun blockPlace(e:BlockPlaceEvent){
         val player = e.player

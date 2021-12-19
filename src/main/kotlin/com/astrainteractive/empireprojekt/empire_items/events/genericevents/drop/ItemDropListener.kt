@@ -26,7 +26,7 @@ class ItemDropListener : IAstraListener {
 
     fun getDrops(list: List<AstraDrop>) = list.mapNotNull { drop->
         val chance = Random.nextDouble(0.0, 100.0)
-        if (drop.percent < chance)
+        if (drop.chance < chance)
             return@mapNotNull null
         val amount = Random.nextInt(drop.minAmount, drop.maxAmount + 1)
         if (amount <= 0)

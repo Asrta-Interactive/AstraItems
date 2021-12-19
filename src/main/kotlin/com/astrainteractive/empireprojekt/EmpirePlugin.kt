@@ -18,41 +18,12 @@ import org.bukkit.Bukkit
 import org.bukkit.event.HandlerList
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitTask
+import org.yaml.snakeyaml.Yaml
 
 
 class EmpirePlugin : JavaPlugin() {
 
     companion object {
-        private val activeTasksList = mutableMapOf<Long, BukkitTask>()
-
-        /**
-         * Добавляем ссылка на таск
-         */
-        fun onBukkitTaskAdded(id: Long, taskRef: BukkitTask) {
-            activeTasksList[id] = taskRef
-        }
-
-        /**
-         * Отключаем таск и выкидываем его из списка
-         */
-        fun onBukkitTaskEnded(id: Long) {
-            val task = activeTasksList[id]
-            task?.cancel()
-            activeTasksList.remove(id)
-        }
-
-        fun clearAllTasks() {
-            for ((key, task) in activeTasksList)
-                task.cancel()
-            activeTasksList.clear()
-            for (task in Bukkit.getScheduler().pendingTasks)
-                task.cancel()
-            for (worker in Bukkit.getScheduler().activeWorkers) try {
-                worker.thread.stop()
-            } catch (e: Exception) {
-            }
-
-        }
 
         /**
          *Plugin instance
@@ -120,7 +91,6 @@ class EmpirePlugin : JavaPlugin() {
         CraftingManager.load()
         astraEssentials.onEnable()
 
-
         licenceTimer.enable()
     }
 
@@ -132,7 +102,7 @@ class EmpirePlugin : JavaPlugin() {
      */
     override fun onDisable() {
         licenceTimer.onDisable()
-        clearAllTasks()
+        AstraLibs.clearAllTasks()
         genericListener.onDisable()
         for (p in server.onlinePlayers)
             p.closeInventory()
@@ -141,7 +111,7 @@ class EmpirePlugin : JavaPlugin() {
         VillagerTradeManager.clear()
         FontManager.clear()
         CraftingManager.clear()
-        HandlerList.unregisterAll()
+        HandlerList.unregisterAll(this)
         astraEssentials.onDisable()
         Bukkit.getScheduler().cancelTasks(this)
 

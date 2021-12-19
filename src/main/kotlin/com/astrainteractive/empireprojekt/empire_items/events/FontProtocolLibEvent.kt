@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull
  * todo переделать в PlaceholderAPI
  */
 class FontProtocolLibEvent : IAstraListener {
-    private lateinit var protocolManager: ProtocolManager
+    private var protocolManager: ProtocolManager = ProtocolLibrary.getProtocolManager()
     private lateinit var packetListener: PacketListener
     private fun changePlayerTabName(player: Player?) {
         player ?: return
@@ -126,7 +126,6 @@ class FontProtocolLibEvent : IAstraListener {
     }
 
     init {
-        protocolManager = ProtocolLibrary.getProtocolManager()
         initPackerListener()
         for (player in Bukkit.getOnlinePlayers())
             changePlayerTabName(player)

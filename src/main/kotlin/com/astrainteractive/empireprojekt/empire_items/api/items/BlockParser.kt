@@ -31,19 +31,17 @@ object BlockParser {
             BlockFace.WEST.name.lowercase() to false
         )
 
-    fun setTypeFast(block: Block, type: Material, facing: Map<String, Boolean> = mutableMapOf()){
+    inline fun setTypeFast(block: Block, type: Material, facing: Map<String, Boolean> = mutableMapOf()){
         val oldCraftBlock = (block as CraftBlock)
         val position=oldCraftBlock.position
         val newData = type.createBlockData()
-
         catching {
             for (f in facing)
                 ((newData as CraftBlockData) as MultipleFacing).setFace(BlockFace.valueOf(f.key.uppercase()), f.value)
         }
         val newCraftBlockData: IBlockData = (newData as CraftBlockData).state
         val generatorAccess = (oldCraftBlock.craftWorld.handle as GeneratorAccess)
-        CraftBlock.setTypeAndData(generatorAccess, position, oldCraftBlock.nms, newCraftBlockData, false)
-        generatorAccess.a(position, newCraftBlockData, 1042)
+        generatorAccess.a(position, newCraftBlockData, 1042,512)
         generatorAccess.minecraftWorld.a(position, oldCraftBlock.nms, newCraftBlockData, 3);
     }
 

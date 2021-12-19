@@ -6,11 +6,13 @@ import com.astrainteractive.empireprojekt.empire_items.api.items.data.ItemManage
 import com.astrainteractive.empireprojekt.empire_items.api.utils.BukkitConstants
 import com.astrainteractive.astralibs.AstraLibs
 import com.astrainteractive.astralibs.Logger
+import com.astrainteractive.empireprojekt.empire_items.util.YamlParser
 import org.bukkit.Bukkit
 import org.bukkit.NamespacedKey
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.inventory.RecipeChoice
 import java.lang.IllegalStateException
+import kotlin.math.max
 
 data class AstraFurnaceRecipe(
     val id: String,
@@ -51,20 +53,17 @@ data class AstraFurnaceRecipe(
                 getRecipe(s.getConfigurationSection(it))
             }
 
-        fun getRecipe(s: ConfigurationSection?): AstraFurnaceRecipe? {
-            val id = "f_" + (s?.name ?: return null)
-            val input = s.getString("input") ?: return null
-            val result = s.getString("result") ?: return null
-            val cookTime = s.getInt("cookTime", 20)
-            val exp = s.getInt("exp", 0)
-            val amount = s.getInt("amount", 1)
+        private fun getRecipe(s: ConfigurationSection?): AstraFurnaceRecipe? {
+            val parser = YamlParser.parser
+            val res = parser.configurationSectionToClass<AstraFurnaceRecipe>(s?:return null)?:return null
+            val id = "f_" + parser.fixNull(res.id,s.name)
             return AstraFurnaceRecipe(
                 id = id,
-                input = input,
-                result = result,
-                cookTime = cookTime,
-                exp = exp,
-                amount = amount
+                input = res.input,
+                result = res.result,
+                cookTime = max(20,res.cookTime),
+                exp = max(1,res.exp),
+                amount = max(res.amount,1)
             )
         }
     }

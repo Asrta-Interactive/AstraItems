@@ -161,7 +161,7 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility) :
         inventory.setItem(backButtonIndex-2,item)
     }
     fun setUpgradeInfo(){
-        val u = UpgradeManager.getUpgrade(itemID.toAstraItemOrItem()?:return)
+        val u = UpgradeManager.getAvailableUpgradesForItemStack(itemID.toAstraItemOrItem()?:return)
         if (u.isEmpty())
             return
         val item = guiSettings.settings.moreButton.clone().apply {
@@ -195,7 +195,7 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility) :
         val item = guiSettings.settings.moreButton.clone().apply {
             val meta = itemMeta!!
             meta.setDisplayName((EmpirePlugin.translations.ITEM_INFO_DROP_COLOR+EmpirePlugin.translations.ITEM_INFO_DROP).HEX())
-            meta.lore =  drops.map { "${ChatColor.GRAY}${it.dropFrom}: [${it.minAmount};${it.maxAmount}] ${it.percent}%" }
+            meta.lore =  drops.map { "${ChatColor.GRAY}${it.dropFrom}: [${it.minAmount};${it.maxAmount}] ${it.chance}%" }
             itemMeta = meta
         }
         inventory.setItem(backButtonIndex-1,item)

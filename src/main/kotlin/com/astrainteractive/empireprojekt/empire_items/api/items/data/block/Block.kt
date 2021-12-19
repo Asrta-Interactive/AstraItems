@@ -1,5 +1,7 @@
 package com.astrainteractive.empireprojekt.empire_items.api.items.data.block
 
+import com.astrainteractive.empireprojekt.empire_items.api.crafting.AstraCraftingTableRecipe
+import com.astrainteractive.empireprojekt.empire_items.util.YamlParser
 import org.bukkit.configuration.ConfigurationSection
 
 data class Block(

@@ -6,12 +6,14 @@ import com.astrainteractive.empireprojekt.empire_items.api.items.data.ItemManage
 import com.astrainteractive.empireprojekt.empire_items.api.utils.BukkitConstants
 import com.astrainteractive.astralibs.AstraLibs
 import com.astrainteractive.astralibs.Logger
+import com.astrainteractive.empireprojekt.empire_items.util.YamlParser
 import org.bukkit.Bukkit
 import org.bukkit.NamespacedKey
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.inventory.RecipeChoice
 import org.bukkit.inventory.ShapelessRecipe
 import java.lang.IllegalStateException
+import kotlin.math.max
 
 data class AstraShapelessRecipe(
     val id: String,
@@ -50,11 +52,10 @@ data class AstraShapelessRecipe(
             }
 
         fun getRecipe(s: ConfigurationSection?): AstraShapelessRecipe? {
-            val id = "s_" + (s?.name ?: return null)
-            val input = s.getString("input") ?: return null
-            val result = s.getString("result") ?: return null
-            val amount = s.getInt("amount", 1)
-            return AstraShapelessRecipe(id = id, input = input, result = result, amount = amount)
+            val parser = YamlParser.parser
+            val res = parser.configurationSectionToClass<AstraShapelessRecipe>(s?:return null)?:return null
+            val id = "s_" + parser.fixNull(res.id,s.name)
+            return AstraShapelessRecipe(id = id, input = res.input, result = res.result, amount = max(1,res.amount))
         }
     }
 }
