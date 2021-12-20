@@ -13,6 +13,7 @@ import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
+import java.util.concurrent.Future
 
 class GenericEvents : IAstraListener {
 
@@ -36,53 +37,46 @@ class GenericEvents : IAstraListener {
             if (hasCooldown(player, event, it.cooldown ?: 0))
                 return@forEach
 
-            it.playCommand?.forEach { cmd ->
-                callSyncMethod {
+            it.playCommand?.syncForEach { cmd ->
                     if (cmd.asConsole)
                         AstraLibs.instance.server.dispatchCommand(AstraLibs.instance.server.consoleSender, cmd.command)
                     else player.performCommand(cmd.command)
-                }
             }
-            it.playParticle?.forEach playParticle@{ particle ->
-                callSyncMethod {
-                    ParticleBuilder(valueOfOrNull<Particle>(particle.name) ?: return@callSyncMethod)
+            it.playParticle?.syncForEach playParticle@{ particle ->
+                    ParticleBuilder(valueOfOrNull<Particle>(particle.name) ?: return@playParticle)
                         .count(particle.count)
                         .extra(particle.time)
                         .location(player.location.add(0.0, 1.5, 0.0)).spawn()
-                }
             }
-            it.playPotionEffect?.forEach playPotion@{ effect ->
-                callSyncMethod {
+            it.playPotionEffect?.syncForEach playPotion@{ effect ->
                     player.addPotionEffect(
                         PotionEffect(
-                            PotionEffectType.getByName(effect.effect) ?: return@callSyncMethod,
+                            PotionEffectType.getByName(effect.effect) ?: return@playPotion,
                             effect.duration,
                             effect.amplifier
                         )
                     )
-                }
 
             }
-            it.potionEffectsRemove?.forEach removeEffect@{ effect ->
-                callSyncMethod {
-                    player.removePotionEffect(PotionEffectType.getByName(effect) ?: return@callSyncMethod)
-                }
-
-
+            it.potionEffectsRemove?.syncForEach removeEffect@{ effect ->
+                    player.removePotionEffect(PotionEffectType.getByName(effect) ?: return@removeEffect)
             }
-            it.playSound?.forEach { sound ->
-                callSyncMethod {
+            it.playSound?.syncForEach { sound ->
                     player.world.playSound(
                         player.location,
                         sound.name,
                         sound.volume ?: 1.0f,
                         sound.pitch ?: 1.0f
                     )
-                }
-
             }
         }
     }
+
+    private inline fun <T> Iterable<T>.syncForEach(crossinline action: (T) -> Unit): Future<Unit>? =
+        callSyncMethod{
+            for (element in this) action(element)
+        }
+
 
     @EventHandler
     fun onClick(event: PlayerInteractEvent) {

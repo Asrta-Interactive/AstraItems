@@ -13,6 +13,7 @@ import com.astrainteractive.empireprojekt.empire_items.events.GenericListener
 import com.astrainteractive.empireprojekt.empire_items.util.Config
 import com.astrainteractive.empireprojekt.empire_items.util.Files
 import com.astrainteractive.empireprojekt.empire_items.util.Translations
+import com.astrainteractive.empireprojekt.empire_items.util.protection.KProtectionLib
 import com.astrainteractive.empireprojekt.essentials.AstraEssentials
 import org.bukkit.Bukkit
 import org.bukkit.event.HandlerList
@@ -90,7 +91,8 @@ class EmpirePlugin : JavaPlugin() {
         UpgradeManager.loadUpgrade()
         CraftingManager.load()
         astraEssentials.onEnable()
-
+        if (server.pluginManager.getPlugin("WorldGuard")!=null)
+            KProtectionLib.init(this)
         licenceTimer.enable()
     }
 

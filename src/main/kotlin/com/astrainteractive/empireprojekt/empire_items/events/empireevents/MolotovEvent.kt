@@ -5,6 +5,7 @@ import com.astrainteractive.astralibs.Logger
 import com.astrainteractive.empireprojekt.EmpirePlugin
 import com.astrainteractive.empireprojekt.EmpirePlugin.Companion.instance
 import com.astrainteractive.empireprojekt.empire_items.api.utils.BukkitConstants
+import com.astrainteractive.empireprojekt.empire_items.util.protection.KProtectionLib
 
 import com.sk89q.worldedit.bukkit.BukkitAdapter
 import com.sk89q.worldguard.WorldGuard
@@ -30,22 +31,13 @@ class MolotovEvent : IAstraListener {
         val player = e.entity.shooter as Player
         val itemStack = player.inventory.itemInMainHand
         val meta = itemStack.itemMeta ?: return
+        if (!KProtectionLib.canIgnite(null,e.hitBlock?.location))
+            return
         val molotovPower =
             meta.persistentDataContainer.get(BukkitConstants.MOLOTOV.value, BukkitConstants.MOLOTOV.dataType)
                 ?: return
         Logger.log(this.javaClass.name,"Player ${player.name} threw molotov at blockLocation=${e.hitBlock?.location} playerLocation=${player.location}",logType = Logger.Type.LOG)
         Igniter(instance, e.hitBlock ?: return, molotovPower.toInt(), player)
-    }
-
-    companion object {
-        fun allowFire(plugin: EmpirePlugin, location: Location): Boolean {
-            if (plugin.server.pluginManager.getPlugin("WorldGuard") != null) {
-                val query: RegionQuery = WorldGuard.getInstance().platform.regionContainer.createQuery()
-                val loc: com.sk89q.worldedit.util.Location = BukkitAdapter.adapt(location)
-                return (query.testState(loc, null, Flags.FIRE_SPREAD))
-            }
-            return true
-        }
     }
 
     class Igniter(val plugin: EmpirePlugin, block: Block, radius: Int, player: Player) {
@@ -94,7 +86,7 @@ class MolotovEvent : IAstraListener {
         }
 
         private fun setFire(block: Block, radius: Int, player: Player) {
-            if (!allowFire(plugin, block.location))
+            if (!KProtectionLib.canIgnite(null,block?.location))
                 return
             if (radius == 0)
                 return

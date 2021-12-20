@@ -10,6 +10,7 @@ import com.astrainteractive.empireprojekt.empire_items.api.items.data.ItemManage
 import com.astrainteractive.empireprojekt.empire_items.api.utils.BukkitConstants
 import com.astrainteractive.empireprojekt.empire_items.api.utils.getPersistentData
 import com.astrainteractive.empireprojekt.empire_items.api.utils.setPersistentDataType
+import com.astrainteractive.empireprojekt.empire_items.util.protection.KProtectionLib
 import com.comphenix.protocol.PacketType
 import com.comphenix.protocol.ProtocolLibrary
 import com.comphenix.protocol.ProtocolManager
@@ -177,7 +178,7 @@ class GunEvent : IAstraListener {
 
 
         }
-        if (gunInfo.explosion != null && GrenadeEvent.allowExplosion(EmpirePlugin.instance, l))
+        if (gunInfo.explosion != null && KProtectionLib.canExplode(null,l))
             GrenadeEvent.generateExplosion(l, gunInfo.explosion.toDouble())
 
     }
