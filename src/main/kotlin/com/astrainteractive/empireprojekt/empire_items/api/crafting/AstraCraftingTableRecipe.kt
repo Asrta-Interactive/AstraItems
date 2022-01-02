@@ -69,13 +69,14 @@ data class AstraCraftingTableRecipe(
             val parser = YamlParser()
             val res = parser.configurationSectionToClass<AstraCraftingTableRecipe>(s?:return null)?:return null
             val id = "ct_"+parser.fixNull(res.id,s.name)
-            return AstraCraftingTableRecipe(
+            val recipe =  AstraCraftingTableRecipe(
                 id = id,
-                result = parser.fixNull(res.result,id),
+                result = parser.fixNull(res.result,parser.fixNull(res.id,s.name)),
                 pattern = res.pattern,
                 amount = max(res.amount,1),
                 ingredients = res.ingredients
             )
+            return recipe
         }
     }
 }

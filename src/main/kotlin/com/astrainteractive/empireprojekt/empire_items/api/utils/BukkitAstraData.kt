@@ -34,6 +34,8 @@ object BukkitConstants {
     val MOLOTOV
         get() = BukkitConstant("MOLOTOV", PersistentDataType.INTEGER)
     val GRAPPLING_HOOK
+        get() = BukkitConstant("GRAPPLING_HOOK", PersistentDataType.STRING)
+    val STATE
         get() = BukkitConstant("GRAPPLING_HOOK", PersistentDataType.INTEGER)
     val SOUL_BIND
         get() = BukkitConstant("SOUL_BIND", PersistentDataType.INTEGER)

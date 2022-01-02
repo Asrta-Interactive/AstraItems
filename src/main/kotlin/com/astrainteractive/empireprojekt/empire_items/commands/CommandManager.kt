@@ -3,7 +3,6 @@ package com.astrainteractive.empireprojekt.empire_items.commands
 import com.astrainteractive.astralibs.*
 import com.astrainteractive.empireprojekt.EmpirePlugin
 import com.astrainteractive.empireprojekt.empire_items.util.Config
-import com.astrainteractive.empireprojekt.essentials.sit.SitEvent
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -55,11 +54,6 @@ class CommandManager() : CommandExecutor {
 
         if (label.equals("emoji", ignoreCase = true))
             sendChatEmoji(sender, args)
-
-
-        if (label.equals("sit", ignoreCase = true))
-            if (sender is Player)
-                SitEvent.instance.sitPlayer(sender)
 
 
 

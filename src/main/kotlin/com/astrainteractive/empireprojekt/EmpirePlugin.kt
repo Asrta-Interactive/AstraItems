@@ -14,12 +14,9 @@ import com.astrainteractive.empireprojekt.empire_items.util.Config
 import com.astrainteractive.empireprojekt.empire_items.util.Files
 import com.astrainteractive.empireprojekt.empire_items.util.Translations
 import com.astrainteractive.empireprojekt.empire_items.util.protection.KProtectionLib
-import com.astrainteractive.empireprojekt.essentials.AstraEssentials
 import org.bukkit.Bukkit
 import org.bukkit.event.HandlerList
 import org.bukkit.plugin.java.JavaPlugin
-import org.bukkit.scheduler.BukkitTask
-import org.yaml.snakeyaml.Yaml
 
 
 class EmpirePlugin : JavaPlugin() {
@@ -68,7 +65,6 @@ class EmpirePlugin : JavaPlugin() {
 //    private lateinit var database:EmpireDatabase
 //    private lateinit var empireRating:EmpireRating
     private val licenceTimer = LicenceChecker()
-    private val astraEssentials = AstraEssentials()
 
     /**
      * This function called when server starts
@@ -90,7 +86,6 @@ class EmpirePlugin : JavaPlugin() {
         VillagerTradeManager.load()
         UpgradeManager.loadUpgrade()
         CraftingManager.load()
-        astraEssentials.onEnable()
         if (server.pluginManager.getPlugin("WorldGuard")!=null)
             KProtectionLib.init(this)
         licenceTimer.enable()
@@ -114,7 +109,6 @@ class EmpirePlugin : JavaPlugin() {
         FontManager.clear()
         CraftingManager.clear()
         HandlerList.unregisterAll(this)
-        astraEssentials.onDisable()
         Bukkit.getScheduler().cancelTasks(this)
 
     }

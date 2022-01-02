@@ -87,7 +87,7 @@ data class AstraItem(
                 )
                 BukkitConstants.GRAPPLING_HOOK.value.key -> itemMeta.setPersistentDataType(
                     BukkitConstants.GRAPPLING_HOOK,
-                    v.toIntOrNull() ?: 0
+                    v
                 )
                 BukkitConstants.SOUL_BIND.value.key -> itemMeta.setPersistentDataType(
                     BukkitConstants.SOUL_BIND,

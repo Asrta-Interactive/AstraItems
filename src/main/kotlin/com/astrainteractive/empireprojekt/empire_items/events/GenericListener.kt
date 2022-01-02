@@ -16,7 +16,6 @@ import com.astrainteractive.empireprojekt.empire_items.events.upgrade.UpgradeEve
 import com.astrainteractive.empireprojekt.empire_items.events.villagers.VillagerEvent
 
 import com.astrainteractive.empireprojekt.empire_items.events.empireevents.MusicDiscsNewEvent
-import com.astrainteractive.empireprojekt.essentials.sit.SitEvent
 import org.bukkit.Bukkit
 
 
@@ -29,7 +28,6 @@ class GenericListener() : IAstraManager {
 //        MusicDiscsEvent().onEnable(this)
         MusicDiscsNewEvent().onEnable(this)
 //        AutoBlockChangeEvent().onEnable(this)
-        SitEvent().onEnable(this)
         //GunEvent().onEnable(this)
         Vampirism().onEnable(this)
         if (Bukkit.getServer().pluginManager.getPlugin("ProtocolLib") != null)

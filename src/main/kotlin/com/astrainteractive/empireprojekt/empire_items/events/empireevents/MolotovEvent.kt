@@ -31,7 +31,7 @@ class MolotovEvent : IAstraListener {
         val player = e.entity.shooter as Player
         val itemStack = player.inventory.itemInMainHand
         val meta = itemStack.itemMeta ?: return
-        if (!KProtectionLib.canIgnite(null,e.hitBlock?.location))
+        if (!KProtectionLib.canIgnite(null,e.hitBlock?.location?:return))
             return
         val molotovPower =
             meta.persistentDataContainer.get(BukkitConstants.MOLOTOV.value, BukkitConstants.MOLOTOV.dataType)

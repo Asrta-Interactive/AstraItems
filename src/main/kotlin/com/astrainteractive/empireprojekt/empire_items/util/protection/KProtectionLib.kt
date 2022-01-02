@@ -31,24 +31,24 @@ class KProtectionLib {
         }
 
         private fun canAny(
-            canAny: (KProtectionCompatibility, Player?, Location?) -> Boolean,
+            canAny: (KProtectionCompatibility, Player?, Location) -> Boolean,
             player: Player?,
-            target: Location?
+            target: Location
         ): Boolean = if (!compatibilities.isNullOrEmpty())
             compatibilities.stream()
                 .allMatch { compatibility: KProtectionCompatibility -> canAny.invoke(compatibility, player, target) }
         else true
 
-        fun canBuild(player: Player?, target: Location?): Boolean =
+        fun canBuild(player: Player?, target: Location): Boolean =
             canAny(KProtectionCompatibility::canBuild, player, target)
 
-        fun canBreak(player: Player?, target: Location?): Boolean =
+        fun canBreak(player: Player?, target: Location): Boolean =
             canAny(KProtectionCompatibility::canBreak, player, target)
 
-        fun canExplode(player: Player?, target: Location?): Boolean =
+        fun canExplode(player: Player?, target: Location): Boolean =
             canAny(KProtectionCompatibility::canExplode, player, target)
 
-        fun canIgnite(player: Player?, target: Location?): Boolean =
+        fun canIgnite(player: Player?, target: Location): Boolean =
             canAny(KProtectionCompatibility::canIgnite, player, target)
 
     }

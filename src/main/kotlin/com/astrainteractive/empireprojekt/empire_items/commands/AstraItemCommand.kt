@@ -6,6 +6,7 @@ import com.astrainteractive.astralibs.registerTabCompleter
 import com.astrainteractive.empireprojekt.EmpirePlugin
 import com.astrainteractive.empireprojekt.empire_items.api.items.data.ItemManager
 import com.astrainteractive.empireprojekt.empire_items.api.items.data.ItemManager.toAstraItemOrItem
+import com.astrainteractive.empireprojekt.empire_items.util.EmpirePermissions
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -17,6 +18,8 @@ class AstraItemCommand {
     fun Array<out Any>.equals(e: Any, position: Int) = this.getOrNull(position)?.equals(e) ?: false
 
     private fun commandExecutor() = AstraLibs.registerCommand("emp") { sender, args ->
+        if (!sender.hasPermission(EmpirePermissions.EMPGIVE))
+            return@registerCommand
         if (sender !is Player)
             return@registerCommand
         // /emp give RomaRoman item 1

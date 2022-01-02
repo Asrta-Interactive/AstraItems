@@ -48,7 +48,9 @@ object ItemManager {
     }
 
     fun String?.getItemStack(amount: Int? = 1) = getItemStackByID(this,amount)
+    fun String?.getItemInfo() = itemsInfoMap[this]
     fun getItemStackByID(id:String?, amount:Int? = 1) = itemStacksMap[id]?.clone()?.apply { setAmount(amount?:1) }
+    @JvmName("getItemInfoFromString")
     fun getItemInfo(id:String?) = itemsInfoMap[id]
     fun getItemsIDS() = itemsInfoMap.keys.toList()
 

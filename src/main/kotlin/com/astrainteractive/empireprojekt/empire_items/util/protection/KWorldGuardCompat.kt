@@ -25,7 +25,7 @@ class KWorldGuardCompat(mainPlugin: JavaPlugin?, plugin: Plugin?) :
      * @param target Place where the player seeks to place a block
      * @return true if he can put the block
      */
-    override fun canBuild(player: Player?, target: Location?): Boolean =
+    override fun canBuild(player: Player?, target: Location): Boolean =
         checkFlag(player, target, Flags.BLOCK_PLACE)
 
     /**
@@ -33,17 +33,17 @@ class KWorldGuardCompat(mainPlugin: JavaPlugin?, plugin: Plugin?) :
      * @param target Place where the player seeks to break a block
      * @return true if he can break the block
      */
-    override fun canBreak(player: Player?, target: Location?): Boolean =
+    override fun canBreak(player: Player?, target: Location): Boolean =
         checkFlag(player, target, Flags.BLOCK_BREAK)
 
-    override fun canExplode(player: Player?, target: Location?): Boolean =
+    override fun canExplode(player: Player?, target: Location): Boolean =
         checkFlag(player, target, Flags.CREEPER_EXPLOSION, Flags.OTHER_EXPLOSION)
 
-    override fun canIgnite(player: Player?, target: Location?): Boolean =
+    override fun canIgnite(player: Player?, target: Location): Boolean =
         checkFlag(player, target, Flags.LIGHTER, Flags.FIRE_SPREAD)
 
 
-    private fun checkFlag(player: Player?, target: Location?, vararg flag: StateFlag?): Boolean {
+    private fun checkFlag(player: Player?, target: Location, vararg flag: StateFlag?): Boolean {
         val localPlayer:LocalPlayer? = player?.let {
             (plugin as WorldGuardPlugin).wrapPlayer(player)
         }

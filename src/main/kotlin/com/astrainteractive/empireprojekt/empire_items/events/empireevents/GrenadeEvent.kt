@@ -32,7 +32,7 @@ class GrenadeEvent : IAstraListener {
 
         val itemStack = player.inventory.itemInMainHand
         val meta = itemStack.itemMeta ?: return
-        if (!KProtectionLib.canExplode(null,e.hitBlock?.location))
+        if (!KProtectionLib.canExplode(null,e.hitBlock?.location?:return))
             return
 
         val explosionPower = meta.getPersistentData(BukkitConstants.GRENADE_EXPLOSION_POWER) ?: return
