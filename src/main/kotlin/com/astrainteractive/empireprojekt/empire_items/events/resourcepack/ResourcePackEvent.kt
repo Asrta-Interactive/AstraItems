@@ -26,7 +26,7 @@ class ResourcePackEvent : IAstraListener {
         } else
             p.sendTitle(
                 EmpirePlugin.translations.RESOURCE_PACK_HINT_TITLE,
-                EmpirePlugin.translations.RESOURCE_PACK_HINT_SUBTITLE, 5, 200, 5
+                EmpirePlugin.translations.RESOURCE_PACK_HINT_SUBTITLE, 5, 20, 5
             )
     }
 
