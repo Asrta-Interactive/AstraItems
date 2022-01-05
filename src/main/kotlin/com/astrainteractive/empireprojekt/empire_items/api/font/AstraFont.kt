@@ -1,7 +1,6 @@
 package com.astrainteractive.empireprojekt.empire_items.api.font
 
 import com.astrainteractive.empireprojekt.empire_items.api.utils.getCustomItemsFiles
-import org.apache.commons.lang.StringEscapeUtils
 import org.bukkit.configuration.ConfigurationSection
 
 data class AstraFont(
@@ -15,9 +14,8 @@ data class AstraFont(
 ) {
 
     companion object {
-        val startChar: String
-            get() = "\u3400"
         private var count = 0x3400
+
         fun getFonts() = getCustomItemsFiles()?.mapNotNull {
             val fileConfig = it.getConfig()
             val section = fileConfig.getConfigurationSection("fontImages")
@@ -26,15 +24,15 @@ data class AstraFont(
             }
         }?.flatten()?: listOf()
 
-        private fun getFont(s:ConfigurationSection?, namespace:String = "minecraft"): AstraFont? {
-            s?:return null
+        private fun getFont(s: ConfigurationSection?, namespace: String = "minecraft"): AstraFont? {
+            s ?: return null
             val id = s.name
-            val path = s.getString("path")?:return null
-            val height = s.getInt("height",10)
-            val ascent = s.getInt("ascent",13)
-            val char = (count+s.getInt("data")).toChar().toString()
-            val blockSend = s.getBoolean("blockSend",false)
-            val f = AstraFont(
+            val path = s.getString("path") ?: return null
+            val height = s.getInt("height", 10)
+            val ascent = s.getInt("ascent", 13)
+            val char = (count + s.getInt("data")).toChar().toString()
+            val blockSend = s.getBoolean("blockSend", false)
+            return AstraFont(
                 id = id,
                 path = path,
                 height = height,
@@ -43,7 +41,6 @@ data class AstraFont(
                 blockSend = blockSend,
                 namespace = namespace
             )
-            return f
 
         }
     }

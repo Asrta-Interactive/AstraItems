@@ -19,14 +19,14 @@ object UpgradeManager {
         get() = EmpirePlugin.translations
     val attrMap: Map<String, String>
         get() = mapOf(
-            "GENERIC_MAX_HEALTH" to translations.GENERIC_MAX_HEALTH,
-            "GENERIC_KNOCKBACK_RESISTANCE" to translations.GENERIC_KNOCKBACK_RESISTANCE,
-            "GENERIC_ATTACK_DAMAGE" to translations.GENERIC_ATTACK_DAMAGE,
-            "GENERIC_ATTACK_KNOCKBACK" to translations.GENERIC_ATTACK_KNOCKBACK,
-            "GENERIC_ATTACK_SPEED" to translations.GENERIC_ATTACK_SPEED,
-            "GENERIC_ARMOR" to translations.GENERIC_ARMOR,
-            "GENERIC_ARMOR_TOUGHNESS" to translations.GENERIC_ARMOR_TOUGHNESS,
-            "GENERIC_MOVEMENT_SPEED" to translations.GENERIC_MOVEMENT_SPEED
+            "GENERIC_MAX_HEALTH" to translations.itemUpgradeMaxHealth,
+            "GENERIC_KNOCKBACK_RESISTANCE" to translations.itemUpgradeKnockbackResistance,
+            "GENERIC_ATTACK_DAMAGE" to translations.itemUpgradeAttackDamage,
+            "GENERIC_ATTACK_KNOCKBACK" to translations.itemUpgradeAttackKnockback,
+            "GENERIC_ATTACK_SPEED" to translations.itemUpgradeAttackSpeed,
+            "GENERIC_ARMOR" to translations.itemUpgradeArmor,
+            "GENERIC_ARMOR_TOUGHNESS" to translations.itemUpgradeArmorToughness,
+            "GENERIC_MOVEMENT_SPEED" to translations.itemUpgradeMovementSpeed
         )
 
     private fun ItemStack.isWeapon() = listOf("SWORD", "AXE").any { type.name.uppercase().contains(it) }
@@ -111,8 +111,8 @@ object UpgradeManager {
                 return@forEach
             val amount = meta.getPersistentData(upgradeKey)?.round(3) ?: return@forEach
             val key = attrMap[it.name]
-            val color = translations.ITEM_UPGRADE_AMOUNT_COLOR
-            val colorMagic = if (hide) ChatColor.MAGIC else translations.ITEM_UPGRADE_AMOUNT_COLOR
+            val color = translations.itemUpgradeAmountColor
+            val colorMagic = if (hide) ChatColor.MAGIC else translations.itemUpgradeAmountColor
             lore.add("$key: $color$colorMagic$amount")
         }
         meta.lore = lore.emoji()

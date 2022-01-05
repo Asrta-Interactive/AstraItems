@@ -1,5 +1,6 @@
 package com.astrainteractive.empireprojekt.empire_items.api.items
 
+import com.astrainteractive.astralibs.callSyncMethod
 import com.astrainteractive.astralibs.catching
 import com.astrainteractive.astralibs.catchingNoStackTrace
 import net.minecraft.world.level.GeneratorAccess
@@ -41,8 +42,10 @@ object BlockParser {
         }
         val newCraftBlockData: IBlockData = (newData as CraftBlockData).state
         val generatorAccess = (oldCraftBlock.craftWorld.handle as GeneratorAccess)
-        generatorAccess.a(position, newCraftBlockData, 1042,512)
-        generatorAccess.minecraftWorld.a(position, oldCraftBlock.nms, newCraftBlockData, 3);
+        callSyncMethod{
+            generatorAccess.a(position, newCraftBlockData, 1042,512)
+            generatorAccess.minecraftWorld.a(position, oldCraftBlock.nms, newCraftBlockData, 3);
+        }
     }
 
     fun getMultipleFacing(block: Block): MultipleFacing? {

@@ -28,14 +28,14 @@ object BankAPI {
 
         //Может ли игрок внести столько денег
         if (amount > playerEss.money.toInt()) {
-            player.sendMessage(EmpirePlugin.translations.NOT_ENOUGH_MONEY)
+            player.sendMessage(EmpirePlugin.translations.notEnoughMoney)
             return
         }
         //Забираем деньги у игрока и сохраняем конфиг
         playerEss.takeMoney(amount.toBigDecimal())
         creditPlayer.bank += amount
         CreditAPI.savePlayerConfig(creditPlayer)
-        player.sendMessage(EmpirePlugin.translations.BANK_DEPOSIT.replace("%amount%", amount.toString()))
+        player.sendMessage(EmpirePlugin.translations.bankDeposit.replace("%amount%", amount.toString()))
     }
 
     /**
@@ -51,14 +51,14 @@ object BankAPI {
         val playerEss = CreditAPI.getEssentialsPlayer(player) ?: return
         //Проверяем, есть ли такое количество в банке
         if (amount > creditPlayer.bank) {
-            player.sendMessage(EmpirePlugin.translations.NOT_ENOUGH_MONEY)
+            player.sendMessage(EmpirePlugin.translations.notEnoughMoney)
             return
         }
         //Даем игроку деньги и сохраняем конфиг
         playerEss.giveMoney(amount.toBigDecimal())
         creditPlayer.bank -= amount
         CreditAPI.savePlayerConfig(creditPlayer)
-        player.sendMessage(EmpirePlugin.translations.BANK_WITHDRAW.replace("%amount%", amount.toString()))
+        player.sendMessage(EmpirePlugin.translations.bankWithdraw.replace("%amount%", amount.toString()))
     }
 
 }

@@ -14,11 +14,11 @@ class Bank: CommandExecutor {
             return true
 
         if (!sender.hasPermission(EmpirePermissions.BANK)){
-            sender.sendMessage(EmpirePlugin.translations.NO_PERMISSION)
+            sender.sendMessage(EmpirePlugin.translations.noPerms)
             return true
         }
         if (args.isEmpty()){
-            sender.sendMessage(EmpirePlugin.translations.WRONG_ARGS)
+            sender.sendMessage(EmpirePlugin.translations.wrongArgs)
             return true
         }
         if (args[0].equals("deposit",ignoreCase = true)) {

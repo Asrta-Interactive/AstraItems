@@ -1,4 +1,30 @@
 namespace: empire_items
+crafting_table:
+  shield1:
+    id: shield_crafting_table
+    result: shield1
+    amount: 1
+    pattern:
+      - XXX
+      - XDX
+      - XXX
+    ingredients:
+      D: DIAMOND
+shapeless:
+  shield1:
+    id: shield_shapeless
+    result: shield1
+    amount: 2
+    input: NETHERITE_INGOT
+furnace:
+  id: shield_furnace
+  result: shield1
+  amount: 2
+  input: IRON_INGOT
+  cookTime: 200
+  exp: 20
+
+
 yml_items:
   shield1:
     displayName: "&2Новый предмет"

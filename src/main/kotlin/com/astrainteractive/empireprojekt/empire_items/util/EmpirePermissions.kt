@@ -1,16 +1,24 @@
 package com.astrainteractive.empireprojekt.empire_items.util
 
-class EmpirePermissions{
-    companion object {
-        const val EMPGIVE: String = "empireitems.give"
-        const val CREDIT: String = "empirecredit"
-        const val BANK: String = "embank"
-        const val EZIP: String = "empireitems.zip"
-        const val RELOAD: String = "empireitems.reload"
-        const val INVENTORY_SAVE: String = "empireitems.save_inventory"
-        const val SPAWN_ENTITY: String = "empireitems.spawn_entity"
-        const val GET_RANDOM_ITEM: String = "empireitems.random_item"
-        const val FIXED_ITEM_FRAME: String = "empireitems.change_itemframe_fixed"
-        const val CREATE_NPC: String = "empireitems.create_npc"
-    }
+object EmpirePermissions {
+    val EMPGIVE: String
+        get() = "empireitems.give"
+    val CREDIT: String
+        get() = "empirecredit"
+    val BANK: String
+        get() = "embank"
+    val EZIP: String
+        get() = "empireitems.zip"
+    val RELOAD: String
+        get() = "empireitems.reload"
+    val INVENTORY_SAVE: String
+        get() = "empireitems.save_inventory"
+    val SPAWN_ENTITY: String
+        get() = "empireitems.spawn_entity"
+    val GET_RANDOM_ITEM: String
+        get() = "empireitems.random_item"
+    val FIXED_ITEM_FRAME: String
+        get() = "empireitems.change_itemframe_fixed"
+    val CREATE_NPC: String
+        get() = "empireitems.create_npc"
 }

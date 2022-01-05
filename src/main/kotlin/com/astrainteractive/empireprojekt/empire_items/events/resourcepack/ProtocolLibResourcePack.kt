@@ -27,7 +27,7 @@ class ProtocolLibResourcePack: IAstraListener {
         override fun onPacketSending(event: PacketEvent) {
             val packet = event.packet
             for (i in 0 until packet.chatComponents.size()) {
-                val chatComponent = WrappedChatComponent.fromJson(EmpirePlugin.translations.RESOURCE_PACK_SEND_JSON)
+                val chatComponent = WrappedChatComponent.fromJson(EmpirePlugin.translations.resourcePackMessage)
                 packet.chatComponents.write(i,chatComponent)
             }
         }

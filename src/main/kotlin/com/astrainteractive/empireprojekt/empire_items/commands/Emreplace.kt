@@ -20,7 +20,7 @@ class Emreplace {
             item = id.getItemStack(amount)?:return@registerCommand
             item.durability = durability
             sender.inventory.setItemInMainHand(item)
-            sender.sendMessage(EmpirePlugin.translations.ITEM_REPLACED)
+            sender.sendMessage(EmpirePlugin.translations.itemReplaced)
         }
     }
 }

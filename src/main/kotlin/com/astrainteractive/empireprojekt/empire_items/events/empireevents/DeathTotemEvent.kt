@@ -46,7 +46,7 @@ class DeathTotemEvent : IAstraListener {
             player.damage(999999999999.0)
 
         },20L*2)
-        player.sendMessage("#cf2d04${ChatColor.MAGIC}Голос ${EmpirePlugin.translations.LOG_MESSAGE_COLOR}-> #cf2d04Ты недостоин".HEX())
+        player.sendMessage("#cf2d04${ChatColor.MAGIC}Голос ${ChatColor.AQUA}-> #cf2d04Ты недостоин".HEX())
     }
     override fun onDisable() {
         PlayerItemHeldEvent.getHandlerList().unregister(this)

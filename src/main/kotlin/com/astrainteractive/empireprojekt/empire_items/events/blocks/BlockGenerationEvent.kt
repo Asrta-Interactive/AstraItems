@@ -5,7 +5,10 @@ import com.astrainteractive.astralibs.*
 import com.astrainteractive.empireprojekt.EmpirePlugin
 import com.astrainteractive.empireprojekt.empire_items.api.items.BlockParser
 import com.astrainteractive.empireprojekt.empire_items.api.items.data.ItemManager
+import com.astrainteractive.empireprojekt.empire_items.util.AsyncTask
 import com.astrainteractive.empireprojekt.empire_items.util.Config
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import net.minecraft.core.BlockPosition
 import org.bukkit.Bukkit
 import org.bukkit.Chunk
@@ -24,7 +27,7 @@ import kotlin.concurrent.timer
 import kotlin.math.min
 import kotlin.random.Random
 
-class BlockGenerationEvent : IAstraListener {
+class BlockGenerationEvent : IAstraListener, AsyncTask {
 
     private var currentChunkAmount = 0
     private var currentChunkLoadGap = System.currentTimeMillis()
@@ -46,7 +49,7 @@ class BlockGenerationEvent : IAstraListener {
     private fun Chunk.getBlocksLocations(
         yMin: Int,
         yMax: Int,
-        types: Map<String,Int>
+        types: Map<String, Int>
     ): MutableList<Pair<String, Location>> {
         val locations = mutableListOf<Pair<String, Location>>()
         (yMin until yMax).shuffled().forEach { y ->
@@ -54,7 +57,7 @@ class BlockGenerationEvent : IAstraListener {
                 (0 until 15).shuffled().forEach { z ->
                     val loc = Location(this.world, this.x * 16.0 + x, y * 1.0, this.z * 16.0 + z)
                     val blockName = loc.block.type.name
-                    if (types.contains(blockName) && types[blockName]!! >= Random.nextInt(0,100))
+                    if (types.contains(blockName) && types[blockName]!! >= Random.nextInt(0, 100))
                         locations.add(Pair(blockName, loc))
                 }
             }
@@ -116,10 +119,10 @@ class BlockGenerationEvent : IAstraListener {
     /**
      * Загружает в файл информацию о том, что чанк был сгенерирован
      */
-    private fun setChunkHasGenerated(chunk: Chunk) {
+    private fun setChunkHasGenerated(chunk: Chunk,id:String) = synchronized(this){
         val tempChunks = EmpirePlugin.empireFiles.tempChunks
-        if (!tempChunks.getConfig().contains(chunk.toString())) {
-            tempChunks.getConfig().set(chunk.toString(), true)
+        if (!tempChunks.getConfig().contains("${chunk}.$id")) {
+            tempChunks.getConfig().set("${chunk}.$id", true)
             tempChunks.saveConfig()
         }
     }
@@ -131,16 +134,13 @@ class BlockGenerationEvent : IAstraListener {
         val block = getQueuedBlock() ?: return
         if (Config.generationDebug)
             Logger.log(
-                TAG,
-                "Generating block at [${block.l.x};${block.l.y};${block.l.z}] queue=${blockQueue.size}"
+                "Generating block at [${block.l.x};${block.l.y};${block.l.z}] queue=${blockQueue.size}", TAG
             )
-        setChunkHasGenerated(block.l.chunk)
-        callSyncMethod {
-            val time = System.currentTimeMillis()
-            replaceBlock(block)
-            if (Config.generationDebug)
-                Logger.log(TAG, "Block replacing time = ${(System.currentTimeMillis() - time)}")
-        }
+        setChunkHasGenerated(block.l.chunk,block.id)
+        val time = System.currentTimeMillis()
+        replaceBlock(block)
+        if (Config.generationDebug)
+            Logger.log("Block replacing time = ${(System.currentTimeMillis() - time)}", TAG)
     }
 
     /**
@@ -155,19 +155,23 @@ class BlockGenerationEvent : IAstraListener {
      */
     private fun generateChunk(chunk: Chunk) {
         if (Config.generationDeepDebug)
-            Logger.log(TAG, "Generating Queue")
+            Logger.log("Generating Queue", TAG)
         val currentBlocksQueue = mutableListOf<QueuedBlock>()
 
         ItemManager.getBlocksInfos().forEach { itemInfo ->
             val block = itemInfo.block ?: return@forEach
+            if (isBlockGeneratedInChunk(chunk,itemInfo.id))
+                return@forEach
             //Надо ли генерировать блок
             val generate = block.generate ?: return@forEach
             //Если указан мир и он не равен миру чанка - пропускаем
             if (block.generate.world != null && block.generate.world != chunk.world.name)
                 return@forEach
             //Проверяем рандом
-            if (generate.generateInChunkChance < Random.nextDouble(100.0))
+            if (generate.generateInChunkChance < Random.nextDouble(100.0)) {
+                setChunkHasGenerated(chunk,itemInfo.id)
                 return@forEach
+            }
 
 
             //Получаем список локаций блоков по их типу
@@ -175,7 +179,7 @@ class BlockGenerationEvent : IAstraListener {
                 chunk.getBlocksLocations(
                     generate.minY ?: return@forEach,
                     generate.maxY ?: return@forEach,
-                    generate.replaceBlocks?: return@forEach
+                    generate.replaceBlocks ?: return@forEach
                 )
 
             if (blockLocByType.isEmpty())
@@ -203,7 +207,13 @@ class BlockGenerationEvent : IAstraListener {
                             break
                         }
                     }
-                    currentBlocksQueue.add(QueuedBlock(faceBlock.location.clone(), material.name, facing))
+                    if (Config.generateBlocksGap == 0L) {
+                        val q = QueuedBlock(itemInfo.id, faceBlock.location.clone(), material.name, facing)
+                        replaceBlock(q)
+                        setChunkHasGenerated(chunk,itemInfo.id)
+                    }
+                    else
+                        currentBlocksQueue.add(QueuedBlock(itemInfo.id,faceBlock.location.clone(), material.name, facing))
                     generated++
                 }
 
@@ -212,22 +222,24 @@ class BlockGenerationEvent : IAstraListener {
         addBlockToQueue(currentBlocksQueue)
     }
 
+    fun isBlockGeneratedInChunk(chunk: Chunk, id: String): Boolean {
+        return EmpirePlugin.empireFiles.tempChunks.getConfig().contains("${chunk}.$id")
+    }
+
     @EventHandler
     private fun chunkLoadEvent(e: ChunkLoadEvent) {
         if (currentChunkAmount > Config.generateMaxChunksAtOnce)
             return
         currentChunkLoadGap = System.currentTimeMillis()
         val chunk = e.chunk
-        //Если чанк есть в конфиге - значит он уже генерировался
-        if (EmpirePlugin.empireFiles.tempChunks.getConfig().contains(chunk.toString()))
-            return
+
         if (!e.isNewChunk && Config.generateOnlyOnNewChunks)
             return
         if (!Config.generateBlocks)
             return
 
         increaseCurrentChunk()
-        runAsyncTask {
+        launch(Dispatchers.IO) {
             generateChunk(chunk)
             decreaseCurrentChunk()
         }
@@ -241,7 +253,7 @@ class BlockGenerationEvent : IAstraListener {
             lastChunkCheck = System.currentTimeMillis()
         }
 
-        runAsyncTask {
+        launch(Dispatchers.IO) {
             generateBlock()
         }
     }, 0L, Config.generateBlocksGap)

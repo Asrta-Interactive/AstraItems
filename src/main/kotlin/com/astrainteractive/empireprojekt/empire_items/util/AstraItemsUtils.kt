@@ -12,19 +12,13 @@ import java.util.regex.Pattern
  * Utils class
  */
 object EmpireUtils {
-
-
-
-
+    private val emojiPattern = Pattern.compile(":([a-zA-Z0-9_]*):")
 
     fun getBook(author: String, title: String, lines: List<String>, useHex: Boolean = true): ItemStack {
-
         val book = ItemStack(Material.WRITTEN_BOOK)
         val meta = book.itemMeta as BookMeta
-
         meta.author = author
         meta.title = title
-
         val pages = mutableListOf<String>()
         for (line in lines) {
             var hexLine = if (useHex) EmpireUtils.emojiPattern(AstraUtils.HEXPattern(line)) else line
@@ -34,22 +28,13 @@ object EmpireUtils {
             }
             pages.add(hexLine)
         }
-
-
         meta.pages = pages
-
         book.itemMeta = meta
         return book
     }
 
-    private val emojiPattern = Pattern.compile(":([a-zA-Z0-9_]*):")
 
-    fun emojiPattern(lines: List<String>): List<String> {
-        val newList = mutableListOf<String>()
-        for (line in lines)
-            newList.add(emojiPattern(line))
-        return newList
-    }
+    fun emojiPattern(lines: List<String>): List<String> = lines.map { emojiPattern(it) }
 
     fun emojiPattern(_line: String): String {
         val map = FontManager.fontById().toMutableMap()
@@ -67,5 +52,6 @@ object EmpireUtils {
     }
 
 }
+
 fun String.emoji() = EmpireUtils.emojiPattern(this)
 fun List<String>.emoji() = EmpireUtils.emojiPattern(this)

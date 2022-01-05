@@ -154,7 +154,7 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility) :
             return
         val item = guiSettings.settings.moreButton.clone().apply {
             val meta = itemMeta!!
-            meta.setDisplayName((EmpirePlugin.translations.ITEM_INFO_DROP_COLOR+"Можно купить у жителя:").HEX())
+            meta.setDisplayName((EmpirePlugin.translations.guiInfoDropColor+"Можно купить у жителя:").HEX())
             meta.lore = v.map { "${ChatColor.GRAY}${it.profession}" }
             itemMeta = meta
         }
@@ -166,7 +166,7 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility) :
             return
         val item = guiSettings.settings.moreButton.clone().apply {
             val meta = itemMeta!!
-            meta.setDisplayName((EmpirePlugin.translations.ITEM_INFO_DROP_COLOR+"Улучшает:").HEX())
+            meta.setDisplayName((EmpirePlugin.translations.guiInfoDropColor+"Улучшает:").HEX())
             meta.lore = u.map { "${ChatColor.GRAY}${UpgradeManager.attrMap[it.attribute.name]} [${it.addMin};${it.addMax}]" }
             itemMeta = meta
         }
@@ -177,7 +177,7 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility) :
         val b = ItemManager.getItemInfo(itemID)?.block?.generate?:return
         val item = guiSettings.settings.moreButton.clone().apply {
             val meta = itemMeta!!
-            meta.setDisplayName((EmpirePlugin.translations.ITEM_INFO_DROP_COLOR+"Генерируется:").HEX())
+            meta.setDisplayName((EmpirePlugin.translations.guiInfoDropColor+"Генерируется:").HEX())
             meta.lore = listOf(
             ("${ChatColor.GRAY}На высоте [${b.minY};${b.maxY}]"),
             ("${ChatColor.GRAY}Количество в чанке [${b.minPerChunk};${b.maxPerChunk}]"),
@@ -194,7 +194,7 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility) :
             return
         val item = guiSettings.settings.moreButton.clone().apply {
             val meta = itemMeta!!
-            meta.setDisplayName((EmpirePlugin.translations.ITEM_INFO_DROP_COLOR+EmpirePlugin.translations.ITEM_INFO_DROP).HEX())
+            meta.setDisplayName((EmpirePlugin.translations.guiInfoDropColor+EmpirePlugin.translations.guiInfoDrop).HEX())
             meta.lore =  drops.map { "${ChatColor.GRAY}${it.dropFrom}: [${it.minAmount};${it.maxAmount}] ${it.chance}%" }
             itemMeta = meta
         }

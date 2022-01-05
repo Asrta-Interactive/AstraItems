@@ -12,4 +12,5 @@ object DropManager {
     }
     fun getDropsFrom(dropFrom:String) = dropsMap.filter { it.dropFrom==dropFrom }.toSet().toMutableList()
     fun getDropsById(id:String) = dropsMap.filter { it.id==id }.toSet().toMutableList()
+
 }

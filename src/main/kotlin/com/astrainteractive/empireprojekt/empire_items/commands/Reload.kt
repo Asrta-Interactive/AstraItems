@@ -13,13 +13,13 @@ class Reload{
     init {
         AstraLibs.registerCommand("ereload") { sender, args ->
             if (!sender.hasPermission(EmpirePermissions.RELOAD)) {
-                sender.sendMessage(EmpirePlugin.translations.NO_PERMISSION)
+                sender.sendMessage(EmpirePlugin.translations.noPerms)
                 return@registerCommand
             }
-            sender.sendMessage(EmpirePlugin.translations.RELOAD)
+            sender.sendMessage(EmpirePlugin.translations.reload)
             EmpirePlugin.instance.onDisable()
             EmpirePlugin.instance.onEnable()
-            sender.sendMessage(EmpirePlugin.translations.RELOAD_COMPLETE)
+            sender.sendMessage(EmpirePlugin.translations.reloadComplete)
         }
     }
 }

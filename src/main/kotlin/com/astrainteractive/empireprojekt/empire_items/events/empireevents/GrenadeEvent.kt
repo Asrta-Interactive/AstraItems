@@ -36,7 +36,7 @@ class GrenadeEvent : IAstraListener {
             return
 
         val explosionPower = meta.getPersistentData(BukkitConstants.GRENADE_EXPLOSION_POWER) ?: return
-        Logger.log(this.javaClass.name,"Player ${player.name} threw grenade at blockLocation=${e.hitBlock?.location} playerLocation=${player.location}",logType = Logger.Type.LOG)
+        Logger.log("Player ${player.name} threw grenade at blockLocation=${e.hitBlock?.location} playerLocation=${player.location}","Grenade")
         generateExplosion(e.entity.location, explosionPower.toDouble())
         e.entity.world.spawnParticle(Particle.SMOKE_LARGE, e.entity.location, 300, 0.0, 0.0, 0.0, 0.2)
     }

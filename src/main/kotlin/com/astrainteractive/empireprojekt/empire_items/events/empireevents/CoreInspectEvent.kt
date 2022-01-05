@@ -11,6 +11,7 @@ import com.astrainteractive.empireprojekt.empire_items.api.utils.hasPersistentDa
 import com.astrainteractive.empireprojekt.empire_items.api.utils.setPersistentDataType
 import net.coreprotect.CoreProtect
 import net.coreprotect.CoreProtectAPI
+import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.block.Action
@@ -25,7 +26,7 @@ class CoreInspectEvent : IAstraListener {
 
     var coreProtect: CoreProtectAPI? = null
     val c: String
-        get() = EmpirePlugin.translations.LOG_MESSAGE_COLOR
+        get() = ChatColor.AQUA.toString()
 
     override fun onEnable(manager: IAstraManager): IAstraListener {
         AstraLibs.instance.server.pluginManager.getPlugin("CoreProtect")?.let {

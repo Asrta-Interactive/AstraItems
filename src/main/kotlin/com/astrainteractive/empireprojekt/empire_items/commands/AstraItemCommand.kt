@@ -8,9 +8,6 @@ import com.astrainteractive.empireprojekt.empire_items.api.items.data.ItemManage
 import com.astrainteractive.empireprojekt.empire_items.api.items.data.ItemManager.toAstraItemOrItem
 import com.astrainteractive.empireprojekt.empire_items.util.EmpirePermissions
 import org.bukkit.Bukkit
-import org.bukkit.command.Command
-import org.bukkit.command.CommandExecutor
-import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class AstraItemCommand {
@@ -33,9 +30,9 @@ class AstraItemCommand {
                 return@registerCommand
             }
             val player = Bukkit.getPlayer(playerName)?:return@registerCommand
-            sender.sendMessage(EmpirePlugin.translations.ITEM_GIVE+" ${player.name}"+" ${itemStack.itemMeta?.displayName}")
+            sender.sendMessage(EmpirePlugin.translations.itemGave+" ${player.name}"+" ${itemStack.itemMeta?.displayName}")
             player.inventory?.addItem(itemStack)
-            player.sendMessage(EmpirePlugin.translations.ITEM_GAINED+" ${itemStack.itemMeta?.displayName}")
+            player.sendMessage(EmpirePlugin.translations.itemGained+" ${itemStack.itemMeta?.displayName}")
         }
     }
     private fun tabCompleter() = AstraLibs.registerTabCompleter("emp"){sender,args->

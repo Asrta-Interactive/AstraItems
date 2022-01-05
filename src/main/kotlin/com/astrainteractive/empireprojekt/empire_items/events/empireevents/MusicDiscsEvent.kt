@@ -21,7 +21,7 @@ import org.bukkit.event.player.PlayerInteractEvent
 /**
  * Эвент кастомных музыкальных дисков
  */
-class MusicDiscsNewEvent : IAstraListener {
+class MusicDiscsEvent : IAstraListener {
 
     /**
      * Список активных jukebox'ов с включенной музыкой

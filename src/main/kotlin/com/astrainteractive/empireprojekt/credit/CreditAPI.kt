@@ -96,9 +96,9 @@ object CreditAPI {
         val amount = amountStr.toBigDecimalOrNull() ?: return
         //Проверяем, может ли иметь кредит
         if (!canHaveCredit(player, amount)) {
-            player.sendMessage(EmpirePlugin.translations.CANT_HAVE_CREDIT)
+            player.sendMessage(EmpirePlugin.translations.cantHaveCredit)
             player.sendMessage(
-                EmpirePlugin.translations.MIN_FOR_CREDIT.replace(
+                EmpirePlugin.translations.minForCredit.replace(
                     "%amount%",
                     EmpireCredit.config.minAmountForCredit.toString()
                 )
@@ -108,7 +108,7 @@ object CreditAPI {
         //Даем деньги и сохраняем конфиг
         getEssentialsPlayer(player)!!.giveMoney(amount)
         saveCreditInfo(player, amount.toInt(), true)
-        player.sendMessage(EmpirePlugin.translations.GAVE_CREDIT.replace("%amount%", amountStr))
+        player.sendMessage(EmpirePlugin.translations.gaveCredit.replace("%amount%", amountStr))
 
     }
 
@@ -118,7 +118,7 @@ object CreditAPI {
     fun repayCredit(player: Player, amount: Int = getCreditAmount(player)) {
         //Если нет кредита - возвращаемся
         if (!hasCredit(player)) {
-            player.sendMessage(EmpirePlugin.translations.NO_ACTIVE_CREDIT)
+            player.sendMessage(EmpirePlugin.translations.noActiveCredit)
             return
         }
 
@@ -129,14 +129,14 @@ object CreditAPI {
 
         //Проверяем хватает ли у игрока денег
         if (essPlayer.money.toInt() < amount) {
-            player.sendMessage(EmpirePlugin.translations.NOT_ENOUGH_MONEY)
+            player.sendMessage(EmpirePlugin.translations.notEnoughMoney)
             return
         }
         //Выдаем кредит и сохраняем конфиги
         essPlayer.takeMoney(amount.toBigDecimal())
         saveCreditInfo(player, (creditPlayer.credit - amount / EmpireCredit.config.creditTax).toInt())
         player.sendMessage(
-            EmpirePlugin.translations.PAID_CREDIT.replace(
+            EmpirePlugin.translations.paidCredit.replace(
                 "%amount%",
                 (amount).toString()
             )

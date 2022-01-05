@@ -149,7 +149,7 @@
         <dependency>
             <groupId>com.astrainteractive</groupId>
             <artifactId>astralibs</artifactId>
-            <version>1.0.17</version>
+            <version>1.0.27</version>
         </dependency>
         <!--        Essentials-->
         <dependency>
@@ -225,6 +225,21 @@
             <artifactId>coreprotect</artifactId>
             <version>20.0</version>
             <scope>provided</scope>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.jetbrains.kotlinx</groupId>
+            <artifactId>kotlinx-coroutines-core</artifactId>
+            <version>1.6.0</version>
+            <!--            <type>pom</type>-->
+        </dependency>
+
+        <dependency>
+            <groupId>org.jetbrains.kotlinx</groupId>
+            <artifactId>kotlinx-coroutines-core-jvm</artifactId>
+            <version>1.6.0</version>
+            <!--            <scope>runtime</scope>-->
         </dependency>
 
     </dependencies>

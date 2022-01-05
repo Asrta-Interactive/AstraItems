@@ -36,7 +36,7 @@ class MolotovEvent : IAstraListener {
         val molotovPower =
             meta.persistentDataContainer.get(BukkitConstants.MOLOTOV.value, BukkitConstants.MOLOTOV.dataType)
                 ?: return
-        Logger.log(this.javaClass.name,"Player ${player.name} threw molotov at blockLocation=${e.hitBlock?.location} playerLocation=${player.location}",logType = Logger.Type.LOG)
+        Logger.log("Player ${player.name} threw molotov at blockLocation=${e.hitBlock?.location} playerLocation=${player.location}","Molotov")
         Igniter(instance, e.hitBlock ?: return, molotovPower.toInt(), player)
     }
 

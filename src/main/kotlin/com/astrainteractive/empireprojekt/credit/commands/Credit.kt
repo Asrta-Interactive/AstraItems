@@ -16,7 +16,7 @@ class Credit:CommandExecutor {
 
 
         if (!sender.hasPermission(EmpirePermissions.CREDIT)){
-            sender.sendMessage(EmpirePlugin.translations.NO_PERMISSION)
+            sender.sendMessage(EmpirePlugin.translations.noPerms)
             return true
         }
         if (args.size==2 && args[0].equals("take",ignoreCase = true)) {
@@ -28,7 +28,7 @@ class Credit:CommandExecutor {
             CreditAPI.repayCredit(sender)
             return true
         }
-        sender.sendMessage(EmpirePlugin.translations.WRONG_ARGS)
+        sender.sendMessage(EmpirePlugin.translations.wrongArgs)
         return false
     }
 

@@ -15,7 +15,7 @@ import com.astrainteractive.empireprojekt.empire_items.events.resourcepack.Resou
 import com.astrainteractive.empireprojekt.empire_items.events.upgrade.UpgradeEvent
 import com.astrainteractive.empireprojekt.empire_items.events.villagers.VillagerEvent
 
-import com.astrainteractive.empireprojekt.empire_items.events.empireevents.MusicDiscsNewEvent
+import com.astrainteractive.empireprojekt.empire_items.events.empireevents.MusicDiscsEvent
 import org.bukkit.Bukkit
 
 
@@ -26,7 +26,7 @@ class GenericListener() : IAstraManager {
 
         BookSignEvent().onEnable(this)
 //        MusicDiscsEvent().onEnable(this)
-        MusicDiscsNewEvent().onEnable(this)
+        MusicDiscsEvent().onEnable(this)
 //        AutoBlockChangeEvent().onEnable(this)
         //GunEvent().onEnable(this)
         Vampirism().onEnable(this)

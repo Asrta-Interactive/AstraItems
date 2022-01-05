@@ -25,8 +25,8 @@ class ResourcePackEvent : IAstraListener {
             Logger.log(this.javaClass.name, "Игрок ${p.name} присоединился впервые. Запрашиваем ресурс-пак")
         } else
             p.sendTitle(
-                EmpirePlugin.translations.RESOURCE_PACK_HINT_TITLE,
-                EmpirePlugin.translations.RESOURCE_PACK_HINT_SUBTITLE, 5, 20, 5
+                EmpirePlugin.translations.resourcePackHintTitle,
+                EmpirePlugin.translations.resourcePackHintSubtitle, 5, 20, 5
             )
     }
 
@@ -37,17 +37,17 @@ class ResourcePackEvent : IAstraListener {
         when (e.status) {
             PlayerResourcePackStatusEvent.Status.DECLINED -> {
                 Logger.log(this.javaClass.name, "Игрок ${e.player.name} отклонил ресурс-пак")
-                p.sendMessage(EmpirePlugin.translations.RESOURCE_PACK_DENY)
-                p.sendMessage(EmpirePlugin.translations.RESOURCE_PACK_DOWNLOAD_SELF)
+                p.sendMessage(EmpirePlugin.translations.resourcePackDeny)
+                p.sendMessage(EmpirePlugin.translations.resourcePackDownloadHint)
             }
             PlayerResourcePackStatusEvent.Status.FAILED_DOWNLOAD -> {
                 Logger.log(this.javaClass.name, "Игроку ${e.player.name} не удалось скачать ресурс-пак")
                 p.kickPlayer(
                     """
-                    ${EmpirePlugin.translations.RESOURCE_PACK_DOWNLOAD_ERROR}
+                    ${EmpirePlugin.translations.resourcePackDownloadError}
                         """.trimIndent()
                 )
-                p.sendMessage(EmpirePlugin.translations.RESOURCE_PACK_DOWNLOAD_ERROR)
+                p.sendMessage(EmpirePlugin.translations.resourcePackDownloadError)
             }
             PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED -> {
                 if (System.currentTimeMillis() - p.firstPlayed>1000*60*10)

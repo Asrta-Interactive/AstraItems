@@ -12,15 +12,15 @@ class Ezip {
     init {
         AstraLibs.registerCommand("ezip", permission = "Astra_Zip") { sender, args ->
             runAsyncTask {
-                sender.sendMessage(EmpirePlugin.translations.ZIP_START)
+                sender.sendMessage(EmpirePlugin.translations.zipStarted)
                 ResourcePack.generate()
                 if (Zipper.zipAll(
                     AstraLibs.instance.dataFolder.toString() + File.separator + "pack",
                     AstraLibs.instance.dataFolder.toString() + File.separator + "pack" + File.separator + "pack.zip"
                 ))
-                sender.sendMessage(EmpirePlugin.translations.ZIP_SUCCESS)
+                sender.sendMessage(EmpirePlugin.translations.zipSuccess)
                 else
-                    sender.sendMessage(EmpirePlugin.translations.ZIP_ERROR)
+                    sender.sendMessage(EmpirePlugin.translations.zipError)
             }
         }
     }

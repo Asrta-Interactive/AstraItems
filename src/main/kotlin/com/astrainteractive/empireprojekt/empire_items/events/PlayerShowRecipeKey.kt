@@ -1,12 +1,13 @@
 package com.astrainteractive.empireprojekt.empire_items.events
 
-import com.astrainteractive.astralibs.AstraLibs
-import com.astrainteractive.astralibs.IAstraListener
-import com.astrainteractive.astralibs.callSyncMethod
-import com.astrainteractive.astralibs.runAsyncTask
+import com.astrainteractive.astralibs.*
 import com.astrainteractive.empireprojekt.empire_items.api.crafting.CraftingManager
 import com.astrainteractive.empireprojekt.empire_items.api.items.data.ItemManager.getAstraID
+import com.astrainteractive.empireprojekt.empire_items.api.items.data.ItemManager.toAstraItemOrItem
 import com.astrainteractive.empireprojekt.empire_items.api.utils.BukkitConstants
+import com.astrainteractive.empireprojekt.empire_items.util.AsyncTask
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.bukkit.NamespacedKey
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -17,7 +18,7 @@ import org.bukkit.inventory.ItemStack
 /**
  * Показывать игроку рецепт кастомных предметов
  */
-class PlayerShowRecipeKey : IAstraListener {
+class PlayerShowRecipeKey : IAstraListener, AsyncTask {
     /**
      * Когда игрок поднимает предмет - даём ему рецепты
      */
@@ -29,6 +30,7 @@ class PlayerShowRecipeKey : IAstraListener {
         val player = entity as Player
         val itemStack = e.item.itemStack
         addPlayerRecipe(itemStack, player)
+
     }
 
     /**
@@ -39,8 +41,9 @@ class PlayerShowRecipeKey : IAstraListener {
         val entity = e.whoClicked
         if (entity !is Player)
             return
+
         val player = entity as Player
-        val itemStack = e.currentItem ?: return
+        val itemStack = e.recipe.result ?: return
         addPlayerRecipe(itemStack, player)
     }
 
@@ -51,20 +54,16 @@ class PlayerShowRecipeKey : IAstraListener {
         itemStack: ItemStack,
         player: Player
     ) {
-        runAsyncTask {
+        launch {
             val mainItemId = itemStack.getAstraID() ?: itemStack.type.name
-            val mainRecipeKey = NamespacedKey(AstraLibs.instance, BukkitConstants.ASTRA_CRAFTING+ mainItemId)
-            if (player.hasDiscoveredRecipe(mainRecipeKey))
-                return@runAsyncTask
-
-            for (id in CraftingManager.usedInCraft(mainItemId))
-                callSyncMethod {
-                    val key = NamespacedKey(AstraLibs.instance, BukkitConstants.ASTRA_CRAFTING+ id)
-                    player.discoverRecipe(key)
-                }
-
+            val ids = mutableListOf(mainItemId).apply { addAll(CraftingManager.usedInCraft(mainItemId)) }
+            val toDiscover =
+                ids.flatMap { CraftingManager.getKeysById(it) ?: listOf() }.filter { !player.hasDiscoveredRecipe(it) }
             callSyncMethod {
-                player.discoverRecipe(mainRecipeKey)
+                toDiscover.forEach {
+                    Logger.log("Player ${player.name} discovered recipe ${it}", "Crafting", consolePrint = false)
+                    player.discoverRecipe(it)
+                }
             }
         }
     }
