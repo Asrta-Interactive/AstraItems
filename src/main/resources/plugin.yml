@@ -1,4 +1,4 @@
-main: com.astrainteractive.empireprojekt.EmpirePlugin
+main: com.astrainteractive.empire_items.EmpirePlugin
 name: EmpireItems
 version: '${project.version}'
 author: MakeevRoman

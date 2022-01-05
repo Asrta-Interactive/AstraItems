@@ -5,18 +5,17 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>EmpireItems</artifactId>
-    <groupId>me.makeevrserg</groupId>
-    <version>3.1.0</version>
+    <groupId>com.astrainteractive</groupId>
+    <version>3.2.0</version>
     <packaging>jar</packaging>
-    <name>EmpireItems</name>
-    <description>Custom items made for EmpireProjekt</description>
+    <description>EmpireItems</description>
 
+    <name>EmpireItems</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <kotlin.code.style>official</kotlin.code.style>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <kotlin.compiler.jvmTarget>1.8</kotlin.compiler.jvmTarget>
         <kotlin.version>1.5.20</kotlin.version>
     </properties>
 
@@ -55,8 +54,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
+                    <target>1.8</target>
+                    <source>1.8</source>
                 </configuration>
             </plugin>
             <plugin>
@@ -70,7 +69,7 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <outputFile>D:\Minecraft Servers\TEST_SERVER\plugins\EmpireItems.jar</outputFile>
+                            <outputFile>D:\Minecraft Servers\TEST_SERVER\plugins\${project.name}.jar</outputFile>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                         </configuration>
                     </execution>
