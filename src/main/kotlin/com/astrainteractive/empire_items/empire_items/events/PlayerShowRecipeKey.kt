@@ -3,7 +3,7 @@ package com.astrainteractive.empire_items.empire_items.events
 import com.astrainteractive.astralibs.*
 import com.astrainteractive.empire_items.empire_items.api.crafting.CraftingManager
 import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager.getAstraID
-import com.astrainteractive.empire_items.empire_items.util.AsyncTask
+import com.astrainteractive.empire_items.empire_items.util.AsyncHelper
 import kotlinx.coroutines.launch
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -14,7 +14,7 @@ import org.bukkit.inventory.ItemStack
 /**
  * Показывать игроку рецепт кастомных предметов
  */
-class PlayerShowRecipeKey : IAstraListener, AsyncTask {
+class PlayerShowRecipeKey : IAstraListener {
     /**
      * Когда игрок поднимает предмет - даём ему рецепты
      */
@@ -50,7 +50,7 @@ class PlayerShowRecipeKey : IAstraListener, AsyncTask {
         itemStack: ItemStack,
         player: Player
     ) {
-        launch {
+        AsyncHelper.runBackground {
             val mainItemId = itemStack.getAstraID() ?: itemStack.type.name
             val ids = mutableListOf(mainItemId).apply { addAll(CraftingManager.usedInCraft(mainItemId)) }
             val toDiscover =

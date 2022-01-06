@@ -2,20 +2,16 @@ package com.astrainteractive.empire_items.empire_items.commands
 
 import com.astrainteractive.astralibs.AstraLibs
 import com.astrainteractive.astralibs.registerCommand
-import com.astrainteractive.astralibs.runAsyncTask
 import com.astrainteractive.empire_items.empire_items.gui.GuiCategories
+import com.astrainteractive.empire_items.empire_items.util.AsyncHelper
+import kotlinx.coroutines.launch
 import org.bukkit.entity.Player
 
 class AstraGuiCommand {
-
-    init {
-        AstraLibs.registerCommand("emgui"){ sender, args->
-            if (sender !is Player)
-                return@registerCommand
-            runAsyncTask {
-                GuiCategories(sender).open()
-            }
+    private val cmd = AstraLibs.registerCommand("emgui") { sender, args ->
+        if (sender !is Player)
+            return@registerCommand
+        AsyncHelper.runBackground {
+            GuiCategories(sender).open()
         }
-    }
-
-}
+    }}

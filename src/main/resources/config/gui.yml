@@ -1,21 +1,29 @@
 settings:
-  workbench_ui: "&f:l_16::grid_menu_6::l_128:"
-  categories_text: "&f:l_16::grid_menu_6::l_128:#11d417Категории "
-  drop_btn: more
-  next_btn: next_button
-  prev_btn: prev_button
-  back_btn: back
-  close_btn: cancel
-  give_btn: ender_chest_opened
+  workbenchText: "&f:l_16::workbench_menu::l_128::l_32::l_4:"
+  categoriesText: "&f:l_16::grid_menu_6::l_128::l_32::l_4:#1bbce0Категории "
+  soundsText: "&f:l_16::grid_menu_6::l_128:#11d417Звуки "
+  moreButton: more
+  nextButton: next_button
+  prevButton: prev_button
+  backButton: back
+  closeButton: cancel
+  giveButton: ender_chest_opened
+  furnaceButton: furnace
+  craftingTableButton: crafting_table
+
+  workbenchSound: empire_items:gui.next_page
+  categoriesSound: empire_items:gui.open_menu
+  categorySound: empire_items:gui.open_menu
 
 categories:
-  upgrades:
-    title: "&f:l_16::grid_menu_6::l_128:#9a11d4Апгрейды"
-    name: "&2Апгрейды"
-    icon: ender_scrap
+  items:
+    title: "&f:l_16::grid_menu_6::l_128::l_32::l_4:#e02b1bОбычные предметы"
+    name: "#e02b1bОбычные предметы"
+    icon: slime_bottle_active
     lore:
-      - "&7Здесь показаны предметы"
-      - "&7которыми можно улучшать экипировку"
-    permission: emp.categories.upgrades
+      - "&7Обычные и не очень предметы"
+      - "&7Можно как найти в мире, так и скрафтить"
     items:
-      - "ender_scrap"
+      - "bottle_for_slime"
+      - "slime_bottle_active"
+      - "co_inspect_lens"

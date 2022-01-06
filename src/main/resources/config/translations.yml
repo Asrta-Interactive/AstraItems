@@ -1,32 +1,56 @@
-PLUGIN_PREFIX: "#18dbd1[EmpireItems]"
-RELOAD: "#dbbb18Перезагрузка плагина"
-RELOAD_COMPLETE: "#42f596Перезагрузка успешно завершена"
-SAVE_ERROR: "#db2c18Не удалось сохранить файл"
-NONSTANDART_FILE: "#db2c18Нестнадартный файл"
-LOADING_FILE: "#18dbd1Загрузка файла"
-NOT_EXIST_FILE: "#db2c18Файл не существует"
-ITEM_GAINED: "#18dbd1Вы получили"
-ITEM_GIVE: "#18dbd1Вы выдали"
-ITEM_NOT_FOUND: "#db2c18Нет предмета"
-WRONG_NUMBER: "#db2c18Количество задано неверно"
-ITEM_REPLACED: "#18db52Предмет заменён"
-ITEM_REPLACE_WRONG: "#db2f18Предмет не подходит для замены"
-ZIP_SUCCESS: "#42f596Успешно завершено"
-ZIP_ERROR: "#f55442Ошибка при упакове ресурс-пака"
-RESOURCE_PACK_DENY: "#f55442Вы отклонили ресурс-пак"
-RESOURCE_PACK_HINT_TITLE: "#db2518Скачайте ресурс-пак"
-RESOURCE_PACK_HINT_SUBTITLE: "#18db4fВведите #189adb/empack. #18db4fОн нужен для новых предметов, звуков, оружие, брони и новых меню в #189adb/menu"
-RESOURCE_PACK_DOWNLOAD_SELF: "#f54542Попробуйте скачать самостоятельно. #429ef5empireprojekt.ru/files/EmpireProjektPack.zip"
-RESOURCE_PACK_DOWNLOAD_ERROR: "\n
-    #f54542Не удалось загрузить ресурс-пак\n
-    #f54542Скачайте его сами с #429ef5empireprojekt.ru/files/EmpireProjektPack.zip\n
-    #f54542Дискорд #429ef5EmpireProjekt.ru/discord\n
-    #f54542Группа ВК #429ef5EmpireProjekt.ru.vk"
-FIRST_PAGE: "#f5a742Вы на первой странице"
-LAST_PAGE: "#f5a742Вы на последней странице"
-ITEM_UPGRADE_NAME_COLOR: "#4790ad"
-ITEM_UPGRADE_AMOUNT_COLOR: "#47ad5f"
-ITEM_INFO_IMPROVING: "Улучшает"
-ITEM_INFO_IMPROVING_COLOR: "#47ad5f"
-ITEM_INFO_DROP: "Выпадает из"
-ITEM_INFO_DROP_COLOR: "#47ad5f"
+
+general:
+  reload: '#dbbb18Перезагрузка плагина'
+  reload_complete: '#42f596Перезагрузка успешно завершена'
+  no_permission: '#db2c18Недостаточно прав!'
+  not_a_player: '#db2c18ы не игрок!'
+  player_not_found: '#db2c18Игрок не найден'
+  wrong_args: '#db2c18Неверные аргументы'
+  item_not_exist: '#db2c18Такого предмета нет'
+  item_gained: '#18dbd1Вы получили %item%'
+  item_gave: '#18dbd1Вы выдали %item% игроку %player%'
+  item_replaced: '#18db52Предмет заменён'
+  dice_throw: '#18db52Игрок &6%player% #18db52бросил кубик. Значение &6%value%'
+zipping:
+  started: |-
+    Начинается архивирование.
+    Время зависит от количества файлов.
+    Дождитесь окончания архивирования.
+  success: '#42f596Архивирование успешно завершено'
+  error: '#f55442Ошибка при упакове ресурс-пака'
+upgrades:
+  amount_color: '#777777'
+  max_health: Здоровье
+  knockback_resistance: Сопротивление откидыванию
+  attack_damage: Урон
+  attack_knockback: Откидывание
+  attack_speed: Скорость Атаки
+  armor: Броня
+  armor_toughness: Прочность брони
+  movement_speed: Скорость
+gui:
+  info_drop: Выпадает из
+  info_drop_color: '#47ad5f'
+resouce_pack:
+  deny: '#f55442Вы отклонили ресурс-пак'
+resource_pack:
+  hint:
+    download_self: '#f54542Попробуйте скачать самостоятельно. #429ef5empireprojekt.ru/files/EmpireProjektPack.zip'
+    title: '#db2518Скачайте ресурс-пак'
+    subtitle: '#18db4fВведите #189adb/empack. #18db4fОн нужен для новых предметов,
+      звуков, оружие, брони и т.д'
+    error: |-
+      #f54542Не удалось загрузить ресурс-пак
+      #f54542Скачайте его самостоятельно с #429ef5empireprojekt.ru/files/EmpireProjektPack.zip
+      #f54542Дискорд https://discord.gg/Gwukdr8
+      #f54542Группа ВК https://vk.com/EmpireProjekt
+credit:
+  cant_have: '#f5a742Вы не можете получить кредит.'
+  min: '#f5a742Минимальный баланс для кредита %amount%.'
+  gained: '#f5a742Вы получили кредит: %amount%$.'
+  paid: '#f5a742Вы выплатили кредит %amount%$.'
+  no_active: '#f5a742У вас нет активных кредитов.'
+  no_money: '#f5a742У вас недостаточно денег.'
+  bank:
+    deposit: '#f5a742Вы внесли в банк %amount%$.'
+    withdraw: '#f5a742Вы взяли из банка %amount%$.'

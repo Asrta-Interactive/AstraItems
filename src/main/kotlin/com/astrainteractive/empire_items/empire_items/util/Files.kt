@@ -5,9 +5,9 @@ import java.io.File
 
 class Files {
     val configFile: FileManager =
-        FileManager("config" + File.separator + "config.yml")
+        FileManager("config.yml")
     val guiConfig: FileManager =
-        FileManager("config"+File.separator+"gui.yml")
+        FileManager("gui.yml")
     val tempChunks: FileManager =
         FileManager("temp" + File.separator + "generated_chunks.yml")
 }

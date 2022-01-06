@@ -80,7 +80,6 @@ class EmpirePlugin : JavaPlugin() {
         genericListener = GenericListener()
         commandManager = CommandManager()
         empireCredit = EmpireCredit()
-
         ItemManager.loadItems()
         DropManager.loadDrops()
         VillagerTradeManager.load()

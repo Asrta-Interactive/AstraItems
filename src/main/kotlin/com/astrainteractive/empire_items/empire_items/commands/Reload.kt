@@ -8,18 +8,17 @@ import com.astrainteractive.empire_items.empire_items.util.EmpirePermissions
 /**
  * Reload command handler
  */
-class Reload{
+class Reload {
 
-    init {
-        AstraLibs.registerCommand("ereload") { sender, args ->
-            if (!sender.hasPermission(EmpirePermissions.RELOAD)) {
-                sender.sendMessage(EmpirePlugin.translations.noPerms)
-                return@registerCommand
-            }
-            sender.sendMessage(EmpirePlugin.translations.reload)
-            EmpirePlugin.instance.onDisable()
-            EmpirePlugin.instance.onEnable()
-            sender.sendMessage(EmpirePlugin.translations.reloadComplete)
+    val reload = AstraLibs.registerCommand("ereload") { sender, args ->
+        if (!sender.hasPermission(EmpirePermissions.RELOAD)) {
+            sender.sendMessage(EmpirePlugin.translations.noPerms)
+            return@registerCommand
         }
+        sender.sendMessage(EmpirePlugin.translations.reload)
+        EmpirePlugin.instance.onDisable()
+        EmpirePlugin.instance.onEnable()
+        sender.sendMessage(EmpirePlugin.translations.reloadComplete)
     }
+
 }

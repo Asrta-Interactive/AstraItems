@@ -5,7 +5,7 @@ import com.astrainteractive.astralibs.*
 import com.astrainteractive.empire_items.EmpirePlugin
 import com.astrainteractive.empire_items.empire_items.api.items.BlockParser
 import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager
-import com.astrainteractive.empire_items.empire_items.util.AsyncTask
+import com.astrainteractive.empire_items.empire_items.util.AsyncHelper
 import com.astrainteractive.empire_items.empire_items.util.Config
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -23,7 +23,7 @@ import org.bukkit.event.world.ChunkUnloadEvent
 import java.awt.Point
 import kotlin.random.Random
 
-class BlockGenerationEvent : IAstraListener, AsyncTask {
+class BlockGenerationEvent : IAstraListener {
 
     private var currentChunkAmount = 0
     private var currentChunkLoadGap = System.currentTimeMillis()
@@ -235,7 +235,7 @@ class BlockGenerationEvent : IAstraListener, AsyncTask {
             return
 
         increaseCurrentChunk()
-        launch(Dispatchers.IO) {
+        AsyncHelper.runBackground(Dispatchers.IO) {
             generateChunk(chunk)
             decreaseCurrentChunk()
         }
@@ -249,7 +249,7 @@ class BlockGenerationEvent : IAstraListener, AsyncTask {
             lastChunkCheck = System.currentTimeMillis()
         }
 
-        launch(Dispatchers.IO) {
+        AsyncHelper.runBackground(Dispatchers.IO) {
             generateBlock()
         }
     }, 0L, Config.generateBlocksGap)

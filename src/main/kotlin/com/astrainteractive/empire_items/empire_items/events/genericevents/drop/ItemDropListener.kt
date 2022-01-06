@@ -24,42 +24,19 @@ class ItemDropListener : IAstraListener {
     private val blockLocations: MutableList<Location> = mutableListOf()
 
 
-    fun getDrops(list: List<AstraDrop>) = list.mapNotNull { drop->
-        val chance = Random.nextDouble(0.0, 100.0)
-        if (drop.chance < chance)
-            return@mapNotNull null
-        val amount = Random.nextInt(drop.minAmount, drop.maxAmount + 1)
-        if (amount <= 0)
-            return@mapNotNull null
-        drop.id.getItemStack(amount)
-    }
-
-    private fun dropItem(list: List<AstraDrop>, l: Location): Boolean {
-        var isDropped = false
-
-        getDrops(list).forEach {
-            isDropped = true
-            l.world?.dropItem(l, it) ?: return isDropped
-        }
-        return isDropped
-    }
-
-
     @EventHandler
     fun onFishingEvent(e: PlayerFishEvent) {
         val caught = e.caught ?: return
-        val drops = DropManager.getDropsFrom("PlayerFishEvent")
-        dropItem(drops, caught.location)
+        DropManager.spawnDrop("PlayerFishEvent",caught.location)
     }
 
     @EventHandler
     fun onBlockBreak(e: BlockBreakEvent) {
         val block: Block = e.block
-
         val customBlockData = BlockParser.getBlockData(e.block)
         val customBlock = ItemManager.getBlockInfoByData(customBlockData)
         val customBlockId = customBlock?.id
-        if (customBlock?.block?.ignoreCheck!=true) {
+        if (customBlock?.block?.ignoreCheck != true) {
             if (blockLocations.contains(block.location))
                 return
             else
@@ -68,15 +45,11 @@ class ItemDropListener : IAstraListener {
                 blockLocations.removeAt(0)
         }
 
-
-        if (dropItem(
-                DropManager.getDropsFrom(customBlockId ?: block.blockData.material.name),
-                block.location
-            )
-        )
+        val dropFrom = customBlockId ?: block.blockData.material.name
+        if (DropManager.spawnDrop(dropFrom,block.location))
             e.isDropItems = false
-
     }
+
 
     @EventHandler
     fun inventoryOpenEvent(e: PlayerInteractEvent) {
@@ -87,8 +60,9 @@ class ItemDropListener : IAstraListener {
             return
         val chest = block.state as Chest
         val lootable = chest as Lootable
-        lootable.lootTable?:return
-        getDrops(DropManager.getDropsFrom("PlayerInteractEvent") ?: return).forEach {
+        lootable.lootTable ?: return
+        val drops = DropManager.getDropsFrom("PlayerInteractEvent")
+        DropManager.getDrops(drops).forEach {
             chest.blockInventory.addItem(it)
         }
     }
@@ -96,8 +70,7 @@ class ItemDropListener : IAstraListener {
     @EventHandler
     fun onMobDeath(e: EntityDeathEvent) {
         val entity: Entity = e.entity
-        val listDrop = DropManager.getDropsFrom(entity.type.name) ?: return
-        dropItem(listDrop, entity.location)
+        DropManager.spawnDrop(entity.type.name,entity.location)
     }
 
     override fun onDisable() {

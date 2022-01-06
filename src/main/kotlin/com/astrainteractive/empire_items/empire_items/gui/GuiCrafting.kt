@@ -4,7 +4,6 @@ import com.astrainteractive.empire_items.empire_items.api.drop.DropManager
 import com.astrainteractive.astralibs.HEX
 import com.astrainteractive.empire_items.empire_items.gui.data.GuiConfig
 import com.astrainteractive.astralibs.menu.AstraMenuSize
-import com.astrainteractive.astralibs.runAsyncTask
 import com.astrainteractive.empire_items.EmpirePlugin
 import com.astrainteractive.empire_items.empire_items.api.crafting.CraftingManager
 import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager
@@ -14,6 +13,7 @@ import com.astrainteractive.empire_items.empire_items.api.upgrade.UpgradeManager
 import com.astrainteractive.empire_items.empire_items.api.utils.setDisplayName
 import com.astrainteractive.empire_items.empire_items.api.v_trades.AstraVillagerTrade
 import com.astrainteractive.empire_items.empire_items.api.v_trades.VillagerTradeManager
+import com.astrainteractive.empire_items.empire_items.util.AsyncHelper
 import com.astrainteractive.empire_items.empire_items.util.EmpirePermissions
 import org.bukkit.ChatColor
 import org.bukkit.event.inventory.InventoryClickEvent
@@ -49,7 +49,7 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility) :
         super.handleMenu(e)
         when (e.slot) {
             backButtonIndex -> {
-                runAsyncTask {
+                AsyncHelper.runBackground {
                     playerMenuUtility.prevItems.removeLast()
                     if (playerMenuUtility.prevItems.isEmpty())
                         GuiCategory(playerMenuUtility).open()

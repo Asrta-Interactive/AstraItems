@@ -2,7 +2,8 @@ package com.astrainteractive.empire_items.empire_items.gui
 
 import com.astrainteractive.empire_items.empire_items.gui.data.GuiConfig
 import com.astrainteractive.astralibs.menu.AstraMenuSize
-import com.astrainteractive.astralibs.runAsyncTask
+import com.astrainteractive.empire_items.empire_items.util.AsyncHelper
+import kotlinx.coroutines.launch
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
@@ -28,10 +29,10 @@ class GuiCategories(player: Player, playerMenuUtility: PlayerMenuUtility = Playe
                 playerMenuUtility.player.closeInventory()
             }
             else->{
-                runAsyncTask{
+                AsyncHelper.runBackground{
                     playerMenuUtility.categoriesPage = page
                     playerMenuUtility.categoryPage = 0
-                    playerMenuUtility.categoryId = guiSettings.categories?.values?.elementAt(getIndex(e.slot))?.id?:return@runAsyncTask
+                    playerMenuUtility.categoryId = guiSettings.categories?.values?.elementAt(getIndex(e.slot))?.id?:return@runBackground
                   GuiCategory(playerMenuUtility).open()
                 }
             }

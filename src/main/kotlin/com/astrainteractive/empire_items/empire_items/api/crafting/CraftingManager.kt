@@ -45,7 +45,7 @@ object CraftingManager {
         Bukkit.addRecipe(recipe)
         ItemManager.addRecipe(result, recipe)
     } catch (e: IllegalStateException) {
-        Logger.warn("Не удалось добавить крафт ${id} ${e.message}", "Crafting")
+        Logger.warn("Не удалось добавить крафт id:${id} result:${result}. ID не должны повтаряться! ${e.message}", "Crafting")
     }
 
     fun usedInCraft(id: String): MutableSet<String> {

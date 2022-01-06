@@ -3,7 +3,9 @@ package com.astrainteractive.empire_items.empire_items.events.genericevents
 import com.astrainteractive.astralibs.*
 import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager
 import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager.getAstraID
+import com.astrainteractive.empire_items.empire_items.util.AsyncHelper
 import com.destroystokyo.paper.ParticleBuilder
+import kotlinx.coroutines.launch
 import org.bukkit.Particle
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -105,7 +107,7 @@ class GenericEvents : IAstraListener {
 
     @EventHandler
     fun onPlayerMove(event: PlayerMoveEvent) {
-        runAsyncTask {
+        AsyncHelper.runBackground {
             executeEvent(item = event.player.inventory.itemInMainHand, player = event.player, event = event.eventName)
         }
     }

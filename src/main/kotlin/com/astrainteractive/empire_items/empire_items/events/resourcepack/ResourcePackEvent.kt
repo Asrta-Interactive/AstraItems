@@ -10,6 +10,7 @@ import org.bukkit.event.player.PlayerResourcePackStatusEvent
 
 class ResourcePackEvent : IAstraListener {
 
+    val TAG = "ResourcePack"
 
     override fun onDisable() {
         PlayerJoinEvent.getHandlerList().unregister(this)
@@ -22,7 +23,7 @@ class ResourcePackEvent : IAstraListener {
         val p = e.player
         if (Config.requestPackOnJoin || !p.hasPlayedBefore()) {
             p.performCommand("empack")
-            Logger.log(this.javaClass.name, "Игрок ${p.name} присоединился впервые. Запрашиваем ресурс-пак")
+            Logger.log("Игрок ${p.name} присоединился впервые. Запрашиваем ресурс-пак",TAG)
         } else
             p.sendTitle(
                 EmpirePlugin.translations.resourcePackHintTitle,
@@ -36,12 +37,12 @@ class ResourcePackEvent : IAstraListener {
         val p = e.player
         when (e.status) {
             PlayerResourcePackStatusEvent.Status.DECLINED -> {
-                Logger.log(this.javaClass.name, "Игрок ${e.player.name} отклонил ресурс-пак")
+                Logger.log( "Игрок ${e.player.name} отклонил ресурс-пак",TAG)
                 p.sendMessage(EmpirePlugin.translations.resourcePackDeny)
                 p.sendMessage(EmpirePlugin.translations.resourcePackDownloadHint)
             }
             PlayerResourcePackStatusEvent.Status.FAILED_DOWNLOAD -> {
-                Logger.log(this.javaClass.name, "Игроку ${e.player.name} не удалось скачать ресурс-пак")
+                Logger.log("Игроку ${e.player.name} не удалось скачать ресурс-пак",TAG)
                 p.kickPlayer(
                     """
                     ${EmpirePlugin.translations.resourcePackDownloadError}
@@ -56,7 +57,7 @@ class ResourcePackEvent : IAstraListener {
                     ":first_join:",
                     "", 5, 1000, 5
                 )
-                Logger.log(this.javaClass.name, "Игроку ${e.player.name} успешно загрузил ресурс-пак")
+                Logger.log("Игроку ${e.player.name} успешно загрузил ресурс-пак",TAG)
 
             }
             PlayerResourcePackStatusEvent.Status.ACCEPTED -> {

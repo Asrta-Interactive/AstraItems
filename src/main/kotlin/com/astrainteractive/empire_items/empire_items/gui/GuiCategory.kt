@@ -2,8 +2,9 @@ package com.astrainteractive.empire_items.empire_items.gui
 
 import com.astrainteractive.empire_items.empire_items.gui.data.GuiConfig
 import com.astrainteractive.astralibs.menu.AstraMenuSize
-import com.astrainteractive.astralibs.runAsyncTask
 import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager.getItemStack
+import com.astrainteractive.empire_items.empire_items.util.AsyncHelper
+import kotlinx.coroutines.launch
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
 
@@ -33,7 +34,7 @@ class GuiCategory(playerMenuUtility: PlayerMenuUtility) :
         super.handleMenu(e)
         when(e.slot){
             backButtonIndex->{
-                runAsyncTask{
+                AsyncHelper.runBackground{
                     GuiCategories(playerMenuUtility.player).open()
                 }
             }
@@ -41,7 +42,7 @@ class GuiCategory(playerMenuUtility: PlayerMenuUtility) :
 
             }
             else->{
-                runAsyncTask{
+                AsyncHelper.runBackground{
                     playerMenuUtility.prevItems.add(category.items[getIndex(e.slot)])
                     GuiCrafting(playerMenuUtility).open()
                 }

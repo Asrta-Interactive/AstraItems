@@ -1,16 +1,22 @@
 package com.astrainteractive.empire_items.empire_items.api.drop
 
 import com.astrainteractive.astralibs.AstraYamlParser
+import com.astrainteractive.astralibs.Logger
+import com.astrainteractive.astralibs.catching
+import com.astrainteractive.astralibs.getFloat
 import com.astrainteractive.empire_items.empire_items.api.utils.getCustomItemsFiles
 import org.bukkit.configuration.ConfigurationSection
+import kotlin.reflect.KProperty1
+
 
 data class AstraDrop(
     val dropFrom: String,
     val id: String,
-    val minAmount: Int,
+    val minAmount: Int=0,
     val maxAmount: Int,
     val chance: Double
 ) {
+
 
     companion object {
         fun getDrops(): List<AstraDrop> = getCustomItemsFiles()?.flatMap { fileManager ->

@@ -26,7 +26,6 @@ data class AstraItem(
     val id: String,
     val displayName: String,
     val lore: List<String>?,
-    val generate: Boolean,
     val material: Material,
     var texturePath: String?,
     var modelPath: String?,
@@ -191,7 +190,6 @@ data class AstraItem(
         fun getItemById(section: ConfigurationSection?, namespace: String): AstraItem? {
             val id = section?.name ?: return null
             val lore = section.getHEXStringList("lore")?.emoji()
-            val generate = section.getBoolean("generate", false)
             val displayName = section.getString("displayName")?.HEX()?.emoji() ?: return null
             val material = Material.getMaterial(section.getString("material") ?: return null) ?: return null
             val texturePath = section.getString("texturePath")?.replace(".png", "")
@@ -213,7 +211,6 @@ data class AstraItem(
                 id = id,
                 namespace = namespace,
                 lore = lore,
-                generate = generate,
                 displayName = displayName,
                 material = material,
                 texturePath = texturePath,

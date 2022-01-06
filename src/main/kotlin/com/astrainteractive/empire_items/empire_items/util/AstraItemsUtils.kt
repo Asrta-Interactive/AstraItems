@@ -7,6 +7,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.BookMeta
 import java.util.regex.Matcher
 import java.util.regex.Pattern
+import kotlin.random.Random
 
 /**
  * Utils class
@@ -55,3 +56,7 @@ object EmpireUtils {
 
 fun String.emoji() = EmpireUtils.emojiPattern(this)
 fun List<String>.emoji() = EmpireUtils.emojiPattern(this)
+
+fun calcChance(chance:Int) = chance>=Random(System.currentTimeMillis()).nextInt(0,101)
+fun calcChance(chance:Double) = chance>=Random(System.currentTimeMillis()).nextDouble(0.0,101.0)
+fun calcChance(chance:Float) = chance>=Random(System.currentTimeMillis()).nextDouble(0.0,101.0)

@@ -66,7 +66,6 @@ class ResourcePack {
             name.contains("SWORD", ignoreCase = true) -> "minecraft:item/handheld"
             name.contains("SHIELD") -> "minecraft:item/handheld"
             item.block != null -> "minecraft:block/base/block_real"
-            item.generate -> "minecraft:item/generated"
             else -> "minecraft:item/handheld"
         }
     }

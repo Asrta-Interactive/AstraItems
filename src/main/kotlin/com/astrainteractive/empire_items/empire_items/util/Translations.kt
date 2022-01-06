@@ -13,7 +13,7 @@ class Translations {
     init {
         instance = this
     }
-    private val _translationFile: FileManager = FileManager("config" + File.separator + "translations.yml")
+    private val _translationFile: FileManager = FileManager("translations.yml")
     private val translation = _translationFile.getConfig()
     private fun getHEXString(path: String, default: String): String {
         if (!translation.contains(path)) {
@@ -31,11 +31,15 @@ class Translations {
     val reloadComplete: String =
         getHEXString("general.reload_complete", "#42f596Перезагрузка успешно завершена")
     val noPerms: String = getHEXString("general.no_permission", "#db2c18Недостаточно прав!")
+    val notPlayer: String = getHEXString("general.not_a_player", "#db2c18ы не игрок!")
+    val playerNotFound: String = getHEXString("general.player_not_found", "#db2c18Игрок не найден")
     val wrongArgs: String = getHEXString("general.wrong_args", "#db2c18Неверные аргументы")
 
-    val itemGained: String = getHEXString("general.item_gained", "#18dbd1Вы получили")
-    val itemGave: String = getHEXString("general.item_gave", "#18dbd1Вы выдали")
+    val itemNotExist: String = getHEXString("general.item_not_exist", "#db2c18Такого предмета нет")
+    val itemGained: String = getHEXString("general.item_gained", "#18dbd1Вы получили %item%")
+    val itemGave: String = getHEXString("general.item_gave", "#18dbd1Вы выдали %item% игроку %player%")
     val itemReplaced: String = getHEXString("general.item_replaced", "#18db52Предмет заменён")
+    val diceThrow: String = getHEXString("general.dice_throw", "#18db52Игрок &6%player% #18db52бросил кубик. Значение &6%value%")
 
     //Zipping
     val zipStarted: String = getHEXString(

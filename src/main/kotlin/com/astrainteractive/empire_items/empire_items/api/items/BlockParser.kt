@@ -14,14 +14,14 @@ import java.lang.NumberFormatException
 
 object BlockParser {
 
-    val blockList
+    private val blockList
         get() = mutableListOf<Material>(
             Material.BROWN_MUSHROOM_BLOCK,
             Material.RED_MUSHROOM_BLOCK,
             Material.MUSHROOM_STEM
         )
 
-    val facesMap
+    private val facesMap
         get() = mapOf<String, Boolean>(
             BlockFace.DOWN.name.lowercase() to false,
             BlockFace.EAST.name.lowercase() to false,
