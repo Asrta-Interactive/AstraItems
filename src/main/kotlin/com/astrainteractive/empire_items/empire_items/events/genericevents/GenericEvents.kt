@@ -1,15 +1,19 @@
 package com.astrainteractive.empire_items.empire_items.events.genericevents
 
 import com.astrainteractive.astralibs.*
+import com.astrainteractive.empire_items.empire_items.api.crafting.CraftingManager
 import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager
 import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager.getAstraID
+import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager.toAstraItemOrItem
 import com.astrainteractive.empire_items.empire_items.util.AsyncHelper
 import com.destroystokyo.paper.ParticleBuilder
-import kotlinx.coroutines.launch
+import org.bukkit.Material
 import org.bukkit.Particle
+import org.bukkit.block.Furnace
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.EntityDamageEvent
+import org.bukkit.event.inventory.FurnaceSmeltEvent
 import org.bukkit.event.player.*
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
@@ -29,11 +33,13 @@ class GenericEvents : IAstraListener {
         return false
     }
 
-    fun executeEvent(item: ItemStack, player: Player, event: String) {
+    fun executeEvent(item: ItemStack, player: Player, event: String): Boolean {
         val id = item.getAstraID()
-        val itemInfo = ItemManager.getItemInfo(id) ?: return
-        val interact = itemInfo.interact ?: return
+        val itemInfo = ItemManager.getItemInfo(id) ?: return false
+        val interact = itemInfo.interact ?: return false
+        var executed = false
         interact.forEach {
+            executed = true
             if (it.eventList?.contains(event.uppercase()) == false)
                 return@forEach
             if (hasCooldown(player, event, it.cooldown ?: 0))
@@ -72,6 +78,7 @@ class GenericEvents : IAstraListener {
                     )
             }
         }
+        return executed
     }
 
     private inline fun <T> Iterable<T>.syncForEach(crossinline action: (T) -> Unit): Future<Unit>? =
@@ -91,9 +98,20 @@ class GenericEvents : IAstraListener {
 
     @EventHandler
     fun onDrink(event: PlayerItemConsumeEvent) {
-        executeEvent(item = event.player.inventory.itemInMainHand, player = event.player, event = event.eventName)
+        val executed = executeEvent(item = event.player.inventory.itemInMainHand, player = event.player, event = event.eventName)
+        if (executed)
+            event.replacement = ItemStack(Material.AIR)
     }
 
+    @EventHandler
+    fun onFurnaceEnded(event: FurnaceSmeltEvent){
+        val id = event.source.getAstraID()?:return
+        val returnId = CraftingManager.getFurnaceByInputId(id).firstOrNull { it.returns != null }?.returns?.toAstraItemOrItem() ?:return
+        if (event.block.state !is Furnace)
+            return
+        val furnace = event.block.state as Furnace
+        furnace.inventory.smelting = returnId
+    }
     @EventHandler
     fun onEntityDamage(event: EntityDamageEvent) {
         if (event.entity !is Player)

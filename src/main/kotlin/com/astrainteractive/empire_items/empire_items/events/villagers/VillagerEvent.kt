@@ -93,12 +93,13 @@ class VillagerEvent : IAstraListener {
             return
 
         val mRecipe =
-            MerchantRecipe(trade.resultItem.id.toAstraItemOrItem()?.clone()?.apply { amount = trade.resultItem.amount }
-                ?: return, 50)
+            MerchantRecipe(trade.id.toAstraItemOrItem()?.clone()?.apply { amount = trade.amount }
+                ?: return, Random.nextInt(trade.minUses, trade.maxUses))
+        mRecipe.maxUses = Random.nextInt(trade.minUses, trade.maxUses)
+        println("MaxUses of ${trade.id} ${mRecipe.maxUses}")
         mRecipe.addIngredient(trade.leftItem.id.toAstraItemOrItem()?.clone()?.apply {
             amount = trade.leftItem.amount }
             ?: return)
-        mRecipe.maxUses = Random.nextInt(1, 6)
         if (trade.middleItem != null)
             mRecipe.addIngredient(
                 trade.middleItem.id.toAstraItemOrItem()?.clone()?.apply { amount = trade.middleItem.amount } ?: return)

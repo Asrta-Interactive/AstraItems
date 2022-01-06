@@ -7,6 +7,7 @@ import kotlin.math.max
 
 data class AstraFurnaceRecipe(
     val id: String,
+    val returns:String?,
     val result: String,
     val input: String,
     val cookTime: Int,
@@ -43,6 +44,7 @@ data class AstraFurnaceRecipe(
             return AstraFurnaceRecipe(
                 id = id,
                 input = res.input,
+                returns = res.returns,
                 result = res.result,
                 cookTime = max(20, res.cookTime),
                 exp = max(1, res.exp),

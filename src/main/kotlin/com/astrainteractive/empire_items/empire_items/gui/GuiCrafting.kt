@@ -144,7 +144,7 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility) :
     }
     fun setVillagerInfo(){
         val v = VillagerTradeManager.villagerTrades.mapNotNull {
-            val filtered = it.trades.filter { it.resultItem.id==itemID }
+            val filtered = it.trades.filter { it.id==itemID }
             if (filtered.isEmpty())
                 null
             else

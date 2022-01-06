@@ -1,24 +1,27 @@
 package com.astrainteractive.empire_items.empire_items.api.v_trades
 
+import com.astrainteractive.astralibs.AstraYamlParser
+import com.astrainteractive.empire_items.empire_items.api.items.data.AstraItem.Companion.getIntOrNull
 import com.astrainteractive.empire_items.empire_items.api.utils.getCustomItemsFiles
 import org.bukkit.configuration.ConfigurationSection
+import kotlin.random.Random
 
 data class AstraVillagerTrade(
-    val profession:String,
-    val trades:List<TradeItem>
-){
-    companion object{
+    val profession: String,
+    val trades: List<TradeItem>
+) {
+    companion object {
         fun getVillagerTrades() = getCustomItemsFiles()?.mapNotNull {
             val fileConfig = it.getConfig()
             val section = fileConfig.getConfigurationSection("villagerTrades")
-            section?.getKeys(false)?.mapNotNull {profession->
+            section?.getKeys(false)?.mapNotNull { profession ->
                 getTVillagerTrade(section.getConfigurationSection(profession))
             }
-        }?.flatten()?: listOf()
+        }?.flatten() ?: listOf()
 
-        fun getTVillagerTrade(s:ConfigurationSection?): AstraVillagerTrade? {
-            s?:return null
-            val profession = s.getString("profession")?:s.name
+        fun getTVillagerTrade(s: ConfigurationSection?): AstraVillagerTrade? {
+            s ?: return null
+            val profession = s.getString("profession") ?: s.name
             val trades = TradeItem.getTrades(s.getConfigurationSection("trades"))
             return AstraVillagerTrade(
                 profession = profession,
@@ -27,50 +30,64 @@ data class AstraVillagerTrade(
         }
     }
 }
+
 data class TradeItem(
-    val chance:Int,
+    val id: String,
+    val chance: Int,
+    val amount: Int,
     val leftItem: SlotItem,
     val middleItem: SlotItem?,
-    val resultItem: SlotItem,
-    val minLevel:Int,
-    val maxLevel:Int
-){
-    companion object{
-        fun getTrades(section:ConfigurationSection?)=
+    val minLevel: Int,
+    val maxLevel: Int,
+    val minUses: Int,
+    val maxUses: Int
+) {
+    companion object {
+        fun getTrades(section: ConfigurationSection?) =
             section?.getKeys(false)?.mapNotNull {
-              val s = section.getConfigurationSection(it)?:return@mapNotNull null
-                val chance = s.getInt("chance")
-                val result = s.getString("id")?:s.name
-                val amount = s.getInt("amount",1)
-                val minLevel = s.getInt("minLevel",0)
-                val maxLevel = s.getInt("maxLevel",5)+1
-                val leftItem = SlotItem.getItem(s.getConfigurationSection("leftItem")) ?: return@mapNotNull null
-                val middleItem = SlotItem.getItem(s.getConfigurationSection("middleItem"))
-                val resultItem = SlotItem(result,amount)
+                val s = section.getConfigurationSection(it) ?: return@mapNotNull null
+
                 TradeItem(
-                    chance = chance,
-                    leftItem = leftItem,
-                    middleItem = middleItem,
-                    resultItem = resultItem,
-                    minLevel = minLevel,
-                    maxLevel = maxLevel
+                    id = s.getString("id") ?: s.name,
+                    chance = s.getInt("chance", 100),
+                    amount = s.getInt("amount", 1),
+                    leftItem = SlotItem.getItem(s.getConfigurationSection("leftItem"))!!,
+                    middleItem = SlotItem.getItem(s.getConfigurationSection("middleItem")),
+                    minLevel = s.getInt("minLevel", 1),
+                    maxLevel = s.getInt("maxLevel", 1) + 1,
+                    minUses = s.getInt("minUses", 1),
+                    maxUses = s.getInt("maxUses", 1) + 1,
                 )
-            }?: listOf()
+            } ?: listOf()
 
     }
 }
+
 data class SlotItem(
-    val id:String,
-    val amount:Int
-){
-    companion object{
-        fun getItem(s:ConfigurationSection?): SlotItem? {
-            s?:return null
-            val amount = s.getInt("amount",1)
-            val id = s.getString("id")?:return null
+    val id: String,
+    private val _amount: Int,
+    private val minAmount: Int?,
+    private val maxAmount: Int?
+) {
+    val amount: Int
+        get() {
+            return if (minAmount != null && maxAmount != null)
+                Random(System.currentTimeMillis()).nextInt(minAmount, maxAmount)
+            else _amount
+        }
+
+    companion object {
+        fun getItem(s: ConfigurationSection?): SlotItem? {
+            s ?: return null
+            val amount = s.getInt("amount", 1)
+            val minAmount = s.getIntOrNull("minAmount")
+            val maxAmount = s.getIntOrNull("maxAmount")
+            val id = s.getString("id") ?: return null
             return SlotItem(
                 id = id,
-                amount = amount
+                _amount = amount,
+                minAmount = minAmount,
+                maxAmount = maxAmount
             )
         }
     }

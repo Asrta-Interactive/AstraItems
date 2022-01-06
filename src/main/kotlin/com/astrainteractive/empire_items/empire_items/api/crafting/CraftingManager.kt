@@ -21,7 +21,7 @@ object CraftingManager {
         list.add(key)
         keyMap[id] = list
     }
-
+    fun getFurnaceByInputId(id: String) = crafting.furnace.filter { it.input==id }
     fun getKeysById(id: String) = keyMap[id]
 
     fun load() {

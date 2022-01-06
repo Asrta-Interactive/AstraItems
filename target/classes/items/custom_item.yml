@@ -10,6 +10,15 @@ crafting_table:
       - XXX
     ingredients:
       D: DIAMOND
+  shield2:
+    id: shield_crafting_table
+    result: shield1
+    amount: 1
+    pattern:
+      - XX
+      - XD
+    ingredients:
+      D: DIAMOND
 shapeless:
   shield1:
     id: shield_shapeless
@@ -17,13 +26,46 @@ shapeless:
     amount: 2
     input: NETHERITE_INGOT
 furnace:
-  id: shield_furnace
-  result: shield1
-  amount: 2
-  input: IRON_INGOT
-  cookTime: 200
-  exp: 20
-
+  shield_furnace:
+    # После того, как печь закончит плавить - на слот, гдже был input вернется returns
+    returns: bottle_for_slime
+    id: shield_furnace
+    result: shield1
+    amount: 2
+    input: IRON_INGOT
+    cookTime: 200
+    exp: 20
+villagerTrades:
+  WEAPONSMITH_1:
+    #Если profession не указана - возьмется название поля - WEAPONSMITH_1
+    profession: WEAPONSMITH
+    trades:
+      pistol_1:
+        #Если id не указана - возьмется название поля - pistol_1
+        id: "pistol"
+        #Если шанс не указан - по умолчанию 100
+        chance: 100
+        # Если amount не указан - по умолчанию значение 1
+        amount: 1
+        # Если не указаны minUses,maxUses -  по умолчанию 1 и 1
+        minUses: 2
+        maxUses: 5
+        leftItem:
+          # Если minAmount или minAmount - будет браться значение amount
+          # Если указаны - возьмется случайное число
+          minAmount: 3
+          maxAmount: 5
+          # По умолчанию значение 1
+          amount: 1
+          id: ruby
+        middleItem:
+          minAmount: 3
+          maxAmount: 5
+          amount: 5
+          id: steel_ingot
+        # По умолчанию значения 1 и 1
+        minLevel: 1
+        maxLevel: 1
 
 yml_items:
   shield1:
