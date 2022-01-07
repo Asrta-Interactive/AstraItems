@@ -9,6 +9,8 @@ object EmpirePermissions {
         get() = "embank"
     val EZIP: String
         get() = "empireitems.zip"
+    val spawnModel: String
+        get() = "empireitems.spawn"
     val RELOAD: String
         get() = "empireitems.reload"
     val INVENTORY_SAVE: String

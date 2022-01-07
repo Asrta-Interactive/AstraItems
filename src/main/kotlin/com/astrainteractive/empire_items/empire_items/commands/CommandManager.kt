@@ -17,6 +17,7 @@ class CommandManager {
         Ezip()
         Reload()
         General()
+        ModelEngine()
 
     }
 }

@@ -90,6 +90,9 @@ class Translations {
         #f54542Группа ВК https://vk.com/EmpireProjekt
     """.trimIndent()
     )
+    //Mobs
+    val mobNotExist: String = getHEXString("mobs.not_exist", "#f5a742Такого моба нет")
+    val mobFailedToSpawn: String = getHEXString("mobs.failed_to_spawn", "#f5a742Не удалось заспавнить моба")
 
 
 

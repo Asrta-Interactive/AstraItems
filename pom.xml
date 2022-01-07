@@ -135,11 +135,18 @@
             <id>everything</id>
             <url>http://repo.citizensnpcs.co/</url>
         </repository>
-<!--        CoreProtect-->
+        <!--        CoreProtect-->
         <repository>
             <id>playpro-repo</id>
             <url>https://maven.playpro.com</url>
         </repository>
+<!--        ModelEngine-->
+        <repository>
+            <id>nexus</id>
+            <name>Lumine Public</name>
+            <url>https://mvn.lumine.io/repository/maven-public/</url>
+        </repository>
+
 
     </repositories>
 
@@ -218,7 +225,7 @@
             <version>1.7</version>
             <scope>provided</scope>
         </dependency>
-<!--        CoreProtect-->
+        <!--        CoreProtect-->
         <dependency>
             <groupId>net.coreprotect</groupId>
             <artifactId>coreprotect</artifactId>
@@ -246,6 +253,13 @@
             <artifactId>kotlin-reflect</artifactId>
             <version>${kotlin.version}</version>
             <scope>compile</scope>
+        </dependency>
+        <!--        ModelEngine-->
+        <dependency>
+            <groupId>com.ticxo.modelengine</groupId>
+            <artifactId>api</artifactId>
+            <version>R2.2.0</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

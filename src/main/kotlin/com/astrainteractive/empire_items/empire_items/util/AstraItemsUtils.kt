@@ -2,7 +2,10 @@ package com.astrainteractive.empire_items.empire_items.util
 
 import com.astrainteractive.astralibs.AstraUtils
 import com.astrainteractive.empire_items.empire_items.api.font.FontManager
+import com.astrainteractive.empire_items.empire_items.api.utils.getDoubleOrNull
+import org.bukkit.Location
 import org.bukkit.Material
+import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.BookMeta
 import java.util.regex.Matcher
@@ -60,3 +63,10 @@ fun List<String>.emoji() = EmpireUtils.emojiPattern(this)
 fun calcChance(chance:Int) = chance>=Random(System.currentTimeMillis()).nextInt(0,101)
 fun calcChance(chance:Double) = chance>=Random(System.currentTimeMillis()).nextDouble(0.0,101.0)
 fun calcChance(chance:Float) = chance>=Random(System.currentTimeMillis()).nextDouble(0.0,101.0)
+
+fun Location.playSound(name:String?){
+    this.world.playSound(this,name?:return,1f,1f)
+}
+fun Location.getBiome()= world.getBiome(this)
+
+

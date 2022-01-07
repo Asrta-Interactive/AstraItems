@@ -6,6 +6,7 @@ import com.astrainteractive.empire_items.empire_items.api.crafting.CraftingManag
 import com.astrainteractive.empire_items.empire_items.api.drop.DropManager
 import com.astrainteractive.empire_items.empire_items.api.font.FontManager
 import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager
+import com.astrainteractive.empire_items.empire_items.api.mobs.MobApi
 import com.astrainteractive.empire_items.empire_items.api.upgrade.UpgradeManager
 import com.astrainteractive.empire_items.empire_items.api.v_trades.VillagerTradeManager
 import com.astrainteractive.empire_items.empire_items.commands.CommandManager
@@ -87,6 +88,7 @@ class EmpirePlugin : JavaPlugin() {
         CraftingManager.load()
         if (server.pluginManager.getPlugin("WorldGuard")!=null)
             KProtectionLib.init(this)
+        MobApi.loadEmpireMobs()
         licenceTimer.enable()
     }
 
