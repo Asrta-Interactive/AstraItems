@@ -4,16 +4,11 @@ import com.astrainteractive.astralibs.AstraLibs
 import com.astrainteractive.astralibs.registerCommand
 import com.astrainteractive.astralibs.registerTabCompleter
 import com.astrainteractive.astralibs.withEntry
-import com.astrainteractive.empire_items.EmpirePlugin
 import com.astrainteractive.empire_items.empire_items.api.mobs.MobApi
-import com.astrainteractive.empire_items.empire_items.api.mobs.MobApi.playAnimation
 import com.astrainteractive.empire_items.empire_items.util.EmpirePermissions
 import com.astrainteractive.empire_items.empire_items.util.Translations
-import com.ticxo.modelengine.api.ModelEngineAPI
-import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.block.BlockFace
-import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
 
 class ModelEngine {
@@ -26,12 +21,12 @@ class ModelEngine {
                 sender.sendMessage(Translations.instance.notPlayer)
                 return@registerCommand
             }
-            val name = args.firstOrNull()
-            if (name == null) {
+            val id = args.firstOrNull()
+            if (id == null) {
                 sender.sendMessage(Translations.instance.wrongArgs)
                 return@registerCommand
             }
-            val empireMob = MobApi.getEmpireMob(name)
+            val empireMob = MobApi.getEmpireMob(id)
             if (empireMob == null) {
                 sender.sendMessage(Translations.instance.mobNotExist)
                 return@registerCommand
@@ -45,7 +40,7 @@ class ModelEngine {
 
         }
     val tabCompleter = AstraLibs.registerTabCompleter("spawnmodel") { sender, args ->
-        val models = MobApi.getModelEngineMobs()
+        val models = MobApi.getEmpireMobsList()
         return@registerTabCompleter models.toList().withEntry(args.firstOrNull() ?: "")
     }
 }

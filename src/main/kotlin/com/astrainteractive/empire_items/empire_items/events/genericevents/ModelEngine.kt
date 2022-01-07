@@ -1,21 +1,22 @@
 package com.astrainteractive.empire_items.empire_items.events.genericevents
 
 import com.astrainteractive.astralibs.IAstraListener
+import com.astrainteractive.astralibs.callSyncMethod
 import com.astrainteractive.empire_items.empire_items.api.mobs.MobApi
 import com.astrainteractive.empire_items.empire_items.api.mobs.MobApi.activeModel
 import com.astrainteractive.empire_items.empire_items.api.mobs.MobApi.modeledEntity
 import com.astrainteractive.empire_items.empire_items.api.mobs.MobApi.playAnimation
 import com.astrainteractive.empire_items.empire_items.api.mobs.data.BoneInfo
+import com.astrainteractive.empire_items.empire_items.api.mobs.data.EmpireMob
 import com.astrainteractive.empire_items.empire_items.api.mobs.data.EmpireMobEvent
+import com.astrainteractive.empire_items.empire_items.util.AsyncHelper
 import com.astrainteractive.empire_items.empire_items.util.Cooldown
-import com.astrainteractive.empire_items.empire_items.util.calcChance
-import com.astrainteractive.empire_items.empire_items.util.getBiome
 import com.astrainteractive.empire_items.empire_items.util.playSound
 import com.destroystokyo.paper.ParticleBuilder
 import com.ticxo.modelengine.api.generator.blueprint.Bone
 import com.ticxo.modelengine.api.model.ActiveModel
-import org.bukkit.Color
-import org.bukkit.Location
+import io.papermc.paper.event.entity.EntityMoveEvent
+import okhttp3.MultipartBody
 import org.bukkit.Particle
 import org.bukkit.entity.Entity
 import org.bukkit.entity.LivingEntity
@@ -23,6 +24,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.entity.EntitySpawnEvent
+import org.bukkit.event.entity.EntityTargetEvent
 import kotlin.math.max
 
 class ModelEngine : IAstraListener {
@@ -40,22 +42,19 @@ class ModelEngine : IAstraListener {
     fun onMobSpawn(e: EntitySpawnEvent) {
         if (MobApi.isSpawnIgnored(e.location))
             return
-        val type = e.entityType.name
-        val mobs = MobApi.empireMobs.filter { emob ->
-            emob.spawn?.conditions?.firstOrNull { cond ->
-                val chance = cond.replace[type]
-                val c1 = calcChance(chance?.toFloat() ?: -1f)
-                val c2 = e.location.y > cond.minY && e.location.y < cond.maxY
-                val c3 = if (cond.biomes.isNullOrEmpty()) true else cond.biomes.contains(e.location.getBiome().name)
-                c1 && c2 && c3
-            } != null
-        }
-        if (mobs.isNullOrEmpty())
-            return
+        val mobs = MobApi.getByNaturalSpawn(e.entity) ?: return
         MobApi.replaceEntity(mobs.shuffled().first(), e.entity)
     }
 
-    private val modelSet = mutableSetOf<Int>()
+    @EventHandler
+    fun entityMove(e:EntityMoveEvent){
+        val modeledEntity = e.entity.modeledEntity ?: return
+        val activeModel = modeledEntity.activeModel ?: return
+        val empireMob = MobApi.getEmpireMob(activeModel.modelId) ?: return
+        val event = empireMob.onEvent.firstOrNull { it.eventName == "EntityMoveEvent" } ?: return
+        executeEvent(e.entity,activeModel,event)
+
+    }
     private val particleCooldown: Cooldown<Int> = Cooldown()
     private val soundCooldown: Cooldown<Int> = Cooldown()
 
@@ -68,6 +67,7 @@ class ModelEngine : IAstraListener {
         }
         playParticle(entity, model, event.bones)
     }
+
 
 
     private fun playParticle(e: Entity, model: ActiveModel, bonesInfo: List<BoneInfo>) {
@@ -101,29 +101,54 @@ class ModelEngine : IAstraListener {
     fun onDamage(e: EntityDamageByEntityEvent) {
         if (e.entity !is LivingEntity)
             return
-        if (modelSet.contains(e.damager.entityId)) {
-            modelSet.remove(e.damager.entityId)
+        if (isAttacking(e.damager))
             return
-        }
-        val modeledEntity = e.damager.modeledEntity ?: return
-        val activeModel = modeledEntity.activeModel ?: return
-        val empireMob = MobApi.getEmpireMob(activeModel.modelId) ?: return
+
         e.isCancelled = true
-        val event = empireMob.onEvent.firstOrNull { it.eventName == "EntityDamageByEntityEvent" } ?: return
-        activeModel.playAnimation(event.animation ?: "attack")
-        MobApi.runLater(event.hitAfter ?: 0L) {
-            val distance = e.damager.location.distance(e.entity.location)
-            if (distance > (event.range ?: 5))
-                return@runLater
-            modelSet.add(e.damager.entityId)
-            val damage = if (event.decreaseDamageByRange)
-                e.damage / max(1.0, distance)
-            else e.damage
-            executeEvent(e.damager, activeModel, event)
-            (e.entity as LivingEntity).damage(damage, e.damager)
+        performAttack(e.damager, listOf(e.entity), e.damage)
+    }
+
+    private val attackingMobs = mutableSetOf<Int>()
+    fun setAttacking(entity: Entity) {
+        attackingMobs.add(entity.entityId)
+    }
+
+    private fun stopAttacking(entity: Entity) = attackingMobs.remove(entity.entityId)
+    fun isAttacking(entity: Entity) = attackingMobs.contains(entity.entityId)
+
+    private fun performAttack(damager: Entity, entities: List<Entity>, _damage: Double) {
+        AsyncHelper.runBackground {
+            val modeledEntity = damager.modeledEntity ?: return@runBackground
+            val activeModel = modeledEntity.activeModel ?: return@runBackground
+            val empireMob = MobApi.getEmpireMob(activeModel.modelId) ?: return@runBackground
+            val event =
+                empireMob.onEvent.firstOrNull { it.eventName == "EntityDamageByEntityEvent" } ?: return@runBackground
+            if (isAttacking(damager))
+                return@runBackground
+            activeModel.playAnimation(event.animation ?: "attack")
+            MobApi.runLater(event.hitAfter ?: 0L) {
+                entities.forEach { entity ->
+                    val distance = damager.location.distance(entity.location)
+                    if (distance > (event.range ?: 5))
+                        return@runLater
+                    setAttacking(damager)
+                    val damage = if (event.decreaseDamageByRange)
+                        _damage / max(1.0, distance)
+                    else _damage
+
+                    callSyncMethod{
+                        executeEvent(damager, activeModel, event)
+                    }
+                    (entity as LivingEntity).damage(damage, damager)
+                    MobApi.runLater(2L) {
+                        stopAttacking(damager)
+                    }
+                }
+            }
         }
 
     }
+
 
     override fun onDisable() {
     }
