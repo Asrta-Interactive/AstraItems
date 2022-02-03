@@ -9,11 +9,11 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.Recipe
 
 object ItemManager {
-    private val itemsInfo: MutableList<AstraItem> = mutableListOf()
+    private val itemsInfo: MutableList<EmpireItem> = mutableListOf()
     private val itemStacks:MutableList<ItemStack> = mutableListOf()
     private var itemStacksMap:MutableMap<String,ItemStack> = mutableMapOf()
-    private var itemsInfoMap:MutableMap<String, AstraItem> = mutableMapOf()
-    private var blockInfoByData:MutableMap<Int, AstraItem> = mutableMapOf()
+    private var itemsInfoMap:MutableMap<String, EmpireItem> = mutableMapOf()
+    private var blockInfoByData:MutableMap<Int, EmpireItem> = mutableMapOf()
     private var recipes:MutableMap<String,MutableList<Recipe>> = mutableMapOf()
     private var upgrades:MutableList<AstraUpgrade> = mutableListOf()
 
@@ -33,7 +33,7 @@ object ItemManager {
     }
     fun loadItems() {
         getCustomItemsFiles()?.map { fileManager ->
-            val astraItem = AstraItem.getItems(fileManager) ?:return@map
+            val astraItem = EmpireItem.getItems(fileManager) ?:return@map
             itemsInfo.addAll(astraItem)
         }
         itemsInfoMap = itemsInfo.associateBy { it.id }.toMutableMap()

@@ -140,7 +140,7 @@
             <id>playpro-repo</id>
             <url>https://maven.playpro.com</url>
         </repository>
-<!--        ModelEngine-->
+        <!--        ModelEngine-->
         <repository>
             <id>nexus</id>
             <name>Lumine Public</name>
@@ -155,7 +155,7 @@
         <dependency>
             <groupId>com.astrainteractive</groupId>
             <artifactId>astralibs</artifactId>
-            <version>1.0.27</version>
+            <version>1.1.6</version>
         </dependency>
         <!--        Essentials-->
         <dependency>
@@ -233,26 +233,23 @@
             <scope>provided</scope>
         </dependency>
 
-
+        <!--        Coroutines-->
         <dependency>
             <groupId>org.jetbrains.kotlinx</groupId>
             <artifactId>kotlinx-coroutines-core</artifactId>
             <version>1.6.0</version>
-            <!--            <type>pom</type>-->
         </dependency>
 
         <dependency>
             <groupId>org.jetbrains.kotlinx</groupId>
             <artifactId>kotlinx-coroutines-core-jvm</artifactId>
             <version>1.6.0</version>
-            <!--            <scope>runtime</scope>-->
         </dependency>
-
+        <!--Reflect-->
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-reflect</artifactId>
             <version>${kotlin.version}</version>
-            <scope>compile</scope>
         </dependency>
         <!--        ModelEngine-->
         <dependency>

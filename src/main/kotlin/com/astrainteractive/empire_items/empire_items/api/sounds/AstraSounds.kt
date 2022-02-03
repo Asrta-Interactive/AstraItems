@@ -4,29 +4,22 @@ import com.astrainteractive.empire_items.empire_items.api.utils.getCustomItemsFi
 import org.bukkit.configuration.ConfigurationSection
 
 data class AstraSounds(
-    @Transient
-    val id:String,
-    @Transient
+    val id: String,
     val namespace: String,
-    val sounds:List<String>
-){
-    companion object{
-        fun getSounds() = getCustomItemsFiles()?.mapNotNull {
+    val sounds: List<String>
+) {
+    companion object {
+        fun getSounds() = getCustomItemsFiles()?.mapNotNull files@{
             val fileConfig = it.getConfig()
             val section = fileConfig.getConfigurationSection("sounds")
             section?.getKeys(false)?.mapNotNull {
-                getSound(section.getConfigurationSection(it),fileConfig.getString("namespace","empire_items")!!)
+                val s = section.getConfigurationSection(it) ?: return@mapNotNull null
+                AstraSounds(
+                    id = s.name,
+                    sounds = s.getStringList("sounds"),
+                    namespace = fileConfig.getString("namespace", "empire_items")!!
+                )
             }
-        }?.flatten()?: listOf()
-        fun getSound(s:ConfigurationSection?,namespace:String): AstraSounds? {
-            s?:return null
-            val id = s.name
-            val sounds = s.getStringList("sounds")
-            if (sounds.isEmpty())
-                return null
-            return AstraSounds(id = id,sounds = sounds,namespace = namespace)
-
-        }
-
+        }?.flatten() ?: listOf()
     }
 }

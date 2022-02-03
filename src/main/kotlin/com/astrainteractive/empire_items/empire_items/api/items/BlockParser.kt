@@ -1,7 +1,8 @@
 package com.astrainteractive.empire_items.empire_items.api.items
 
-import com.astrainteractive.astralibs.callSyncMethod
 import com.astrainteractive.astralibs.catching
+import com.astrainteractive.astralibs.catchingNoStackTrace
+import com.astrainteractive.empire_items.empire_items.util.AsyncHelper
 import net.minecraft.world.level.GeneratorAccess
 import net.minecraft.world.level.block.state.IBlockData
 import org.bukkit.Material
@@ -35,13 +36,13 @@ object BlockParser {
         val oldCraftBlock = (block as CraftBlock)
         val position=oldCraftBlock.position
         val newData = type.createBlockData()
-        catching {
+        catchingNoStackTrace {
             for (f in facing)
                 ((newData as CraftBlockData) as MultipleFacing).setFace(BlockFace.valueOf(f.key.uppercase()), f.value)
         }
         val newCraftBlockData: IBlockData = (newData as CraftBlockData).state
         val generatorAccess = (oldCraftBlock.craftWorld.handle as GeneratorAccess)
-        callSyncMethod{
+        com.astrainteractive.astralibs.async.AsyncHelper.callSyncMethod{
             generatorAccess.a(position, newCraftBlockData, 1042,512)
             generatorAccess.minecraftWorld.a(position, oldCraftBlock.nms, newCraftBlockData, 3);
         }

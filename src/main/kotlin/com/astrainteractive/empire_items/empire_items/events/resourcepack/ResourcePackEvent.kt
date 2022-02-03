@@ -1,6 +1,6 @@
 package com.astrainteractive.empire_items.empire_items.events.resourcepack
 
-import com.astrainteractive.astralibs.IAstraListener
+import com.astrainteractive.astralibs.EventListener
 import com.astrainteractive.astralibs.Logger
 import com.astrainteractive.empire_items.EmpirePlugin
 import com.astrainteractive.empire_items.empire_items.util.Config
@@ -8,7 +8,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerResourcePackStatusEvent
 
-class ResourcePackEvent : IAstraListener {
+class ResourcePackEvent : EventListener {
 
     val TAG = "ResourcePack"
 

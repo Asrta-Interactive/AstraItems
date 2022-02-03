@@ -1,13 +1,13 @@
-package com.astrainteractive.empire_items.empire_items.events.genericevents
+package com.astrainteractive.empire_items.empire_items.events
 
-import com.astrainteractive.astralibs.IAstraListener
-import com.astrainteractive.astralibs.callSyncMethod
+import com.astrainteractive.astralibs.EventListener
+import com.astrainteractive.astralibs.async.AsyncHelper.callSyncMethod
+
 import com.astrainteractive.empire_items.empire_items.api.mobs.MobApi
 import com.astrainteractive.empire_items.empire_items.api.mobs.MobApi.activeModel
 import com.astrainteractive.empire_items.empire_items.api.mobs.MobApi.modeledEntity
 import com.astrainteractive.empire_items.empire_items.api.mobs.MobApi.playAnimation
 import com.astrainteractive.empire_items.empire_items.api.mobs.data.BoneInfo
-import com.astrainteractive.empire_items.empire_items.api.mobs.data.EmpireMob
 import com.astrainteractive.empire_items.empire_items.api.mobs.data.EmpireMobEvent
 import com.astrainteractive.empire_items.empire_items.util.AsyncHelper
 import com.astrainteractive.empire_items.empire_items.util.Cooldown
@@ -16,7 +16,6 @@ import com.destroystokyo.paper.ParticleBuilder
 import com.ticxo.modelengine.api.generator.blueprint.Bone
 import com.ticxo.modelengine.api.model.ActiveModel
 import io.papermc.paper.event.entity.EntityMoveEvent
-import okhttp3.MultipartBody
 import org.bukkit.Particle
 import org.bukkit.entity.Entity
 import org.bukkit.entity.LivingEntity
@@ -24,10 +23,9 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.entity.EntitySpawnEvent
-import org.bukkit.event.entity.EntityTargetEvent
 import kotlin.math.max
 
-class ModelEngine : IAstraListener {
+class ModelEngine : EventListener {
 
     @EventHandler
     fun onDamaged(e: EntityDamageEvent) {
@@ -103,6 +101,8 @@ class ModelEngine : IAstraListener {
             return
         if (isAttacking(e.damager))
             return
+
+        e.damager.modeledEntity?.activeModel ?: return
 
         e.isCancelled = true
         performAttack(e.damager, listOf(e.entity), e.damage)

@@ -1,7 +1,7 @@
 package com.astrainteractive.empire_items.empire_items.events.empireevents
 
 import com.astrainteractive.astralibs.AstraLibs
-import com.astrainteractive.astralibs.IAstraListener
+import com.astrainteractive.astralibs.EventListener
 import com.astrainteractive.empire_items.empire_items.api.items.data.Gun
 import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager
 import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager.getAstraID
@@ -28,7 +28,7 @@ import org.bukkit.inventory.ItemStack
 import java.lang.IllegalArgumentException
 import java.lang.NumberFormatException
 
-class GunEvent : IAstraListener {
+class GunEvent : EventListener {
 
     private var protocolManager: ProtocolManager? = null
 

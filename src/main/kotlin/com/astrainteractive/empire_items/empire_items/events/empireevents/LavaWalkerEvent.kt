@@ -1,9 +1,10 @@
 package com.astrainteractive.empire_items.empire_items.events.empireevents
 
-import com.astrainteractive.astralibs.IAstraListener
+import com.astrainteractive.astralibs.EventListener
 import com.astrainteractive.empire_items.empire_items.api.items.BlockParser
 import com.astrainteractive.empire_items.empire_items.api.utils.BukkitConstants
 import com.astrainteractive.empire_items.empire_items.api.utils.hasPersistentData
+import com.astrainteractive.empire_items.empire_items.util.AsyncHelper
 import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
@@ -14,8 +15,7 @@ import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 
-class LavaWalkerEvent : IAstraListener {
-
+class LavaWalkerEvent : EventListener {
 
 
     override fun onDisable() {
@@ -24,7 +24,7 @@ class LavaWalkerEvent : IAstraListener {
     }
 
     fun Block.setTypeFast(type: Material) =
-        BlockParser.setTypeFast(this,type)
+        BlockParser.setTypeFast(this, type)
 
 
     private fun createBlocks(block: Block) {
@@ -67,18 +67,21 @@ class LavaWalkerEvent : IAstraListener {
     }
 
     private fun hasLaveWalker(meta: ItemMeta?): Boolean =
-         meta?.hasPersistentData(BukkitConstants.LAVA_WALKER_ENCHANT)==true
+        meta?.hasPersistentData(BukkitConstants.LAVA_WALKER_ENCHANT) == true
 
 
     @EventHandler
     private fun playerMoveEvent(e: PlayerMoveEvent) {
         val itemStack = e.player.inventory.boots ?: return
         val itemMeta = itemStack.itemMeta ?: return
-        if (!hasLaveWalker(itemMeta)) return
-        val onToBlock = e.to?.block?.getRelative(BlockFace.DOWN) ?: return
+        AsyncHelper.runBackground {
+
+            if (!hasLaveWalker(itemMeta)) return@runBackground
+            val onToBlock = e.to.block.getRelative(BlockFace.DOWN)
 //        if (allMagmaSet(e.player.equipment?.armorContents ?: return))
             if (onToBlock.type == Material.LAVA)
                 createBlocks(onToBlock)
+        }
 
     }
 

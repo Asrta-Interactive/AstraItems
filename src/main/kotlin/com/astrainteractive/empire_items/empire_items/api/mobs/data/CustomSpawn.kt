@@ -1,10 +1,8 @@
 package com.astrainteractive.empire_items.empire_items.api.mobs.data
 
-import com.astrainteractive.empire_items.empire_items.api.items.data.AstraItem.Companion.getIntOrNull
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.configuration.ConfigurationSection
-import java.nio.file.Path
 
 data class CustomSpawn(
     val time: Long,

@@ -1,7 +1,7 @@
 package com.astrainteractive.empire_items.empire_items.events
 
-import com.astrainteractive.astralibs.AstraUtils
-import com.astrainteractive.astralibs.IAstraListener
+import com.astrainteractive.astralibs.EventListener
+import com.astrainteractive.astralibs.convertHex
 import com.comphenix.protocol.PacketType
 import com.comphenix.protocol.ProtocolLibrary
 import com.comphenix.protocol.ProtocolManager
@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull
 /**
  * todo переделать в PlaceholderAPI
  */
-class FontProtocolLibEvent : IAstraListener {
+class FontProtocolLibEvent : EventListener {
     private var protocolManager: ProtocolManager = ProtocolLibrary.getProtocolManager()
     private lateinit var packetListener: PacketListener
     private fun changePlayerTabName(player: Player?) {
@@ -34,7 +34,7 @@ class FontProtocolLibEvent : IAstraListener {
         if (EmpirePlugin.instance.server.pluginManager.getPlugin("placeholderapi") != null)
             format = PlaceholderAPI.setPlaceholders(player, format)
 
-        format = AstraUtils.HEXPattern(format)
+        format = convertHex(format)
         format = EmpireUtils.emojiPattern(format)
         player.setPlayerListName(format)
     }

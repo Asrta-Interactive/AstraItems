@@ -21,7 +21,8 @@ object CraftingManager {
         list.add(key)
         keyMap[id] = list
     }
-    fun getFurnaceByInputId(id: String) = crafting.furnace.filter { it.input==id }
+
+    fun getFurnaceByInputId(id: String) = crafting.furnace.filter { it.input == id }
     fun getKeysById(id: String) = keyMap[id]
 
     fun load() {
@@ -33,19 +34,24 @@ object CraftingManager {
         crafting.clear()
     }
 
-    fun createKey(id:String): NamespacedKey {
+    fun createKey(id: String): NamespacedKey {
         val key = NamespacedKey(AstraLibs.instance, BukkitConstants.ASTRA_CRAFTING + id)
-        addToMap(id,key)
+        addToMap(id, key)
         return key
     }
+
     fun getRecipeChoice(inputItem: ItemStack) = if (inputItem.getAstraID() != null)
         RecipeChoice.ExactChoice(inputItem)
     else RecipeChoice.MaterialChoice(inputItem.type)
+
     fun addRecipe(id: String, result: String, recipe: Recipe) = try {
         Bukkit.addRecipe(recipe)
         ItemManager.addRecipe(result, recipe)
     } catch (e: IllegalStateException) {
-        Logger.warn("Не удалось добавить крафт id:${id} result:${result}. ID не должны повтаряться! ${e.message}", "Crafting")
+        Logger.warn(
+            "Не удалось добавить крафт id:${id} result:${result}. ID не должны повтаряться! ${e.message}",
+            "Crafting"
+        )
     }
 
     fun usedInCraft(id: String): MutableSet<String> {

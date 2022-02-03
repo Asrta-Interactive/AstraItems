@@ -1,6 +1,6 @@
 package com.astrainteractive.empire_items.empire_items.events.empireevents
 
-import com.astrainteractive.astralibs.IAstraListener
+import com.astrainteractive.astralibs.EventListener
 import com.astrainteractive.astralibs.Logger
 import com.astrainteractive.empire_items.EmpirePlugin
 import com.astrainteractive.empire_items.EmpirePlugin.Companion.instance
@@ -16,7 +16,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.ProjectileHitEvent
 
-class MolotovEvent : IAstraListener {
+class MolotovEvent : EventListener {
 
 
 

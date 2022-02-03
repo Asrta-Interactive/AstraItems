@@ -1,8 +1,8 @@
 package com.astrainteractive.empire_items.empire_items.events
 
 
-import com.astrainteractive.astralibs.IAstraListener
-import com.astrainteractive.astralibs.IAstraManager
+import com.astrainteractive.astralibs.EventListener
+import com.astrainteractive.astralibs.EventManager
 import com.astrainteractive.astralibs.menu.MenuListener
 import com.astrainteractive.empire_items.empire_items.events.blocks.*
 import com.astrainteractive.empire_items.empire_items.events.empireevents.*
@@ -16,17 +16,16 @@ import com.astrainteractive.empire_items.empire_items.events.upgrade.UpgradeEven
 import com.astrainteractive.empire_items.empire_items.events.villagers.VillagerEvent
 
 import com.astrainteractive.empire_items.empire_items.events.empireevents.MusicDiscsEvent
-import com.astrainteractive.empire_items.empire_items.events.genericevents.ModelEngine
 import org.bukkit.Bukkit
 
 
-class GenericListener() : IAstraManager {
-    override val handlers: MutableList<IAstraListener> = mutableListOf()
+class GenericListener() : EventManager {
+    override val handlers: MutableList<EventListener> = mutableListOf()
 
     init {
 
         BookSignEvent().onEnable(this)
-        ModelEngine().onEnable(this)
+//        ModelEngine().onEnable(this)
 //        MusicDiscsEvent().onEnable(this)
         MusicDiscsEvent().onEnable(this)
 //        AutoBlockChangeEvent().onEnable(this)
@@ -64,6 +63,7 @@ class GenericListener() : IAstraManager {
         MushroomBlockPlaceEvent().onEnable(this)
         MushroomBlockBreakEvent().onEnable(this)
         MushroomCancelEvent().onEnable(this)
+//        DecorationEvent().onEnable(this)
 
 
     }

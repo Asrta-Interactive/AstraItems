@@ -1,6 +1,6 @@
 package com.astrainteractive.empire_items.empire_items.api.mobs.data
 
-import com.astrainteractive.empire_items.empire_items.api.items.data.AstraItem.Companion.getIntOrNull
+import com.astrainteractive.empire_items.empire_items.api.items.data.EmpireItem.Companion.getIntOrNull
 import org.bukkit.configuration.ConfigurationSection
 
 data class EmpireMobEvent(

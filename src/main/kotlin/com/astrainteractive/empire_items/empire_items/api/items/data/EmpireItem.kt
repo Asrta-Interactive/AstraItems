@@ -21,7 +21,7 @@ import org.bukkit.inventory.meta.LeatherArmorMeta
 import org.bukkit.inventory.meta.PotionMeta
 
 
-data class AstraItem(
+data class EmpireItem(
     val namespace: String,
     val id: String,
     val displayName: String,
@@ -174,7 +174,7 @@ data class AstraItem(
                 null
             else getInt(path)
 
-        fun getItems(fileManager: FileManager): List<AstraItem>? {
+        fun getItems(fileManager: FileManager): List<EmpireItem>? {
             val fileConfig = fileManager.getConfig()
             val namespace = fileConfig.getString("namespace", "empire_items")!!
             return fileConfig.getConfigurationSection("yml_items")?.getKeys(false)?.mapNotNull {
@@ -187,7 +187,7 @@ data class AstraItem(
         /**
          * yml_items.<item_id>
          */
-        fun getItemById(section: ConfigurationSection?, namespace: String): AstraItem? {
+        fun getItemById(section: ConfigurationSection?, namespace: String): EmpireItem? {
             val id = section?.name ?: return null
             val lore = section.getHEXStringList("lore")?.emoji()
             val displayName = section.getString("displayName")?.HEX()?.emoji() ?: return null
@@ -207,7 +207,8 @@ data class AstraItem(
             val block = Block.getBlock(section.getConfigurationSection("block"))
             val empireEnchants = section.getConfigurationSection("empire_enchants")?.getKeys(false)
                 ?.associate { Pair(it, section.getString("empire_enchants.$it") ?: "0") }
-            return AstraItem(
+            val decoration = Decoration.getDecoration(section.getConfigurationSection("decoration"))
+            return EmpireItem(
                 id = id,
                 namespace = namespace,
                 lore = lore,
@@ -226,7 +227,7 @@ data class AstraItem(
                 interact = interact,
                 musicDisc = musicDisc,
                 block = block,
-                decoration = null,
+                decoration = decoration,
                 empireEnchants = empireEnchants
             )
 

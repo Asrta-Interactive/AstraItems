@@ -1,6 +1,6 @@
 package com.astrainteractive.empire_items.empire_items.events.blocks
 
-import com.astrainteractive.astralibs.IAstraListener
+import com.astrainteractive.astralibs.EventListener
 import com.astrainteractive.empire_items.empire_items.api.items.BlockParser
 import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager
 import net.minecraft.core.BlockPosition
@@ -18,7 +18,7 @@ import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import kotlin.random.Random
 
-class BlockHardnessEvent : IAstraListener {
+class BlockHardnessEvent : EventListener {
     public override fun onDisable() {
         BlockBreakEvent.getHandlerList().unregister(this)
         PlayerAnimationEvent.getHandlerList().unregister(this)

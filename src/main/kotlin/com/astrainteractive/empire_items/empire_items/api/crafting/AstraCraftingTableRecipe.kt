@@ -1,12 +1,11 @@
 package com.astrainteractive.empire_items.empire_items.api.crafting
 
 import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager.toAstraItemOrItem
-import com.astrainteractive.astralibs.AstraYamlParser
+import com.astrainteractive.empire_items.empire_items.api.mobs.data.getMap
 import org.bukkit.Material
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.inventory.RecipeChoice
 import org.bukkit.inventory.ShapedRecipe
-import kotlin.math.max
 
 data class AstraCraftingTableRecipe(
     val id: String,
@@ -36,24 +35,18 @@ data class AstraCraftingTableRecipe(
 
 
     companion object {
-        fun getAllRecipes(s: ConfigurationSection?) =
-            s?.getKeys(false)?.mapNotNull {
-                getRecipe(s.getConfigurationSection(it))
+        fun getAllRecipes(section: ConfigurationSection?) =
+            section?.getKeys(false)?.mapNotNull {craftId->
+                val s = section.getConfigurationSection(craftId) ?: return@mapNotNull null
+                val id = s.getString("id") ?: s.name
+                AstraCraftingTableRecipe(
+                    id =id,
+                    result = s.getString("result")?:id,
+                    amount = s.getInt("amount", 1),
+                    pattern = s.getStringList("pattern"),
+                    ingredients = s.getMap<Char, String>("ingredients")
+                )
             }
-
-        private fun getRecipe(s: ConfigurationSection?): AstraCraftingTableRecipe? {
-            val parser = AstraYamlParser.parser
-            val res = parser.configurationSectionToClass<AstraCraftingTableRecipe>(s ?: return null) ?: return null
-            val id = parser.fixNull(res.id, s.name)
-            val recipe = AstraCraftingTableRecipe(
-                id = id,
-                result = parser.fixNull(res.result, parser.fixNull(res.id, s.name)),
-                pattern = res.pattern,
-                amount = max(res.amount, 1),
-                ingredients = res.ingredients
-            )
-            return recipe
-        }
     }
 }
 

@@ -23,16 +23,15 @@ data class AstraShapelessRecipe(
     }
 
     companion object {
-        fun getAllRecipes(s: ConfigurationSection?) =
-            s?.getKeys(false)?.mapNotNull {
-                getRecipe(s.getConfigurationSection(it))
+        fun getAllRecipes(section: ConfigurationSection?) =
+            section?.getKeys(false)?.mapNotNull {
+                val s = section.getConfigurationSection(it) ?: return@mapNotNull null
+                AstraShapelessRecipe(
+                    id = s.getString("id") ?: s.name,
+                    input = s.getString("input") ?: return@mapNotNull null,
+                    result = s.getString("result") ?: return@mapNotNull null,
+                    amount = s.getInt("amount", 1)
+                )
             }
-
-        private fun getRecipe(s: ConfigurationSection?): AstraShapelessRecipe? {
-            val parser = AstraYamlParser.parser
-            val res = parser.configurationSectionToClass<AstraShapelessRecipe>(s ?: return null) ?: return null
-            val id = parser.fixNull(res.id, s.name)
-            return AstraShapelessRecipe(id = id, input = res.input, result = res.result, amount = max(1, res.amount))
-        }
     }
 }

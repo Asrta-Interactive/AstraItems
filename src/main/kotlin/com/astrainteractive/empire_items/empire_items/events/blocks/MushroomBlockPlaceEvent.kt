@@ -1,6 +1,6 @@
 package com.astrainteractive.empire_items.empire_items.events.blocks
 
-import com.astrainteractive.astralibs.IAstraListener
+import com.astrainteractive.astralibs.EventListener
 import com.astrainteractive.empire_items.empire_items.api.items.BlockParser
 import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager
 import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager.getAstraID
@@ -8,7 +8,7 @@ import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager
 import org.bukkit.event.EventHandler
 import org.bukkit.event.block.BlockPlaceEvent
 
-class MushroomBlockPlaceEvent: IAstraListener {
+class MushroomBlockPlaceEvent: EventListener {
     public override fun onDisable(){
         BlockPlaceEvent.getHandlerList().unregister(this)
     }

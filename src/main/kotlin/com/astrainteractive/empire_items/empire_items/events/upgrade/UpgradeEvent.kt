@@ -1,6 +1,6 @@
 package com.astrainteractive.empire_items.empire_items.events.upgrade
 
-import com.astrainteractive.astralibs.IAstraListener
+import com.astrainteractive.astralibs.EventListener
 import com.astrainteractive.empire_items.empire_items.api.upgrade.UpgradeManager
 import org.bukkit.event.EventHandler
 import org.bukkit.event.inventory.InventoryClickEvent
@@ -9,7 +9,7 @@ import org.bukkit.inventory.AnvilInventory
 import org.bukkit.inventory.InventoryView
 import org.bukkit.inventory.ItemStack
 
-class UpgradeEvent:IAstraListener {
+class UpgradeEvent:EventListener {
 
 
     init {

@@ -7,8 +7,8 @@ import com.astrainteractive.empire_items.empire_items.api.items.BlockParser
 import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager
 import com.astrainteractive.empire_items.empire_items.util.AsyncHelper
 import com.astrainteractive.empire_items.empire_items.util.Config
+import com.astrainteractive.empire_items.modules.hud.thirst.RepeatableTask
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import org.bukkit.Bukkit
 import org.bukkit.Chunk
 import org.bukkit.Location
@@ -23,20 +23,12 @@ import org.bukkit.event.world.ChunkUnloadEvent
 import java.awt.Point
 import kotlin.random.Random
 
-class BlockGenerationEvent : IAstraListener {
+class BlockGenerationEvent : EventListener {
 
     private var currentChunkAmount = 0
-    private var currentChunkLoadGap = System.currentTimeMillis()
     private val TAG: String
         get() = "BlockGenerationEvent"
     private var blockQueue = mutableListOf<QueuedBlock>()
-    private fun increaseCurrentChunk() = synchronized(this) {
-        currentChunkAmount++
-    }
-
-    private fun decreaseCurrentChunk() = synchronized(this) {
-        currentChunkAmount--
-    }
 
 
     /**
@@ -46,20 +38,26 @@ class BlockGenerationEvent : IAstraListener {
         yMin: Int,
         yMax: Int,
         types: Map<String, Int>
-    ): MutableList<Pair<String, Location>> {
-        val locations = mutableListOf<Pair<String, Location>>()
-        (yMin until yMax).shuffled().forEach { y ->
-            (0 until 15).shuffled().forEach { x ->
-                (0 until 15).shuffled().forEach { z ->
-                    val loc = Location(this.world, this.x * 16.0 + x, y * 1.0, this.z * 16.0 + z)
-                    val blockName = loc.block.type.name
-                    if (types.contains(blockName) && types[blockName]!! >= Random.nextInt(0, 100))
-                        locations.add(Pair(blockName, loc))
-                }
+    ): List<Pair<String, Location>> {
+        val xShuffled = (0 until 15).shuffled()
+        val zShuffled = xShuffled.shuffled()
+        val yShuffled = (yMin until yMax).shuffled()
+        val xAndZ = xShuffled zip zShuffled
+        val singleMap = yShuffled.flatMap { y ->
+            return@flatMap xAndZ.map {
+                return@map Pair(y, it)
             }
         }
-
-        return locations
+        return singleMap.mapNotNull { (y, it) ->
+            val x = it.first
+            val z = it.second
+            val loc = Location(this.world, this.x * 16.0 + x, y * 1.0, this.z * 16.0 + z)
+            val blockName = loc.block.type.name
+            val chance = types[blockName] ?: return@mapNotNull null
+            if (chance >= Random.nextInt(0, 100))
+                return@mapNotNull Pair(blockName, loc)
+            return@mapNotNull null
+        }
     }
 
     /**
@@ -90,11 +88,15 @@ class BlockGenerationEvent : IAstraListener {
     /**
      * Очистка из очереди чанков, которые не сгенерированы и рядом с которыми нет игроков
      */
-    private fun clearChunks() = synchronized(this) {
+    private fun clearChunks() {
         val tempChunks = EmpirePlugin.empireFiles.tempChunks
-        blockQueue = blockQueue.filter { q ->
+        var list = synchronized(this) { blockQueue.toList() }
+        list = list.filter { q ->
             q.l.chunk.containsPlayers() || tempChunks.getConfig().contains(q.l.chunk.toString())
         }.toMutableList()
+        synchronized(this) {
+            blockQueue = list
+        }
     }
 
     /**
@@ -115,7 +117,7 @@ class BlockGenerationEvent : IAstraListener {
     /**
      * Загружает в файл информацию о том, что чанк был сгенерирован
      */
-    private fun setChunkHasGenerated(chunk: Chunk,id:String) = synchronized(this){
+    private fun setChunkHasGenerated(chunk: Chunk, id: String) = synchronized(this) {
         val tempChunks = EmpirePlugin.empireFiles.tempChunks
         if (!tempChunks.getConfig().contains("${chunk}.$id")) {
             tempChunks.getConfig().set("${chunk}.$id", true)
@@ -132,7 +134,7 @@ class BlockGenerationEvent : IAstraListener {
             Logger.log(
                 "Generating block at [${block.l.x};${block.l.y};${block.l.z}] queue=${blockQueue.size}", TAG
             )
-        setChunkHasGenerated(block.l.chunk,block.id)
+        setChunkHasGenerated(block.l.chunk, block.id)
         val time = System.currentTimeMillis()
         replaceBlock(block)
         if (Config.generationDebug)
@@ -150,13 +152,12 @@ class BlockGenerationEvent : IAstraListener {
      * Получение списка локация из чанка и добавление их в очередь
      */
     private fun generateChunk(chunk: Chunk) {
-        if (Config.generationDeepDebug)
-            Logger.log("Generating Queue", TAG)
         val currentBlocksQueue = mutableListOf<QueuedBlock>()
 
         ItemManager.getBlocksInfos().forEach { itemInfo ->
             val block = itemInfo.block ?: return@forEach
-            if (isBlockGeneratedInChunk(chunk,itemInfo.id))
+            //Сгенерирован ли блок в чанке
+            if (isBlockGeneratedInChunk(chunk, itemInfo.id))
                 return@forEach
             //Надо ли генерировать блок
             val generate = block.generate ?: return@forEach
@@ -165,7 +166,7 @@ class BlockGenerationEvent : IAstraListener {
                 return@forEach
             //Проверяем рандом
             if (generate.generateInChunkChance < Random.nextDouble(100.0)) {
-                setChunkHasGenerated(chunk,itemInfo.id)
+                setChunkHasGenerated(chunk, itemInfo.id)
                 return@forEach
             }
 
@@ -185,31 +186,28 @@ class BlockGenerationEvent : IAstraListener {
             val facing = BlockParser.getFacingByData(block.data)
             //Количество сгенерированных блоков
             var generated = 0
-            blockLocByType.forEach block@{
+            blockLocByType.forEach block@{ (_, loc) ->
                 if (generated > generate.maxPerChunk)
                     return@block
-                val type = it.first
-                val l = it.second
-                var faceBlock = l.block
-                val originalBlockType = faceBlock.type
+                var initialBlock = loc.block
+                val originalBlockType = initialBlock.type
                 val depositAmount = Random.nextInt(generate.minPerDeposit, generate.maxPerDeposit + 1)
-                (0 until depositAmount).forEach deposit@{ _ ->
+                for (unnamed in 0 until depositAmount) {
                     if (generated > generate.maxPerChunk)
                         return@block
                     for (i in 0 until 10) {
-                        val newFaceBlock = faceBlock.getRelative(getRandomBlockFace())
+                        val newFaceBlock = initialBlock.getRelative(getRandomBlockFace())
                         if (newFaceBlock.type == originalBlockType) {
-                            faceBlock = newFaceBlock
+                            initialBlock = newFaceBlock
                             break
                         }
                     }
+                    val q = QueuedBlock(itemInfo.id, initialBlock.location.clone(), material.name, facing)
                     if (Config.generateBlocksGap == 0L) {
-                        val q = QueuedBlock(itemInfo.id, faceBlock.location.clone(), material.name, facing)
                         replaceBlock(q)
-                        setChunkHasGenerated(chunk,itemInfo.id)
-                    }
-                    else
-                        currentBlocksQueue.add(QueuedBlock(itemInfo.id,faceBlock.location.clone(), material.name, facing))
+                        setChunkHasGenerated(chunk, itemInfo.id)
+                    } else
+                        currentBlocksQueue.add(q)
                     generated++
                 }
 
@@ -226,7 +224,6 @@ class BlockGenerationEvent : IAstraListener {
     private fun chunkLoadEvent(e: ChunkLoadEvent) {
         if (currentChunkAmount > Config.generateMaxChunksAtOnce)
             return
-        currentChunkLoadGap = System.currentTimeMillis()
         val chunk = e.chunk
 
         if (!e.isNewChunk && Config.generateOnlyOnNewChunks)
@@ -234,26 +231,33 @@ class BlockGenerationEvent : IAstraListener {
         if (!Config.generateBlocks)
             return
 
-        increaseCurrentChunk()
+        currentChunkAmount++
         AsyncHelper.runBackground(Dispatchers.IO) {
             generateChunk(chunk)
-            decreaseCurrentChunk()
+            currentChunkAmount--
         }
     }
 
     var lastChunkCheck = System.currentTimeMillis()
 
-    private val task = Bukkit.getScheduler().runTaskTimer(AstraLibs.instance, Runnable {
-        if ((System.currentTimeMillis() - lastChunkCheck) > Config.generationClearCheck) {
-            clearChunks()
-            lastChunkCheck = System.currentTimeMillis()
-        }
+    private val repeatableTask = RepeatableTask(Config.generateBlocksGap) {
+        if (Config.generationClearCheck > 0)
+            if ((System.currentTimeMillis() - lastChunkCheck) > Config.generationClearCheck) {
+                clearChunks()
+                lastChunkCheck = System.currentTimeMillis()
+            }
 
         AsyncHelper.runBackground(Dispatchers.IO) {
             generateBlock()
         }
-    }, 0L, Config.generateBlocksGap)
+    }
 
+
+    override fun onEnable(manager: EventManager): EventListener {
+        if (Config.generateBlocksGap == 0L)
+            repeatableTask.cancel()
+        return super.onEnable(manager)
+    }
 
     override fun onDisable() {
         ChunkLoadEvent.getHandlerList().unregister(this)
@@ -261,7 +265,8 @@ class BlockGenerationEvent : IAstraListener {
         PlayerJoinEvent.getHandlerList().unregister(this)
         PlayerQuitEvent.getHandlerList().unregister(this)
         PlayerMoveEvent.getHandlerList().unregister(this)
-        task.cancel()
+        repeatableTask.cancel()
+        repeatableTask.cancel()
     }
 
 }

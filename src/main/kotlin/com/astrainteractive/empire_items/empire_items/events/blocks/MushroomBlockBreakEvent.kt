@@ -1,12 +1,12 @@
 package com.astrainteractive.empire_items.empire_items.events.blocks
 
-import com.astrainteractive.astralibs.IAstraListener
+import com.astrainteractive.astralibs.EventListener
 import com.astrainteractive.empire_items.empire_items.api.items.BlockParser
 import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager
 import org.bukkit.event.EventHandler
 import org.bukkit.event.block.BlockBreakEvent
 
-class MushroomBlockBreakEvent: IAstraListener {
+class MushroomBlockBreakEvent: EventListener {
     public override fun onDisable(){
         BlockBreakEvent.getHandlerList().unregister(this)
     }

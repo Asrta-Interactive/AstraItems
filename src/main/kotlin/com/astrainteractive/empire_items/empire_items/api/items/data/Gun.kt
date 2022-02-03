@@ -1,6 +1,6 @@
 package com.astrainteractive.empire_items.empire_items.api.items.data
 
-import com.astrainteractive.empire_items.empire_items.api.items.data.AstraItem.Companion.getIntOrNull
+import com.astrainteractive.empire_items.empire_items.api.items.data.EmpireItem.Companion.getIntOrNull
 import com.astrainteractive.empire_items.empire_items.api.utils.getDoubleOrNull
 import org.bukkit.configuration.ConfigurationSection
 

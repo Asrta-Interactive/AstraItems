@@ -1,6 +1,6 @@
 package com.astrainteractive.empire_items.empire_items.events.empireevents
 
-import com.astrainteractive.astralibs.IAstraListener
+import com.astrainteractive.astralibs.EventListener
 import com.astrainteractive.empire_items.EmpirePlugin.Companion.instance
 import com.astrainteractive.empire_items.empire_items.api.utils.BukkitConstants
 import com.astrainteractive.empire_items.empire_items.api.utils.hasPersistentData
@@ -18,7 +18,7 @@ import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import java.util.*
 
-class HammerEvent : IAstraListener {
+class HammerEvent : EventListener {
     private val blockFace: MutableMap<Player, Int> = mutableMapOf()
 
 

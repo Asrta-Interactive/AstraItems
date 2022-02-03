@@ -1,7 +1,7 @@
 package com.astrainteractive.empire_items.empire_items.events.genericevents.drop
 
 import com.astrainteractive.empire_items.empire_items.api.drop.DropManager
-import com.astrainteractive.astralibs.IAstraListener
+import com.astrainteractive.astralibs.EventListener
 import com.astrainteractive.empire_items.empire_items.api.drop.AstraDrop
 import com.astrainteractive.empire_items.empire_items.api.items.BlockParser
 import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager
@@ -19,7 +19,7 @@ import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.loot.Lootable
 import kotlin.random.Random
 
-class ItemDropListener : IAstraListener {
+class ItemDropListener : EventListener {
 
     private val blockLocations: MutableList<Location> = mutableListOf()
 

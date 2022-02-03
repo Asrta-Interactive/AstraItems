@@ -18,6 +18,8 @@ object Config {
     //Block generation
     var generationDebug = false
         private set
+    var generateAtOnce = 1
+        private set
     var generationDeepDebug = false
         private set
     var generateBlocks = true
@@ -41,6 +43,7 @@ object Config {
         vampirismMultiplier = s.getDouble("empireEnchants.vampirismMultiplier", vampirismMultiplier)
 
         generationDebug = s.getBoolean("blockGeneration.debug", generationDebug)
+        generateAtOnce = s.getInt("blockGeneration.generateAtOnce", generateAtOnce)
         generationDeepDebug = s.getBoolean("blockGeneration.deepDebug", generationDeepDebug)
         generateBlocks = s.getBoolean("blockGeneration.generate", generateBlocks)
         generateOnlyOnNewChunks = s.getBoolean("blockGeneration.onlyOnNewChunks", generateOnlyOnNewChunks)

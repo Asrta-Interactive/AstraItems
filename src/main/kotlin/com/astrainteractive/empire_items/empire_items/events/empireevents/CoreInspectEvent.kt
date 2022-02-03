@@ -2,8 +2,8 @@ package com.astrainteractive.empire_items.empire_items.events.empireevents
 
 import com.astrainteractive.astralibs.AstraLibs
 import com.astrainteractive.astralibs.HEX
-import com.astrainteractive.astralibs.IAstraListener
-import com.astrainteractive.astralibs.IAstraManager
+import com.astrainteractive.astralibs.EventListener
+import com.astrainteractive.astralibs.EventManager
 import com.astrainteractive.empire_items.empire_items.api.utils.BukkitConstants
 import com.astrainteractive.empire_items.empire_items.api.utils.getPersistentData
 import com.astrainteractive.empire_items.empire_items.api.utils.setPersistentDataType
@@ -17,13 +17,13 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class CoreInspectEvent : IAstraListener {
+class CoreInspectEvent : EventListener {
 
     var coreProtect: CoreProtectAPI? = null
     val c: String
         get() = ChatColor.AQUA.toString()
 
-    override fun onEnable(manager: IAstraManager): IAstraListener {
+    override fun onEnable(manager: EventManager): EventListener {
         AstraLibs.instance.server.pluginManager.getPlugin("CoreProtect")?.let {
             coreProtect = (it as CoreProtect).api
         }

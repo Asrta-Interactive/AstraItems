@@ -1,6 +1,6 @@
 package com.astrainteractive.empire_items.empire_items.events.villagers
 
-import com.astrainteractive.astralibs.IAstraListener
+import com.astrainteractive.astralibs.EventListener
 import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager.getAstraID
 import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager.toAstraItemOrItem
 import com.astrainteractive.empire_items.empire_items.api.v_trades.TradeItem
@@ -16,7 +16,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.MerchantRecipe
 import kotlin.random.Random
 
-class VillagerEvent : IAstraListener {
+class VillagerEvent : EventListener {
 
 
     /**

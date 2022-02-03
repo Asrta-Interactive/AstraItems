@@ -25,6 +25,7 @@ shapeless:
     result: shield1
     amount: 2
     input: NETHERITE_INGOT
+
 furnace:
   shield_furnace:
     # После того, как печь закончит плавить - на слот, гдже был input вернется returns
@@ -35,6 +36,13 @@ furnace:
     input: IRON_INGOT
     cookTime: 200
     exp: 20
+loot:
+  bottle_for_slime:
+    id: bottle_for_slime
+    dropFrom: ZOMBIE
+    minAmount: 1
+    maxAmount: 2
+    chance: 0.2
 villagerTrades:
   WEAPONSMITH_1:
     #Если profession не указана - возьмется название поля - WEAPONSMITH_1

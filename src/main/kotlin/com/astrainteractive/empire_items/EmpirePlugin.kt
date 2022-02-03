@@ -15,6 +15,8 @@ import com.astrainteractive.empire_items.empire_items.util.Config
 import com.astrainteractive.empire_items.empire_items.util.Files
 import com.astrainteractive.empire_items.empire_items.util.Translations
 import com.astrainteractive.empire_items.empire_items.util.protection.KProtectionLib
+import com.astrainteractive.empire_items.modules.hud.thirst.RepeatableTask
+import com.astrainteractive.empire_items.modules.hud.thirst.ThirstModule
 import org.bukkit.Bukkit
 import org.bukkit.event.HandlerList
 import org.bukkit.plugin.java.JavaPlugin
@@ -63,9 +65,15 @@ class EmpirePlugin : JavaPlugin() {
      */
     lateinit var empireCredit: EmpireCredit
 
-//    private lateinit var database:EmpireDatabase
+    //    private lateinit var database:EmpireDatabase
 //    private lateinit var empireRating:EmpireRating
     private val licenceTimer = LicenceChecker()
+
+
+
+
+//    var thirstModule: ThirstModule = ThirstModule()
+
 
     /**
      * This function called when server starts
@@ -86,13 +94,13 @@ class EmpirePlugin : JavaPlugin() {
         VillagerTradeManager.load()
         UpgradeManager.loadUpgrade()
         CraftingManager.load()
-        if (server.pluginManager.getPlugin("WorldGuard")!=null)
+        if (server.pluginManager.getPlugin("WorldGuard") != null)
             KProtectionLib.init(this)
         MobApi.loadEmpireMobs()
         licenceTimer.enable()
+//        thirstModule.onEnable()
+
     }
-
-
 
 
     /**
@@ -111,6 +119,8 @@ class EmpirePlugin : JavaPlugin() {
         CraftingManager.clear()
         HandlerList.unregisterAll(this)
         Bukkit.getScheduler().cancelTasks(this)
+//        thirstModule.onDisable()
+//        RepeatableTask.clearTasks()
 
     }
 }

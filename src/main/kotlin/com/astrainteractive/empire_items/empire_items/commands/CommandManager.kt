@@ -16,6 +16,7 @@ class CommandManager {
         Emreplace()
         Ezip()
         Reload()
+        ESpeed()
         General()
         ModelEngine()
 

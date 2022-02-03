@@ -1,23 +1,88 @@
 package com.astrainteractive.empire_items.empire_items.api.font
 
+import com.astrainteractive.astralibs.Logger
+import com.astrainteractive.astralibs.observer.MutableLiveData
+import com.astrainteractive.empire_items.empire_items.events.blocks.Timer
+import kotlin.math.abs
+import kotlin.math.sign
+
 object FontManager {
 
 
     var fonts = mutableListOf<AstraFont>()
     var map = mutableMapOf<String, AstraFont>()
 
-    fun clear(){
+    var actionBar = MutableLiveData<String>()
+
+    fun clear() {
         fonts.clear()
         map.clear()
     }
-    fun load(){
+
+    fun load() {
         clear()
+
         fonts = AstraFont.getFonts().toMutableList()
         map = fonts.associateBy { it.id }.toMutableMap()
     }
+
     fun allFonts() = fonts.toList()
     fun playerFonts() = fonts.filter { !it.blockSend }
     fun fontById() = map.mapKeys { ":${it.key}:" }.mapValues { it.value.char }
+    enum class HudOffsets(val offset: Int, val char: String) {
+        LEFT_1(-1, "\uF801"),
+        LEFT_2(-2, "\uF802"),
+        LEFT_3(-3, "\uF803"),
+        LEFT_4(-4, "\uF804"),
+        LEFT_5(-5, "\uF805"),
+        LEFT_6(-6, "\uF806"),
+        LEFT_7(-7, "\uF807"),
+        LEFT_8(-8, "\uF808"),
+        LEFT_16(-16, "\uF809"),
+        LEFT_32(-32, "\uF80A"),
+        LEFT_64(-64, "\uF80B"),
+        LEFT_128(-128, "\uF80C"),
+        LEFT_512(-512, "\uF80D"),
+        LEFT_1024(-1024, "\uF80E"),
+        RIGHT_1(1, "\uF821"),
+        RIGHT_2(2, "\uF822"),
+        RIGHT_3(3, "\uF823"),
+        RIGHT_4(4, "\uF824"),
+        RIGHT_5(5, "\uF825"),
+        RIGHT_6(6, "\uF826"),
+        RIGHT_7(7, "\uF827"),
+        RIGHT_8(8, "\uF828"),
+        RIGHT_16(16, "\uF829"),
+        RIGHT_32(32, "\uF82A"),
+        RIGHT_64(64, "\uF82B"),
+        RIGHT_128(128, "\uF82C"),
+        RIGHT_512(512, "\uF82D"),
+        RIGHT_1024(1024, "\uF82E");
+
+
+
+        companion object {
+            private fun nearestAndSmaller(value: Int): HudOffsets? {
+                val sign = value.sign
+                return values().filter { it.offset.sign == sign }.filter { abs(it.offset) <= abs(value) }
+                    .maxByOrNull { abs(it.offset) }
+            }
+            fun getOffsets(_offset: Int): String {
+                val isEven = _offset % 2
+                var offset = _offset - isEven
+                var stringOffset = nearestAndSmaller(isEven)?.char ?: ""
+                var nearest = nearestAndSmaller(offset)
+                while (nearest != null) {
+                    stringOffset += nearest.char
+                    offset -= nearest.offset
+                    nearest = nearestAndSmaller(offset)
+                }
+                return stringOffset
+            }
+        }
+
+
+    }
 
     fun getOffsets() = mapOf(
         "l_1" to "\uF801",

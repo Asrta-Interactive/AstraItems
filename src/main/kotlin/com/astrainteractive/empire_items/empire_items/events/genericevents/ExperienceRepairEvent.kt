@@ -1,6 +1,6 @@
 package com.astrainteractive.empire_items.empire_items.events.genericevents
 
-import com.astrainteractive.astralibs.IAstraListener
+import com.astrainteractive.astralibs.EventListener
 import com.astrainteractive.empire_items.empire_items.api.utils.BukkitConstants
 import com.astrainteractive.empire_items.empire_items.api.utils.getPersistentData
 import com.astrainteractive.empire_items.empire_items.api.utils.setPersistentDataType
@@ -12,7 +12,7 @@ import org.bukkit.event.player.PlayerItemMendEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 
-class ExperienceRepairEvent : IAstraListener {
+class ExperienceRepairEvent : EventListener {
 
 
 

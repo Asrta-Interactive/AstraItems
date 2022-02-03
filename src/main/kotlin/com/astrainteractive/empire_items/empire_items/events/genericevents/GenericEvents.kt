@@ -1,6 +1,7 @@
 package com.astrainteractive.empire_items.empire_items.events.genericevents
 
 import com.astrainteractive.astralibs.*
+import com.astrainteractive.astralibs.async.AsyncHelper.callSyncMethod
 import com.astrainteractive.empire_items.empire_items.api.crafting.CraftingManager
 import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager
 import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager.getAstraID
@@ -21,7 +22,7 @@ import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import java.util.concurrent.Future
 
-class GenericEvents : IAstraListener {
+class GenericEvents : EventListener {
 
     private val cooldown = mutableMapOf<String, Long>()
 
@@ -125,9 +126,9 @@ class GenericEvents : IAstraListener {
 
     @EventHandler
     fun onPlayerMove(event: PlayerMoveEvent) {
-        AsyncHelper.runBackground {
-            executeEvent(item = event.player.inventory.itemInMainHand, player = event.player, event = event.eventName)
-        }
+//        AsyncHelper.runBackground {
+//            executeEvent(item = event.player.inventory.itemInMainHand, player = event.player, event = event.eventName)
+//        }
     }
 
 

@@ -9,8 +9,6 @@ import org.bukkit.configuration.ConfigurationSection
 import kotlin.reflect.KClass
 
 
-
-
 data class AstraUpgrade(
 
     val id: String,
@@ -19,21 +17,18 @@ data class AstraUpgrade(
     val attribute: Attribute
 ) {
     companion object {
-        fun getUpgrade(s: ConfigurationSection?): AstraUpgrade? {
-            s ?: return null
-            val id = s.getString("id") ?: s.name
-            val addMin = s.getDoubleOrNull("addMin") ?: return null
-            val addMax = s.getDoubleOrNull("addMax") ?: return null
-            val attributes = (valueOfOrNull<Attribute>(s.getString("attributes") ?: "")) ?: return null
-            return AstraUpgrade(id = id, addMin = addMin, addMax = addMax, attribute = attributes)
-        }
-
         fun getUpgrades() =
-            getCustomItemsFiles()?.mapNotNull {
+            getCustomItemsFiles()?.mapNotNull file@{
                 val fileConfig = it.getConfig()
                 val section = fileConfig.getConfigurationSection("upgrades")
                 section?.getKeys(false)?.mapNotNull {
-                    getUpgrade(section.getConfigurationSection(it))
+                    val s = section.getConfigurationSection(it) ?: return@mapNotNull null
+                    AstraUpgrade(
+                        id = s.getString("id") ?: s.name,
+                        addMin = s.getDoubleOrNull("addMin") ?: return null,
+                        addMax = s.getDoubleOrNull("addMax") ?: return null,
+                        attribute = (valueOfOrNull<Attribute>(s.getString("attributes") ?: "")) ?: return null
+                    )
                 }
             }?.flatten()
 

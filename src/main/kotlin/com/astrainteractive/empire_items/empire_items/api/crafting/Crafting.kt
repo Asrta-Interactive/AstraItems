@@ -12,25 +12,23 @@ data class Crafting(
     val furnace: MutableList<AstraFurnaceRecipe> = mutableListOf(),
     val player: MutableList<AstraCraftingTableRecipe> = mutableListOf()
 ) {
-    fun clear(){
+    private fun isCustomRecipe(key: NamespacedKey): Boolean =
+        key.key.contains(BukkitConstants.ASTRA_CRAFTING)
 
-        fun isCustomRecipe(key: NamespacedKey): Boolean {
-            val k = key.key.contains(BukkitConstants.ASTRA_CRAFTING)
-            return k
+    private fun isCustomRecipe(recipe: FurnaceRecipe) = isCustomRecipe(recipe.key)
+    private fun isCustomRecipe(recipe: ShapedRecipe) = isCustomRecipe(recipe.key)
+    private fun isCustomRecipe(recipe: ShapelessRecipe) = isCustomRecipe(recipe.key)
+
+    private fun isCustomRecipe(recipe: Recipe): Boolean {
+        return when (recipe) {
+            is FurnaceRecipe -> isCustomRecipe(recipe)
+            is ShapedRecipe -> isCustomRecipe(recipe)
+            is ShapelessRecipe -> isCustomRecipe(recipe)
+            else -> false
         }
-        fun isCustomRecipe(recipe: FurnaceRecipe) = isCustomRecipe(recipe.key)
-        fun isCustomRecipe(recipe: ShapedRecipe) = isCustomRecipe(recipe.key)
-        fun isCustomRecipe(recipe: ShapelessRecipe) = isCustomRecipe(recipe.key)
+    }
 
-        fun isCustomRecipe(recipe: Recipe): Boolean {
-            return when (recipe) {
-                is FurnaceRecipe -> isCustomRecipe(recipe)
-                is ShapedRecipe -> isCustomRecipe(recipe)
-                is ShapelessRecipe -> isCustomRecipe(recipe)
-                else -> false
-            }
-        }
-
+    fun clear() {
         val ite = AstraLibs.instance.server.recipeIterator()
         var recipe: Recipe?
         while (ite.hasNext()) {
@@ -40,14 +38,12 @@ data class Crafting(
                 continue
             }
         }
-
-
-
         craftingTable.clear()
         shapeless.clear()
         furnace.clear()
         player.clear()
     }
+
     fun createRecipes() {
         craftingTable.forEach {
             it.createRecipe()
@@ -86,7 +82,7 @@ data class Crafting(
                 furnace.addAll(_furnace)
                 player.addAll(_player)
             }
-            return Crafting(craftingTable = craftingTable,shapeless = shapeless,furnace = furnace,player = player)
+            return Crafting(craftingTable = craftingTable, shapeless = shapeless, furnace = furnace, player = player)
         }
     }
 

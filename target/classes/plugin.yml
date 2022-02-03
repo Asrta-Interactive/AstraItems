@@ -12,30 +12,16 @@ depend: []
 commands:
   ereload:
   edice:
-  egeneration:
-  erating:
-  emsplash:
   emreplace:
   emoji:
-  erandomitem:
   emcredit:
   embank:
-  emsounds:
   emp:
-  emr:
   emgui:
+  espeed:
   ezip:
-  thirst:
   emojis:
-  emnbt:
-  emrepair:
   empack:
-  emess:
-  sit:
-  emnpc:
-  skin:
-  eminv:
-  emspawn:
   spawnmodel:
   empireitems:
     usage: |

@@ -1,6 +1,7 @@
 package com.astrainteractive.empire_items.empire_items.events
 
 import com.astrainteractive.astralibs.*
+import com.astrainteractive.astralibs.async.AsyncHelper.callSyncMethod
 import com.astrainteractive.empire_items.empire_items.api.crafting.CraftingManager
 import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager.getAstraID
 import com.astrainteractive.empire_items.empire_items.util.AsyncHelper
@@ -14,7 +15,7 @@ import org.bukkit.inventory.ItemStack
 /**
  * Показывать игроку рецепт кастомных предметов
  */
-class PlayerShowRecipeKey : IAstraListener {
+class PlayerShowRecipeKey : EventListener {
     /**
      * Когда игрок поднимает предмет - даём ему рецепты
      */

@@ -1,13 +1,13 @@
 package com.astrainteractive.empire_items.empire_items.events.genericevents
 
-import com.astrainteractive.astralibs.AstraUtils
-import com.astrainteractive.astralibs.IAstraListener
+import com.astrainteractive.astralibs.EventListener
+import com.astrainteractive.astralibs.convertHex
 import com.astrainteractive.empire_items.empire_items.util.EmpireUtils
 import org.bukkit.event.EventHandler
 import org.bukkit.event.block.SignChangeEvent
 import org.bukkit.event.player.PlayerEditBookEvent
 
-class BookSignEvent:IAstraListener {
+class BookSignEvent:EventListener {
 
 
     public override fun onDisable(){
@@ -22,14 +22,14 @@ class BookSignEvent:IAstraListener {
         val newMeta = e.newBookMeta
         if (newMeta.hasAuthor())
             newMeta.author =
-                AstraUtils.HEXPattern(EmpireUtils.emojiPattern(newMeta.author!!))
+                convertHex(EmpireUtils.emojiPattern(newMeta.author!!))
 
         if (newMeta.hasTitle())
             newMeta.title =
-                AstraUtils.HEXPattern(EmpireUtils.emojiPattern(newMeta.title!!))
+                convertHex(EmpireUtils.emojiPattern(newMeta.title!!))
         for (i in 1..newMeta.pageCount) {
             newMeta.setPage(
-                i, AstraUtils.HEXPattern(
+                i, convertHex(
                     EmpireUtils.emojiPattern(
                         newMeta.getPage(i)
                     ) + "&r"
@@ -45,7 +45,7 @@ class BookSignEvent:IAstraListener {
         for (i in e.lines.indices)
             e.setLine(
                 i,
-                AstraUtils.HEXPattern(EmpireUtils.emojiPattern(e.getLine(i) ?: continue))
+                convertHex(EmpireUtils.emojiPattern(e.getLine(i) ?: continue))
             )
     }
 }

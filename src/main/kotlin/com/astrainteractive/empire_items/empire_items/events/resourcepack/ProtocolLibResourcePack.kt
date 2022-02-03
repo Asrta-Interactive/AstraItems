@@ -1,7 +1,7 @@
 package com.astrainteractive.empire_items.empire_items.events.resourcepack
 
 import com.astrainteractive.astralibs.AstraLibs
-import com.astrainteractive.astralibs.IAstraListener
+import com.astrainteractive.astralibs.EventListener
 import com.astrainteractive.empire_items.EmpirePlugin
 import com.comphenix.protocol.PacketType
 import com.comphenix.protocol.ProtocolLibrary
@@ -12,7 +12,7 @@ import com.comphenix.protocol.events.PacketEvent
 import com.comphenix.protocol.events.PacketListener
 import com.comphenix.protocol.wrappers.WrappedChatComponent
 
-class ProtocolLibResourcePack: IAstraListener {
+class ProtocolLibResourcePack: EventListener {
     private var protocolManager: ProtocolManager = ProtocolLibrary.getProtocolManager()
     private var packetListener: PacketListener = object : PacketAdapter(
         AstraLibs.instance,

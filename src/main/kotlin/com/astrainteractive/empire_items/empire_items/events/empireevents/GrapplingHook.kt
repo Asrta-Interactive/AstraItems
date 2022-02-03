@@ -1,6 +1,6 @@
 package com.astrainteractive.empire_items.empire_items.events.empireevents
 
-import com.astrainteractive.astralibs.IAstraListener
+import com.astrainteractive.astralibs.EventListener
 import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager.getAstraID
 import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager.getItemInfo
 import com.astrainteractive.empire_items.empire_items.api.utils.BukkitConstants
@@ -19,7 +19,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 
-class GrapplingHook : IAstraListener {
+class GrapplingHook : EventListener {
     private val activeHooks = mutableMapOf<String, Location>()
     private fun unCastHook(itemStack: ItemStack, player: Player) {
         val state = itemStack.itemMeta.getPersistentData(BukkitConstants.GRAPPLING_HOOK) ?: return

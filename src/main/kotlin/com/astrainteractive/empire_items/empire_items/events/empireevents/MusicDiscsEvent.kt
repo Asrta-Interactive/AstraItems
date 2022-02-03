@@ -1,8 +1,8 @@
 package com.astrainteractive.empire_items.empire_items.events.empireevents
 
 import com.astrainteractive.astralibs.HEX
-import com.astrainteractive.astralibs.IAstraListener
-import com.astrainteractive.empire_items.empire_items.api.items.data.AstraItem
+import com.astrainteractive.astralibs.EventListener
+import com.astrainteractive.empire_items.empire_items.api.items.data.EmpireItem
 import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager
 import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager.getAstraID
 import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager.toAstraItemOrItem
@@ -21,12 +21,12 @@ import org.bukkit.event.player.PlayerInteractEvent
 /**
  * Эвент кастомных музыкальных дисков
  */
-class MusicDiscsEvent : IAstraListener {
+class MusicDiscsEvent : EventListener {
 
     /**
      * Список активных jukebox'ов с включенной музыкой
      */
-    val activeJukeboxes: MutableMap<Location, AstraItem> = mutableMapOf()
+    val activeJukeboxes: MutableMap<Location, EmpireItem> = mutableMapOf()
 
 
     @EventHandler
@@ -41,7 +41,7 @@ class MusicDiscsEvent : IAstraListener {
         stopMusic(e.block.location)
     }
 
-    fun dropDisc(location: Location, item: AstraItem?) {
+    fun dropDisc(location: Location, item: EmpireItem?) {
         location.world?.dropItem(location.add(0.0, 1.0, 0.0), item?.id.toAstraItemOrItem() ?: return)
     }
 
@@ -83,7 +83,7 @@ class MusicDiscsEvent : IAstraListener {
     /**
      * Включение проигрывания звука
      */
-    fun playMusic(item: AstraItem, location: Location) {
+    fun playMusic(item: EmpireItem, location: Location) {
         location.world?.playSound(location, "${item.namespace}:${item.musicDisc!!.name}", 2f, 1f)
         activeJukeboxes[location] = item
         getPlayerInDistance(location).forEach { player ->

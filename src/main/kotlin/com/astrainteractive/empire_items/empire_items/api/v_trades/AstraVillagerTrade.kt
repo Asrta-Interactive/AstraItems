@@ -1,7 +1,6 @@
 package com.astrainteractive.empire_items.empire_items.api.v_trades
 
-import com.astrainteractive.astralibs.AstraYamlParser
-import com.astrainteractive.empire_items.empire_items.api.items.data.AstraItem.Companion.getIntOrNull
+import com.astrainteractive.empire_items.empire_items.api.items.data.EmpireItem.Companion.getIntOrNull
 import com.astrainteractive.empire_items.empire_items.api.utils.getCustomItemsFiles
 import org.bukkit.configuration.ConfigurationSection
 import kotlin.random.Random
@@ -11,23 +10,17 @@ data class AstraVillagerTrade(
     val trades: List<TradeItem>
 ) {
     companion object {
-        fun getVillagerTrades() = getCustomItemsFiles()?.mapNotNull {
+        fun getVillagerTrades() = getCustomItemsFiles()?.mapNotNull file@{
             val fileConfig = it.getConfig()
             val section = fileConfig.getConfigurationSection("villagerTrades")
             section?.getKeys(false)?.mapNotNull { profession ->
-                getTVillagerTrade(section.getConfigurationSection(profession))
+                val s = section.getConfigurationSection(profession) ?: return@mapNotNull null
+                AstraVillagerTrade(
+                    profession = s.getString("profession") ?: s.name,
+                    trades = TradeItem.getTrades(s.getConfigurationSection("trades"))
+                )
             }
         }?.flatten() ?: listOf()
-
-        fun getTVillagerTrade(s: ConfigurationSection?): AstraVillagerTrade? {
-            s ?: return null
-            val profession = s.getString("profession") ?: s.name
-            val trades = TradeItem.getTrades(s.getConfigurationSection("trades"))
-            return AstraVillagerTrade(
-                profession = profession,
-                trades = trades
-            )
-        }
     }
 }
 
@@ -46,7 +39,6 @@ data class TradeItem(
         fun getTrades(section: ConfigurationSection?) =
             section?.getKeys(false)?.mapNotNull {
                 val s = section.getConfigurationSection(it) ?: return@mapNotNull null
-
                 TradeItem(
                     id = s.getString("id") ?: s.name,
                     chance = s.getInt("chance", 100),
@@ -79,15 +71,11 @@ data class SlotItem(
     companion object {
         fun getItem(s: ConfigurationSection?): SlotItem? {
             s ?: return null
-            val amount = s.getInt("amount", 1)
-            val minAmount = s.getIntOrNull("minAmount")
-            val maxAmount = s.getIntOrNull("maxAmount")
-            val id = s.getString("id") ?: return null
             return SlotItem(
-                id = id,
-                _amount = amount,
-                minAmount = minAmount,
-                maxAmount = maxAmount
+                id = s.getString("id") ?: return null,
+                _amount = s.getInt("amount", 1),
+                minAmount = s.getIntOrNull("minAmount"),
+                maxAmount = s.getIntOrNull("maxAmount")
             )
         }
     }

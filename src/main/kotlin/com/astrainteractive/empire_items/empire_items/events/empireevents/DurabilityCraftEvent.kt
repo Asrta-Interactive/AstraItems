@@ -1,6 +1,6 @@
 package com.astrainteractive.empire_items.empire_items.events.empireevents
 
-import com.astrainteractive.astralibs.IAstraListener
+import com.astrainteractive.astralibs.EventListener
 import com.astrainteractive.empire_items.empire_items.api.utils.BukkitConstants
 import com.astrainteractive.empire_items.empire_items.api.utils.getPersistentData
 import com.astrainteractive.empire_items.empire_items.api.utils.hasPersistentData
@@ -11,7 +11,7 @@ import org.bukkit.event.inventory.InventoryAction
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.Damageable
 
-class DurabilityCraftEvent : IAstraListener {
+class DurabilityCraftEvent : EventListener {
 
     fun ItemStack.manage(): ItemStack {
         val meta = itemMeta
@@ -32,18 +32,17 @@ class DurabilityCraftEvent : IAstraListener {
     @EventHandler
     private fun entityResurrectEvent(e: CraftItemEvent) {
 
-        val a = e.inventory.matrix.filter { it?.itemMeta?.hasPersistentData(BukkitConstants.CRAFT_DURABILITY)==true }
-        if (a.isEmpty())
+        val a = e.inventory.matrix?.filter { it?.itemMeta?.hasPersistentData(BukkitConstants.CRAFT_DURABILITY)==true }
+        if (a.isNullOrEmpty())
             return
         if (e.action!=InventoryAction.PICKUP_ALL) {
             e.isCancelled = true
             return
         }
-        e.inventory.matrix.toList().forEachIndexed { i, itemStack ->
+        e.inventory.matrix?.toList()?.forEachIndexed { i, itemStack ->
             if (itemStack?.itemMeta?.hasPersistentData(BukkitConstants.CRAFT_DURABILITY)!=true)
                 return@forEachIndexed
             e.inventory.setItem(i+1,itemStack.manage())
-
         }
 
     }

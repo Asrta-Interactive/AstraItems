@@ -1,11 +1,9 @@
 package com.astrainteractive.empire_items.empire_items.util
 
-import com.astrainteractive.astralibs.AstraUtils
+import com.astrainteractive.astralibs.convertHex
 import com.astrainteractive.empire_items.empire_items.api.font.FontManager
-import com.astrainteractive.empire_items.empire_items.api.utils.getDoubleOrNull
 import org.bukkit.Location
 import org.bukkit.Material
-import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.BookMeta
 import java.util.regex.Matcher
@@ -25,7 +23,7 @@ object EmpireUtils {
         meta.title = title
         val pages = mutableListOf<String>()
         for (line in lines) {
-            var hexLine = if (useHex) EmpireUtils.emojiPattern(AstraUtils.HEXPattern(line)) else line
+            var hexLine = if (useHex) EmpireUtils.emojiPattern(convertHex(line)) else line
             while (hexLine.length > 19 * 14) {
                 pages.add(hexLine.substring(0, 19 * 14))
                 hexLine = hexLine.substring(19 * 14)
@@ -60,9 +58,9 @@ object EmpireUtils {
 fun String.emoji() = EmpireUtils.emojiPattern(this)
 fun List<String>.emoji() = EmpireUtils.emojiPattern(this)
 
-fun calcChance(chance:Int) = chance>=Random(System.currentTimeMillis()).nextInt(0,101)
-fun calcChance(chance:Double) = chance>=Random(System.currentTimeMillis()).nextDouble(0.0,101.0)
-fun calcChance(chance:Float) = chance>=Random(System.currentTimeMillis()).nextDouble(0.0,101.0)
+fun calcChance(chance:Int) = chance>=Random.nextInt(0,101)
+fun calcChance(chance:Double) = chance>=Random.nextDouble(0.0,101.0)
+fun calcChance(chance:Float) = chance>=Random.nextDouble(0.0,101.0)
 
 fun Location.playSound(name:String?){
     this.world.playSound(this,name?:return,1f,1f)

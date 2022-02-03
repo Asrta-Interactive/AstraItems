@@ -1,13 +1,11 @@
 package com.astrainteractive.empire_items.empire_items.api.crafting
 
 import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager.toAstraItemOrItem
-import com.astrainteractive.astralibs.AstraYamlParser
 import org.bukkit.configuration.ConfigurationSection
-import kotlin.math.max
 
 data class AstraFurnaceRecipe(
     val id: String,
-    val returns:String?,
+    val returns: String?,
     val result: String,
     val input: String,
     val cookTime: Int,
@@ -32,24 +30,19 @@ data class AstraFurnaceRecipe(
     }
 
     companion object {
-        fun getAllRecipes(s: ConfigurationSection?) =
-            s?.getKeys(false)?.mapNotNull {
-                getRecipe(s.getConfigurationSection(it))
+        fun getAllRecipes(section: ConfigurationSection?) =
+            section?.getKeys(false)?.mapNotNull {
+                val s = section.getConfigurationSection(it) ?: return@mapNotNull null
+                AstraFurnaceRecipe(
+                    id = s.getString("id") ?: s.name,
+                    input = s.getString("input") ?: return null,
+                    returns = s.getString("returns"),
+                    result = s.getString("result") ?: return null,
+                    amount = s.getInt("amount", 1),
+                    cookTime = s.getInt("cookTime", 200),
+                    exp = s.getInt("exp")
+                )
             }
 
-        private fun getRecipe(s: ConfigurationSection?): AstraFurnaceRecipe? {
-            val parser = AstraYamlParser.parser
-            val res = parser.configurationSectionToClass<AstraFurnaceRecipe>(s ?: return null) ?: return null
-            val id = parser.fixNull(res.id, s.name)
-            return AstraFurnaceRecipe(
-                id = id,
-                input = res.input,
-                returns = res.returns,
-                result = res.result,
-                cookTime = max(20, res.cookTime),
-                exp = max(1, res.exp),
-                amount = max(res.amount, 1)
-            )
-        }
     }
 }

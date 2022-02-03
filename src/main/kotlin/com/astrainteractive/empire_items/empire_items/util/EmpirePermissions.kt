@@ -13,6 +13,8 @@ object EmpirePermissions {
         get() = "empireitems.spawn"
     val RELOAD: String
         get() = "empireitems.reload"
+    val ESPEED: String
+        get() = "empireitems.espeed"
     val INVENTORY_SAVE: String
         get() = "empireitems.save_inventory"
     val SPAWN_ENTITY: String
