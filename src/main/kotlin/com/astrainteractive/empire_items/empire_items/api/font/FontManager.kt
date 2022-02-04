@@ -1,8 +1,6 @@
 package com.astrainteractive.empire_items.empire_items.api.font
 
-import com.astrainteractive.astralibs.Logger
 import com.astrainteractive.astralibs.observer.MutableLiveData
-import com.astrainteractive.empire_items.empire_items.events.blocks.Timer
 import kotlin.math.abs
 import kotlin.math.sign
 

@@ -30,6 +30,8 @@ object Config {
         private set
     var generateBlocksGap = 1L
         private set
+    var generateBlocksTimeGap = 1000L
+        private set
     var generateMaxChunksAtOnce = 2
         private set
 
@@ -50,7 +52,7 @@ object Config {
         generationClearCheck = s.getLong("blockGeneration.generationClearCheck", generationClearCheck)
         generateBlocksGap = s.getLong("blockGeneration.generateBlocksGap", generateBlocksGap)
         generateMaxChunksAtOnce = s.getInt("blockGeneration.maxChunksAtOnce", generateMaxChunksAtOnce)
-
+        generateBlocksTimeGap = s.getLong("blockGeneration.generateBlocksTimeGap", generateBlocksTimeGap)
         tabPrefix = s.getString("tabPrefix", tabPrefix)!!
 
     }

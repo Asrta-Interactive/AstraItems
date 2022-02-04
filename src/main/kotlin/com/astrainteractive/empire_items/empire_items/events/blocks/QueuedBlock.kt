@@ -5,10 +5,10 @@ import org.bukkit.Material
 
 data class QueuedBlock(
     val id:String,
-    val l: Location,
-    val m: String,
-    val f: Map<String, Boolean>
+    val location: Location,
+    val materialName: String,
+    val faces: Map<String, Boolean>
 ) {
-    val mat: Material
-        get() = Material.getMaterial(m)!!
+    val material: Material
+        get() = Material.getMaterial(materialName)!!
 }

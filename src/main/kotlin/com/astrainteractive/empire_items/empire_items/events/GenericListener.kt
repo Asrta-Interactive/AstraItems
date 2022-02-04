@@ -58,6 +58,7 @@ class GenericListener() : EventManager {
         VillagerEvent().onEnable(this)
         PlayerShowRecipeKey().onEnable(this)
         BlockGenerationEvent().onEnable(this)
+//        FixBlockGenerationEvent().onEnable(this)
 //        TestEvent().onEnable(this)
         BlockHardnessEvent().onEnable(this)
         MushroomBlockPlaceEvent().onEnable(this)

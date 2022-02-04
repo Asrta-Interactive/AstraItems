@@ -5,31 +5,53 @@ import com.astrainteractive.astralibs.*
 import com.astrainteractive.empire_items.EmpirePlugin
 import com.astrainteractive.empire_items.empire_items.api.items.BlockParser
 import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager
-import com.astrainteractive.empire_items.empire_items.util.AsyncHelper
+import com.astrainteractive.empire_items.empire_items.events.blocks.GenerationUtils.containsPlayers
 import com.astrainteractive.empire_items.empire_items.util.Config
+import com.astrainteractive.empire_items.empire_items.util.TriplePair
 import com.astrainteractive.empire_items.modules.hud.thirst.RepeatableTask
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import org.bukkit.Bukkit
 import org.bukkit.Chunk
 import org.bukkit.Location
-import org.bukkit.block.BlockFace
-import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.event.world.ChunkLoadEvent
 import org.bukkit.event.world.ChunkUnloadEvent
-import java.awt.Point
+import kotlin.coroutines.CoroutineContext
+import kotlin.math.max
 import kotlin.random.Random
 
-class BlockGenerationEvent : EventListener {
+class BlockGenerationEvent : EventListener, CoroutineScope {
+    private val job: Job
+        get() = Job()
+    override val coroutineContext: CoroutineContext
+        get() = job + Dispatchers.Default
 
-    private var currentChunkAmount = 0
     private val TAG: String
         get() = "BlockGenerationEvent"
     private var blockQueue = mutableListOf<QueuedBlock>()
+    private val chunkList = mutableSetOf<Chunk>()
+    private var currentChunkProcessing = 0L
+    private fun addChunkToQueue(chunk: Chunk) {
+        chunkList.add(chunk)
+    }
 
+
+
+    private fun getChunkFromQueue(): Chunk? {
+        val chunk = chunkList.firstOrNull()
+        chunkList.remove(chunk)
+        return chunk
+    }
+
+    private fun clearChunks() {
+        chunkList.removeIf { !it.containsPlayers() }
+    }
 
     /**
      * Получаем список координат блоков, которые необходимо будет заменить
@@ -42,16 +64,15 @@ class BlockGenerationEvent : EventListener {
         val xShuffled = (0 until 15).shuffled()
         val zShuffled = xShuffled.shuffled()
         val yShuffled = (yMin until yMax).shuffled()
-        val xAndZ = xShuffled zip zShuffled
         val singleMap = yShuffled.flatMap { y ->
-            return@flatMap xAndZ.map {
-                return@map Pair(y, it)
+            return@flatMap xShuffled.flatMap f2@{ x ->
+                return@f2 zShuffled.map { z ->
+                    return@map TriplePair(x, y, z)
+                }
             }
         }
-        return singleMap.mapNotNull { (y, it) ->
-            val x = it.first
-            val z = it.second
-            val loc = Location(this.world, this.x * 16.0 + x, y * 1.0, this.z * 16.0 + z)
+        return singleMap.mapNotNull { (x,y,z) ->
+            val loc = Location(world, this.x * 16.0 + x, y * 1.0, this.z * 16.0 + z)
             val blockName = loc.block.type.name
             val chance = types[blockName] ?: return@mapNotNull null
             if (chance >= Random.nextInt(0, 100))
@@ -60,39 +81,15 @@ class BlockGenerationEvent : EventListener {
         }
     }
 
-    /**
-     * Получаем рандомное направление чтобы получить связный блок
-     */
-    private fun getRandomBlockFace(): BlockFace {
-        val faces = BlockFace.values()
-        return faces[Random.nextInt(faces.size)]
-    }
-
-    /**
-     * Дистанция от чанка до игрока в 2D координатах
-     */
-    private fun Chunk.distanceToPlayer(p: Player): Double {
-        val p1 = Point(x, z)
-        val p2 = Point(p.location.chunk.x, p.location.chunk.z)
-        return p1.distance(p2)
-    }
-
-    /**
-     * Содержит ли чанк игрока, или есть ли вблизи viewDistance игроки
-     */
-    private fun Chunk.containsPlayers(): Boolean {
-        val list = Bukkit.getOnlinePlayers().filter { this.distanceToPlayer(it) < Bukkit.getServer().viewDistance }
-        return list.isNotEmpty()
-    }
 
     /**
      * Очистка из очереди чанков, которые не сгенерированы и рядом с которыми нет игроков
      */
-    private fun clearChunks() {
+    private fun clearBlockQueue() {
         val tempChunks = EmpirePlugin.empireFiles.tempChunks
         var list = synchronized(this) { blockQueue.toList() }
         list = list.filter { q ->
-            q.l.chunk.containsPlayers() || tempChunks.getConfig().contains(q.l.chunk.toString())
+            q.location.chunk.containsPlayers() || tempChunks.getConfig().contains(q.location.chunk.toString())
         }.toMutableList()
         synchronized(this) {
             blockQueue = list
@@ -117,7 +114,7 @@ class BlockGenerationEvent : EventListener {
     /**
      * Загружает в файл информацию о том, что чанк был сгенерирован
      */
-    private fun setChunkHasGenerated(chunk: Chunk, id: String) = synchronized(this) {
+    private fun setChunkHasGenerated(chunk: Chunk, id: String) = synchronized(this){
         val tempChunks = EmpirePlugin.empireFiles.tempChunks
         if (!tempChunks.getConfig().contains("${chunk}.$id")) {
             tempChunks.getConfig().set("${chunk}.$id", true)
@@ -131,30 +128,36 @@ class BlockGenerationEvent : EventListener {
     private fun generateBlock() {
         val block = getQueuedBlock() ?: return
         if (Config.generationDebug)
-            Logger.log(
-                "Generating block at [${block.l.x};${block.l.y};${block.l.z}] queue=${blockQueue.size}", TAG
-            )
-        setChunkHasGenerated(block.l.chunk, block.id)
+            log("Generating block at [${block.location.x};${block.location.y};${block.location.z}] queue=${blockQueue.size}")
+        setChunkHasGenerated(block.location.chunk, block.id)
         val time = System.currentTimeMillis()
         replaceBlock(block)
         if (Config.generationDebug)
-            Logger.log("Block replacing time = ${(System.currentTimeMillis() - time)}", TAG)
+            log("Block replacing time = ${(System.currentTimeMillis() - time)}")
     }
 
     /**
      * Заменяем блок на сгенерированный
      */
-    private fun replaceBlock(b: QueuedBlock) =
-        BlockParser.setTypeFast(b.l.block, b.mat, b.f)
+    private fun replaceBlock(b: QueuedBlock) = Bukkit.getScheduler().runTaskLaterAsynchronously(
+        EmpirePlugin.instance,
+        Runnable {
+            if (Config.generationDeepDebug)
+                log("Creating ${b.id} at {${b.location.x}; ${b.location.y}; ${b.location.z}}")
+            BlockParser.setTypeFast(b.location.block, b.material, b.faces)
+        }, 5L
+    )
 
+    private val blocksToGenerate = ItemManager.getBlocksInfos().filter { it.block?.generate != null }
 
     /**
      * Получение списка локация из чанка и добавление их в очередь
      */
     private fun generateChunk(chunk: Chunk) {
+        if (Config.generationDeepDebug)
+            log("Generating Queue")
         val currentBlocksQueue = mutableListOf<QueuedBlock>()
-
-        ItemManager.getBlocksInfos().forEach { itemInfo ->
+        blocksToGenerate.forEach { itemInfo ->
             val block = itemInfo.block ?: return@forEach
             //Сгенерирован ли блок в чанке
             if (isBlockGeneratedInChunk(chunk, itemInfo.id))
@@ -186,24 +189,24 @@ class BlockGenerationEvent : EventListener {
             val facing = BlockParser.getFacingByData(block.data)
             //Количество сгенерированных блоков
             var generated = 0
-            blockLocByType.forEach block@{ (_, loc) ->
+            blockLocByType.forEach block@{ (_, location) ->
                 if (generated > generate.maxPerChunk)
                     return@block
-                var initialBlock = loc.block
-                val originalBlockType = initialBlock.type
+                var faceBlock = location.block
+                val originalBlockType = faceBlock.type
                 val depositAmount = Random.nextInt(generate.minPerDeposit, generate.maxPerDeposit + 1)
                 for (unnamed in 0 until depositAmount) {
                     if (generated > generate.maxPerChunk)
                         return@block
                     for (i in 0 until 10) {
-                        val newFaceBlock = initialBlock.getRelative(getRandomBlockFace())
+                        val newFaceBlock = faceBlock.getRelative(GenerationUtils.getRandomBlockFace())
                         if (newFaceBlock.type == originalBlockType) {
-                            initialBlock = newFaceBlock
+                            faceBlock = newFaceBlock
                             break
                         }
                     }
-                    val q = QueuedBlock(itemInfo.id, initialBlock.location.clone(), material.name, facing)
-                    if (Config.generateBlocksGap == 0L) {
+                    val q = QueuedBlock(itemInfo.id, faceBlock.location.clone(), material.name, facing)
+                    if (Config.generateBlocksGap <= 0L) {
                         replaceBlock(q)
                         setChunkHasGenerated(chunk, itemInfo.id)
                     } else
@@ -213,71 +216,90 @@ class BlockGenerationEvent : EventListener {
 
             }
         }
-        addBlockToQueue(currentBlocksQueue)
+        if (Config.generationDebug)
+            log("Created queue of ${currentBlocksQueue.size} blocks")
+        if (Config.generateBlocksGap > 0L)
+            addBlockToQueue(currentBlocksQueue)
     }
 
-    fun isBlockGeneratedInChunk(chunk: Chunk, id: String): Boolean {
+    private fun isBlockGeneratedInChunk(chunk: Chunk, id: String): Boolean = synchronized(this){
         return EmpirePlugin.empireFiles.tempChunks.getConfig().contains("${chunk}.$id")
     }
 
+
     @EventHandler
     private fun chunkLoadEvent(e: ChunkLoadEvent) {
-        if (currentChunkAmount > Config.generateMaxChunksAtOnce)
-            return
         val chunk = e.chunk
-
         if (!e.isNewChunk && Config.generateOnlyOnNewChunks)
             return
         if (!Config.generateBlocks)
             return
-
-        currentChunkAmount++
-        AsyncHelper.runBackground(Dispatchers.IO) {
-            generateChunk(chunk)
-            currentChunkAmount--
+        if (Config.generateBlocksTimeGap > 0L) addChunkToQueue(chunk)
+        else {
+            if (currentChunkProcessing >= Config.generateMaxChunksAtOnce)
+                return
+            currentChunkProcessing++
+            launch {
+                generateChunk(chunk)
+                currentChunkProcessing--
+            }
         }
     }
 
-    var lastChunkCheck = System.currentTimeMillis()
 
-    private val repeatableTask = RepeatableTask(Config.generateBlocksGap) {
-        if (Config.generationClearCheck > 0)
-            if ((System.currentTimeMillis() - lastChunkCheck) > Config.generationClearCheck) {
-                clearChunks()
-                lastChunkCheck = System.currentTimeMillis()
-            }
-
-        AsyncHelper.runBackground(Dispatchers.IO) {
+    private val blockGenerationTask = RepeatableTask(max(1, Config.generateBlocksGap)) {
+        if (Config.generateBlocksGap <= 0L) return@RepeatableTask
+        launch {
             generateBlock()
         }
+    }
+    private val clearBlocksTask = RepeatableTask(max(1, Config.generationClearCheck)) {
+        if (Config.generationClearCheck <= 0L) return@RepeatableTask
+        launch {
+            clearBlockQueue()
+        }
+    }
+
+    private val generateChunkTask = RepeatableTask(max(1, Config.generateBlocksTimeGap)) {
+        launch {
+            if (Config.generateBlocksTimeGap <= 0L) return@launch
+            if (Config.generationDebug)
+                log("Chunk queue: ${chunkList.size}")
+            val chunk = getChunkFromQueue() ?: return@launch
+            generateChunk(chunk)
+        }
+    }
+    private val clearOldChunksTask = RepeatableTask(2000L) {
+        if (Config.generateBlocksTimeGap <= 0L)
+            return@RepeatableTask
+        clearChunks()
     }
 
 
     override fun onEnable(manager: EventManager): EventListener {
-        if (Config.generateBlocksGap == 0L)
-            repeatableTask.cancel()
+        if (Config.generateBlocksGap <= 0L || !Config.generateBlocks)
+            blockGenerationTask.cancel()
+        if (Config.generationClearCheck <= 0L || !Config.generateBlocks)
+            blockGenerationTask.cancel()
+        if (Config.generateBlocksTimeGap <= 0L || !Config.generateBlocks) {
+            generateChunkTask.cancel()
+            clearOldChunksTask.cancel()
+        }
         return super.onEnable(manager)
     }
 
+    fun log(message: String) = Logger.log(message, TAG)
     override fun onDisable() {
         ChunkLoadEvent.getHandlerList().unregister(this)
         ChunkUnloadEvent.getHandlerList().unregister(this)
         PlayerJoinEvent.getHandlerList().unregister(this)
         PlayerQuitEvent.getHandlerList().unregister(this)
         PlayerMoveEvent.getHandlerList().unregister(this)
-        repeatableTask.cancel()
-        repeatableTask.cancel()
+        blockGenerationTask.cancel()
+        clearBlocksTask.cancel()
+        generateChunkTask.cancel()
+        clearOldChunksTask.cancel()
     }
 
 }
 
-object Timer {
-    private val map: MutableMap<String, Long> = mutableMapOf()
-
-    fun start(key: String) {
-        if (map.containsKey(key)) {
-            println("$key: ${(System.currentTimeMillis() - map.remove(key)!!) / 1000.0}s")
-        } else map[key] = System.currentTimeMillis()
-    }
-
-}

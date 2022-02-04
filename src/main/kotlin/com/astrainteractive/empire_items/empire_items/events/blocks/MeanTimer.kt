@@ -2,7 +2,7 @@ package com.astrainteractive.empire_items.empire_items.events.blocks
 
 import com.astrainteractive.astralibs.Logger
 
-class MeanTimer(val toPass: Int = 30000) {
+class MeanTimer(val toPass: Int = 30000, val tag: String = "MeanTime", val clear: Boolean = false) {
     private val lock = Any()
     private var started = System.currentTimeMillis()
     private val times: MutableList<Double> = mutableListOf()
@@ -27,9 +27,10 @@ class MeanTimer(val toPass: Int = 30000) {
         if (System.currentTimeMillis() - started > toPass) {
             if (!list.isNullOrEmpty()) {
                 val sum = list.sum() / list.size
-                Logger.log("Mean time is ${sum}", "MeanTime")
+                Logger.log("Mean time is ${sum}", tag)
             }
-            clear()
+            if (clear)
+                clear()
             start()
 
         } else
