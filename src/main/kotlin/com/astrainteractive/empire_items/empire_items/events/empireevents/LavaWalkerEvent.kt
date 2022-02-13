@@ -67,7 +67,7 @@ class LavaWalkerEvent : EventListener {
     }
 
     private fun hasLaveWalker(meta: ItemMeta?): Boolean =
-        meta?.hasPersistentData(BukkitConstants.LAVA_WALKER_ENCHANT) == true
+        meta?.hasPersistentData(BukkitConstants.EmpireEnchants.LAVA_WALKER) == true
 
 
     @EventHandler

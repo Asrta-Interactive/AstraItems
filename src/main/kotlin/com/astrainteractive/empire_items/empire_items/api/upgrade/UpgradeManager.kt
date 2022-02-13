@@ -3,6 +3,7 @@ package com.astrainteractive.empire_items.empire_items.api.upgrade
 import com.astrainteractive.empire_items.EmpirePlugin
 import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager.getAstraID
 import com.astrainteractive.empire_items.empire_items.api.utils.*
+import com.astrainteractive.empire_items.empire_items.util.Disableable
 import com.astrainteractive.empire_items.empire_items.util.Translations
 import com.astrainteractive.empire_items.empire_items.util.emoji
 import org.bukkit.ChatColor
@@ -12,7 +13,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 import kotlin.random.Random
 
-object UpgradeManager {
+object UpgradeManager : Disableable {
 
     private var list: List<AstraUpgrade> = mutableListOf()
     private val translations: Translations
@@ -62,8 +63,7 @@ object UpgradeManager {
                 meta.setPersistentDataType(upgradeKey, currentAttributeAmount)
                 upgraded = true
                 meta.setPersistentDataType(BukkitConstants.ASTRA_UPGRADE_TIMES, ++upgradeTimes)
-            }
-            else if (itemStack.isArmor() && upgradeModel.attribute.isArmorAttribute()) {
+            } else if (itemStack.isArmor() && upgradeModel.attribute.isArmorAttribute()) {
                 meta.addAttribute(upgradeModel.attribute, upgradeAmount, itemStack.type.equipmentSlot)
                 meta.setPersistentDataType(upgradeKey, currentAttributeAmount)
                 upgraded = true
@@ -79,11 +79,15 @@ object UpgradeManager {
     }
 
     fun getAvailableUpgradesForItemStack(itemStack: ItemStack): List<AstraUpgrade> =
-         list.filter { it.id == itemStack.getAstraID() }
+        list.filter { it.id == itemStack.getAstraID() }
 
 
-    fun loadUpgrade() {
+    override fun onEnable() {
         list = AstraUpgrade.getUpgrades() ?: listOf()
+    }
+
+    override fun onDisable() {
+        list = emptyList()
     }
 
 

@@ -29,7 +29,7 @@ data class EmpireItem(
     val material: Material,
     var texturePath: String?,
     var modelPath: String?,
-    var armorColor:String?,
+    var armorColor: String?,
     val customModelData: Int?,
     val itemFlags: List<ItemFlag>?,
     val enchantments: Map<Enchantment, Int>?,
@@ -67,16 +67,22 @@ data class EmpireItem(
             itemMeta.setPersistentDataType(BukkitConstants.EMPIRE_DURABILITY, durability)
             itemMeta.setPersistentDataType(BukkitConstants.MAX_CUSTOM_DURABILITY, durability)
         }
-        if (armorColor!=null && (itemMeta is LeatherArmorMeta)){
-                val color = java.awt.Color.decode(armorColor)
+        if (armorColor != null && (itemMeta is LeatherArmorMeta)) {
+            val color = java.awt.Color.decode(armorColor)
             val r = color.red
             val g = color.green
             val b = color.blue
-            (itemMeta as LeatherArmorMeta) .setColor(Color.fromRGB(r,g,b))
+            (itemMeta as LeatherArmorMeta).setColor(Color.fromRGB(r, g, b))
             itemMeta.addItemFlags(ItemFlag.HIDE_DYE)
 
         }
         empireEnchants?.forEach { (k, v) ->
+
+            val empireEnchant = BukkitConstants.EmpireEnchants.enchantByName[k.uppercase()]
+            empireEnchant?.let {
+                itemMeta.setPersistentDataType(BukkitConstants.EmpireEnchants.EMPIRE_ENCHANT, 0)
+                itemMeta.setPersistentDataType(it, v.toIntOrNull() ?: return@let)
+            }
             when (k.lowercase()) {
                 BukkitConstants.MOLOTOV.value.key -> itemMeta.setPersistentDataType(
                     BukkitConstants.MOLOTOV,
@@ -93,14 +99,6 @@ data class EmpireItem(
                 BukkitConstants.HAMMER_ENCHANT.value.key -> itemMeta.setPersistentDataType(
                     BukkitConstants.HAMMER_ENCHANT,
                     v.toIntOrNull() ?: 0
-                )
-                BukkitConstants.LAVA_WALKER_ENCHANT.value.key -> itemMeta.setPersistentDataType(
-                    BukkitConstants.LAVA_WALKER_ENCHANT,
-                    v.toIntOrNull() ?: 0
-                )
-                BukkitConstants.VAMPIRISM_ENCHANT.value.key -> itemMeta.setPersistentDataType(
-                    BukkitConstants.VAMPIRISM_ENCHANT,
-                    v.toDoubleOrNull() ?: 0.0
                 )
                 BukkitConstants.GRENADE_EXPLOSION_POWER.value.key -> itemMeta.setPersistentDataType(
                     BukkitConstants.GRENADE_EXPLOSION_POWER,
@@ -181,7 +179,6 @@ data class EmpireItem(
                 getItemById(fileConfig.getConfigurationSection("yml_items.$it"), namespace)
             }
         }
-
 
 
         /**

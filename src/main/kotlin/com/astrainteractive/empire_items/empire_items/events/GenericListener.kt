@@ -16,6 +16,7 @@ import com.astrainteractive.empire_items.empire_items.events.upgrade.UpgradeEven
 import com.astrainteractive.empire_items.empire_items.events.villagers.VillagerEvent
 
 import com.astrainteractive.empire_items.empire_items.events.empireevents.MusicDiscsEvent
+import com.astrainteractive.empire_items.modules.enchants.Vampirism
 import org.bukkit.Bukkit
 
 
@@ -25,12 +26,11 @@ class GenericListener() : EventManager {
     init {
 
         BookSignEvent().onEnable(this)
-//        ModelEngine().onEnable(this)
+        ModelEngine().onEnable(this)
 //        MusicDiscsEvent().onEnable(this)
         MusicDiscsEvent().onEnable(this)
 //        AutoBlockChangeEvent().onEnable(this)
         //GunEvent().onEnable(this)
-        Vampirism().onEnable(this)
         if (Bukkit.getServer().pluginManager.getPlugin("ProtocolLib") != null)
             FontProtocolLibEvent().onEnable(this)
         if (Bukkit.getServer().pluginManager.getPlugin("ProtocolLib") != null)

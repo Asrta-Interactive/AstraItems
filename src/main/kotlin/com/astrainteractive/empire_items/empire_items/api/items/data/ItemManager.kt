@@ -4,11 +4,12 @@ import com.astrainteractive.empire_items.empire_items.api.utils.BukkitConstants
 import com.astrainteractive.empire_items.empire_items.api.utils.getCustomItemsFiles
 import com.astrainteractive.empire_items.empire_items.api.utils.getPersistentData
 import com.astrainteractive.empire_items.empire_items.api.upgrade.AstraUpgrade
+import com.astrainteractive.empire_items.empire_items.util.Disableable
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.Recipe
 
-object ItemManager {
+object ItemManager:Disableable {
     private val itemsInfo: MutableList<EmpireItem> = mutableListOf()
     private val itemStacks:MutableList<ItemStack> = mutableListOf()
     private var itemStacksMap:MutableMap<String,ItemStack> = mutableMapOf()
@@ -22,7 +23,7 @@ object ItemManager {
         mutableList.add(recipe)
         recipes[itemID] = mutableList
     }
-    fun clear(){
+    override fun onDisable(){
         itemStacks.clear()
         itemsInfo.clear()
         itemStacksMap.clear()
@@ -31,7 +32,7 @@ object ItemManager {
         recipes.clear()
         upgrades.clear()
     }
-    fun loadItems() {
+    override fun onEnable() {
         getCustomItemsFiles()?.map { fileManager ->
             val astraItem = EmpireItem.getItems(fileManager) ?:return@map
             itemsInfo.addAll(astraItem)

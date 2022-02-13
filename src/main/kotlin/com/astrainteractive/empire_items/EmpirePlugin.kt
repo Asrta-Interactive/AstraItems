@@ -15,8 +15,7 @@ import com.astrainteractive.empire_items.empire_items.util.Config
 import com.astrainteractive.empire_items.empire_items.util.Files
 import com.astrainteractive.empire_items.empire_items.util.Translations
 import com.astrainteractive.empire_items.empire_items.util.protection.KProtectionLib
-import com.astrainteractive.empire_items.modules.hud.thirst.RepeatableTask
-import com.astrainteractive.empire_items.modules.hud.thirst.ThirstModule
+import com.astrainteractive.empire_items.modules.enchants.EnchantManager
 import org.bukkit.Bukkit
 import org.bukkit.event.HandlerList
 import org.bukkit.plugin.java.JavaPlugin
@@ -58,7 +57,7 @@ class EmpirePlugin : JavaPlugin() {
      * Generic listener event handler
      */
     private lateinit var genericListener: GenericListener
-
+    private lateinit var enchantManager: EnchantManager
 
     /**
      * Instance for bank/credit system
@@ -88,15 +87,16 @@ class EmpirePlugin : JavaPlugin() {
         Config.load()
         commandManager = CommandManager()
         empireCredit = EmpireCredit()
-        ItemManager.loadItems()
+        ItemManager.onEnable()
         DropManager.loadDrops()
-        VillagerTradeManager.load()
-        UpgradeManager.loadUpgrade()
+        VillagerTradeManager.onEnable()
+        UpgradeManager.onEnable()
         CraftingManager.load()
         genericListener = GenericListener()
+        enchantManager = EnchantManager()
         if (server.pluginManager.getPlugin("WorldGuard") != null)
             KProtectionLib.init(this)
-        MobApi.loadEmpireMobs()
+        MobApi.onEnable()
         licenceTimer.enable()
 //        thirstModule.onEnable()
 
@@ -110,11 +110,14 @@ class EmpirePlugin : JavaPlugin() {
         licenceTimer.onDisable()
         AstraLibs.clearAllTasks()
         genericListener.onDisable()
+        enchantManager.onDisable()
         for (p in server.onlinePlayers)
             p.closeInventory()
-        ItemManager.clear()
+        ItemManager.onDisable()
         DropManager.clear()
-        VillagerTradeManager.clear()
+        MobApi.onDisable()
+        VillagerTradeManager.onDisable()
+        UpgradeManager.onDisable()
         FontManager.clear()
         CraftingManager.clear()
         HandlerList.unregisterAll(this)

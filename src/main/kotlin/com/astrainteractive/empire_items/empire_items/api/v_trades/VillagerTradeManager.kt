@@ -1,20 +1,22 @@
 package com.astrainteractive.empire_items.empire_items.api.v_trades
 
-object VillagerTradeManager {
+import com.astrainteractive.empire_items.empire_items.util.Disableable
+
+object VillagerTradeManager : Disableable {
 
     var villagerTrades = mutableListOf<AstraVillagerTrade>()
     var mapTrades = mutableMapOf<String, AstraVillagerTrade>()
 
-    fun clear(){
+    override fun onDisable() {
         villagerTrades.clear()
         mapTrades.clear()
 
     }
-    fun load(){
-        clear()
+
+    override fun onEnable() {
         villagerTrades = AstraVillagerTrade.getVillagerTrades().toMutableList()
         mapTrades = villagerTrades.associateBy { it.profession }.toMutableMap()
     }
 
-    fun villagerTradeByProfession(name:String) = mapTrades[name]
+    fun villagerTradeByProfession(name: String) = mapTrades[name]
 }

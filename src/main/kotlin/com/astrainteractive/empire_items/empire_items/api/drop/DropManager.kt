@@ -1,5 +1,6 @@
 package com.astrainteractive.empire_items.empire_items.api.drop
 
+import com.astrainteractive.astralibs.Logger
 import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager.toAstraItemOrItem
 import com.astrainteractive.empire_items.empire_items.util.calcChance
 import org.bukkit.Location
@@ -16,6 +17,7 @@ object DropManager {
 
     fun loadDrops() {
         dropsMap = AstraDrop.getDrops().toMutableList()
+        println(dropsMap)
     }
 
     fun getDropsFrom(dropFrom: String) = dropsMap.filter { it.dropFrom == dropFrom }.toSet().toMutableList()
@@ -35,6 +37,7 @@ object DropManager {
 
     fun spawnDrop(dropFrom: String, location: Location?): Boolean {
         var isDropped = false
+        Logger.log("${dropFrom} ${getDropsFrom(dropFrom)}")
         getDropsFrom(dropFrom).forEach {
             if (!calcChance(it.chance))
                 return@forEach

@@ -11,11 +11,6 @@ import org.bukkit.inventory.ItemStack
 
 class UpgradeEvent:EventListener {
 
-
-    init {
-        UpgradeManager.loadUpgrade()
-    }
-
     @EventHandler
     fun onAnvilEvent(e:PrepareAnvilEvent){
         val itemBefore: ItemStack = e.inventory.getItem(0) ?: return

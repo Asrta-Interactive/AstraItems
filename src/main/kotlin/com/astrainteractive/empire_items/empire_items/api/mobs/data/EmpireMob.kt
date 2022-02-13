@@ -10,6 +10,12 @@ data class EmpireMob(
     val spawn:SpawnInfo?,
     val attributes: List<EmpireMobAttribute>,
     val onEvent: List<EmpireMobEvent>,
+    val potionEffects:List<MobPotionEffect>,
+    val canBurn:Boolean,
+    val hitDelay:Int,
+    val hitRange:Int,
+    val decreaseDamageByRange:Boolean,
+    val bossBar:MobBossBar?
 ) {
 
     companion object {
@@ -32,7 +38,13 @@ data class EmpireMob(
                 entity = s.getString("entity",EntityType.ZOMBIE.name)!!,
                 attributes = attribute,
                 onEvent = events,
-                spawn = SpawnInfo.fromSection(s.getConfigurationSection("spawn"))
+                spawn = SpawnInfo.fromSection(s.getConfigurationSection("spawn")),
+                potionEffects = MobPotionEffect.getAll(s.getConfigurationSection("effects")),
+                canBurn = s.getBoolean("canBurn",true),
+                hitDelay = s.getInt("hitDelay",0),
+                hitRange = s.getInt("hitRange",20),
+                decreaseDamageByRange =s.getBoolean("decreaseDamageByRange",false),
+                bossBar = MobBossBar.getBar(s.getConfigurationSection("bossBar"))
             )
         }
     }

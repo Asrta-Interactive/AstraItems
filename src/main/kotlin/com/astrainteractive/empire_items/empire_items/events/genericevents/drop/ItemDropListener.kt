@@ -2,15 +2,18 @@ package com.astrainteractive.empire_items.empire_items.events.genericevents.drop
 
 import com.astrainteractive.empire_items.empire_items.api.drop.DropManager
 import com.astrainteractive.astralibs.EventListener
+import com.astrainteractive.astralibs.Logger
 import com.astrainteractive.empire_items.empire_items.api.drop.AstraDrop
 import com.astrainteractive.empire_items.empire_items.api.items.BlockParser
 import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager
 import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager.getItemStack
+import com.astrainteractive.empire_items.empire_items.api.mobs.MobApi
 import org.bukkit.Location
 import org.bukkit.block.Block
 import org.bukkit.block.Chest
 import org.bukkit.entity.Entity
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.block.Action
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.entity.EntityDeathEvent
@@ -27,7 +30,7 @@ class ItemDropListener : EventListener {
     @EventHandler
     fun onFishingEvent(e: PlayerFishEvent) {
         val caught = e.caught ?: return
-        DropManager.spawnDrop("PlayerFishEvent",caught.location)
+        DropManager.spawnDrop("PlayerFishEvent", caught.location)
     }
 
     @EventHandler
@@ -46,7 +49,7 @@ class ItemDropListener : EventListener {
         }
 
         val dropFrom = customBlockId ?: block.blockData.material.name
-        if (DropManager.spawnDrop(dropFrom,block.location))
+        if (DropManager.spawnDrop(dropFrom, block.location))
             e.isDropItems = false
     }
 
@@ -69,8 +72,9 @@ class ItemDropListener : EventListener {
 
     @EventHandler
     fun onMobDeath(e: EntityDeathEvent) {
-        val entity: Entity = e.entity
-        DropManager.spawnDrop(entity.type.name,entity.location)
+        val dropFrom = MobApi.getActiveEntity(e.entity)?.empireMob?.id ?: e.entity.type.name
+        MobApi.removeActiveEntity(e.entity)
+        DropManager.spawnDrop(dropFrom, e.entity.location)
     }
 
     override fun onDisable() {
