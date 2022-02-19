@@ -41,11 +41,10 @@ class GenericEvents : EventListener {
         var executed = false
         interact.forEach {
             executed = true
-            if (it.eventList?.contains(event.uppercase()) == false)
+            if (it.eventList?.contains(event) == false)
                 return@forEach
             if (hasCooldown(player, event, it.cooldown ?: 0))
                 return@forEach
-
             it.playCommand?.syncForEach { cmd ->
                     if (cmd.asConsole)
                         AstraLibs.instance.server.dispatchCommand(AstraLibs.instance.server.consoleSender, cmd.command)

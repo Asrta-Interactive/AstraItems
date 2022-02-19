@@ -5,8 +5,6 @@ import org.bukkit.configuration.ConfigurationSection
 
 data class EmpireMobEvent(
     val eventName:String,
-    val hitAfter:Long?,
-    val range:Int?,
     val decreaseDamageByRange:Boolean,
     val sound:String?,
     val cooldown:Long?,
@@ -23,8 +21,6 @@ data class EmpireMobEvent(
             s?:return null
             return EmpireMobEvent(
                 eventName= s.getString("eventName")?:s.name,
-                hitAfter = s.getIntOrNull("hitAfter")?.toLong(),
-                range = s.getIntOrNull("range"),
                 cooldown = s.getIntOrNull("cooldown")?.toLong(),
                 decreaseDamageByRange = s.getBoolean("decreaseDamageByRange"),
                 sound = s.getString("sound"),

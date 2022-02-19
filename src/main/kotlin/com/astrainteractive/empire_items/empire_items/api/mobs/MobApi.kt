@@ -2,20 +2,14 @@ package com.astrainteractive.empire_items.empire_items.api.mobs
 
 import com.astrainteractive.astralibs.valueOfOrNull
 import com.astrainteractive.empire_items.EmpirePlugin
-import com.astrainteractive.empire_items.empire_items.api.mobs.data.CustomEntityInfo
-import com.astrainteractive.empire_items.empire_items.api.mobs.data.EmpireMob
-import com.astrainteractive.empire_items.empire_items.api.mobs.data.MobBossBar
-import com.astrainteractive.empire_items.empire_items.util.AsyncHelper
-import com.astrainteractive.empire_items.empire_items.util.Disableable
-import com.astrainteractive.empire_items.empire_items.util.calcChance
-import com.astrainteractive.empire_items.empire_items.util.getBiome
+import com.astrainteractive.empire_items.empire_items.api.mobs.data.*
+import com.astrainteractive.empire_items.empire_items.util.*
+import com.destroystokyo.paper.ParticleBuilder
 import com.ticxo.modelengine.api.ModelEngineAPI
+import com.ticxo.modelengine.api.generator.blueprint.BlueprintBone
 import com.ticxo.modelengine.api.model.ActiveModel
 import com.ticxo.modelengine.api.model.ModeledEntity
-import org.bukkit.Bukkit
-import org.bukkit.Location
-import org.bukkit.Material
-import org.bukkit.NamespacedKey
+import org.bukkit.*
 import org.bukkit.attribute.Attribute
 import org.bukkit.attribute.AttributeModifier
 import org.bukkit.boss.BarColor
@@ -36,7 +30,9 @@ object MobApi : Disableable {
     private var empireMobs: MutableList<EmpireMob> = mutableListOf()
     private var empireMobsById: Map<String, EmpireMob> = mapOf()
 
-    private val activeMobs: MutableList<CustomEntityInfo> = mutableListOf()
+    private val _activeMobs: MutableList<CustomEntityInfo> = mutableListOf()
+    val activeMobs: List<CustomEntityInfo>
+        get() = _activeMobs
 
     /**
      * @return list of all ids of [EmpireMob]
@@ -91,6 +87,7 @@ object MobApi : Disableable {
     fun getByNaturalSpawn(e: Entity): List<EmpireMob>? {
         val mobs = MobApi.empireMobs.filter { emob ->
             emob.spawn?.conditions?.firstOrNull { cond ->
+
                 val chance = cond.replace[e.type.name]
                 val c1 = calcChance(chance?.toFloat() ?: -1f)
                 val c2 = e.location.y > cond.minY && e.location.y < cond.maxY
@@ -111,7 +108,6 @@ object MobApi : Disableable {
         val barColor = valueOfOrNull<BarColor>(bossBar.color) ?: BarColor.RED
         val barStyle = valueOfOrNull<BarStyle>(bossBar.barStyle) ?: BarStyle.SOLID
         val barFlags = bossBar.flags.mapNotNull { valueOfOrNull<BarFlag>(it) }.toTypedArray()
-        println(barFlags.toList())
         val bar =
             Bukkit.createBossBar(key, bossBar.name, barColor, barStyle, *barFlags)
         bar.isVisible = true
@@ -129,7 +125,12 @@ object MobApi : Disableable {
     /**
      * Replace entity [e] with [EmpireMob] as Custom ModelEngine entity
      */
-    fun replaceEntity(eMob: EmpireMob, e: Entity): CustomEntityInfo {
+    fun replaceEntity(eMob: EmpireMob, e: Entity, naturalSpawn: Boolean = false): CustomEntityInfo? {
+        if (naturalSpawn) {
+            val loc = e.location.clone()
+            spawnMob(eMob, loc)
+            return null
+        }
         eMob.attributes.forEach {
             val attr = valueOfOrNull<Attribute>(it.attribute) ?: return@forEach
             val amount = it.amount
@@ -172,7 +173,7 @@ object MobApi : Disableable {
         modeledEntity.activeModel?.modelId
         modeledEntity?.isInvisible = true
         val customEntityInfo = CustomEntityInfo(e, eMob, modeledEntity, model)
-        activeMobs.add(customEntityInfo)
+        _activeMobs.add(customEntityInfo)
         return customEntityInfo
     }
 
@@ -181,14 +182,14 @@ object MobApi : Disableable {
      * Remove active entity from list
      */
     fun removeActiveEntity(entity: Entity) {
-        activeMobs.removeIf { it.entity==entity }
+        _activeMobs.removeIf { it.entity == entity }
     }
 
     /**
      * Get all active entites as List of [CustomEntityInfo]
      */
-    fun getActiveEntities() = activeMobs.toList()
-    fun getActiveEntity(e:Entity) = activeMobs.firstOrNull() { it.entity==e }
+    fun getActiveEntities() = _activeMobs.toList()
+    fun getActiveEntity(e: Entity) = _activeMobs.firstOrNull() { it.entity == e }
 
     /**
      * Should spawned entity in location [l] be ignored
@@ -254,19 +255,19 @@ object MobApi : Disableable {
             if (frame == null || frame == 0f || (animationLength != null && frame.toInt() == animationLength))
                 activeModel.playAnimation(event.animation ?: "attack")
 
-            MobApi.runLater(event.hitAfter ?: 0L) {
+            MobApi.runLater(empireMob.hitDelay.toLong() ?: 0L) {
                 entities.forEach { entity ->
                     val distance = damager.location.distance(entity.location)
-                    if (distance > (event.range ?: 5))
+                    if (distance > (empireMob.hitRange ?: 5))
                         return@runLater
                     setAttacking(damager)
                     val damage = if (event.decreaseDamageByRange)
                         _damage / max(1.0, distance)
                     else _damage
 
-//                    com.astrainteractive.astralibs.async.AsyncHelper.callSyncMethod {
-//                        executeEvent(damager, activeModel, event)
-//                    }
+                    com.astrainteractive.astralibs.async.AsyncHelper.callSyncMethod {
+                        executeEvent(damager, activeModel, event)
+                    }
                     if ((entity as LivingEntity).health > 0)
                         (entity as LivingEntity).damage(damage, damager)
                     MobApi.runLater(2L) {
@@ -278,15 +279,59 @@ object MobApi : Disableable {
 
     }
 
+    private val particleCooldown: Cooldown<Int> = Cooldown()
+    private val soundCooldown: Cooldown<Int> = Cooldown()
+
+    private fun playParticle(e: Entity, model: ActiveModel, bonesInfo: List<BoneInfo>) {
+        bonesInfo.forEach { boneInfo ->
+            if (particleCooldown.hasCooldown(e.entityId, boneInfo.particle.cooldown))
+                return
+            else particleCooldown.setCooldown(e.entityId)
+            var particleBuilder = ParticleBuilder(Particle.valueOf(boneInfo.particle.name))
+                .extra(boneInfo.particle.extra)
+                .count(boneInfo.particle.amount)
+                .force(true)
+            particleBuilder = if (boneInfo.particle.color != null)
+                particleBuilder.color(boneInfo.particle.color)
+            else particleBuilder
+
+            boneInfo.bones.forEach { bones ->
+                val l = e.location.clone()
+                var modelBone: BlueprintBone? = null
+                bones.split(".").forEach bon@{ bone ->
+                    modelBone = modelBone?.getBone(bone) ?: model.blueprint.getBone(bone)
+                    modelBone?.let {
+                        l.add(it.localOffsetX, it.localOffsetY, it.localOffsetZ)
+                    }
+                }
+                particleBuilder.location(l).spawn()
+            }
+        }
+    }
+
+    fun executeEvent(entity: Entity, model: ActiveModel, event: EmpireMobEvent) {
+        if (!soundCooldown.hasCooldown(entity.entityId, event.cooldown)) {
+            entity.location.playSound(event.sound)
+            soundCooldown.setCooldown(entity.entityId)
+        }
+        playParticle(entity, model, event.bones)
+    }
+
 
     override fun onEnable() {
         empireMobs = EmpireMob.getAll().toMutableList()
         empireMobsById = empireMobs.associateBy { it.id }
+        val entities = Bukkit.getWorlds().flatMap { world ->
+            world.entities.mapNotNull {
+                return@mapNotNull getCustomEntityInfo(it)
+            }
+        }
+        _activeMobs.addAll(entities)
     }
 
     override fun onDisable() {
-        activeMobs.clear()
         empireMobs.clear()
+        _activeMobs.clear()
         bossBars.toMap().forEach { deleteEntityBossBar(it.key) }
     }
 

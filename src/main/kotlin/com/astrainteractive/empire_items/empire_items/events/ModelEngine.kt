@@ -8,10 +8,11 @@ import com.astrainteractive.empire_items.empire_items.api.mobs.MobApi.activeMode
 import com.astrainteractive.empire_items.empire_items.api.mobs.MobApi.modeledEntity
 import com.astrainteractive.empire_items.empire_items.api.mobs.data.BoneInfo
 import com.astrainteractive.empire_items.empire_items.api.mobs.data.EmpireMobEvent
+import com.astrainteractive.empire_items.empire_items.util.AsyncHelper
 import com.astrainteractive.empire_items.empire_items.util.Cooldown
+import com.astrainteractive.empire_items.empire_items.util.calcChance
 import com.astrainteractive.empire_items.empire_items.util.playSound
 import com.destroystokyo.paper.ParticleBuilder
-import com.ticxo.modelengine.api.generator.blueprint.Bone
 import com.ticxo.modelengine.api.model.ActiveModel
 import io.papermc.paper.event.entity.EntityMoveEvent
 import org.bukkit.Bukkit
@@ -30,17 +31,23 @@ class ModelEngine : EventListener {
 
 
     val bossBarScheduler = Bukkit.getScheduler().runTaskTimerAsynchronously(EmpirePlugin.instance, Runnable {
-            MobApi.bossBars.toMap().forEach bossBarsEntities@{
-                val entity = it.key
-                val bossBar = it.value
+        MobApi.bossBars.toMap().forEach bossBarsEntities@{
+            val entity = it.key
+            val bossBar = it.value
 
-                Bukkit.getOnlinePlayers().forEach { player ->
-                    if (player.location.distance(entity.location) > 70)
-                        bossBar.removePlayer(player)
-                    else bossBar.addPlayer(player)
+            Bukkit.getOnlinePlayers().forEach { player ->
+                if (player.location.distance(entity.location) > 70)
+                    bossBar.removePlayer(player)
+                else bossBar.addPlayer(player)
 
-                }
             }
+        }
+    }, 0L, 20L)
+    val entitySoundScheduler = Bukkit.getScheduler().runTaskTimerAsynchronously(EmpirePlugin.instance, Runnable {
+        MobApi.activeMobs.forEach { mobInfo ->
+            if (calcChance(1))
+                mobInfo.entity.location.playSound(mobInfo.empireMob.sound)
+        }
     }, 0L, 20L)
 
     @EventHandler
@@ -49,7 +56,7 @@ class ModelEngine : EventListener {
         val activeModel = modeledEntity.activeModel ?: return
         val empireMob = MobApi.getEmpireMob(activeModel.modelId) ?: return
         val event = empireMob.onEvent.firstOrNull { it.eventName == "EntityDamageEvent" } ?: return
-        executeEvent(e.entity, activeModel, event)
+        MobApi.executeEvent(e.entity, activeModel, event)
     }
 
     @EventHandler
@@ -57,8 +64,9 @@ class ModelEngine : EventListener {
         if (MobApi.isSpawnIgnored(e.location))
             return
         val mobs = MobApi.getByNaturalSpawn(e.entity) ?: return
-        MobApi.replaceEntity(mobs.shuffled().first(), e.entity)
+        MobApi.replaceEntity(mobs.shuffled().first(), e.entity, naturalSpawn = true)
     }
+
 
     @EventHandler
     fun entityMove(e: EntityMoveEvent) {
@@ -66,50 +74,10 @@ class ModelEngine : EventListener {
         val activeModel = modeledEntity.activeModel ?: return
         val empireMob = MobApi.getEmpireMob(activeModel.modelId) ?: return
         val event = empireMob.onEvent.firstOrNull { it.eventName == "EntityMoveEvent" } ?: return
-        executeEvent(e.entity, activeModel, event)
+        MobApi.executeEvent(e.entity, activeModel, event)
 
     }
 
-    private val particleCooldown: Cooldown<Int> = Cooldown()
-    private val soundCooldown: Cooldown<Int> = Cooldown()
-
-    private fun executeEvent(entity: Entity, model: ActiveModel, event: EmpireMobEvent) {
-        if (event.cooldown == null)
-            entity.location.playSound(event.sound)
-        if (soundCooldown.hasCooldown(entity.entityId, event.cooldown)) {
-            entity.location.playSound(event.sound)
-            soundCooldown.setCooldown(entity.entityId)
-        }
-        playParticle(entity, model, event.bones)
-    }
-
-
-    private fun playParticle(e: Entity, model: ActiveModel, bonesInfo: List<BoneInfo>) {
-        bonesInfo.forEach { boneInfo ->
-            if (particleCooldown.hasCooldown(e.entityId, boneInfo.particle.cooldown))
-                return
-            else particleCooldown.setCooldown(e.entityId)
-            var particleBuilder = ParticleBuilder(Particle.valueOf(boneInfo.particle.name))
-                .extra(boneInfo.particle.extra)
-                .count(boneInfo.particle.amount)
-                .force(true)
-            particleBuilder = if (boneInfo.particle.color != null)
-                particleBuilder.color(boneInfo.particle.color)
-            else particleBuilder
-
-            boneInfo.bones.forEach { bones ->
-                val l = e.location.clone()
-                var modelBone: Bone? = null
-                bones.split(".").forEach bon@{ bone ->
-                    modelBone = modelBone?.getBone(bone) ?: model.blueprint.getBone(bone)
-                    modelBone?.let {
-                        l.add(it.localOffsetX, it.localOffsetY, it.localOffsetZ)
-                    }
-                }
-                particleBuilder.location(l).spawn()
-            }
-        }
-    }
 
     @EventHandler
     fun onMobDamage(e: EntityDamageByEntityEvent) {
@@ -118,14 +86,11 @@ class ModelEngine : EventListener {
         val empireMob = MobApi.getEmpireMob(activeModel.modelId) ?: return
         val bar = MobApi.bossBars[e.entity] ?: return
         val livingEntity = (e.entity as LivingEntity)
-        bar.progress = livingEntity.health/livingEntity.maxHealth
-        Logger.log("${bar.progress}")
+        bar.progress = livingEntity.health / livingEntity.maxHealth
     }
 
     @EventHandler
     fun onDamage(e: EntityDamageByEntityEvent) {
-        if (e.damager is Player)
-            Logger.log("${(e.entity as LivingEntity).health}")
         if (e.entity !is LivingEntity)
             return
         if (MobApi.isAttacking(e.damager))
@@ -142,7 +107,9 @@ class ModelEngine : EventListener {
         MobApi.deleteEntityBossBar(e.entity)
     }
 
+
     override fun onDisable() {
         bossBarScheduler.cancel()
+        entitySoundScheduler.cancel()
     }
 }

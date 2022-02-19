@@ -152,7 +152,6 @@ class GunEvent : EventListener {
                 .color(rgbToColor(gunInfo.color ?: "#000000"))
                 .location(l.world ?: return, l.x, l.y, l.z)
                 .spawn()
-
             l =
                 l.add(
                     l.direction.x,
@@ -165,18 +164,15 @@ class GunEvent : EventListener {
 
             for (ent: Entity in getEntityByLocation(l, r))
                 if (ent is LivingEntity && ent != player) {
-
-                    val armor = getEntityArmor(ent.equipment)
                     val damage = (1 - i / gunInfo.bulletTrace) * gunInfo.damage
-                        ent.damage(damage, player)
+                    ent.damage(damage, player)
                 }
-
-
         }
-        if (gunInfo.explosion != null && KProtectionLib.canExplode(null,l))
+        if (gunInfo.explosion != null && KProtectionLib.canExplode(null, l))
             GrenadeEvent.generateExplosion(l, gunInfo.explosion.toDouble())
 
     }
+
 
     fun modifersAmount(itemStack: ItemStack?, slot: EquipmentSlot): Double {
         var amount = 0.0

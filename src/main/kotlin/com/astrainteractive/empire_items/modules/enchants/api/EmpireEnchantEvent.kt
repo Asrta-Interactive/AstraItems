@@ -2,12 +2,14 @@ package com.astrainteractive.empire_items.modules.enchants.api
 
 import com.astrainteractive.astralibs.EventListener
 import com.astrainteractive.empire_items.empire_items.api.utils.BukkitConstant
+import com.astrainteractive.empire_items.empire_items.api.utils.getPersistentData
 import com.astrainteractive.empire_items.empire_items.util.calcChance
 import com.astrainteractive.empire_items.modules.enchants.data.EmpireEnchantement
 import org.bukkit.Material
 import org.bukkit.event.EventHandler
 import org.bukkit.event.enchantment.EnchantItemEvent
 import org.bukkit.event.inventory.PrepareAnvilEvent
+import org.bukkit.inventory.ItemStack
 
 abstract class EmpireEnchantEvent : EventListener {
     abstract val enchant: BukkitConstant<Int, Int>
@@ -15,6 +17,7 @@ abstract class EmpireEnchantEvent : EventListener {
     abstract val materialWhitelist: List<Material>
     val empireEnchant: EmpireEnchantement?
         get() = EmpireEnchantApi.getEnchantment(enchant.value.key.uppercase())
+    fun getEnchantLevel(itemStack: ItemStack) = itemStack.itemMeta?.getPersistentData(enchant)
 
     @EventHandler
     fun onAnvilEnchant(e: PrepareAnvilEvent) {

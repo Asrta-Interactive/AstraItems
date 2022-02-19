@@ -13,6 +13,7 @@ data class EmpireMob(
     val potionEffects:List<MobPotionEffect>,
     val canBurn:Boolean,
     val hitDelay:Int,
+    val sound:String,
     val hitRange:Int,
     val decreaseDamageByRange:Boolean,
     val bossBar:MobBossBar?
@@ -42,6 +43,7 @@ data class EmpireMob(
                 potionEffects = MobPotionEffect.getAll(s.getConfigurationSection("effects")),
                 canBurn = s.getBoolean("canBurn",true),
                 hitDelay = s.getInt("hitDelay",0),
+                sound = s.getString("sound","")!!,
                 hitRange = s.getInt("hitRange",20),
                 decreaseDamageByRange =s.getBoolean("decreaseDamageByRange",false),
                 bossBar = MobBossBar.getBar(s.getConfigurationSection("bossBar"))

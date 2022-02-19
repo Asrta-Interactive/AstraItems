@@ -31,11 +31,15 @@ object BukkitConstants {
             get() = BukkitConstant("LAVA_WALKER_ENCHANT", PersistentDataType.INTEGER)
         val VAMPIRISM
             get() = BukkitConstant("VAMPIRISM", PersistentDataType.INTEGER)
+        val FROST_ASPECT
+            get() = BukkitConstant("FROST_ASPECT", PersistentDataType.INTEGER)
+        val BUTCHER
+            get() = BukkitConstant("BUTCHER", PersistentDataType.INTEGER)
         val STRIKE
             get() = BukkitConstant("STRIKE", PersistentDataType.INTEGER)
 
         val enchant: List<BukkitConstant<Int, Int>>
-            get() = listOf(LAVA_WALKER, VAMPIRISM, STRIKE)
+            get() = listOf(LAVA_WALKER, VAMPIRISM, STRIKE, FROST_ASPECT, BUTCHER)
         val enchantByName: Map<String, BukkitConstant<Int, Int>>
             get() = enchant.associateBy { it.value.key.uppercase() }
 

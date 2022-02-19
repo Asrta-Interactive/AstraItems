@@ -17,7 +17,6 @@ object DropManager {
 
     fun loadDrops() {
         dropsMap = AstraDrop.getDrops().toMutableList()
-        println(dropsMap)
     }
 
     fun getDropsFrom(dropFrom: String) = dropsMap.filter { it.dropFrom == dropFrom }.toSet().toMutableList()
@@ -37,7 +36,6 @@ object DropManager {
 
     fun spawnDrop(dropFrom: String, location: Location?): Boolean {
         var isDropped = false
-        Logger.log("${dropFrom} ${getDropsFrom(dropFrom)}")
         getDropsFrom(dropFrom).forEach {
             if (!calcChance(it.chance))
                 return@forEach

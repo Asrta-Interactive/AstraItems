@@ -80,7 +80,7 @@ class EmpirePlugin : JavaPlugin() {
     override fun onEnable() {
         instance = this
         AstraLibs.create(this)
-        Logger.init("AstraTemplate")
+        Logger.init("EmpireItems")
         FontManager.load()
         translations = Translations()
         empireFiles = Files()
@@ -122,7 +122,6 @@ class EmpirePlugin : JavaPlugin() {
         CraftingManager.clear()
         HandlerList.unregisterAll(this)
         Bukkit.getScheduler().cancelTasks(this)
-//        thirstModule.onDisable()
 //        RepeatableTask.clearTasks()
 
     }

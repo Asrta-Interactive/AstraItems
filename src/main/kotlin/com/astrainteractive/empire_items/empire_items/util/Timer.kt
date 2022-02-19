@@ -6,9 +6,10 @@ class Timer {
         started = System.currentTimeMillis()
         return this
     }
+    fun isEnded(time:Long=1000L) = (System.currentTimeMillis()-started)>time
 
-    fun stop(): Double {
-        return (System.currentTimeMillis() - started) / 1000.0
+    fun stop(time:Int=1000): Double {
+        return (System.currentTimeMillis() - started) / time.toDouble()
     }
 
 }

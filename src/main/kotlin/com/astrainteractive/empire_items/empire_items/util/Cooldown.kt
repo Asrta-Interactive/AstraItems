@@ -11,6 +11,7 @@ class Cooldown<K> {
     }
 
     fun hasCooldown(key: K,time: Int) = hasCooldown(key,time.toLong())
+
     fun hasCooldown(key: K, time: Long?): Boolean {
         time?:return false
         val started = map[key] ?: return false

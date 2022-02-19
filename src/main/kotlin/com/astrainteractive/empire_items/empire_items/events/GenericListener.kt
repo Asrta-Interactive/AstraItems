@@ -31,6 +31,7 @@ class GenericListener() : EventManager {
         MusicDiscsEvent().onEnable(this)
 //        AutoBlockChangeEvent().onEnable(this)
         //GunEvent().onEnable(this)
+//        QuakeMovement().onEnable(this)
         if (Bukkit.getServer().pluginManager.getPlugin("ProtocolLib") != null)
             FontProtocolLibEvent().onEnable(this)
         if (Bukkit.getServer().pluginManager.getPlugin("ProtocolLib") != null)
