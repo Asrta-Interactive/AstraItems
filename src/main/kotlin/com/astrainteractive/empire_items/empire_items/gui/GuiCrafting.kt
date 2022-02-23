@@ -1,19 +1,19 @@
 package com.astrainteractive.empire_items.empire_items.gui
 
-import com.astrainteractive.empire_items.empire_items.api.drop.DropManager
+import com.astrainteractive.empire_items.api.drop.DropApi
 import com.astrainteractive.astralibs.HEX
+import com.astrainteractive.astralibs.async.AsyncHelper
 import com.astrainteractive.empire_items.empire_items.gui.data.GuiConfig
 import com.astrainteractive.astralibs.menu.AstraMenuSize
 import com.astrainteractive.empire_items.EmpirePlugin
-import com.astrainteractive.empire_items.empire_items.api.crafting.CraftingManager
-import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager
-import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager.getAstraID
-import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager.toAstraItemOrItem
-import com.astrainteractive.empire_items.empire_items.api.upgrade.UpgradeManager
-import com.astrainteractive.empire_items.empire_items.api.utils.setDisplayName
-import com.astrainteractive.empire_items.empire_items.api.v_trades.AstraVillagerTrade
-import com.astrainteractive.empire_items.empire_items.api.v_trades.VillagerTradeManager
-import com.astrainteractive.empire_items.empire_items.util.AsyncHelper
+import com.astrainteractive.empire_items.api.crafting.CraftingApi
+import com.astrainteractive.empire_items.api.items.data.ItemApi
+import com.astrainteractive.empire_items.api.items.data.ItemApi.getAstraID
+import com.astrainteractive.empire_items.api.items.data.ItemApi.toAstraItemOrItem
+import com.astrainteractive.empire_items.api.upgrade.UpgradeApi
+import com.astrainteractive.empire_items.api.utils.setDisplayName
+import com.astrainteractive.empire_items.api.v_trades.AstraVillagerTrade
+import com.astrainteractive.empire_items.api.v_trades.VillagerTradeApi
 import com.astrainteractive.empire_items.empire_items.util.EmpirePermissions
 import org.bukkit.ChatColor
 import org.bukkit.event.inventory.InventoryClickEvent
@@ -24,8 +24,8 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility) :
 
     val guiSettings = GuiConfig.getGuiConfig()
     val itemID = playerMenuUtility.prevItems.last()
-    val recipes = ItemManager.getItemRecipes(itemID)
-    val usedInCraftIDS = CraftingManager.usedInCraft(itemID)
+    val recipes = ItemApi.getItemRecipes(itemID)
+    val usedInCraftIDS = CraftingApi.usedInCraft(itemID)
     val usedInCraftItemStacks = usedInCraftIDS.map { it.toAstraItemOrItem() }
 
 
@@ -143,7 +143,7 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility) :
         inventory.clear()
     }
     fun setVillagerInfo(){
-        val v = VillagerTradeManager.villagerTrades.mapNotNull {
+        val v = VillagerTradeApi.villagerTrades.mapNotNull {
             val filtered = it.trades.filter { it.id==itemID }
             if (filtered.isEmpty())
                 null
@@ -161,20 +161,20 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility) :
         inventory.setItem(backButtonIndex-2,item)
     }
     fun setUpgradeInfo(){
-        val u = UpgradeManager.getAvailableUpgradesForItemStack(itemID.toAstraItemOrItem()?:return)
+        val u = UpgradeApi.getAvailableUpgradesForItemStack(itemID.toAstraItemOrItem()?:return)
         if (u.isEmpty())
             return
         val item = guiSettings.settings.moreButton.clone().apply {
             val meta = itemMeta!!
             meta.setDisplayName((EmpirePlugin.translations.guiInfoDropColor+"Улучшает:").HEX())
-            meta.lore = u.map { "${ChatColor.GRAY}${UpgradeManager.attrMap[it.attribute.name]} [${it.addMin};${it.addMax}]" }
+            meta.lore = u.map { "${ChatColor.GRAY}${UpgradeApi.attrMap[it.attribute.name]} [${it.addMin};${it.addMax}]" }
             itemMeta = meta
         }
         inventory.setItem(backButtonIndex+2,item)
 
     }
     fun setBlockInfo(){
-        val b = ItemManager.getItemInfo(itemID)?.block?.generate?:return
+        val b = ItemApi.getItemInfo(itemID)?.block?.generate?:return
         val item = guiSettings.settings.moreButton.clone().apply {
             val meta = itemMeta!!
             meta.setDisplayName((EmpirePlugin.translations.guiInfoDropColor+"Генерируется:").HEX())
@@ -189,7 +189,7 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility) :
         inventory.setItem(backButtonIndex+1,item)
     }
     fun setDropInfo(){
-        val drops = DropManager.getDropsById(itemID)
+        val drops = DropApi.getDropsById(itemID)
         if (drops.isEmpty())
             return
         val item = guiSettings.settings.moreButton.clone().apply {

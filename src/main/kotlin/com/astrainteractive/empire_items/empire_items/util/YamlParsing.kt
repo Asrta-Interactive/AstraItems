@@ -1,15 +1,9 @@
 package com.astrainteractive.empire_items.empire_items.util
 
-import com.astrainteractive.astralibs.Logger
 import com.astrainteractive.astralibs.catching
 import com.astrainteractive.astralibs.getFloat
-import com.astrainteractive.empire_items.empire_items.api.font.AstraFont
 import org.bukkit.configuration.ConfigurationSection
-import kotlin.reflect.KClass
-import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty1
-import kotlin.reflect.full.instanceParameter
-import kotlin.reflect.full.memberProperties
 
 
 @Target(AnnotationTarget.PROPERTY)

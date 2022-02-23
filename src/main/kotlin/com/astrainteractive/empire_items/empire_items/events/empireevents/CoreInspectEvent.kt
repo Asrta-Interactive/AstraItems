@@ -4,9 +4,9 @@ import com.astrainteractive.astralibs.AstraLibs
 import com.astrainteractive.astralibs.HEX
 import com.astrainteractive.astralibs.EventListener
 import com.astrainteractive.astralibs.EventManager
-import com.astrainteractive.empire_items.empire_items.api.utils.BukkitConstants
-import com.astrainteractive.empire_items.empire_items.api.utils.getPersistentData
-import com.astrainteractive.empire_items.empire_items.api.utils.setPersistentDataType
+import com.astrainteractive.empire_items.api.utils.BukkitConstants
+import com.astrainteractive.empire_items.api.utils.getPersistentData
+import com.astrainteractive.empire_items.api.utils.setPersistentDataType
 import net.coreprotect.CoreProtect
 import net.coreprotect.CoreProtectAPI
 import org.bukkit.ChatColor

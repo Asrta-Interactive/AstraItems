@@ -1,10 +1,10 @@
 package com.astrainteractive.empire_items.empire_items.events.villagers
 
 import com.astrainteractive.astralibs.EventListener
-import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager.getAstraID
-import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager.toAstraItemOrItem
-import com.astrainteractive.empire_items.empire_items.api.v_trades.TradeItem
-import com.astrainteractive.empire_items.empire_items.api.v_trades.VillagerTradeManager
+import com.astrainteractive.empire_items.api.items.data.ItemApi.getAstraID
+import com.astrainteractive.empire_items.api.items.data.ItemApi.toAstraItemOrItem
+import com.astrainteractive.empire_items.api.v_trades.TradeItem
+import com.astrainteractive.empire_items.api.v_trades.VillagerTradeApi
 
 import org.bukkit.entity.Villager
 import org.bukkit.event.EventHandler
@@ -27,7 +27,7 @@ class VillagerEvent : EventListener {
         if (e.entity !is Villager)
             return
         val villager = e.entity as Villager
-        val trades = VillagerTradeManager.villagerTradeByProfession(villager.profession.name) ?: return
+        val trades = VillagerTradeApi.villagerTradeByProfession(villager.profession.name) ?: return
         if (e.isCancelled)
             return
         for (trade in trades.trades)
@@ -57,7 +57,7 @@ class VillagerEvent : EventListener {
             return
 
         val villager = e.rightClicked as Villager
-        val trades = VillagerTradeManager.villagerTradeByProfession(villager.profession.name) ?: return
+        val trades = VillagerTradeApi.villagerTradeByProfession(villager.profession.name) ?: return
 
         val recipes = villager.recipes.toMutableList()
         villager.recipes = mutableListOf()

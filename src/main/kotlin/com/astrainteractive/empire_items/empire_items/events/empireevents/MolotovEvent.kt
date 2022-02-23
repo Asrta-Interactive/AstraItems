@@ -4,7 +4,7 @@ import com.astrainteractive.astralibs.EventListener
 import com.astrainteractive.astralibs.Logger
 import com.astrainteractive.empire_items.EmpirePlugin
 import com.astrainteractive.empire_items.EmpirePlugin.Companion.instance
-import com.astrainteractive.empire_items.empire_items.api.utils.BukkitConstants
+import com.astrainteractive.empire_items.api.utils.BukkitConstants
 import com.astrainteractive.empire_items.empire_items.util.protection.KProtectionLib
 
 import org.bukkit.Location
@@ -19,19 +19,21 @@ import org.bukkit.event.entity.ProjectileHitEvent
 class MolotovEvent : EventListener {
 
 
-
     @EventHandler
     fun onProjectileHit(e: ProjectileHitEvent) {
         if (e.entity.shooter !is Player) return
         val player = e.entity.shooter as Player
         val itemStack = player.inventory.itemInMainHand
         val meta = itemStack.itemMeta ?: return
-        if (!KProtectionLib.canIgnite(null,e.hitBlock?.location?:return))
+        if (!KProtectionLib.canIgnite(null, e.hitBlock?.location ?: return))
             return
         val molotovPower =
             meta.persistentDataContainer.get(BukkitConstants.MOLOTOV.value, BukkitConstants.MOLOTOV.dataType)
                 ?: return
-        Logger.log("Player ${player.name} threw molotov at blockLocation=${e.hitBlock?.location} playerLocation=${player.location}","Molotov")
+        Logger.log(
+            "Player ${player.name} threw molotov at blockLocation=${e.hitBlock?.location} playerLocation=${player.location}",
+            "Molotov"
+        )
         Igniter(instance, e.hitBlock ?: return, molotovPower.toInt(), player)
     }
 
@@ -40,13 +42,7 @@ class MolotovEvent : EventListener {
 
         init {
             block.location.world?.spawnParticle(Particle.SMOKE_LARGE, block.location, 300, 0.0, 0.0, 0.0, 0.2)
-
-
-                setFire(block, radius, player)
-
-
-
-
+            setFire(block, radius, player)
         }
 
 
@@ -81,7 +77,7 @@ class MolotovEvent : EventListener {
         }
 
         private fun setFire(block: Block, radius: Int, player: Player) {
-            if (!KProtectionLib.canIgnite(null,block?.location))
+            if (!KProtectionLib.canIgnite(null, block?.location))
                 return
             if (radius == 0)
                 return

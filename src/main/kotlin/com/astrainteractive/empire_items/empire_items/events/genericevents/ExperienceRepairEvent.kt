@@ -1,9 +1,9 @@
 package com.astrainteractive.empire_items.empire_items.events.genericevents
 
 import com.astrainteractive.astralibs.EventListener
-import com.astrainteractive.empire_items.empire_items.api.utils.BukkitConstants
-import com.astrainteractive.empire_items.empire_items.api.utils.getPersistentData
-import com.astrainteractive.empire_items.empire_items.api.utils.setPersistentDataType
+import com.astrainteractive.empire_items.api.utils.BukkitConstants
+import com.astrainteractive.empire_items.api.utils.getPersistentData
+import com.astrainteractive.empire_items.api.utils.setPersistentDataType
 
 import org.bukkit.event.EventHandler
 import org.bukkit.event.inventory.PrepareAnvilEvent

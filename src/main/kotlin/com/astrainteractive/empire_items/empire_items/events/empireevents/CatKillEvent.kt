@@ -11,7 +11,7 @@ class CatKillEvent: EventListener {
     @EventHandler
     private fun onCatHurtEvent(e:EntityDamageEvent){
         val entity = e.entity
-        if (entity.type!=EntityType.CAT && entity.type!=EntityType.OCELOT)
+        if (entity.type!=EntityType.CAT && entity.type!=EntityType.OCELOT || entity.type!=EntityType.PARROT)
             return
         e.damage = 0.0
         e.isCancelled = true

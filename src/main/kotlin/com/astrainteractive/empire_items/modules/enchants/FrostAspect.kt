@@ -1,13 +1,11 @@
 package com.astrainteractive.empire_items.modules.enchants
 
-import com.astrainteractive.empire_items.empire_items.api.utils.BukkitConstants
-import com.astrainteractive.empire_items.empire_items.api.utils.getPersistentData
+import com.astrainteractive.empire_items.api.utils.BukkitConstants
 import com.astrainteractive.empire_items.modules.enchants.api.EmpireEnchantEvent
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.EntityDamageByEntityEvent
-import org.bukkit.inventory.ItemStack
 
 
 class FrostAspect : EmpireEnchantEvent() {

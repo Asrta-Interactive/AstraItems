@@ -6,19 +6,22 @@ import org.bukkit.configuration.ConfigurationSection
 data class EmpireEnchantement(
     val id: String,
     val maxLevel: Int = 5,
-    val expPerLevel:Int = 1,
+    val expPerLevel: Int = 1,
     val chances: IntArray,
     val value: Double,
     val increaseModifier: Double,
-    val enchantingTableEnabled:Boolean = true,
-    val anvilEnchantingEnabled:Boolean = true
+    val enchantingTableEnabled: Boolean = true,
+    val anvilEnchantingEnabled: Boolean = true
 ) {
+    val totalMultiplier: Double
+        get() = value * increaseModifier
+
     companion object {
         fun loadALl(): List<EmpireEnchantement> {
             val fConfig = FileManager("modules/empire_enchants.yml").getConfig().getConfigurationSection("enchants")
             return fConfig?.getKeys(false)?.mapNotNull { id ->
                 loadEnchant(fConfig.getConfigurationSection(id))
-            }?: listOf()
+            } ?: listOf()
 
         }
 
@@ -33,12 +36,12 @@ data class EmpireEnchantement(
             return EmpireEnchantement(
                 id = s.name,
                 maxLevel = s.getInt("maxLevel", 5),
-                expPerLevel = s.getInt("expPerLevel",1),
+                expPerLevel = s.getInt("expPerLevel", 1),
                 chances = chancec,
                 value = s.getDouble("value"),
                 increaseModifier = s.getDouble("increaseModifier"),
-                enchantingTableEnabled = s.getBoolean("enchantingTableEnabled",true),
-                anvilEnchantingEnabled = s.getBoolean("anvilEnchantingEnabled",true),
+                enchantingTableEnabled = s.getBoolean("enchantingTableEnabled", true),
+                anvilEnchantingEnabled = s.getBoolean("anvilEnchantingEnabled", true),
             )
         }
     }

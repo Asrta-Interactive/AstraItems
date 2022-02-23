@@ -2,8 +2,8 @@ package com.astrainteractive.empire_items.empire_items.events.empireevents
 
 import com.astrainteractive.astralibs.EventListener
 import com.astrainteractive.empire_items.EmpirePlugin.Companion.instance
-import com.astrainteractive.empire_items.empire_items.api.utils.BukkitConstants
-import com.astrainteractive.empire_items.empire_items.api.utils.hasPersistentData
+import com.astrainteractive.empire_items.api.utils.BukkitConstants
+import com.astrainteractive.empire_items.api.utils.hasPersistentData
 import com.sk89q.worldedit.bukkit.BukkitAdapter
 import com.sk89q.worldedit.world.World
 import com.sk89q.worldguard.WorldGuard

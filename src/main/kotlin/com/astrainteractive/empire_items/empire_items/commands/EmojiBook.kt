@@ -3,7 +3,7 @@ package com.astrainteractive.empire_items.empire_items.commands
 import com.astrainteractive.astralibs.AstraLibs
 import com.astrainteractive.astralibs.convertHex
 import com.astrainteractive.astralibs.registerCommand
-import com.astrainteractive.empire_items.empire_items.api.font.FontManager
+import com.astrainteractive.empire_items.api.font.FontApi
 import com.astrainteractive.empire_items.empire_items.util.EmpireUtils
 import org.bukkit.entity.Player
 
@@ -12,7 +12,7 @@ class EmojiBook {
         AstraLibs.registerCommand("emojis") { sender, args ->
             if (sender !is Player)
                 return@registerCommand
-            val list = FontManager.allFonts().mapNotNull { font ->
+            val list = FontApi.allFonts().mapNotNull { font ->
                 if (font.blockSend)
                     null
                 else

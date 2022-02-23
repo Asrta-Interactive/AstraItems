@@ -1,15 +1,14 @@
 package com.astrainteractive.empire_items.modules.enchants.api
 
-import com.astrainteractive.empire_items.empire_items.api.utils.BukkitConstant
-import com.astrainteractive.empire_items.empire_items.api.utils.getPersistentData
-import com.astrainteractive.empire_items.empire_items.api.utils.setPersistentDataType
-import com.astrainteractive.empire_items.empire_items.util.Disableable
+import com.astrainteractive.empire_items.api.utils.BukkitConstant
+import com.astrainteractive.empire_items.api.utils.getPersistentData
+import com.astrainteractive.empire_items.api.utils.setPersistentDataType
+import com.astrainteractive.empire_items.api.utils.Disableable
 import com.astrainteractive.empire_items.modules.enchants.data.EmpireEnchantement
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.event.inventory.PrepareAnvilEvent
 import org.bukkit.inventory.ItemStack
-import kotlin.math.max
 import kotlin.random.Random
 
 

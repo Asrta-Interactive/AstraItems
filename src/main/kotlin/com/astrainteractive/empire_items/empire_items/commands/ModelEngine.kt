@@ -4,7 +4,7 @@ import com.astrainteractive.astralibs.AstraLibs
 import com.astrainteractive.astralibs.registerCommand
 import com.astrainteractive.astralibs.registerTabCompleter
 import com.astrainteractive.astralibs.withEntry
-import com.astrainteractive.empire_items.empire_items.api.mobs.MobApi
+import com.astrainteractive.empire_items.api.mobs.MobApi
 import com.astrainteractive.empire_items.empire_items.util.EmpirePermissions
 import com.astrainteractive.empire_items.empire_items.util.Translations
 import org.bukkit.Material

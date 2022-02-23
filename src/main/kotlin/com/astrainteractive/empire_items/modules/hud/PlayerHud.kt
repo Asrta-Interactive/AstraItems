@@ -1,6 +1,6 @@
 package com.astrainteractive.empire_items.modules.hud
 
-import com.astrainteractive.empire_items.empire_items.api.font.AstraFont
+import com.astrainteractive.empire_items.api.font.AstraFont
 
 data class PlayerHud(
     val id: String,

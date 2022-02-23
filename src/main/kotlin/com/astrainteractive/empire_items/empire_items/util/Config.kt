@@ -26,12 +26,6 @@ object Config {
         private set
     var generateOnlyOnNewChunks = false
         private set
-    var generationClearCheck = 10000L
-        private set
-    var generateBlocksGap = 1L
-        private set
-    var generateBlocksTimeGap = 1000L
-        private set
     var generateMaxChunksAtOnce = 2
         private set
 
@@ -49,10 +43,7 @@ object Config {
         generationDeepDebug = s.getBoolean("blockGeneration.deepDebug", generationDeepDebug)
         generateBlocks = s.getBoolean("blockGeneration.generate", generateBlocks)
         generateOnlyOnNewChunks = s.getBoolean("blockGeneration.onlyOnNewChunks", generateOnlyOnNewChunks)
-        generationClearCheck = s.getLong("blockGeneration.generationClearCheck", generationClearCheck)
-        generateBlocksGap = s.getLong("blockGeneration.generateBlocksGap", generateBlocksGap)
         generateMaxChunksAtOnce = s.getInt("blockGeneration.maxChunksAtOnce", generateMaxChunksAtOnce)
-        generateBlocksTimeGap = s.getLong("blockGeneration.generateBlocksTimeGap", generateBlocksTimeGap)
         tabPrefix = s.getString("tabPrefix", tabPrefix)!!
 
     }

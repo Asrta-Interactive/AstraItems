@@ -1,8 +1,8 @@
 package com.astrainteractive.empire_items.modules.enchants.api
 
 import com.astrainteractive.astralibs.EventListener
-import com.astrainteractive.empire_items.empire_items.api.utils.BukkitConstant
-import com.astrainteractive.empire_items.empire_items.api.utils.getPersistentData
+import com.astrainteractive.empire_items.api.utils.BukkitConstant
+import com.astrainteractive.empire_items.api.utils.getPersistentData
 import com.astrainteractive.empire_items.empire_items.util.calcChance
 import com.astrainteractive.empire_items.modules.enchants.data.EmpireEnchantement
 import org.bukkit.Material

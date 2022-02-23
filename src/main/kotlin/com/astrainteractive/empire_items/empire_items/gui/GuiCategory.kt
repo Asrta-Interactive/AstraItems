@@ -1,10 +1,9 @@
 package com.astrainteractive.empire_items.empire_items.gui
 
+import com.astrainteractive.astralibs.async.AsyncHelper
 import com.astrainteractive.empire_items.empire_items.gui.data.GuiConfig
 import com.astrainteractive.astralibs.menu.AstraMenuSize
-import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager.getItemStack
-import com.astrainteractive.empire_items.empire_items.util.AsyncHelper
-import kotlinx.coroutines.launch
+import com.astrainteractive.empire_items.api.items.data.ItemApi.getItemStack
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
 

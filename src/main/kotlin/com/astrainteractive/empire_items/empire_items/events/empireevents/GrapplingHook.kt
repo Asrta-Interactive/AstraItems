@@ -1,10 +1,10 @@
 package com.astrainteractive.empire_items.empire_items.events.empireevents
 
 import com.astrainteractive.astralibs.EventListener
-import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager.getAstraID
-import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager.getItemInfo
-import com.astrainteractive.empire_items.empire_items.api.utils.BukkitConstants
-import com.astrainteractive.empire_items.empire_items.api.utils.getPersistentData
+import com.astrainteractive.empire_items.api.items.data.ItemApi.getAstraID
+import com.astrainteractive.empire_items.api.items.data.ItemApi.getItemInfo
+import com.astrainteractive.empire_items.api.utils.BukkitConstants
+import com.astrainteractive.empire_items.api.utils.getPersistentData
 import com.destroystokyo.paper.ParticleBuilder
 import org.bukkit.*
 

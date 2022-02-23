@@ -3,8 +3,8 @@ package com.astrainteractive.empire_items.empire_items.commands
 import com.astrainteractive.astralibs.AstraLibs
 import com.astrainteractive.astralibs.registerCommand
 import com.astrainteractive.empire_items.EmpirePlugin
-import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager.getAstraID
-import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager.getItemStack
+import com.astrainteractive.empire_items.api.items.data.ItemApi.getAstraID
+import com.astrainteractive.empire_items.api.items.data.ItemApi.getItemStack
 import org.bukkit.entity.Player
 
 class Emreplace {

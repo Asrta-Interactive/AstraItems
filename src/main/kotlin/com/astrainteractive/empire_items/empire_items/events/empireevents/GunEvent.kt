@@ -2,13 +2,13 @@ package com.astrainteractive.empire_items.empire_items.events.empireevents
 
 import com.astrainteractive.astralibs.AstraLibs
 import com.astrainteractive.astralibs.EventListener
-import com.astrainteractive.empire_items.empire_items.api.items.data.Gun
-import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager
-import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager.getAstraID
-import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager.toAstraItemOrItem
-import com.astrainteractive.empire_items.empire_items.api.utils.BukkitConstants
-import com.astrainteractive.empire_items.empire_items.api.utils.getPersistentData
-import com.astrainteractive.empire_items.empire_items.api.utils.setPersistentDataType
+import com.astrainteractive.empire_items.api.items.data.Gun
+import com.astrainteractive.empire_items.api.items.data.ItemApi
+import com.astrainteractive.empire_items.api.items.data.ItemApi.getAstraID
+import com.astrainteractive.empire_items.api.items.data.ItemApi.toAstraItemOrItem
+import com.astrainteractive.empire_items.api.utils.BukkitConstants
+import com.astrainteractive.empire_items.api.utils.getPersistentData
+import com.astrainteractive.empire_items.api.utils.setPersistentDataType
 import com.astrainteractive.empire_items.empire_items.util.protection.KProtectionLib
 import com.comphenix.protocol.PacketType
 import com.comphenix.protocol.ProtocolLibrary
@@ -114,7 +114,7 @@ class GunEvent : EventListener {
 
         val itemStack = e.item ?: return
         val id = itemStack.getAstraID()
-        val gunInfo = ItemManager.getItemInfo(id)?.gun ?: return
+        val gunInfo = ItemApi.getItemInfo(id)?.gun ?: return
         val player = e.player
         if (e.action == Action.LEFT_CLICK_AIR || e.action == Action.LEFT_CLICK_BLOCK) {
             reloadGun(player, itemStack, gunInfo)

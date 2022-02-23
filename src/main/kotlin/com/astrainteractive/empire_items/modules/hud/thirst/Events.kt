@@ -1,7 +1,7 @@
 package com.astrainteractive.empire_items.modules.hud.thirst
 
 import com.astrainteractive.astralibs.EventListener
-import com.astrainteractive.empire_items.empire_items.util.AsyncHelper
+import com.astrainteractive.astralibs.async.AsyncHelper
 import org.bukkit.Material
 import org.bukkit.World
 import org.bukkit.entity.Player

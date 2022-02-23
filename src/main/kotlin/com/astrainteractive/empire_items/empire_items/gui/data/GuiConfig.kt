@@ -3,8 +3,8 @@ package com.astrainteractive.empire_items.empire_items.gui.data
 import com.astrainteractive.astralibs.getHEXString
 import com.astrainteractive.astralibs.getHEXStringList
 import com.astrainteractive.empire_items.EmpirePlugin
-import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager.getItemStack
-import com.astrainteractive.empire_items.empire_items.api.utils.setDisplayName
+import com.astrainteractive.empire_items.api.items.data.ItemApi.getItemStack
+import com.astrainteractive.empire_items.api.utils.setDisplayName
 import org.bukkit.Material
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.inventory.ItemStack

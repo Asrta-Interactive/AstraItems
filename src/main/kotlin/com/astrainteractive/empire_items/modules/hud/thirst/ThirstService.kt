@@ -1,7 +1,7 @@
 package com.astrainteractive.empire_items.modules.hud.thirst
 
 import com.astrainteractive.astralibs.uuid
-import com.astrainteractive.empire_items.empire_items.api.font.FontManager
+import com.astrainteractive.empire_items.api.font.FontApi
 import com.astrainteractive.empire_items.modules.hud.HudView
 import org.bukkit.entity.Player
 import kotlin.math.max
@@ -28,7 +28,7 @@ object ThirstService {
         val old = thirstsMap[player.uuid] ?: return
         var new = max(min(21, old + value), 0)
         thirstsMap[player.uuid] = new
-        HudView.send(player, FontManager.map["thirst_${new}"] ?: return, "thirst",208)
+        HudView.send(player, FontApi.map["thirst_${new}"] ?: return, "thirst",208)
     }
 
     fun getValue(player: Player): Int? {

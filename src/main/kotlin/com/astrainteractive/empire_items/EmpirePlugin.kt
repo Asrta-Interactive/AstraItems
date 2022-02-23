@@ -2,20 +2,14 @@ package com.astrainteractive.empire_items
 
 import com.astrainteractive.astralibs.*
 import com.astrainteractive.empire_items.credit.EmpireCredit
-import com.astrainteractive.empire_items.empire_items.api.crafting.CraftingManager
-import com.astrainteractive.empire_items.empire_items.api.drop.DropManager
-import com.astrainteractive.empire_items.empire_items.api.font.FontManager
-import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager
-import com.astrainteractive.empire_items.empire_items.api.mobs.MobApi
-import com.astrainteractive.empire_items.empire_items.api.upgrade.UpgradeManager
-import com.astrainteractive.empire_items.empire_items.api.v_trades.VillagerTradeManager
+import com.astrainteractive.empire_items.api.EmpireAPI
 import com.astrainteractive.empire_items.empire_items.commands.CommandManager
 import com.astrainteractive.empire_items.empire_items.events.GenericListener
 import com.astrainteractive.empire_items.empire_items.util.Config
 import com.astrainteractive.empire_items.empire_items.util.Files
 import com.astrainteractive.empire_items.empire_items.util.Translations
 import com.astrainteractive.empire_items.empire_items.util.protection.KProtectionLib
-import com.astrainteractive.empire_items.modules.enchants.EnchantManager
+import com.astrainteractive.empire_items.modules.ModuleManager
 import org.bukkit.Bukkit
 import org.bukkit.event.HandlerList
 import org.bukkit.plugin.java.JavaPlugin
@@ -57,21 +51,16 @@ class EmpirePlugin : JavaPlugin() {
      * Generic listener event handler
      */
     private lateinit var genericListener: GenericListener
-    private lateinit var enchantManager: EnchantManager
 
     /**
      * Instance for bank/credit system
      */
     lateinit var empireCredit: EmpireCredit
-
-    //    private lateinit var database:EmpireDatabase
-//    private lateinit var empireRating:EmpireRating
     private val licenceTimer = LicenceChecker()
 
 
 
 
-//    var thirstModule: ThirstModule = ThirstModule()
 
 
     /**
@@ -81,24 +70,17 @@ class EmpirePlugin : JavaPlugin() {
         instance = this
         AstraLibs.create(this)
         Logger.init("EmpireItems")
-        FontManager.load()
         translations = Translations()
         empireFiles = Files()
         Config.load()
         commandManager = CommandManager()
         empireCredit = EmpireCredit()
-        ItemManager.onEnable()
-        DropManager.loadDrops()
-        VillagerTradeManager.onEnable()
-        UpgradeManager.onEnable()
-        CraftingManager.load()
+        ModuleManager.onEnable()
+        EmpireAPI.onEnable()
         genericListener = GenericListener()
-        enchantManager = EnchantManager()
         if (server.pluginManager.getPlugin("WorldGuard") != null)
             KProtectionLib.init(this)
-        MobApi.onEnable()
         licenceTimer.enable()
-//        thirstModule.onEnable()
 
     }
 
@@ -110,19 +92,12 @@ class EmpirePlugin : JavaPlugin() {
         licenceTimer.onDisable()
         AstraLibs.clearAllTasks()
         genericListener.onDisable()
-        enchantManager.onDisable()
         for (p in server.onlinePlayers)
             p.closeInventory()
-        ItemManager.onDisable()
-        DropManager.clear()
-        MobApi.onDisable()
-        VillagerTradeManager.onDisable()
-        UpgradeManager.onDisable()
-        FontManager.clear()
-        CraftingManager.clear()
         HandlerList.unregisterAll(this)
         Bukkit.getScheduler().cancelTasks(this)
-//        RepeatableTask.clearTasks()
+        EmpireAPI.onDisable()
+        ModuleManager.onDisable()
 
     }
 }

@@ -1,12 +1,11 @@
 package com.astrainteractive.empire_items.empire_items.events.decoration
 
 import com.astrainteractive.astralibs.EventListener
-import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager.getAstraID
+import com.astrainteractive.empire_items.api.items.DecorationBlockAPI
+import com.astrainteractive.empire_items.api.items.data.ItemApi.getAstraID
 import org.bukkit.Material
-import org.bukkit.block.Block
 import org.bukkit.event.EventHandler
 import org.bukkit.event.block.Action
-import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot

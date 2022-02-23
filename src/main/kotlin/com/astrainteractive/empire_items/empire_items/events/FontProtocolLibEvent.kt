@@ -68,17 +68,12 @@ class FontProtocolLibEvent : EventListener {
             PacketType.Play.Server.OPEN_WINDOW
 
         ) {
-            override fun onPacketReceiving(event: PacketEvent) {
-                val packet = event.packet
-//                println("Packet Receiving: " + packet.getType().name());
-            }
+            override fun onPacketReceiving(event: PacketEvent) = Unit
 
             override fun onPacketSending(event: PacketEvent) {
-//                println("Packet Sending: " + event.packet.getType().name());
                 fun chatCompToEmoji(packet: PacketContainer, i: Int) {
                     val chatComponent = packet.chatComponents.read(i) ?: return
                     chatComponent.json = EmpireUtils.emojiPattern(chatComponent.json)
-                    //packet.chatComponents.setReadOnly(i, false)
                     packet.chatComponents.write(i, chatComponent)
                 }
 
@@ -97,12 +92,10 @@ class FontProtocolLibEvent : EventListener {
                 }
 
                 val packet = event.packet
-                //println(packet.type)
                 for (i in 0 until packet.chatComponents.size()) {
                     chatCompToEmoji(packet, i)
                     for (j in 0 until packet.modifier.size()) {
                         val obj = packet.modifier.read(j) ?: continue
-                        //println(obj)
                         if (obj is TranslatableComponent)
                             packet.modifier.write(j, obj.args(getListComponent(obj)))
 
@@ -118,16 +111,13 @@ class FontProtocolLibEvent : EventListener {
     }
 
     override fun onDisable() {
-
         protocolManager.removePacketListener(packetListener)
         PlayerJoinEvent.getHandlerList().unregister(this)
-
     }
 
     init {
         initPackerListener()
         for (player in Bukkit.getOnlinePlayers())
             changePlayerTabName(player)
-
     }
 }

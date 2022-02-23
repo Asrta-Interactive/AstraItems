@@ -13,7 +13,8 @@ class EnchantManager : EventManager {
 
     init {
         EmpireEnchantApi.onEnable()
-        Logger
+        Vyderlight().onEnable(this)
+        AquaLight().onEnable(this)
     }
 
     override fun onDisable() {

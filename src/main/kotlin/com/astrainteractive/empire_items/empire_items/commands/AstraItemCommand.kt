@@ -5,8 +5,8 @@ import com.astrainteractive.astralibs.registerCommand
 import com.astrainteractive.astralibs.registerTabCompleter
 import com.astrainteractive.astralibs.withEntry
 import com.astrainteractive.empire_items.EmpirePlugin
-import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager
-import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager.toAstraItemOrItem
+import com.astrainteractive.empire_items.api.items.data.ItemApi
+import com.astrainteractive.empire_items.api.items.data.ItemApi.toAstraItemOrItem
 import com.astrainteractive.empire_items.empire_items.util.EmpirePermissions
 import com.astrainteractive.empire_items.empire_items.util.Translations
 import org.bukkit.Bukkit
@@ -48,7 +48,7 @@ class AstraItemCommand {
         when (args.size) {
             1 -> return@registerTabCompleter listOf("give").withEntry(args[0])
             2 -> return@registerTabCompleter Bukkit.getOnlinePlayers().map { it.name }.withEntry(args[1])
-            3 -> return@registerTabCompleter ItemManager.getItemsIDS().withEntry(args[2])
+            3 -> return@registerTabCompleter ItemApi.getItemsIDS().withEntry(args[2])
         }
         return@registerTabCompleter listOf()
 

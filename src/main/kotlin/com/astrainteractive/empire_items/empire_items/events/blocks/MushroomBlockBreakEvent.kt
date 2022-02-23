@@ -1,8 +1,8 @@
 package com.astrainteractive.empire_items.empire_items.events.blocks
 
 import com.astrainteractive.astralibs.EventListener
-import com.astrainteractive.empire_items.empire_items.api.items.BlockParser
-import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager
+import com.astrainteractive.empire_items.api.items.BlockParser
+import com.astrainteractive.empire_items.api.items.data.ItemApi
 import org.bukkit.event.EventHandler
 import org.bukkit.event.block.BlockBreakEvent
 
@@ -17,7 +17,7 @@ class MushroomBlockBreakEvent: EventListener {
         val player = e.player
         val block = e.block
         val data = BlockParser.getBlockData(block)?:return
-        val id = ItemManager.getBlockInfoByData(data)?.id?:return
+        val id = ItemApi.getBlockInfoByData(data)?.id?:return
         e.isDropItems=false
     }
 }

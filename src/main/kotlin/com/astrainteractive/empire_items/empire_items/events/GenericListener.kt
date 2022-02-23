@@ -8,34 +8,31 @@ import com.astrainteractive.empire_items.empire_items.events.blocks.*
 import com.astrainteractive.empire_items.empire_items.events.empireevents.*
 import com.astrainteractive.empire_items.empire_items.events.genericevents.BookSignEvent
 import com.astrainteractive.empire_items.empire_items.events.genericevents.ExperienceRepairEvent
-import com.astrainteractive.empire_items.empire_items.events.genericevents.GenericEvents
-import com.astrainteractive.empire_items.empire_items.events.genericevents.drop.ItemDropListener
-import com.astrainteractive.empire_items.empire_items.events.resourcepack.ProtocolLibResourcePack
+import com.astrainteractive.empire_items.empire_items.events.genericevents.ItemInteractEvent
+import com.astrainteractive.empire_items.empire_items.events.genericevents.drop.ItemDropEvent
+import com.astrainteractive.empire_items.empire_items.events.resourcepack.ProtocolLibResourcePackEvent
 import com.astrainteractive.empire_items.empire_items.events.resourcepack.ResourcePackEvent
 import com.astrainteractive.empire_items.empire_items.events.upgrade.UpgradeEvent
 import com.astrainteractive.empire_items.empire_items.events.villagers.VillagerEvent
 
 import com.astrainteractive.empire_items.empire_items.events.empireevents.MusicDiscsEvent
-import com.astrainteractive.empire_items.modules.enchants.Vampirism
 import org.bukkit.Bukkit
 
 
-class GenericListener() : EventManager {
+class GenericListener : EventManager {
     override val handlers: MutableList<EventListener> = mutableListOf()
 
-    init {
 
-        BookSignEvent().onEnable(this)
-        ModelEngine().onEnable(this)
-//        MusicDiscsEvent().onEnable(this)
-        MusicDiscsEvent().onEnable(this)
-//        AutoBlockChangeEvent().onEnable(this)
-        //GunEvent().onEnable(this)
-//        QuakeMovement().onEnable(this)
-        if (Bukkit.getServer().pluginManager.getPlugin("ProtocolLib") != null)
+    init {
+        if (Bukkit.getServer().pluginManager.getPlugin("ProtocolLib") != null) {
             FontProtocolLibEvent().onEnable(this)
-        if (Bukkit.getServer().pluginManager.getPlugin("ProtocolLib") != null)
-            ProtocolLibResourcePack().onEnable(this)
+            ProtocolLibResourcePackEvent().onEnable(this)
+        }
+        if (Bukkit.getServer().pluginManager.getPlugin("CoreProtect") != null)
+            CoreInspectEvent().onEnable(this)
+        BookSignEvent().onEnable(this)
+        ModelEngineEvent().onEnable(this)
+        MusicDiscsEvent().onEnable(this)
         LavaWalkerEvent().onEnable(this)
         HammerEvent().onEnable(this)
         MolotovEvent().onEnable(this)
@@ -48,24 +45,19 @@ class GenericListener() : EventManager {
         VoidTotemEvent().onEnable(this)
         ResourcePackEvent().onEnable(this)
         ExperienceRepairEvent().onEnable(this)
-        if (Bukkit.getServer().pluginManager.getPlugin("CoreProtect") != null)
-            CoreInspectEvent().onEnable(this)
         DurabilityCraftEvent().onEnable(this)
         GunEvent().onEnable(this)
         MenuListener().onEnable(this)
         UpgradeEvent().onEnable(this)
-        ItemDropListener().onEnable(this)
-        GenericEvents().onEnable(this)
+        ItemDropEvent().onEnable(this)
+        ItemInteractEvent().onEnable(this)
         VillagerEvent().onEnable(this)
-        PlayerShowRecipeKey().onEnable(this)
+        PlayerShowRecipeKeyEvent().onEnable(this)
         BlockGenerationEvent().onEnable(this)
-//        FixBlockGenerationEvent().onEnable(this)
-//        TestEvent().onEnable(this)
         BlockHardnessEvent().onEnable(this)
         MushroomBlockPlaceEvent().onEnable(this)
         MushroomBlockBreakEvent().onEnable(this)
         MushroomCancelEvent().onEnable(this)
-//        DecorationEvent().onEnable(this)
 
 
     }

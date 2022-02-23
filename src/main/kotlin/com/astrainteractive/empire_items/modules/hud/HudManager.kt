@@ -1,12 +1,12 @@
 package com.astrainteractive.empire_items.modules.hud
 
-import com.astrainteractive.empire_items.empire_items.api.font.AstraFont
-import com.astrainteractive.empire_items.empire_items.api.font.FontManager
+import com.astrainteractive.empire_items.api.font.AstraFont
+import com.astrainteractive.empire_items.api.font.FontApi
 
 object HudManager {
 
     private fun fontOffset(amount: Int): String {
-        return FontManager.HudOffsets.getOffsets(amount)
+        return FontApi.HudOffsets.getOffsets(amount)
     }
 
     private fun fontWithOffset(font: AstraFont): String {

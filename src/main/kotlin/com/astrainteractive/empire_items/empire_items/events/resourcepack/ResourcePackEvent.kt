@@ -4,6 +4,7 @@ import com.astrainteractive.astralibs.EventListener
 import com.astrainteractive.astralibs.Logger
 import com.astrainteractive.empire_items.EmpirePlugin
 import com.astrainteractive.empire_items.empire_items.util.Config
+import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerResourcePackStatusEvent
@@ -22,8 +23,11 @@ class ResourcePackEvent : EventListener {
     fun onJoin(e: PlayerJoinEvent) {
         val p = e.player
         if (Config.requestPackOnJoin || !p.hasPlayedBefore()) {
-            p.performCommand("empack")
-            Logger.log("Игрок ${p.name} присоединился впервые. Запрашиваем ресурс-пак",TAG)
+            Bukkit.getScheduler().runTaskLater(EmpirePlugin.instance, Runnable {
+                p.performCommand("empack")
+                Logger.log("Игрок ${p.name} присоединился впервые. Запрашиваем ресурс-пак",TAG)
+            },300L)
+
         } else
             p.sendTitle(
                 EmpirePlugin.translations.resourcePackHintTitle,

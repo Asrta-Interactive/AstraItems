@@ -4,7 +4,7 @@ import com.astrainteractive.astralibs.AstraLibs
 import com.astrainteractive.astralibs.HEX
 import com.astrainteractive.astralibs.registerCommand
 import com.astrainteractive.astralibs.registerTabCompleter
-import com.astrainteractive.empire_items.empire_items.api.font.FontManager
+import com.astrainteractive.empire_items.api.font.FontApi
 import com.astrainteractive.empire_items.empire_items.util.Config
 import com.astrainteractive.empire_items.empire_items.util.Translations
 import org.bukkit.Bukkit
@@ -13,7 +13,7 @@ import kotlin.random.Random
 
 class General {
     val emojiCompleter = AstraLibs.registerTabCompleter("emoji") { sender, args ->
-        return@registerTabCompleter FontManager.playerFonts().map { it.char }
+        return@registerTabCompleter FontApi.playerFonts().map { it.char }
     }
 
     private val edice = AstraLibs.registerCommand("edice") { sender, args ->

@@ -2,10 +2,10 @@ package com.astrainteractive.empire_items.empire_items.events.empireevents
 
 import com.astrainteractive.astralibs.HEX
 import com.astrainteractive.astralibs.EventListener
-import com.astrainteractive.empire_items.empire_items.api.items.data.EmpireItem
-import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager
-import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager.getAstraID
-import com.astrainteractive.empire_items.empire_items.api.items.data.ItemManager.toAstraItemOrItem
+import com.astrainteractive.empire_items.api.items.data.EmpireItem
+import com.astrainteractive.empire_items.api.items.data.ItemApi
+import com.astrainteractive.empire_items.api.items.data.ItemApi.getAstraID
+import com.astrainteractive.empire_items.api.items.data.ItemApi.toAstraItemOrItem
 import net.md_5.bungee.api.ChatMessageType
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Location
@@ -58,7 +58,7 @@ class MusicDiscsEvent : EventListener {
             e.isCancelled = true
 
         } else {
-            val musicDisc = ItemManager.getItemInfo(e.item?.getAstraID())?: return
+            val musicDisc = ItemApi.getItemInfo(e.item?.getAstraID())?: return
             musicDisc.musicDisc?:return
             e.item!!.amount -= 1
             playMusic(musicDisc, jukebox.location)

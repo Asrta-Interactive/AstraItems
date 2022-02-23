@@ -1,6 +1,6 @@
 package com.astrainteractive.empire_items.empire_items.util.resource_pack.data
 
-import com.astrainteractive.empire_items.empire_items.api.font.AstraFont
+import com.astrainteractive.empire_items.api.font.AstraFont
 import org.apache.commons.lang.StringEscapeUtils
 
 data class Providers(
