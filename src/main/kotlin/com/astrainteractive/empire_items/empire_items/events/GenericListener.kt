@@ -5,6 +5,7 @@ import com.astrainteractive.astralibs.EventListener
 import com.astrainteractive.astralibs.EventManager
 import com.astrainteractive.astralibs.menu.MenuListener
 import com.astrainteractive.empire_items.empire_items.events.blocks.*
+import com.astrainteractive.empire_items.empire_items.events.decoration.DecorationEvent
 import com.astrainteractive.empire_items.empire_items.events.empireevents.*
 import com.astrainteractive.empire_items.empire_items.events.genericevents.BookSignEvent
 import com.astrainteractive.empire_items.empire_items.events.genericevents.ExperienceRepairEvent
@@ -58,6 +59,7 @@ class GenericListener : EventManager {
         MushroomBlockPlaceEvent().onEnable(this)
         MushroomBlockBreakEvent().onEnable(this)
         MushroomCancelEvent().onEnable(this)
+        DecorationEvent().onEnable(this)
 
 
     }

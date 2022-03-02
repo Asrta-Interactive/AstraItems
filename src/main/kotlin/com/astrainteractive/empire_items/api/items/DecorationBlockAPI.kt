@@ -4,6 +4,7 @@ import com.astrainteractive.empire_items.api.items.data.ItemApi
 import com.astrainteractive.empire_items.api.items.data.ItemApi.getAstraID
 import com.astrainteractive.empire_items.api.items.data.ItemApi.toAstraItemOrItem
 import com.astrainteractive.empire_items.api.items.data.decoration.Decoration
+import com.astrainteractive.empire_items.empire_items.util.playSound
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.Rotation
@@ -16,17 +17,14 @@ import kotlin.math.sign
 
 object DecorationBlockAPI {
 
-    private fun decorationByID(id: String) = ItemApi.getItemInfo(id)?.decoration
-
-
-    fun Location.floor() = Location(
+    private fun Location.floor() = Location(
         world,
         floor(x),
         floor(y),
         floor(z)
     )
 
-    fun getDecorationByBoundingBox(location: Location): Entity? {
+    private fun getDecorationByBoundingBox(location: Location): Entity? {
         val l = location.clone().floor()
         for (e in location.world?.getNearbyEntities(location, 2.0, 2.0, 2.0) ?: return null) {
             if (e !is ItemFrame)
@@ -39,53 +37,49 @@ object DecorationBlockAPI {
     }
 
 
-    fun breakBoundingBox(location: Location) {
+    private fun breakBoundingBox(location: Location) {
         if (location.block.type != Material.BARRIER)
             return
         location.block.type = Material.AIR
     }
 
+    private fun createBoundingBox(decoration: Decoration, location: Location): Boolean {
+        val l = location.clone()
+        l.block.type = Material.BARRIER
+        return true
+    }
 
     fun breakItem(location: Location) {
         val decor = getDecorationByBoundingBox(location) ?: return
         if (decor !is ItemFrame)
             return
+
         val itemFrame = decor as ItemFrame
         val item = itemFrame.item.getAstraID()
         val itemStack = item.toAstraItemOrItem()?.clone() ?: return
+        val decoration = ItemApi.getItemInfo(item) ?: return
+        location.playSound(decoration.decoration?.breakSound)
         location.world?.dropItem(location, itemStack)
         itemFrame.setItem(null)
         itemFrame.remove()
         breakBoundingBox(location)
     }
 
-    fun createBoundingBox(decoration: Decoration, location: Location): Boolean {
-        val l = location.clone()
-        l.block.type = Material.BARRIER
-        return true
-    }
 
-    fun placeBlock(id: String, location: Location, playerLoc: Location): Boolean {
-        val decoration = decorationByID(id) ?: return false
+    fun placeBlock(id: String, itemFrame: ItemFrame, playerLoc: Location, blockFace: BlockFace): Boolean {
+        val decoration = ItemApi.getItemInfo(id)?.decoration ?: return false
+        itemFrame.location.playSound(decoration.placeSound)
         val itemStack = id.toAstraItemOrItem()?.clone() ?: return false
-        location.block.type = Material.AIR
 
-
-        val itemFrame = location.world!!.spawnEntity(location.clone().floor(), EntityType.ITEM_FRAME) as ItemFrame
         itemFrame.isFixed = true
         itemFrame.isVisible = true
         itemFrame.itemDropChance = 0.0f
-        itemFrame.isCustomNameVisible = false
+        itemFrame.isCustomNameVisible = true
         itemFrame.isInvulnerable = true
         itemFrame.customName = ""
-        if (playerLoc.pitch > 0)
-            itemFrame.setFacingDirection(BlockFace.UP, true)
-        else
-            itemFrame.setFacingDirection(BlockFace.DOWN, true)
-
-
-        val yaw = playerLoc.yaw+10*(playerLoc.yaw.sign)
-
+        var yaw = playerLoc.yaw + 10 * (playerLoc.yaw.sign)
+        if (blockFace == BlockFace.DOWN)
+            yaw *= -1
         val flipMap = mapOf(
             0 to Rotation.FLIPPED,
             1 to Rotation.FLIPPED_45,
@@ -97,14 +91,12 @@ object DecorationBlockAPI {
             -2 to Rotation.CLOCKWISE,
             -1 to Rotation.CLOCKWISE_135
         )
-        itemFrame.rotation = flipMap[(yaw/45).toInt()]!!
-
-
+        itemFrame.rotation = flipMap[(yaw / 45).toInt()]!!
         val meta = itemStack.itemMeta
         meta?.setDisplayName(null)
         itemStack.itemMeta = meta
         itemFrame.setItem(itemStack)
-        createBoundingBox(decoration, location)
+        createBoundingBox(decoration, itemFrame.location)
         return true
     }
 }
