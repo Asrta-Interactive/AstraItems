@@ -82,11 +82,11 @@ object UpgradeApi : Disableable {
         list.filter { it.id == itemStack.getAstraID() }
 
 
-    override fun onEnable() {
+    override suspend fun onEnable() {
         list = AstraUpgrade.getUpgrades() ?: listOf()
     }
 
-    override fun onDisable() {
+    override suspend fun onDisable() {
         list = emptyList()
     }
 

@@ -2,10 +2,12 @@ package com.astrainteractive.empire_items.empire_items.events.empireevents
 
 import com.astrainteractive.astralibs.AstraLibs
 import com.astrainteractive.astralibs.EventListener
+import com.astrainteractive.astralibs.valueOfOrNull
 import com.astrainteractive.empire_items.api.items.data.Gun
 import com.astrainteractive.empire_items.api.items.data.ItemApi
 import com.astrainteractive.empire_items.api.items.data.ItemApi.getAstraID
 import com.astrainteractive.empire_items.api.items.data.ItemApi.toAstraItemOrItem
+import com.astrainteractive.empire_items.api.items.data.interact.PlayPotionEffect
 import com.astrainteractive.empire_items.api.utils.BukkitConstants
 import com.astrainteractive.empire_items.api.utils.getPersistentData
 import com.astrainteractive.empire_items.api.utils.setPersistentDataType
@@ -25,8 +27,10 @@ import org.bukkit.event.player.*
 import org.bukkit.inventory.EntityEquipment
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.meta.Damageable
 import java.lang.IllegalArgumentException
 import java.lang.NumberFormatException
+import kotlin.math.max
 
 class GunEvent : EventListener {
 
@@ -55,6 +59,17 @@ class GunEvent : EventListener {
         }
     }
 
+    private fun setItemDamage(item: ItemStack, maxClipSize: Int?) {
+        maxClipSize ?: return
+        val itemMeta = item.itemMeta
+        val currentClipSize = itemMeta.getPersistentData(BukkitConstants.CLIP_SIZE) ?: return
+        val maxDur = item.type.maxDurability.toInt()
+        (itemMeta as Damageable).damage = maxDur - (maxDur * currentClipSize / maxClipSize)
+        if (itemMeta.damage == 0)
+            itemMeta.damage = 1
+        item.itemMeta = itemMeta
+    }
+
     private fun reloadGun(player: Player, itemStack: ItemStack, gun: Gun) {
         val itemMeta = itemStack.itemMeta
         val currentClipSize = itemMeta.getPersistentData(BukkitConstants.CLIP_SIZE) ?: return
@@ -69,6 +84,8 @@ class GunEvent : EventListener {
             itemMeta.setPersistentDataType(BukkitConstants.CLIP_SIZE, gun.clipSize)
         }
         itemStack.itemMeta = itemMeta
+        setItemDamage(itemStack, gun.clipSize)
+
     }
 
     private fun setRecoil(player: Player, recoil: Double) {
@@ -133,6 +150,7 @@ class GunEvent : EventListener {
         if (currentClipSize != null)
             itemMeta.setPersistentDataType(BukkitConstants.CLIP_SIZE, currentClipSize.minus(1))
         itemStack.itemMeta = itemMeta
+        setItemDamage(itemStack, gunInfo.clipSize)
         var l = player.location.add(0.0, 1.3, 0.0)
         if (player.isSneaking)
             l = l.add(0.0, -0.2, 0.0)
@@ -144,12 +162,15 @@ class GunEvent : EventListener {
 
 
         for (i in 0 until gunInfo.bulletTrace) {
-            ParticleBuilder(Particle.REDSTONE)
+            val particle = valueOfOrNull<Particle>(gunInfo.particle ?: "") ?: Particle.REDSTONE
+            var builder = ParticleBuilder(particle)
                 .count(20)
                 .force(true)
                 .extra(0.06)
                 .data(null)
-                .color(rgbToColor(gunInfo.color ?: "#000000"))
+            if (particle == Particle.REDSTONE)
+                builder = builder.color(rgbToColor(gunInfo.color ?: "#000000"))
+            builder = builder
                 .location(l.world ?: return, l.x, l.y, l.z)
                 .spawn()
             l =
@@ -162,39 +183,17 @@ class GunEvent : EventListener {
             if (!l.block.isPassable)
                 break
 
-            for (ent: Entity in getEntityByLocation(l, r))
-                if (ent is LivingEntity && ent != player) {
-                    val damage = (1 - i / gunInfo.bulletTrace) * gunInfo.damage
-                    ent.damage(damage, player)
-                }
+            for (ent: Entity in getEntityByLocation(l, r)) {
+                gunInfo.onContact?.play(ent, creator = player)
+                if (ent is LivingEntity && ent != player)
+                    gunInfo.damage?.let { ent.damage((1 - i / gunInfo.bulletTrace) * it, player) }
+            }
         }
         if (gunInfo.explosion != null && KProtectionLib.canExplode(null, l))
             GrenadeEvent.generateExplosion(l, gunInfo.explosion.toDouble())
 
     }
 
-
-    fun modifersAmount(itemStack: ItemStack?, slot: EquipmentSlot): Double {
-        var amount = 0.0
-        itemStack?.itemMeta?.attributeModifiers?.forEach { a, am ->
-            if (am?.slot != slot)
-                return@forEach
-            amount += am.amount
-        }
-        return amount
-    }
-
-    fun getEntityArmor(e: EntityEquipment?): Double {
-        e ?: return 0.0
-        return listOf(
-            modifersAmount(e.helmet, EquipmentSlot.HEAD),
-            modifersAmount(e.chestplate, EquipmentSlot.CHEST),
-            modifersAmount(e.leggings, EquipmentSlot.LEGS),
-            modifersAmount(e.boots, EquipmentSlot.FEET),
-            modifersAmount(e.itemInMainHand, EquipmentSlot.HAND),
-            modifersAmount(e.itemInOffHand, EquipmentSlot.OFF_HAND)
-        ).sum()
-    }
 
     private fun getEntityByLocation(loc: Location, r: Double): MutableList<Entity> {
         val entities: MutableList<Entity> = mutableListOf()

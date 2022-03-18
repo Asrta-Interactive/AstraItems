@@ -5,16 +5,16 @@ import com.astrainteractive.empire_items.EmpirePlugin
 import com.astrainteractive.empire_items.api.mobs.MobApi
 import com.astrainteractive.empire_items.api.mobs.MobApi.activeModel
 import com.astrainteractive.empire_items.api.mobs.MobApi.modeledEntity
-import com.astrainteractive.empire_items.empire_items.util.calcChance
 import com.astrainteractive.empire_items.empire_items.util.playSound
 import io.papermc.paper.event.entity.EntityMoveEvent
 import org.bukkit.Bukkit
+import org.bukkit.attribute.Attribute
 import org.bukkit.entity.LivingEntity
 import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.EntityDamageByEntityEvent
-import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.entity.EntityDeathEvent
 import org.bukkit.event.entity.EntitySpawnEvent
+import kotlin.random.Random
 
 class ModelEngineEvent : EventListener {
 
@@ -31,22 +31,14 @@ class ModelEngineEvent : EventListener {
 
             }
         }
-    }, 0L, 20L)
+    }, 0L, 5L)
     val entitySoundScheduler = Bukkit.getScheduler().runTaskTimerAsynchronously(EmpirePlugin.instance, Runnable {
         MobApi.activeMobs.forEach { mobInfo ->
-            if (calcChance(1))
-                mobInfo.entity.location.playSound(mobInfo.empireMob.sound)
+            if (Random.nextDouble(100.0) < 5)
+                mobInfo.entity.location.playSound(mobInfo.empireMob.idleSound[Random.nextInt(mobInfo.empireMob.idleSound.size)])
         }
     }, 0L, 20L)
 
-    @EventHandler
-    fun onDamaged(e: EntityDamageEvent) {
-        val modeledEntity = e.entity.modeledEntity ?: return
-        val activeModel = modeledEntity.activeModel ?: return
-        val empireMob = MobApi.getEmpireMob(activeModel.modelId) ?: return
-        val event = empireMob.onEvent.firstOrNull { it.eventName == "EntityDamageEvent" } ?: return
-        MobApi.executeEvent(e.entity, activeModel, event)
-    }
 
     @EventHandler
     fun onMobSpawn(e: EntitySpawnEvent) {
@@ -62,9 +54,8 @@ class ModelEngineEvent : EventListener {
         val modeledEntity = e.entity.modeledEntity ?: return
         val activeModel = modeledEntity.activeModel ?: return
         val empireMob = MobApi.getEmpireMob(activeModel.modelId) ?: return
-        val event = empireMob.onEvent.firstOrNull { it.eventName == "EntityMoveEvent" } ?: return
-        MobApi.executeEvent(e.entity, activeModel, event)
-
+        val event = empireMob.events["onMove"] ?: return
+        MobApi.executeEvent(e.entity, activeModel, event, "onMove")
     }
 
 
@@ -73,32 +64,48 @@ class ModelEngineEvent : EventListener {
         val modeledEntity = e.entity.modeledEntity ?: return
         val activeModel = modeledEntity.activeModel ?: return
         val empireMob = MobApi.getEmpireMob(activeModel.modelId) ?: return
-        val bar = MobApi.bossBars[e.entity] ?: return
         val livingEntity = (e.entity as LivingEntity)
-        bar.progress = livingEntity.health / livingEntity.maxHealth
+        MobApi.bossBars[e.entity]?.let {
+            it.progress = livingEntity.health / livingEntity.maxHealth
+        }
+        val event = empireMob.events["onDamaged"]?.let {
+            MobApi.executeEvent(e.entity, activeModel, it, "onDamaged")
+        }
+        if (livingEntity.health - e.damage < 0)
+            empireMob.events["onDeath"]?.let {
+                MobApi.executeEvent(e.entity, activeModel, it, "onDeath")
+            }
+
     }
 
     @EventHandler
     fun onDamage(e: EntityDamageByEntityEvent) {
         if (e.entity !is LivingEntity)
             return
-        if (MobApi.isAttacking(e.damager))
+        val entityInfo = MobApi.getCustomEntityInfo(e.damager) ?: return
+        if (entityInfo?.empireMob?.hitDelay ?: return < 0) return
+        if (MobApi.isAttackAnimationTracked(e.damager)) {
+            MobApi.stopAttackAnimationTrack(e.damager)
             return
-//        MobApi.getCustomEntityInfo(e.entity)?:return
-        e.damager.modeledEntity?.activeModel ?: return
-
+        }
         e.isCancelled = true
-        MobApi.performAttack(e.damager, listOf(e.entity), e.damage)
+        MobApi.performAttack(entityInfo, listOf(e.entity), e.damage)
     }
 
     @EventHandler
     fun onDeath(e: EntityDeathEvent) {
         MobApi.deleteEntityBossBar(e.entity)
+        val modeledEntity = e.entity.modeledEntity ?: return
+        val activeModel = modeledEntity.activeModel ?: return
+        val empireMob = MobApi.getEmpireMob(activeModel.modelId) ?: return
+        val event = empireMob.events["onDeath"] ?: return
+        MobApi.executeEvent(e.entity, activeModel, event, "onDeath")
     }
 
 
     override fun onDisable() {
         bossBarScheduler.cancel()
         entitySoundScheduler.cancel()
+        EntityDamageByEntityEvent.getHandlerList().unregister(this)
     }
 }

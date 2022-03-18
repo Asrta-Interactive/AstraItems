@@ -26,17 +26,18 @@ class LavaWalkerEvent : EventListener {
     fun Block.setTypeFast(type: Material) =
         BlockParser.setTypeFast(this, type)
 
+    private fun Block.lavaOrNull() = if (this.type == Material.LAVA) this else null
 
     private fun createBlocks(block: Block) {
         block.setTypeFast(Material.COBBLESTONE)
-        block.getRelative(BlockFace.EAST).setTypeFast(Material.COBBLESTONE)
-        block.getRelative(BlockFace.WEST).setTypeFast(Material.COBBLESTONE)
-        block.getRelative(BlockFace.SOUTH).setTypeFast(Material.COBBLESTONE)
-        block.getRelative(BlockFace.SOUTH_EAST).setTypeFast(Material.COBBLESTONE)
-        block.getRelative(BlockFace.SOUTH_WEST).setTypeFast(Material.COBBLESTONE)
-        block.getRelative(BlockFace.NORTH).setTypeFast(Material.COBBLESTONE)
-        block.getRelative(BlockFace.NORTH_EAST).setTypeFast(Material.COBBLESTONE)
-        block.getRelative(BlockFace.NORTH_WEST).setTypeFast(Material.COBBLESTONE)
+        block.getRelative(BlockFace.EAST).lavaOrNull()?.setTypeFast(Material.COBBLESTONE)
+        block.getRelative(BlockFace.WEST).lavaOrNull()?.setTypeFast(Material.COBBLESTONE)
+        block.getRelative(BlockFace.SOUTH).lavaOrNull()?.setTypeFast(Material.COBBLESTONE)
+        block.getRelative(BlockFace.SOUTH_EAST).lavaOrNull()?.setTypeFast(Material.COBBLESTONE)
+        block.getRelative(BlockFace.SOUTH_WEST).lavaOrNull()?.setTypeFast(Material.COBBLESTONE)
+        block.getRelative(BlockFace.NORTH).lavaOrNull()?.setTypeFast(Material.COBBLESTONE)
+        block.getRelative(BlockFace.NORTH_EAST).lavaOrNull()?.setTypeFast(Material.COBBLESTONE)
+        block.getRelative(BlockFace.NORTH_WEST).lavaOrNull()?.setTypeFast(Material.COBBLESTONE)
     }
 
     @EventHandler
@@ -67,7 +68,7 @@ class LavaWalkerEvent : EventListener {
     }
 
     private fun hasLaveWalker(meta: ItemMeta?): Boolean =
-        meta?.hasPersistentData(BukkitConstants.EmpireEnchants.LAVA_WALKER) == true
+        meta?.hasPersistentData(BukkitConstants.EmpireEnchants.LAVA_WALKER_ENCHANT) == true
 
 
     @EventHandler
@@ -78,7 +79,7 @@ class LavaWalkerEvent : EventListener {
 
             if (!hasLaveWalker(itemMeta)) return@runBackground
             val onToBlock = e.to.block.getRelative(BlockFace.DOWN)
-//        if (allMagmaSet(e.player.equipment?.armorContents ?: return))
+
             if (onToBlock.type == Material.LAVA)
                 createBlocks(onToBlock)
         }

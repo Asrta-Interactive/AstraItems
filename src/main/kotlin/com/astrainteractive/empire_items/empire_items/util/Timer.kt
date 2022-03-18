@@ -12,4 +12,10 @@ class Timer {
         return (System.currentTimeMillis() - started) / time.toDouble()
     }
 
+    fun calculate(time: Int=1000,function: () -> Unit): Double {
+        start()
+        function.invoke()
+        return stop(time)
+    }
+
 }

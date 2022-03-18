@@ -44,3 +44,6 @@ private fun File.isYml() = Files.getFileExtension(toString()).equals("yml", igno
 fun getCustomItemsFiles() = getFilesList()?.filter { it.isYml() }?.map {
     FileManager("items" + File.separator + it.name)
 }
+fun getCustomItemsSections(section:String) = getFilesList()?.filter { it.isYml() }?.mapNotNull {
+    FileManager("items" + File.separator + it.name).getConfig().getConfigurationSection(section)
+}

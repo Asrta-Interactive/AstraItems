@@ -7,13 +7,13 @@ object VillagerTradeApi : Disableable {
     var villagerTrades = mutableListOf<AstraVillagerTrade>()
     var mapTrades = mutableMapOf<String, AstraVillagerTrade>()
 
-   override fun onDisable() {
+   override suspend fun onDisable() {
         villagerTrades.clear()
         mapTrades.clear()
 
     }
 
-    override fun onEnable() {
+    override suspend fun onEnable() {
         villagerTrades = AstraVillagerTrade.getVillagerTrades().toMutableList()
         mapTrades = villagerTrades.associateBy { it.profession }.toMutableMap()
     }

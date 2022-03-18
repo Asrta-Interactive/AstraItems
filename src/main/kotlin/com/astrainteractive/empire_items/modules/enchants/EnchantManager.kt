@@ -4,6 +4,7 @@ import com.astrainteractive.astralibs.EventListener
 import com.astrainteractive.astralibs.EventManager
 import com.astrainteractive.astralibs.Logger
 import com.astrainteractive.empire_items.modules.enchants.api.EmpireEnchantApi
+import kotlinx.coroutines.runBlocking
 
 class EnchantManager : EventManager {
     override val handlers: MutableList<EventListener> = mutableListOf()
@@ -12,13 +13,13 @@ class EnchantManager : EventManager {
     val butcher = Butcher().apply { onEnable(this@EnchantManager) }
 
     init {
-        EmpireEnchantApi.onEnable()
+        runBlocking { EmpireEnchantApi.onEnable() }
         Vyderlight().onEnable(this)
         AquaLight().onEnable(this)
     }
 
     override fun onDisable() {
         super.onDisable()
-        EmpireEnchantApi.onDisable()
+        runBlocking { EmpireEnchantApi.onDisable() }
     }
 }

@@ -10,11 +10,11 @@ object DropApi : Disableable {
 
     private val _dropsMap: MutableList<AstraDrop> = mutableListOf()
 
-    override fun onDisable() {
+    override suspend fun onDisable() {
         _dropsMap.clear()
     }
 
-    override fun onEnable() {
+    override suspend fun onEnable() {
         _dropsMap.addAll(AstraDrop.getDrops().toMutableList())
     }
 

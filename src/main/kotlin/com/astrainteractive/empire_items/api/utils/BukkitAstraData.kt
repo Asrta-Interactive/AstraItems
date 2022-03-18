@@ -27,7 +27,7 @@ object BukkitConstants {
     object EmpireEnchants {
         val EMPIRE_ENCHANT
             get() = BukkitConstant("EMPIRE_ENCHANT", PersistentDataType.BYTE)
-        val LAVA_WALKER
+        val LAVA_WALKER_ENCHANT
             get() = BukkitConstant("LAVA_WALKER_ENCHANT", PersistentDataType.INTEGER)
         val VAMPIRISM
             get() = BukkitConstant("VAMPIRISM", PersistentDataType.INTEGER)
@@ -43,7 +43,7 @@ object BukkitConstants {
             get() = BukkitConstant("STRIKE", PersistentDataType.INTEGER)
 
         val enchant: List<BukkitConstant<Int, Int>>
-            get() = listOf(LAVA_WALKER, VAMPIRISM, STRIKE, FROST_ASPECT, BUTCHER, VYDERLIGHT,AQUALIGHT)
+            get() = listOf(LAVA_WALKER_ENCHANT, VAMPIRISM, STRIKE, FROST_ASPECT, BUTCHER, VYDERLIGHT,AQUALIGHT)
         val enchantByName: Map<String, BukkitConstant<Int, Int>>
             get() = enchant.associateBy { it.value.key.uppercase() }
 

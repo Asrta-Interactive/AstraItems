@@ -18,13 +18,13 @@ object EmpireEnchantApi : Disableable {
 
     fun getEnchantment(id: String) = empireEnchantmentById[id]
 
-    override fun onEnable() {
+    override suspend fun onEnable() {
         empireEnchantments = EmpireEnchantement.loadALl()
         empireEnchantmentById = empireEnchantments.associateBy { it.id }
 
     }
 
-    override fun onDisable() {
+    override suspend fun onDisable() {
         empireEnchantments = emptyList()
         empireEnchantmentById = emptyMap()
 

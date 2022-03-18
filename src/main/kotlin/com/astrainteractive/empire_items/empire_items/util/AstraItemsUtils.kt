@@ -63,7 +63,7 @@ fun calcChance(chance:Double) = chance>=Random.nextDouble(0.0,101.0)
 fun calcChance(chance:Float) = chance>=Random.nextDouble(0.0,101.0)
 
 fun Location.playSound(name:String?){
-    this.world.playSound(this,name?:return,1f,1f)
+    this.world.playSound(this,name?:return,2f,1f)
 }
 fun Location.getBiome()= world.getBiome(this)
 

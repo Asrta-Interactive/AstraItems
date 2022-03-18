@@ -1,13 +1,13 @@
 main: com.astrainteractive.empire_items.EmpirePlugin
 name: EmpireItems
-version: '3.3.1'
+version: '3.3.2'
 author: MakeevRoman
 prefix: EmpireItems
 authors: [ MakeevRoman ]
 description: Custom items made for EmpireProjekt
 website: AstraInteractive.ru
 api-version: 1.17
-softdepend: [PlaceholderAPI,ProtocolLib,WorldGuard]
+softdepend: [PlaceholderAPI,ProtocolLib,WorldGuard,ModelEngine]
 depend: []
 commands:
   ereload:

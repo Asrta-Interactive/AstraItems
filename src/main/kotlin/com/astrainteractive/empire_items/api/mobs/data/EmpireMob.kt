@@ -6,17 +6,18 @@ import org.bukkit.entity.EntityType
 
 data class EmpireMob(
     val id: String,
-    val entity:String,
-    val spawn:SpawnInfo?,
+    val entity: String,
+    val modelId: String,
+    val decreaseDamageByRange: Boolean,
+    val canBurn: Boolean,
+    val idleSound:List<String>,
+    val potionEffects: List<MobPotionEffect>,
     val attributes: List<EmpireMobAttribute>,
-    val onEvent: List<EmpireMobEvent>,
-    val potionEffects:List<MobPotionEffect>,
-    val canBurn:Boolean,
-    val hitDelay:Int,
-    val sound:String,
-    val hitRange:Int,
-    val decreaseDamageByRange:Boolean,
-    val bossBar:MobBossBar?
+    val hitDelay: Int,
+    val hitRange: Int,
+    val spawn: SpawnInfo?,
+    val bossBar: MobBossBar?,
+    val events: Map<String, EmpireMobEvent>
 ) {
 
     companion object {
@@ -33,20 +34,21 @@ data class EmpireMob(
         fun fromSection(s: ConfigurationSection?): EmpireMob? {
             s ?: return null
             val attribute = EmpireMobAttribute.get(s.getConfigurationSection("attributes"))
-            val events = EmpireMobEvent.get(s.getConfigurationSection("events"))
+            val id = s.getString("id") ?: s.name
             return EmpireMob(
-                id = s.getString("id") ?: s.name,
-                entity = s.getString("entity",EntityType.ZOMBIE.name)!!,
+                id = id,
+                entity = s.getString("entity", EntityType.ZOMBIE.name)!!,
+                modelId = s.getString("modelId") ?: id,
                 attributes = attribute,
-                onEvent = events,
                 spawn = SpawnInfo.fromSection(s.getConfigurationSection("spawn")),
                 potionEffects = MobPotionEffect.getAll(s.getConfigurationSection("effects")),
-                canBurn = s.getBoolean("canBurn",true),
-                hitDelay = s.getInt("hitDelay",0),
-                sound = s.getString("sound","")!!,
-                hitRange = s.getInt("hitRange",20),
-                decreaseDamageByRange =s.getBoolean("decreaseDamageByRange",false),
-                bossBar = MobBossBar.getBar(s.getConfigurationSection("bossBar"))
+                canBurn = s.getBoolean("canBurn", true),
+                idleSound  = s.getStringList("idleSound"),
+                hitDelay = s.getInt("hitDelay", 0),
+                hitRange = s.getInt("hitRange", 20),
+                decreaseDamageByRange = s.getBoolean("decreaseDamageByRange", false),
+                bossBar = MobBossBar.getBar(s.getConfigurationSection("bossBar")),
+                events = EmpireMobEvent.get(s.getConfigurationSection("events")).associateBy { it.parentKey }
             )
         }
     }

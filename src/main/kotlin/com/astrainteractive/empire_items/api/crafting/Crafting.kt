@@ -3,6 +3,7 @@ package com.astrainteractive.empire_items.api.crafting
 import com.astrainteractive.empire_items.api.utils.BukkitConstants
 import com.astrainteractive.empire_items.api.utils.getCustomItemsFiles
 import com.astrainteractive.astralibs.AstraLibs
+import com.astrainteractive.astralibs.async.AsyncHelper
 import org.bukkit.NamespacedKey
 import org.bukkit.inventory.*
 
@@ -45,17 +46,19 @@ data class Crafting(
     }
 
     fun createRecipes() {
-        craftingTable.forEach {
-            it.createRecipe()
-        }
-        shapeless.forEach {
-            it.createRecipe()
-        }
-        furnace.forEach {
-            it.createRecipe()
-        }
-        player.forEach {
-            it.createRecipe()
+        AsyncHelper.callSyncMethod {
+            craftingTable.forEach {
+                it.createRecipe()
+            }
+            shapeless.forEach {
+                it.createRecipe()
+            }
+            furnace.forEach {
+                it.createRecipe()
+            }
+            player.forEach {
+                it.createRecipe()
+            }
         }
     }
 

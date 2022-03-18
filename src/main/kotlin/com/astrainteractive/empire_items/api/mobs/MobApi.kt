@@ -12,6 +12,7 @@ import com.ticxo.modelengine.api.ModelEngineAPI
 import com.ticxo.modelengine.api.generator.blueprint.BlueprintBone
 import com.ticxo.modelengine.api.model.ActiveModel
 import com.ticxo.modelengine.api.model.ModeledEntity
+import kotlinx.coroutines.*
 import org.bukkit.*
 import org.bukkit.attribute.Attribute
 import org.bukkit.attribute.AttributeModifier
@@ -59,8 +60,14 @@ object MobApi : Disableable {
         addState(state, 1, 1, 1.0)
     }
 
+    /**
+     * Run task later
+     */
     fun runLater(time: Long, block: () -> Unit) {
-        Bukkit.getScheduler().runTaskLater(EmpirePlugin.instance, Runnable(block), time)
+        AsyncHelper.launch {
+            delay(time)
+            block()
+        }
     }
 
 
@@ -224,12 +231,9 @@ object MobApi : Disableable {
     }
 
     private val attackingMobs = mutableSetOf<Int>()
-    fun setAttacking(entity: Entity) {
-        attackingMobs.add(entity.entityId)
-    }
-
-    private fun stopAttacking(entity: Entity) = attackingMobs.remove(entity.entityId)
-    fun isAttacking(entity: Entity) = attackingMobs.contains(entity.entityId)
+    private fun setAttackAnimationTrack(entity: Entity) = synchronized(MobApi) { attackingMobs.add(entity.entityId) }
+    fun stopAttackAnimationTrack(entity: Entity) = synchronized(MobApi) { attackingMobs.remove(entity.entityId) }
+    fun isAttackAnimationTracked(entity: Entity) = synchronized(MobApi) { attackingMobs.contains(entity.entityId) }
 
     /**
      * @return [CustomEntityInfo]
@@ -237,44 +241,45 @@ object MobApi : Disableable {
     fun getCustomEntityInfo(e: Entity): CustomEntityInfo? {
         val modeledEntity = e.modeledEntity ?: return null
         val activeModel = modeledEntity.activeModel ?: return null
-        val empireMob = MobApi.getEmpireMob(activeModel.modelId) ?: return null
+        val empireMob = getEmpireMob(activeModel.modelId) ?: return null
         return CustomEntityInfo(e, empireMob, modeledEntity, activeModel)
     }
 
     /**
      * Perform attack for custom entity
      */
-    fun performAttack(damager: Entity, entities: List<Entity>, _damage: Double) {
+    fun performAttack(entityInfo: CustomEntityInfo?, entities: List<Entity>, _damage: Double) {
+        entityInfo ?: return
+        val modeledEntity = entityInfo.modeledEntity
+        val activeModel = entityInfo.activeModel
+        val empireMob = entityInfo.empireMob
+        val damager = entityInfo.entity
         AsyncHelper.runBackground {
-            val modeledEntity = damager.modeledEntity ?: return@runBackground
-            val activeModel = modeledEntity.activeModel ?: return@runBackground
-            val empireMob = MobApi.getEmpireMob(activeModel.modelId) ?: return@runBackground
-            val event =
-                empireMob.onEvent.firstOrNull { it.eventName == "EntityDamageByEntityEvent" } ?: return@runBackground
-            if (isAttacking(damager))
-                return@runBackground
-            val frame = activeModel.getState(event.animation ?: "attack")?.frame
-            val animationLength = activeModel.getState(event.animation ?: "attack")?.animationLength
-            if (frame == null || frame == 0f || (animationLength != null && frame.toInt() == animationLength))
-                activeModel.playAnimation(event.animation ?: "attack")
-
-            MobApi.runLater(empireMob.hitDelay.toLong() ?: 0L) {
+            val frame = activeModel.getState("attack")?.frame
+            val animationLength = activeModel.getState("attack")?.animationLength
+            if (animationLength == null || frame == null || frame < 0f || frame.toInt() >= animationLength) {
+                synchronized(MobApi) {
+                    if (isAttackAnimationTracked(damager))
+                        return@runBackground
+                    setAttackAnimationTrack(damager)
+                }
+                activeModel.playAnimation("attack")
+            } else return@runBackground
+            runLater(empireMob.hitDelay.toLong()) {
                 entities.forEach { entity ->
                     val distance = damager.location.distance(entity.location)
                     if (distance > (empireMob.hitRange ?: 5))
-                        return@runLater
-                    setAttacking(damager)
-                    val damage = if (event.decreaseDamageByRange)
+                        return@forEach
+                    val damage = if (empireMob.decreaseDamageByRange)
                         _damage / max(1.0, distance)
                     else _damage
 
-                    com.astrainteractive.astralibs.async.AsyncHelper.callSyncMethod {
-                        executeEvent(damager, activeModel, event)
+                    empireMob.events["onDamage"]?.let { event ->
+                        executeEvent(entity, activeModel, event, "onDamage")
                     }
-                    if ((entity as LivingEntity).health > 0)
-                        (entity as LivingEntity).damage(damage, damager)
-                    MobApi.runLater(2L) {
-                        stopAttacking(damager)
+                    AsyncHelper.callSyncMethod {
+                        if ((damager as LivingEntity).health > 0)
+                            (entity as LivingEntity).damage(damage, damager)
                     }
                 }
             }
@@ -283,10 +288,9 @@ object MobApi : Disableable {
     }
 
     private val particleCooldown: Cooldown<Int> = Cooldown()
-    private val soundCooldown: Cooldown<Int> = Cooldown()
 
-    private fun playParticle(e: Entity, model: ActiveModel, bonesInfo: List<BoneInfo>) {
-        bonesInfo.forEach { boneInfo ->
+    private fun playParticle(e: Entity, model: ActiveModel, bonesInfo: List<BoneInfo>?) {
+        bonesInfo?.forEach { boneInfo ->
             if (particleCooldown.hasCooldown(e.entityId, boneInfo.particle.cooldown))
                 return
             else particleCooldown.setCooldown(e.entityId)
@@ -310,29 +314,43 @@ object MobApi : Disableable {
                 particleBuilder.location(l).spawn()
             }
         }
+
     }
 
-    fun executeEvent(entity: Entity, model: ActiveModel, event: EmpireMobEvent) {
-        if (!soundCooldown.hasCooldown(entity.entityId, event.cooldown)) {
-            entity.location.playSound(event.sound)
-            soundCooldown.setCooldown(entity.entityId)
+
+    val eventTimers: Cooldown<String> = Cooldown()
+
+    fun executeEvent(entity: Entity, model: ActiveModel, event: EmpireMobEvent, eventId: String) {
+        val hasSoundCooldown = eventTimers.hasCooldown("${eventId}S${entity.hashCode()}", event.sound?.cooldown)
+        if (event.sound?.cooldown == null || event.sound.cooldown == 0 || !hasSoundCooldown) {
+            eventTimers.setCooldown("${eventId}S${entity.hashCode()}")
+            entity.location.playSound(event.sound?.sound)
         }
         playParticle(entity, model, event.bones)
     }
 
 
-    override fun onEnable() {
+    override suspend fun onEnable() {
+        if (Bukkit.getServer().pluginManager.getPlugin("ModelEngine") == null) return
+
         empireMobs = EmpireMob.getAll().toMutableList()
         empireMobsById = empireMobs.associateBy { it.id }
-        val entities = Bukkit.getWorlds().flatMap { world ->
-            world.entities.mapNotNull {
-                return@mapNotNull getCustomEntityInfo(it)
+        AsyncHelper.callSyncMethod {
+            val entities = Bukkit.getWorlds().flatMap { world ->
+                world.entities.mapNotNull {
+                    return@mapNotNull getCustomEntityInfo(it)
+                }
             }
+            _activeMobs.addAll(entities)
         }
-        _activeMobs.addAll(entities)
     }
 
-    override fun onDisable() {
+    override suspend fun onDisable() {
+        if (Bukkit.getServer().pluginManager.getPlugin("ModelEngine") == null) return
+        _activeMobs.forEach {
+            it.modeledEntity.removeModel(it.activeModel.modelId)
+            it.entity.remove()
+        }
         empireMobs.clear()
         _activeMobs.clear()
         bossBars.toMap().forEach { deleteEntityBossBar(it.key) }

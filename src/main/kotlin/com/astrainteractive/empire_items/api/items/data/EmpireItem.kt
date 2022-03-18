@@ -9,6 +9,7 @@ import com.astrainteractive.empire_items.api.items.data.block.Block
 import com.astrainteractive.empire_items.api.items.data.decoration.Decoration
 import com.astrainteractive.empire_items.api.items.data.interact.Interact
 import com.astrainteractive.empire_items.empire_items.util.emoji
+import org.bukkit.ChatColor
 import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.attribute.Attribute
@@ -130,7 +131,7 @@ data class EmpireItem(
             if (it.clipSize != null)
                 itemMeta.setPersistentDataType(BukkitConstants.CLIP_SIZE, 0)
         }
-        itemMeta.setDisplayName(displayName)
+        itemMeta.setDisplayName(ChatColor.WHITE.toString()+displayName)
         itemMeta.lore = lore
         itemStack.itemMeta = itemMeta
         return itemStack

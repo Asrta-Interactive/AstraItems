@@ -16,7 +16,6 @@ data class BoneInfo(
         fun fromSection(s: ConfigurationSection?): BoneInfo? {
             s ?: return null
             val listBones = s.getStringList("bones")
-
             val singleBone = s.getString("bones")
             val bones = if (listBones.isNullOrEmpty()) listOf(singleBone?:return null) else listBones
             return BoneInfo(

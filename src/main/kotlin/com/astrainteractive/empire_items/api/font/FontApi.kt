@@ -6,6 +6,8 @@ import kotlin.math.abs
 import kotlin.math.sign
 
 object FontApi: Disableable {
+    var enabled: Boolean = false
+        private set
 
 
     var fonts = mutableListOf<AstraFont>()
@@ -13,16 +15,19 @@ object FontApi: Disableable {
 
     var actionBar = MutableLiveData<String>()
 
-    override fun onDisable() {
+    override suspend fun onDisable() {
         fonts.clear()
         map.clear()
+        enabled = false
     }
 
-    override fun onEnable() {
+    override suspend fun onEnable() {
+
         onDisable()
 
         fonts = AstraFont.getFonts().toMutableList()
         map = fonts.associateBy { it.id }.toMutableMap()
+        enabled = true
     }
 
     fun allFonts() = fonts.toList()

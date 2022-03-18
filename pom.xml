@@ -6,7 +6,7 @@
 
     <artifactId>EmpireItems</artifactId>
     <groupId>com.astrainteractive</groupId>
-    <version>3.3.1</version>
+    <version>3.3.2</version>
     <packaging>jar</packaging>
     <description>EmpireItems</description>
 
@@ -83,7 +83,7 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <outputFile>D:\Minecraft Servers\TEST_SERVER\plugins\${project.name}.jar</outputFile>
+                            <outputFile>D:\Minecraft Servers\TEST_SERVER\plugins\${project.name}-${project.version}.jar</outputFile>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                         </configuration>
                     </execution>
@@ -182,20 +182,20 @@
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.18.1-R0.1-SNAPSHOT</version>
+            <version>1.18.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <!--        Spigot-->
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.18-R0.1-SNAPSHOT</version>
+            <version>1.18.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
-            <version>1.18-R0.1-SNAPSHOT</version>
+            <version>1.18.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <!--        ProtoclLib-->
@@ -269,7 +269,7 @@
         <dependency>
             <groupId>com.ticxo.modelengine</groupId>
             <artifactId>api</artifactId>
-            <version>R2.4.1</version>
+            <version>R2.5.0</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

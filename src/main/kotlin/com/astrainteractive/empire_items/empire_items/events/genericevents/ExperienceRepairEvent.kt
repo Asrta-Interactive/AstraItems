@@ -1,6 +1,9 @@
 package com.astrainteractive.empire_items.empire_items.events.genericevents
 
 import com.astrainteractive.astralibs.EventListener
+import com.astrainteractive.empire_items.api.EmpireAPI
+import com.astrainteractive.empire_items.api.items.data.ItemApi
+import com.astrainteractive.empire_items.api.items.data.ItemApi.getAstraID
 import com.astrainteractive.empire_items.api.utils.BukkitConstants
 import com.astrainteractive.empire_items.api.utils.getPersistentData
 import com.astrainteractive.empire_items.api.utils.setPersistentDataType
@@ -15,7 +18,6 @@ import org.bukkit.inventory.meta.ItemMeta
 class ExperienceRepairEvent : EventListener {
 
 
-
     @EventHandler
     fun repairEvent(e: PlayerItemMendEvent) {
         changeDurability(e.item, e.repairAmount)
@@ -23,14 +25,17 @@ class ExperienceRepairEvent : EventListener {
 
     @EventHandler
     fun durabilityEvent(e: PlayerItemDamageEvent) {
+        if (ItemApi.getItemInfo(e.item?.getAstraID())?.gun != null) {
+            e.isCancelled = true
+            return
+        }
         changeDurability(e.item, -e.damage)
     }
 
 
-
     @EventHandler
     fun anvilEvent(e: PrepareAnvilEvent) {
-        val itemStack: ItemStack = e.result?:return
+        val itemStack: ItemStack = e.result ?: return
         val itemMeta: ItemMeta = itemStack.itemMeta ?: return
 
 
@@ -38,7 +43,7 @@ class ExperienceRepairEvent : EventListener {
 
         val damage: Short = itemStack.durability
         val empireDurability = maxCustomDurability - damage * maxCustomDurability / itemStack.type.maxDurability
-        itemMeta.setPersistentDataType(BukkitConstants.EMPIRE_DURABILITY,empireDurability)
+        itemMeta.setPersistentDataType(BukkitConstants.EMPIRE_DURABILITY, empireDurability)
         itemStack.itemMeta = itemMeta
         val d: Int = itemStack.type.maxDurability -
                 itemStack.type.maxDurability * empireDurability / maxCustomDurability
@@ -65,10 +70,10 @@ class ExperienceRepairEvent : EventListener {
             empireDurability = maxCustomDurability
         }
 
-        itemMeta.setPersistentDataType(BukkitConstants.EMPIRE_DURABILITY,empireDurability)
+        itemMeta.setPersistentDataType(BukkitConstants.EMPIRE_DURABILITY, empireDurability)
         itemStack.itemMeta = itemMeta
 
-        if (maxCustomDurability==0)
+        if (maxCustomDurability == 0)
             maxCustomDurability = itemStack.type.maxDurability.toInt()
         val d: Int = itemStack.type.maxDurability -
                 itemStack.type.maxDurability * empireDurability / maxCustomDurability

@@ -6,13 +6,14 @@ import com.astrainteractive.empire_items.api.items.data.ItemApi
 import com.astrainteractive.empire_items.api.items.data.ItemApi.getAstraID
 import com.astrainteractive.empire_items.api.utils.BukkitConstants
 import com.astrainteractive.empire_items.api.utils.Disableable
+import kotlinx.coroutines.delay
 import org.bukkit.Bukkit
 import org.bukkit.NamespacedKey
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.Recipe
 import org.bukkit.inventory.RecipeChoice
 
-object CraftingApi: Disableable {
+object CraftingApi : Disableable {
     private var crafting: Crafting = Crafting()
     private val keyMap = mutableMapOf<String, MutableList<NamespacedKey>>()
     fun addToMap(id: String, key: NamespacedKey) {
@@ -26,12 +27,14 @@ object CraftingApi: Disableable {
     fun getFurnaceByInputId(id: String) = crafting.furnace.filter { it.input == id }
     fun getKeysById(id: String) = keyMap[id]
 
-    override fun onEnable() {
+    override suspend fun onEnable() {
         onDisable()
+        while (!ItemApi.enabled)
+            delay(100L)
         crafting = Crafting.getCrafting().apply { createRecipes() }
     }
 
-    override fun onDisable() {
+    override suspend fun onDisable() {
         crafting.clear()
     }
 
@@ -58,7 +61,7 @@ object CraftingApi: Disableable {
     fun usedInCraft(id: String): MutableSet<String> {
         val craftingTable =
             crafting.craftingTable.filter { it.ingredients?.values?.contains(id) == true }.map { it.result }
-        val shapeless = crafting.shapeless.filter { it.input == id }.map { it.result }
+        val shapeless = crafting.shapeless.filter { it.input == id || it.inputs.contains(id) }.map { it.result }
         val furnace = crafting.furnace.filter { it.input == id }.map { it.result }
         val player = crafting.player.filter { it.ingredients?.values?.contains(id) == true }.map { it.result }
         val set = mutableSetOf<String>()

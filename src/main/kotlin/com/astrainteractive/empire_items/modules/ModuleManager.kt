@@ -6,11 +6,11 @@ import com.astrainteractive.empire_items.modules.enchants.EnchantManager
 object ModuleManager: Disableable {
 
     lateinit var enchantManager:EnchantManager
-    override fun onEnable() {
+    override suspend fun onEnable() {
         enchantManager = EnchantManager()
     }
 
-    override fun onDisable() {
+    override suspend fun onDisable() {
         enchantManager.onDisable()
     }
 }

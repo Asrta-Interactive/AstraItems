@@ -1,18 +1,25 @@
 package com.astrainteractive.empire_items
 
 import com.astrainteractive.astralibs.*
+import com.astrainteractive.astralibs.async.AsyncHelper
 import com.astrainteractive.empire_items.credit.EmpireCredit
 import com.astrainteractive.empire_items.api.EmpireAPI
 import com.astrainteractive.empire_items.empire_items.commands.CommandManager
 import com.astrainteractive.empire_items.empire_items.events.GenericListener
 import com.astrainteractive.empire_items.empire_items.util.Config
 import com.astrainteractive.empire_items.empire_items.util.Files
+import com.astrainteractive.empire_items.empire_items.util.Timer
 import com.astrainteractive.empire_items.empire_items.util.Translations
 import com.astrainteractive.empire_items.empire_items.util.protection.KProtectionLib
 import com.astrainteractive.empire_items.modules.ModuleManager
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.runBlocking
 import org.bukkit.Bukkit
 import org.bukkit.event.HandlerList
 import org.bukkit.plugin.java.JavaPlugin
+import kotlin.coroutines.ContinuationInterceptor
+import kotlin.coroutines.coroutineContext
 
 
 class EmpirePlugin : JavaPlugin() {
@@ -38,7 +45,10 @@ class EmpirePlugin : JavaPlugin() {
          */
         lateinit var translations: Translations
             private set
-
+        lateinit var mainThread: Thread
+            private set
+        lateinit var mainDispatcher: CoroutineDispatcher
+            private set
     }
 
     /**
@@ -59,14 +69,12 @@ class EmpirePlugin : JavaPlugin() {
     private val licenceTimer = LicenceChecker()
 
 
-
-
-
-
     /**
      * This function called when server starts
      */
     override fun onEnable() {
+        mainDispatcher = runBlocking { coroutineContext[ContinuationInterceptor] as CoroutineDispatcher }
+        mainThread = Thread.currentThread()
         instance = this
         AstraLibs.create(this)
         Logger.init("EmpireItems")
@@ -75,12 +83,19 @@ class EmpirePlugin : JavaPlugin() {
         Config.load()
         commandManager = CommandManager()
         empireCredit = EmpireCredit()
-        ModuleManager.onEnable()
-        EmpireAPI.onEnable()
+        Timer().calculate {
+            runBlocking {
+                ModuleManager.onEnable()
+                EmpireAPI.onEnable()
+            }
+        }.also {
+            Logger.log("ModuleManager and EmpireAPI time ${it}")
+        }
+
         genericListener = GenericListener()
         if (server.pluginManager.getPlugin("WorldGuard") != null)
             KProtectionLib.init(this)
-        licenceTimer.enable()
+//        licenceTimer.enable()
 
     }
 
@@ -89,6 +104,7 @@ class EmpirePlugin : JavaPlugin() {
      * This function called when server stops
      */
     override fun onDisable() {
+        AsyncHelper.cancel()
         licenceTimer.onDisable()
         AstraLibs.clearAllTasks()
         genericListener.onDisable()
@@ -96,8 +112,11 @@ class EmpirePlugin : JavaPlugin() {
             p.closeInventory()
         HandlerList.unregisterAll(this)
         Bukkit.getScheduler().cancelTasks(this)
-        EmpireAPI.onDisable()
-        ModuleManager.onDisable()
+        runBlocking {
+            EmpireAPI.onDisable()
+            ModuleManager.onDisable()
+        }
+        AsyncHelper.cancel()
 
     }
 }
