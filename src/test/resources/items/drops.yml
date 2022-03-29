@@ -1,0 +1,14 @@
+loot:
+  # All class members
+  spawner_energy:
+    dropFrom: SPAWNER_1
+    id: spawner_energy_1
+    minAmount: 1
+    maxAmount: 1
+    chance: 100
+  spawner_energy_2:
+    dropFrom: SPAWNER
+    id: spawner_energy
+    minAmount: 0
+    maxAmount: 1
+    chance: 100

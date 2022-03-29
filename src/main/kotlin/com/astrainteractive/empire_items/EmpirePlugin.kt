@@ -1,14 +1,15 @@
 package com.astrainteractive.empire_items
 
-import com.astrainteractive.astralibs.*
+import com.astrainteractive.astralibs.AstraLibs
+import com.astrainteractive.astralibs.LicenceChecker
+import com.astrainteractive.astralibs.Logger
 import com.astrainteractive.astralibs.async.AsyncHelper
-import com.astrainteractive.empire_items.credit.EmpireCredit
 import com.astrainteractive.empire_items.api.EmpireAPI
+import com.astrainteractive.empire_items.credit.EmpireCredit
 import com.astrainteractive.empire_items.empire_items.commands.CommandManager
 import com.astrainteractive.empire_items.empire_items.events.GenericListener
 import com.astrainteractive.empire_items.empire_items.util.Config
 import com.astrainteractive.empire_items.empire_items.util.Files
-import com.astrainteractive.empire_items.empire_items.util.Timer
 import com.astrainteractive.empire_items.empire_items.util.Translations
 import com.astrainteractive.empire_items.empire_items.util.protection.KProtectionLib
 import com.astrainteractive.empire_items.modules.ModuleManager
@@ -17,13 +18,26 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.runBlocking
 import org.bukkit.Bukkit
 import org.bukkit.event.HandlerList
+import org.bukkit.plugin.PluginDescriptionFile
 import org.bukkit.plugin.java.JavaPlugin
+import org.bukkit.plugin.java.JavaPluginLoader
+import java.io.File
 import kotlin.coroutines.ContinuationInterceptor
-import kotlin.coroutines.coroutineContext
 
 
-class EmpirePlugin : JavaPlugin() {
 
+
+class EmpirePlugin : JavaPlugin {
+    constructor() : super() {}
+    constructor(
+        loader: JavaPluginLoader?,
+        description: PluginDescriptionFile?,
+        dataFolder: File?,
+        file: File?
+    ) : super(
+        loader!!, description!!, dataFolder!!, file!!
+    ) {
+    }
     companion object {
 
         /**
@@ -83,15 +97,15 @@ class EmpirePlugin : JavaPlugin() {
         Config.load()
         commandManager = CommandManager()
         empireCredit = EmpireCredit()
-        Timer().calculate {
-            runBlocking {
-                ModuleManager.onEnable()
-                EmpireAPI.onEnable()
-            }
-        }.also {
-            Logger.log("ModuleManager and EmpireAPI time ${it}")
+        runBlocking {
+            ModuleManager.onEnable()
+            EmpireAPI.onEnable()
         }
-
+//        Timer().calculate {
+//
+//        }.also {
+//            Logger.log("ModuleManager and EmpireAPI time ${it}")
+//        }
         genericListener = GenericListener()
         if (server.pluginManager.getPlugin("WorldGuard") != null)
             KProtectionLib.init(this)

@@ -45,11 +45,16 @@ class ResourcePack {
         file.writeText(setPrettyString(json))
     }
 
+    data class Sound(val sounds: List<String>) {
+        constructor(sound: AstraSounds) : this(sound.sounds)
+    }
+
     private fun generateSounds() {
         val sounds = AstraSounds.getSounds()
         val file = File(getAssetsFolder() + sep + sounds.first().namespace + sep + "sounds.json")
-        val map = sounds.associateBy { it.id }
+        val map = sounds.associate { it.id to Sound(it) }
         file.writeText(setPrettyString(Gson().toJson(map)))
+        File(getMinecraftAssetsPath() + sep + "sounds.json").writeText(setPrettyString(Gson().toJson(map)))
     }
 
 

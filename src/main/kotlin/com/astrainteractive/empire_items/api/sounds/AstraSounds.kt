@@ -3,8 +3,8 @@ package com.astrainteractive.empire_items.api.sounds
 import com.astrainteractive.empire_items.api.utils.getCustomItemsFiles
 
 data class AstraSounds(
-    val id: String,
-    val namespace: String,
+    var id: String,
+    var namespace: String,
     val sounds: List<String>
 ) {
     companion object {

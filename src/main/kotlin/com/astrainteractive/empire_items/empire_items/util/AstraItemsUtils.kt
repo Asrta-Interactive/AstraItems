@@ -58,9 +58,9 @@ object EmpireUtils {
 fun String.emoji() = EmpireUtils.emojiPattern(this)
 fun List<String>.emoji() = EmpireUtils.emojiPattern(this)
 
-fun calcChance(chance:Int) = chance>=Random.nextInt(0,101)
+fun calcChance(chance:Int) = calcChance(chance.toDouble())
 fun calcChance(chance:Double) = chance>=Random.nextDouble(0.0,101.0)
-fun calcChance(chance:Float) = chance>=Random.nextDouble(0.0,101.0)
+fun calcChance(chance:Float) = calcChance(chance.toDouble())
 
 fun Location.playSound(name:String?){
     this.world.playSound(this,name?:return,2f,1f)

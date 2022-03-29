@@ -6,7 +6,7 @@ import com.astrainteractive.empire_items.api.items.data.ItemApi
 import net.minecraft.core.BlockPosition
 import net.minecraft.network.protocol.game.PacketPlayOutBlockBreakAnimation
 import org.bukkit.block.Block
-import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer
+import org.bukkit.craftbukkit.v1_18_R2.entity.CraftPlayer
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler

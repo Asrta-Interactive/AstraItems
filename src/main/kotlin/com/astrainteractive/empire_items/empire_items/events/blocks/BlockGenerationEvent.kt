@@ -20,7 +20,6 @@ import org.bukkit.Chunk
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.BlockFace
-import org.bukkit.craftbukkit.v1_18_R1.CraftWorld
 import org.bukkit.event.EventHandler
 import org.bukkit.event.world.ChunkLoadEvent
 import kotlin.coroutines.CoroutineContext

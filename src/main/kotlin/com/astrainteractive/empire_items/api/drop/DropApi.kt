@@ -16,6 +16,7 @@ object DropApi : Disableable {
 
     override suspend fun onEnable() {
         _dropsMap.addAll(AstraDrop.getDrops().toMutableList())
+        println(_dropsMap)
     }
 
     fun getDropsFrom(dropFrom: String) = _dropsMap.filter { it.dropFrom == dropFrom }.toSet().toMutableList()

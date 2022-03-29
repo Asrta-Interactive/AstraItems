@@ -72,7 +72,7 @@ object DecorationBlockAPI {
         val itemStack = id.toAstraItemOrItem()?.clone() ?: return false
 
         itemFrame.isFixed = true
-        itemFrame.isVisible = true
+        itemFrame.isVisible = false
         itemFrame.itemDropChance = 0.0f
         itemFrame.isCustomNameVisible = true
         itemFrame.isInvulnerable = true
