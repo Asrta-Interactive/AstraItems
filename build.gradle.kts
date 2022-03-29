@@ -2,7 +2,20 @@ import org.jetbrains.kotlin.js.dce.InputResource.Companion.file
 import org.jetbrains.kotlin.konan.properties.saveToFile
 import java.util.Properties
 import java.io.FileInputStream
-
+var astraPropsFile = file("astra.properties")
+if (!astraPropsFile.exists())
+    astraPropsFile.createNewFile()
+var astraProps = Properties().apply { load(FileInputStream(astraPropsFile)) }
+val gprUser = astraProps.getProperty("gpr.user")
+val gprPassword = astraProps.getProperty("gpr.password")
+if (gprUser == null || gprPassword == null) {
+    if (gprUser == null)
+        astraProps.setProperty("gpr.user", "SET_GPR_USERNAME_HERE")
+    if (gprPassword == null)
+        astraProps.setProperty("gpr.password", "SET_GPR_KEY_HERE")
+    astraProps.store(astraPropsFile.outputStream(), "")
+    throw GradleException("You need to set your GPR keys")
+}
 var versionPropsFile = file("version.properties")
 if (!versionPropsFile.exists())
     versionPropsFile.createNewFile()
@@ -26,13 +39,23 @@ plugins {
 java {
     withSourcesJar()
     withJavadocJar()
-    sourceCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_17
 }
 repositories {
     mavenLocal()
     mavenCentral()
     maven("https://repo.maven.apache.org/maven2/")
-    maven("https://maven.pkg.github.com/Astra-Interactive/AstraLibs")
+    maven {
+        name = "GitHubPackages"
+        url = uri("https://maven.pkg.github.com/Astra-Interactive/AstraLibs")
+        credentials {
+            username = gprUser
+            password = gprPassword
+        }
+        metadataSources {
+            artifact()
+        }
+    }
     maven("https://repo1.maven.org/maven2/")
     maven("https://repo.dmulloy2.net/repository/public/")
     maven("https://papermc.io/repo/repository/maven-public/")
@@ -53,8 +76,9 @@ repositories {
 
 dependencies {
 //    implementation(kotlin("stdlib"))
-    implementation("com.astrainteractive:astralibs:1.1.6")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.10")
+    implementation("com.astrainteractive:astralibs:1.1.8-2")
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.21")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.21")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.6.0")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.5.20")

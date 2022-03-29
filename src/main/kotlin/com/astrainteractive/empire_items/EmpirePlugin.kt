@@ -91,7 +91,7 @@ class EmpirePlugin : JavaPlugin {
         mainThread = Thread.currentThread()
         instance = this
         AstraLibs.create(this)
-        Logger.init("EmpireItems")
+        Logger.prefix = "EmpireItems"
         translations = Translations()
         empireFiles = Files()
         Config.load()

@@ -1,6 +1,6 @@
 package com.astrainteractive.empire_items.api.items
 
-import com.astrainteractive.astralibs.catchingNoStackTrace
+import com.astrainteractive.astralibs.catching
 import net.minecraft.world.level.GeneratorAccess
 import net.minecraft.world.level.block.state.IBlockData
 import org.bukkit.Material
@@ -34,7 +34,7 @@ object BlockParser {
         val oldCraftBlock = (block as CraftBlock)
         val position=oldCraftBlock.position
         val newData = type.createBlockData()
-        catchingNoStackTrace {
+        catching {
             for (f in facing)
                 ((newData as CraftBlockData) as MultipleFacing).setFace(BlockFace.valueOf(f.key.uppercase()), f.value)
         }

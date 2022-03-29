@@ -12,3 +12,36 @@ loot:
     minAmount: 0
     maxAmount: 1
     chance: 100
+shapeless:
+  test_diamond_sh:
+    id: test_diamond_sh
+    input: "DIAMOND"
+    amount: 1
+    inputs:
+      - "DIAMOND"
+    result: DIAMOND
+crafting_table:
+  test_diamond_ct_1:
+    amount: 1
+    pattern:
+      - XXX
+      - XDX
+      - XXX
+    ingredients:
+      D: DIAMOND
+  test_diamond_ct_2:
+    amount: 1
+    pattern:
+      - DD
+      - DD
+    ingredients:
+      D: DIAMOND
+furnace:
+  test_diamond_f:
+    id: test_diamond_f
+    returns: IRON_INGOT
+    result: DIAMOND
+    input: DIAMOND
+    cook_time: 600
+    exp: 10
+    amount: 1
