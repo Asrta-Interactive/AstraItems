@@ -1,35 +1,36 @@
 package com.astrainteractive.empire_items.empire_items.events.empireevents
 
-import com.astrainteractive.astralibs.EventListener
+import com.astrainteractive.astralibs.events.DSLEvent
+import com.astrainteractive.astralibs.events.EventListener
 import com.astrainteractive.empire_items.api.utils.BukkitConstants
 import com.astrainteractive.empire_items.api.utils.hasPersistentData
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.entity.EntityResurrectEvent
+import org.bukkit.event.player.PlayerResourcePackStatusEvent
 import org.bukkit.inventory.ItemStack
 
-class VoidTotemEvent : EventListener {
+class VoidTotemEvent {
 
     fun ItemStack.isDeathTotem() =
         itemMeta.hasPersistentData(BukkitConstants.VOID_TOTEM) == true
 
-    @EventHandler
-    private fun entityResurrectEvent(e: EntityDamageEvent) {
+    val entityResurrectEvent = DSLEvent.event(EntityDamageEvent::class.java)  { e ->
         if (e.entity !is Player)
-            return
+            return@event
         if (e.cause != EntityDamageEvent.DamageCause.VOID)
-            return
+            return@event
         val p = e.entity as Player
         if (e.damage<p.health)
-            return
+            return@event
         if (p.location.world?.name?.endsWith("_end")!=true)
-            return
+            return@event
         if (!p.inventory.itemInMainHand.isDeathTotem() && !p.inventory.itemInOffHand.isDeathTotem())
-            return
+            return@event
         val location = p.location.clone()
         if (location.y>0)
-            return
+            return@event
         location.y = 256.0
         p.teleport(location)
         p.damage(999999.0)
@@ -38,7 +39,4 @@ class VoidTotemEvent : EventListener {
 
     }
 
-    override fun onDisable() {
-        EntityResurrectEvent.getHandlerList().unregister(this)
-    }
 }

@@ -166,7 +166,7 @@ object MobApi : Disableable {
         if (!eMob.canBurn) {
             e.isVisualFire = false
             e.fireTicks = 0
-            (e as LivingEntity).equipment?.setHelmet(ItemStack(Material.BARRIER), true)
+            //(e as LivingEntity).equipment?.setHelmet(ItemStack(Material.BARRIER), true)
         }
         eMob.potionEffects.forEach { effect ->
             val potionEffect = PotionEffectType.getByName(effect.effect) ?: return@forEach
@@ -254,17 +254,17 @@ object MobApi : Disableable {
         val activeModel = entityInfo.activeModel
         val empireMob = entityInfo.empireMob
         val damager = entityInfo.entity
-        AsyncHelper.runBackground {
+        AsyncHelper.launch {
             val frame = activeModel.getState("attack")?.frame
             val animationLength = activeModel.getState("attack")?.animationLength
             if (animationLength == null || frame == null || frame < 0f || frame.toInt() >= animationLength) {
                 synchronized(MobApi) {
                     if (isAttackAnimationTracked(damager))
-                        return@runBackground
+                        return@launch
                     setAttackAnimationTrack(damager)
                 }
                 activeModel.playAnimation("attack")
-            } else return@runBackground
+            } else return@launch
             runLater(empireMob.hitDelay.toLong()) {
                 entities.forEach { entity ->
                     val distance = damager.location.distance(entity.location)

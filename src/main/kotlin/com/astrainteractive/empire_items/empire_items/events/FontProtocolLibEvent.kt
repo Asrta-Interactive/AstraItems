@@ -1,7 +1,7 @@
 package com.astrainteractive.empire_items.empire_items.events
 
-import com.astrainteractive.astralibs.EventListener
 import com.astrainteractive.astralibs.convertHex
+import com.astrainteractive.astralibs.events.EventListener
 import com.comphenix.protocol.PacketType
 import com.comphenix.protocol.ProtocolLibrary
 import com.comphenix.protocol.ProtocolManager
@@ -77,7 +77,7 @@ class FontProtocolLibEvent : EventListener {
                     packet.chatComponents.write(i, chatComponent)
                 }
 
-                fun convertTextComponent(textComponent: TextComponent): @NotNull Component {
+                fun convertTextComponent(textComponent: TextComponent): Component {
                     val line = EmpireUtils.emojiPattern(GsonComponentSerializer.gson().serialize(textComponent))
                     return GsonComponentSerializer.gson().deserialize(line)
                 }

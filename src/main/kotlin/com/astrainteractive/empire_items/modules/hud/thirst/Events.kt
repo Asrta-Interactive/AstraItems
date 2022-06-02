@@ -1,7 +1,8 @@
 package com.astrainteractive.empire_items.modules.hud.thirst
 
-import com.astrainteractive.astralibs.EventListener
 import com.astrainteractive.astralibs.async.AsyncHelper
+import com.astrainteractive.astralibs.events.EventListener
+import kotlinx.coroutines.launch
 import org.bukkit.Material
 import org.bukkit.World
 import org.bukkit.entity.Player
@@ -43,7 +44,7 @@ class Events : EventListener {
 
     @EventHandler
     fun PlayerMoveEvent(e: PlayerMoveEvent) {
-        AsyncHelper.runBackground {
+        AsyncHelper.launch {
             val distance = valueByFactors(abs(e.to.distance(e.from)), e.player)
             var amount = amountMap[e.player.name] ?: 0f
             amount += distance.toFloat()

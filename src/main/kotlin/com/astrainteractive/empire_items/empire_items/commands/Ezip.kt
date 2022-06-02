@@ -12,7 +12,7 @@ import java.io.File
 
 class Ezip {
     val ezip = AstraLibs.registerCommand("ezip", permission = EmpirePermissions.EZIP) { sender, args ->
-        AsyncHelper.runBackground {
+        AsyncHelper.launch {
             sender.sendMessage(EmpirePlugin.translations.zipStarted)
             ResourcePack.generate()
             if (Zipper.zipAll(

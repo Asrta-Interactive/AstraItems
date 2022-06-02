@@ -1,6 +1,7 @@
 package com.astrainteractive.empire_items.api.upgrade
 
 import com.astrainteractive.astralibs.valueOfOrNull
+import com.astrainteractive.empire_items.api.EmpireAPI
 import com.astrainteractive.empire_items.api.utils.getCustomItemsFiles
 import com.astrainteractive.empire_items.api.utils.getDoubleOrNull
 import org.bukkit.attribute.Attribute
@@ -13,6 +14,7 @@ data class AstraUpgrade(
     val addMin: Double,
     val attribute: Attribute
 ) {
+    fun validate() = EmpireAPI.isGameObjectOrItem(id)
     companion object {
         fun getUpgrades() =
             getCustomItemsFiles()?.mapNotNull file@{

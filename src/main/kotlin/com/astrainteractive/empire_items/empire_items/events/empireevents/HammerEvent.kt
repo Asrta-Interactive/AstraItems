@@ -1,6 +1,7 @@
 package com.astrainteractive.empire_items.empire_items.events.empireevents
 
-import com.astrainteractive.astralibs.EventListener
+import com.astrainteractive.astralibs.events.DSLEvent
+import com.astrainteractive.astralibs.events.EventListener
 import com.astrainteractive.empire_items.EmpirePlugin.Companion.instance
 import com.astrainteractive.empire_items.api.utils.BukkitConstants
 import com.astrainteractive.empire_items.api.utils.hasPersistentData
@@ -15,22 +16,14 @@ import org.bukkit.block.BlockFace
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.block.BlockBreakEvent
+import org.bukkit.event.entity.ProjectileHitEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import java.util.*
 
-class HammerEvent : EventListener {
+class HammerEvent{
     private val blockFace: MutableMap<Player, Int> = mutableMapOf()
 
-
-
-
-    override fun onDisable() {
-        PlayerInteractEvent.getHandlerList().unregister(this)
-        BlockBreakEvent.getHandlerList().unregister(this)
-    }
-
-    @EventHandler
-    fun playerInteractEvent(e: PlayerInteractEvent) {
+    val playerInteractEvent = DSLEvent.event(PlayerInteractEvent::class.java)  { e ->
         val p = e.player
         val bFace = e.blockFace
         val side: Int
@@ -43,8 +36,7 @@ class HammerEvent : EventListener {
         blockFace[p] = side
     }
 
-    @EventHandler
-    fun playerBreakEvent(e: BlockBreakEvent) {
+    val playerBreakEvent = DSLEvent.event(BlockBreakEvent::class.java)  { e ->
         val p = e.player
         val b = e.block
         if (instance.server.pluginManager.getPlugin("WorldGuard") != null) {
@@ -56,12 +48,12 @@ class HammerEvent : EventListener {
             )
                 if (!query.testState(loc, WorldGuardPlugin.inst().wrapPlayer(p), Flags.BUILD,Flags.BLOCK_BREAK)) {
                     e.isCancelled = true
-                    return
+                    return@event
                 }
         }
         val itemStack = e.player.inventory.itemInMainHand
-        val itemMeta = itemStack.itemMeta ?: return
-        if (itemMeta.hasPersistentData(BukkitConstants.HAMMER_ENCHANT)!=true) return
+        val itemMeta = itemStack.itemMeta ?: return@event
+        if (itemMeta.hasPersistentData(BukkitConstants.HAMMER_ENCHANT)!=true) return@event
         val side = blockFace[e.player]
         blockFace.remove(e.player)
         if (side != null) {

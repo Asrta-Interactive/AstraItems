@@ -3,6 +3,7 @@ package com.astrainteractive.empire_items.api.items.data
 import com.astrainteractive.empire_items.api.items.data.EmpireItem.Companion.getIntOrNull
 import com.astrainteractive.empire_items.api.items.data.interact.PlayCommand
 import com.astrainteractive.empire_items.api.items.data.interact.PlayPotionEffect
+import com.astrainteractive.empire_items.api.mobs.data.getMap
 import com.astrainteractive.empire_items.api.utils.getDoubleOrNull
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.entity.Entity
@@ -27,7 +28,21 @@ data class Gun(
     val radiusSneak: Double?,
     val explosion: Int?,
     val onContact: OnContact?,
+    val advanced: Advanced?
 ) {
+    data class Advanced(
+        val armorPenetration: Map<String, Double>
+    ) {
+        companion object {
+            fun get(s: ConfigurationSection?): Advanced? {
+                s ?: return null
+                val armorPenetration =
+                    s.getConfigurationSection("armorPenetration").getMap<String, Double>() ?: return null
+                return Advanced(armorPenetration)
+            }
+        }
+    }
+
     data class OnContact(
         val ignorePlayer: Boolean = false,
         val fireTicks: Int? = 0,
@@ -80,7 +95,8 @@ data class Gun(
                 radius = s.getDouble("radius", 1.0),
                 radiusSneak = s.getDoubleOrNull("radiusSneak"),
                 explosion = s.getIntOrNull("explosion"),
-                onContact = OnContact.get(s.getConfigurationSection("onContact"))
+                onContact = OnContact.get(s.getConfigurationSection("onContact")),
+                advanced = Advanced.get(s.getConfigurationSection("advanced"))
             )
         }
     }

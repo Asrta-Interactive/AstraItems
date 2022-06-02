@@ -1,7 +1,9 @@
 package com.astrainteractive.empire_items.empire_items.events.empireevents
 
 import com.astrainteractive.astralibs.AstraLibs
-import com.astrainteractive.astralibs.EventListener
+import com.astrainteractive.astralibs.catching
+import com.astrainteractive.astralibs.events.DSLEvent
+import com.astrainteractive.astralibs.events.EventListener
 import com.astrainteractive.astralibs.valueOfOrNull
 import com.astrainteractive.empire_items.api.items.data.Gun
 import com.astrainteractive.empire_items.api.items.data.ItemApi
@@ -23,6 +25,7 @@ import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.block.Action
+import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.player.*
 import org.bukkit.inventory.EntityEquipment
 import org.bukkit.inventory.EquipmentSlot
@@ -32,7 +35,7 @@ import java.lang.IllegalArgumentException
 import java.lang.NumberFormatException
 import kotlin.math.max
 
-class GunEvent : EventListener {
+class GunEvent {
 
     private var protocolManager: ProtocolManager? = null
 
@@ -116,35 +119,28 @@ class GunEvent : EventListener {
 
 
     //#FFFFFF
-    private fun rgbToColor(color: String): Color {
-        return try {
-            Color.fromRGB(Integer.decode(color.replace("#", "0x")))
-        } catch (e: NumberFormatException) {
-            Color.BLACK
-        } catch (e: IllegalArgumentException) {
-            Color.BLACK
-        }
-    }
+    private fun rgbToColor(color: String): Color =
+        catching { Color.fromRGB(Integer.decode(color.replace("#", "0x"))) } ?: Color.BLACK
 
-    @EventHandler
-    fun playerInteractEvent(e: PlayerInteractEvent) {
+    val playerInteractEvent = DSLEvent.event(PlayerInteractEvent::class.java) { e ->
 
-        val itemStack = e.item ?: return
+        val itemStack = e.item ?: return@event
         val id = itemStack.getAstraID()
-        val gunInfo = ItemApi.getItemInfo(id)?.gun ?: return
+        val gunInfo = ItemApi.getItemInfo(id)?.gun ?: return@event
         val player = e.player
-        if (e.action == Action.LEFT_CLICK_AIR || e.action == Action.LEFT_CLICK_BLOCK) {
+        val action = e.action
+        if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
             reloadGun(player, itemStack, gunInfo)
-            return
+            return@event
         }
         val currentClipSize = itemStack.itemMeta.getPersistentData(BukkitConstants.CLIP_SIZE)
         if (currentClipSize == 0) {
             player.world.playSound(player.location, gunInfo.noAmmoSound ?: "", 1.0f, 1.0f)
-            return
+            return@event
         }
 
         if (!canShoot(player, gunInfo))
-            return
+            return@event
         player.world.playSound(player.location, gunInfo.shootSound ?: "", 1.0f, 1.0f)
         var itemMeta = itemStack.itemMeta
         if (currentClipSize != null)
@@ -171,7 +167,7 @@ class GunEvent : EventListener {
             if (particle == Particle.REDSTONE)
                 builder = builder.color(rgbToColor(gunInfo.color ?: "#000000"))
             builder = builder
-                .location(l.world ?: return, l.x, l.y, l.z)
+                .location(l.world ?: return@event, l.x, l.y, l.z)
                 .spawn()
             l =
                 l.add(
@@ -185,8 +181,22 @@ class GunEvent : EventListener {
 
             for (ent: Entity in getEntityByLocation(l, r)) {
                 gunInfo.onContact?.play(ent, creator = player)
-                if (ent is LivingEntity && ent != player)
-                    gunInfo.damage?.let { ent.damage((1 - i / gunInfo.bulletTrace) * it, player) }
+                if (ent is LivingEntity && ent != player) {
+                    gunInfo.damage?.let {
+                        var damage = (1 - i / gunInfo.bulletTrace) * it
+
+                        gunInfo.advanced?.armorPenetration?.let {
+                            ent.equipment?.let { eq ->
+                                listOf(eq.helmet, eq.chestplate, eq.leggings, eq.boots).forEach { armor ->
+                                    val id = armor?.getAstraID() ?: armor?.type?.name ?: return@forEach
+                                    val multiplier = it[id] ?: return@forEach
+                                    damage *= multiplier
+                                }
+                            }
+                        }
+                        ent.damage(damage, player)
+                    }
+                }
             }
         }
         if (gunInfo.explosion != null && KProtectionLib.canExplode(null, l))
@@ -202,14 +212,5 @@ class GunEvent : EventListener {
             if (e.location.distanceSquared(loc) <= r)
                 entities.add(e)
         return entities
-    }
-
-    override fun onDisable() {
-        PlayerInteractEvent.getHandlerList().unregister(this)
-        PlayerMoveEvent.getHandlerList().unregister(this)
-        PlayerToggleSneakEvent.getHandlerList().unregister(this)
-        PlayerItemHeldEvent.getHandlerList().unregister(this)
-        PlayerSwapHandItemsEvent.getHandlerList().unregister(this)
-        PlayerDropItemEvent.getHandlerList().unregister(this)
     }
 }

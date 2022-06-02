@@ -1,8 +1,8 @@
 package com.astrainteractive.empire_items.empire_items.events
 
 
-import com.astrainteractive.astralibs.EventListener
-import com.astrainteractive.astralibs.EventManager
+import com.astrainteractive.astralibs.events.EventListener
+import com.astrainteractive.astralibs.events.EventManager
 import com.astrainteractive.astralibs.menu.MenuListener
 import com.astrainteractive.empire_items.empire_items.events.blocks.*
 import com.astrainteractive.empire_items.empire_items.events.decoration.DecorationEvent
@@ -30,37 +30,37 @@ class GenericListener : EventManager {
             ProtocolLibResourcePackEvent().onEnable(this)
         }
         if (Bukkit.getServer().pluginManager.getPlugin("CoreProtect") != null)
-            CoreInspectEvent().onEnable(this)
+            CoreInspectEvent()
         BookSignEvent().onEnable(this)
         if (Bukkit.getServer().pluginManager.getPlugin("ModelEngine") != null)
             ModelEngineEvent().onEnable(this)
         MusicDiscsEvent().onEnable(this)
-        LavaWalkerEvent().onEnable(this)
-        HammerEvent().onEnable(this)
-        MolotovEvent().onEnable(this)
-        SlimeCatchEvent().onEnable(this)
-        DeathTotemEvent().onEnable(this)
-        CatKillEvent().onEnable(this)
-        SoulBindEvent().onEnable(this)
-        GrenadeEvent().onEnable(this)
-        GrapplingHook().onEnable(this)
-        VoidTotemEvent().onEnable(this)
-        ResourcePackEvent().onEnable(this)
-        ExperienceRepairEvent().onEnable(this)
-        DurabilityCraftEvent().onEnable(this)
-        GunEvent().onEnable(this)
+        LavaWalkerEvent()
+        HammerEvent()
+        MolotovEvent()
+        SlimeCatchEvent()
+        DeathTotemEvent()
+        CatKillEvent()
+        SoulBindEvent()
+        GrenadeEvent()
+        GrapplingHook()
+        VoidTotemEvent()
+        ResourcePackEvent()
+        ExperienceRepairEvent()
+        DurabilityCraftEvent()
+        GunEvent()
         MenuListener().onEnable(this)
-        UpgradeEvent().onEnable(this)
-        ItemDropEvent().onEnable(this)
-        ItemInteractEvent().onEnable(this)
-        VillagerEvent().onEnable(this)
-        PlayerShowRecipeKeyEvent().onEnable(this)
-        BlockGenerationEvent().onEnable(this)
-        BlockHardnessEvent().onEnable(this)
-        MushroomBlockPlaceEvent().onEnable(this)
-        MushroomBlockBreakEvent().onEnable(this)
-        MushroomCancelEvent().onEnable(this)
-        DecorationEvent().onEnable(this)
+        UpgradeEvent()
+        ItemDropEvent()
+        ItemInteractEvent()
+        VillagerEvent()
+        PlayerShowRecipeKeyEvent()
+        BlockGenerationEvent()
+        BlockHardnessEvent()
+        MushroomBlockPlaceEvent()
+        MushroomBlockBreakEvent()
+        MushroomCancelEvent()
+        DecorationEvent()
 
 
     }

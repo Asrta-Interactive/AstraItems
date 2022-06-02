@@ -8,7 +8,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
 
-class GuiCategories(player: Player, playerMenuUtility: PlayerMenuUtility = PlayerMenuUtility(player)) :
+class GuiCategories(player: Player, override val playerMenuUtility: PlayerMenuUtility = PlayerMenuUtility(player)) :
     AstraPaginatedMenu() {
 
     val guiSettings = GuiConfig.getGuiConfig()
@@ -16,12 +16,15 @@ class GuiCategories(player: Player, playerMenuUtility: PlayerMenuUtility = Playe
     override var menuName: String = guiSettings.settings.categoriesText
 
     override val menuSize: AstraMenuSize = AstraMenuSize.XL
-    override val playerMenuUtility: PlayerMenuUtility = playerMenuUtility
     override val backPageButton: ItemStack = guiSettings.settings.backButton
     override val maxItemsAmount: Int = guiSettings.categories?.size ?: 0
     override val nextPageButton: ItemStack = guiSettings.settings.nextButton
     override var page: Int = 0
     override val prevPageButton: ItemStack = guiSettings.settings.prevButton
+    override val prevButtonIndex: Int = 45
+    override val backButtonIndex: Int = 49
+    override val nextButtonIndex: Int = 53
+
     override fun handleMenu(e: InventoryClickEvent) {
         super.handleMenu(e)
         when(e.slot){
@@ -29,10 +32,10 @@ class GuiCategories(player: Player, playerMenuUtility: PlayerMenuUtility = Playe
                 playerMenuUtility.player.closeInventory()
             }
             else->{
-                AsyncHelper.runBackground{
+                AsyncHelper.launch{
                     playerMenuUtility.categoriesPage = page
                     playerMenuUtility.categoryPage = 0
-                    playerMenuUtility.categoryId = guiSettings.categories?.values?.elementAt(getIndex(e.slot))?.id?:return@runBackground
+                    playerMenuUtility.categoryId = guiSettings.categories?.values?.elementAt(getIndex(e.slot))?.id?:return@launch
                   GuiCategory(playerMenuUtility).open()
                 }
             }

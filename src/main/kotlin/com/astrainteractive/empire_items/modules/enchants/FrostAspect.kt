@@ -2,6 +2,7 @@ package com.astrainteractive.empire_items.modules.enchants
 
 import com.astrainteractive.empire_items.api.utils.BukkitConstants
 import com.astrainteractive.empire_items.modules.enchants.api.EmpireEnchantEvent
+import com.astrainteractive.empire_items.modules.enchants.api.EmpireEnchants
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -9,7 +10,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent
 
 
 class FrostAspect : EmpireEnchantEvent() {
-    override val enchant = BukkitConstants.EmpireEnchants.FROST_ASPECT
+    override val enchant = EmpireEnchants.FROST_ASPECT
     override val enchantKey = "Заговор льда"
     override val materialWhitelist: List<Material>
         get() = listOf(

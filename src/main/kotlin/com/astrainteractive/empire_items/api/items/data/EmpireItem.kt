@@ -8,7 +8,9 @@ import com.astrainteractive.empire_items.api.items.data.interact.PlaySound
 import com.astrainteractive.empire_items.api.items.data.block.Block
 import com.astrainteractive.empire_items.api.items.data.decoration.Decoration
 import com.astrainteractive.empire_items.api.items.data.interact.Interact
+import com.astrainteractive.empire_items.api.utils.BukkitConstant
 import com.astrainteractive.empire_items.empire_items.util.emoji
+import com.astrainteractive.empire_items.modules.enchants.api.EmpireEnchants
 import org.bukkit.ChatColor
 import org.bukkit.Color
 import org.bukkit.Material
@@ -20,6 +22,7 @@ import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.LeatherArmorMeta
 import org.bukkit.inventory.meta.PotionMeta
+import org.bukkit.persistence.PersistentDataType
 
 
 data class EmpireItem(
@@ -77,13 +80,21 @@ data class EmpireItem(
             itemMeta.addItemFlags(ItemFlag.HIDE_DYE)
 
         }
+        listOf<BukkitConstant<Int, Int>>().forEach {
+
+        }
         empireEnchants?.forEach { (k, v) ->
 
-            val empireEnchant = BukkitConstants.EmpireEnchants.enchantByName[k.uppercase()]
-            empireEnchant?.let {
-                itemMeta.setPersistentDataType(BukkitConstants.EmpireEnchants.EMPIRE_ENCHANT, 0)
+            EmpireEnchants.byKey[k.uppercase()]?.let {
+                itemMeta.setPersistentDataType(EmpireEnchants.EMPIRE_ENCHANT, 0)
                 itemMeta.setPersistentDataType(it, v.toIntOrNull() ?: return@let)
             }
+
+            v.toIntOrNull()?.let {
+                val bukkitConstant = BukkitConstant(k, PersistentDataType.INTEGER)
+                itemMeta.setPersistentDataType(bukkitConstant, it)
+            }
+
             when (k.lowercase()) {
                 BukkitConstants.MOLOTOV.value.key -> itemMeta.setPersistentDataType(
                     BukkitConstants.MOLOTOV,
@@ -131,7 +142,7 @@ data class EmpireItem(
             if (it.clipSize != null)
                 itemMeta.setPersistentDataType(BukkitConstants.CLIP_SIZE, 0)
         }
-        itemMeta.setDisplayName(ChatColor.WHITE.toString()+displayName)
+        itemMeta.setDisplayName(ChatColor.WHITE.toString() + displayName)
         itemMeta.lore = lore
         itemStack.itemMeta = itemMeta
         return itemStack

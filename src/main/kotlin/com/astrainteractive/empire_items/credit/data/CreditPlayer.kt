@@ -13,7 +13,7 @@ data class CreditPlayer(
     var unix: Long = System.currentTimeMillis()
 ) {
     companion object {
-        fun getPlayer(uuid: String): CreditPlayer? = AstraYamlParser.parser.configurationSectionToClass<CreditPlayer>(
+        fun getPlayer(uuid: String): CreditPlayer? = AstraYamlParser.configurationSectionToClass<CreditPlayer>(
             EmpireCredit.configFile.getConfig().getConfigurationSection("players.$uuid")
         )
 

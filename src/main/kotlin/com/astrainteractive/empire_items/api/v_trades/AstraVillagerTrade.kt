@@ -1,5 +1,6 @@
 package com.astrainteractive.empire_items.api.v_trades
 
+import com.astrainteractive.empire_items.api.EmpireAPI
 import com.astrainteractive.empire_items.api.items.data.EmpireItem.Companion.getIntOrNull
 import com.astrainteractive.empire_items.api.utils.getCustomItemsFiles
 import org.bukkit.configuration.ConfigurationSection
@@ -61,6 +62,7 @@ data class SlotItem(
     private val minAmount: Int?,
     private val maxAmount: Int?
 ) {
+    fun validate() = EmpireAPI.isGameObjectOrItem(id)
     val amount: Int
         get() {
             return if (minAmount != null && maxAmount != null)

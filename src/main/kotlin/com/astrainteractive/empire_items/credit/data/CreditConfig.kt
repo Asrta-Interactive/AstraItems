@@ -19,6 +19,6 @@ data class CreditConfig(
 ) {
     companion object {
         fun new() =
-            AstraYamlParser.parser.configurationSectionToClass<CreditConfig>(EmpireCredit.configFile.getConfig().getConfigurationSection("config"))
+            AstraYamlParser.configurationSectionToClass<CreditConfig>(EmpireCredit.configFile.getConfig().getConfigurationSection("config"))
     }
 }

@@ -1,6 +1,7 @@
 package com.astrainteractive.empire_items.empire_items.events.decoration
 
-import com.astrainteractive.astralibs.EventListener
+import com.astrainteractive.astralibs.events.DSLEvent
+import com.astrainteractive.astralibs.events.EventListener
 import com.astrainteractive.empire_items.api.items.DecorationBlockAPI
 import com.astrainteractive.empire_items.api.items.data.ItemApi.getAstraID
 import com.astrainteractive.empire_items.empire_items.util.playSound
@@ -14,27 +15,20 @@ import org.bukkit.event.player.PlayerInteractEntityEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
 
-class DecorationEvent : EventListener {
-
-    @EventHandler
-    fun playerInteractEntityEvent(e: HangingPlaceEvent) {
+class DecorationEvent{
+    val playerInteractEntityEvent = DSLEvent.event(HangingPlaceEvent::class.java)  { e ->
         if (e.entity !is ItemFrame)
-            return
+            return@event
         val itemFrame: ItemFrame = e.entity as ItemFrame
-        val id = e.itemStack?.clone()?.getAstraID() ?: return
-        DecorationBlockAPI.placeBlock(id, itemFrame, e.player?.location ?: return, e.blockFace)
+        val id = e.itemStack?.clone()?.getAstraID() ?: return@event
+        DecorationBlockAPI.placeBlock(id, itemFrame, e.player?.location ?: return@event, e.blockFace)
     }
 
-    @EventHandler
-    fun decorationInteractEvent(e: PlayerInteractEvent) {
-        val block = e.clickedBlock ?: return
+    val decorationInteractEvent = DSLEvent.event(PlayerInteractEvent::class.java)  { e->
+        val block = e.clickedBlock ?: return@event
         if (block.type != Material.BARRIER)
-            return
+            return@event
         if (e.action == Action.LEFT_CLICK_BLOCK && e.hand == EquipmentSlot.HAND)
             DecorationBlockAPI.breakItem(block.location)
-    }
-
-
-    override fun onDisable() {
     }
 }

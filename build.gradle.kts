@@ -1,5 +1,4 @@
-import org.jetbrains.kotlin.js.dce.InputResource.Companion.file
-import org.jetbrains.kotlin.konan.properties.saveToFile
+
 import java.util.Properties
 import java.io.FileInputStream
 var astraPropsFile = file("astra.properties")
@@ -24,7 +23,7 @@ var versionBuildRelease = (versionProps.getProperty("VERSION_BUILD_RELEASE","0")
 versionProps.setProperty("VERSION_BUILD_RELEASE","${++versionBuildRelease}")
 versionProps.store(versionPropsFile.outputStream(),"")
 group = "com.astrainteractive"
-version = "3.3.2-$versionBuildRelease"
+version = "3.3.6"
 val name = "EmpireItems"
 description = "Custom items plugin for EmpireProjekt"
 java.sourceCompatibility = JavaVersion.VERSION_16
@@ -72,21 +71,21 @@ repositories {
             artifact()
         }
     }
+    flatDir {
+        dirs("libs")
+    }
 }
 
 dependencies {
-//    implementation(kotlin("stdlib"))
-    implementation("com.astrainteractive:astralibs:1.1.8-2")
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.21")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.21")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.6.0")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.5.20")
-    implementation("org.jetbrains.kotlin:kotlin-test-junit:1.5.20")
-    testImplementation("junit:junit:4.13.1")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.5.21")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.6.1")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.5.20")
+    testImplementation("junit:junit:4.13.2")
     testImplementation("com.github.seeseemelk:MockBukkit-v1.18:1.24.1")
-    testImplementation("io.kotest:kotest-runner-junit5:latest.release")
-    testImplementation("io.kotest:kotest-assertions-core:latest.release")
+    testImplementation("io.kotest:kotest-runner-junit5:5.2.1")
+    testImplementation("io.kotest:kotest-assertions-core:5.2.1")
     testImplementation(kotlin("test"))
     compileOnly("net.essentialsx:EssentialsX:2.19.0-SNAPSHOT")
     compileOnly("io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT")
@@ -99,6 +98,7 @@ dependencies {
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
     compileOnly("net.coreprotect:coreprotect:20.0")
     compileOnly("com.ticxo.modelengine:api:R2.5.0")
+    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 }
 
 
@@ -112,9 +112,12 @@ publishing {
 tasks.withType<JavaCompile>() {
     options.encoding = "UTF-8"
 }
-tasks.withType<Test> {
+tasks.withType<Test>().configureEach {
     useJUnitPlatform()
 }
+
+
+
 tasks {
     processResources {
         from(sourceSets.main.get().resources.srcDirs) {
@@ -134,24 +137,37 @@ tasks {
     }
 
     shadowJar {
-        mergeServiceFiles()
+        dependencies {
+            include(dependency(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar",".aar")))))
+            include(dependency("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.21"))
+            include(dependency("org.jetbrains.kotlin:kotlin-runtime:1.5.21"))
+            include(dependency("org.jetbrains.kotlin:kotlin-stdlib:1.5.21"))
+            include(dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1"))
+            include(dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.6.1"))
+        }
+        isReproducibleFileOrder = true
+
+        from(sourceSets.main.get().output)
+        from(project.configurations.runtimeClasspath)
+        manifest.attributes("Main-Class" to "com.astrainteractive.astratemplate.AstraTemplate")
         minimize()
-        archiveClassifier.set("")
     }
 
     test {
         useJUnit()
         testLogging {
             events("passed", "skipped", "failed")
+            this.showStandardStreams = true
         }
     }
 
-//    register<Copy>("copyToServer") {
-//        val path = project.property("targetDir") ?: ""
-//        if (path.toString().isEmpty()) {
-//            println("targetDir is not set in gradle properties")
-//            return@register
-//        }
-//        destinationDir = File(path.toString())
-//    }
+
+    register<Copy>("copyToServer") {
+        val path = "D:\\Minecraft Servers\\TEST_SERVER\\plugins"
+        if (path.toString().isEmpty()) {
+            println("targetDir is not set in gradle properties")
+            return@register
+        }
+        destinationDir = File(path.toString())
+    }
 }

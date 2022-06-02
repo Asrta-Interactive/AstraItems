@@ -2,8 +2,8 @@ package com.astrainteractive.empire_items.empire_items.events.empireevents
 
 import com.astrainteractive.astralibs.AstraLibs
 import com.astrainteractive.astralibs.HEX
-import com.astrainteractive.astralibs.EventListener
-import com.astrainteractive.astralibs.EventManager
+import com.astrainteractive.astralibs.events.DSLEvent
+import com.astrainteractive.astralibs.events.EventManager
 import com.astrainteractive.empire_items.api.utils.BukkitConstants
 import com.astrainteractive.empire_items.api.utils.getPersistentData
 import com.astrainteractive.empire_items.api.utils.setPersistentDataType
@@ -12,33 +12,31 @@ import net.coreprotect.CoreProtectAPI
 import org.bukkit.ChatColor
 import org.bukkit.event.EventHandler
 import org.bukkit.event.block.Action
+import org.bukkit.event.entity.EntitySpawnEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import java.text.SimpleDateFormat
 import java.util.*
 
 
-class CoreInspectEvent : EventListener {
+class CoreInspectEvent{
 
     var coreProtect: CoreProtectAPI? = null
     val c: String
         get() = ChatColor.AQUA.toString()
 
-    override fun onEnable(manager: EventManager): EventListener {
+    init {
         AstraLibs.instance.server.pluginManager.getPlugin("CoreProtect")?.let {
             coreProtect = (it as CoreProtect).api
         }
-        return super.onEnable(manager)
-
     }
 
 
 
-    @EventHandler
-    private fun onPlayerInteract(e: PlayerInteractEvent) {
-        coreProtect ?: return
-        val itemStack = e.item?:return
-        val itemMeta = itemStack.itemMeta?:return
-        val time = e.item?.itemMeta?.getPersistentData(BukkitConstants.CORE_INSPECT) ?: return
+    val onPlayerInteract = DSLEvent.event(PlayerInteractEvent::class.java)  { e ->
+        coreProtect ?: return@event
+        val itemStack = e.item?:return@event
+        val itemMeta = itemStack.itemMeta?:return@event
+        val time = e.item?.itemMeta?.getPersistentData(BukkitConstants.CORE_INSPECT) ?: return@event
         if (!e.player.isSneaking) {
             if (e.action == Action.LEFT_CLICK_AIR) {
                 itemMeta.setPersistentDataType(BukkitConstants.CORE_INSPECT, time + 5)
@@ -52,7 +50,7 @@ class CoreInspectEvent : EventListener {
 
 
         if (!e.player.isSneaking)
-            return
+            return@event
         val result = if (e.action==Action.LEFT_CLICK_AIR || e.action==Action.RIGHT_CLICK_AIR)
             coreProtect?.performLookup(time*60,null,null,null,null,null,20,e.player.location)
         else
@@ -61,7 +59,7 @@ class CoreInspectEvent : EventListener {
         if (result?.isEmpty() != false) {
             e.player.sendMessage("${c}[Лупа]: Тут ничего не происходило в течение ${time} минут")
             e.player.sendMessage("${c}[Лупа]: Чтобы увеличить или уменьшить время - ударьте левой/правой рукой по воздуху")
-            return
+            return@event
         }
         val last = if (result.size<5) result.size-1 else 5
         result.takeLast(last).forEach { res ->
@@ -75,9 +73,5 @@ class CoreInspectEvent : EventListener {
                 }".HEX()
             )
         }
-    }
-
-    override fun onDisable() {
-        PlayerInteractEvent.getHandlerList().unregister(this)
     }
 }

@@ -1,24 +1,25 @@
 package com.astrainteractive.empire_items.empire_items.events.empireevents
 
-import com.astrainteractive.astralibs.EventListener
+import com.astrainteractive.astralibs.events.DSLEvent
+import com.astrainteractive.astralibs.events.EventListener
 import com.astrainteractive.empire_items.api.utils.BukkitConstants
 import com.astrainteractive.empire_items.api.utils.hasPersistentData
 
 import org.bukkit.Location
 import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.PlayerDeathEvent
+import org.bukkit.event.entity.ProjectileHitEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.event.player.PlayerRespawnEvent
 import org.bukkit.inventory.ItemStack
 
-class SoulBindEvent: EventListener {
+class SoulBindEvent{
 
 
     val playerDiedMap= mutableMapOf<String,MutableList<ItemStack>>()
     val playerDiedLocationMap = mutableMapOf<String,Location>()
 
-    @EventHandler
-    fun playerDieEvent(e:PlayerDeathEvent){
+    val playerDieEvent = DSLEvent.event(PlayerDeathEvent::class.java)  { e ->
         val player = e.entity
         playerDiedMap[player.uniqueId.toString()] = mutableListOf()
         for (item in e.drops.toList()){
@@ -33,8 +34,7 @@ class SoulBindEvent: EventListener {
             playerDiedLocationMap[player.uniqueId.toString()] = player.location
     }
 
-    @EventHandler
-    fun playerRespawnEvent(e:PlayerRespawnEvent){
+    val playerRespawnEvent = DSLEvent.event(PlayerRespawnEvent::class.java)  { e ->
         val player = e.player
         for (item in playerDiedMap[player.uniqueId.toString()]?: mutableListOf()){
             player.inventory.addItem(item)
@@ -42,19 +42,11 @@ class SoulBindEvent: EventListener {
         playerDiedMap.remove(e.player.uniqueId.toString())
         playerDiedLocationMap.remove(e.player.uniqueId.toString())
     }
-    @EventHandler
-    fun playerDisconnectEvent(e:PlayerQuitEvent){
-        val location = playerDiedLocationMap[e.player.uniqueId.toString()]?:return
+    val playerDisconnectEvent = DSLEvent.event(PlayerQuitEvent::class.java)  { e ->
+        val location = playerDiedLocationMap[e.player.uniqueId.toString()]?:return@event
         for (item in playerDiedMap[e.player.uniqueId.toString()]?: mutableListOf())
             location.world?.dropItem(location,item)?:continue
         playerDiedMap.remove(e.player.uniqueId.toString())
         playerDiedLocationMap.remove(e.player.uniqueId.toString())
     }
-
-    override fun onDisable() {
-        PlayerQuitEvent.getHandlerList().unregister(this)
-        PlayerDeathEvent.getHandlerList().unregister(this)
-        PlayerRespawnEvent.getHandlerList().unregister(this)
-    }
-
 }

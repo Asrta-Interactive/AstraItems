@@ -1,6 +1,7 @@
 package com.astrainteractive.empire_items.empire_items.events.villagers
 
-import com.astrainteractive.astralibs.EventListener
+import com.astrainteractive.astralibs.events.DSLEvent
+import com.astrainteractive.astralibs.events.EventListener
 import com.astrainteractive.empire_items.api.items.data.ItemApi.getAstraID
 import com.astrainteractive.empire_items.api.items.data.ItemApi.toAstraItemOrItem
 import com.astrainteractive.empire_items.api.v_trades.TradeItem
@@ -11,25 +12,25 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.VillagerAcquireTradeEvent
 import org.bukkit.event.entity.VillagerCareerChangeEvent
 import org.bukkit.event.entity.VillagerReplenishTradeEvent
+import org.bukkit.event.inventory.CraftItemEvent
 import org.bukkit.event.player.PlayerInteractEntityEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.MerchantRecipe
 import kotlin.random.Random
 
-class VillagerEvent : EventListener {
+class VillagerEvent{
 
 
     /**
      * У жителя создается трейд
      */
-    @EventHandler
-    fun villagerAcquireTradeEvent(e: VillagerAcquireTradeEvent) {
+    val villagerAcquireTradeEvent = DSLEvent.event(VillagerAcquireTradeEvent::class.java)  { e ->
         if (e.entity !is Villager)
-            return
+            return@event
         val villager = e.entity as Villager
-        val trades = VillagerTradeApi.villagerTradeByProfession(villager.profession.name) ?: return
+        val trades = VillagerTradeApi.villagerTradeByProfession(villager.profession.name) ?: return@event
         if (e.isCancelled)
-            return
+            return@event
         for (trade in trades.trades)
             addRecipe(villager, trade)
 
@@ -49,15 +50,14 @@ class VillagerEvent : EventListener {
     /**
      * Эвент взаимодействия с жителем - необходим для замены предметов
      */
-    @EventHandler
-    fun villagerInteractEvent(e: PlayerInteractEntityEvent) {
+    val villagerInteractEvent = DSLEvent.event(PlayerInteractEntityEvent::class.java)  { e ->
         if (e.rightClicked !is Villager)
-            return
+            return@event
         if (!e.player.isSneaking)
-            return
+            return@event
 
         val villager = e.rightClicked as Villager
-        val trades = VillagerTradeApi.villagerTradeByProfession(villager.profession.name) ?: return
+        val trades = VillagerTradeApi.villagerTradeByProfession(villager.profession.name) ?: return@event
 
         val recipes = villager.recipes.toMutableList()
         villager.recipes = mutableListOf()
@@ -112,11 +112,5 @@ class VillagerEvent : EventListener {
         val recipes = villager.recipes.toMutableList()
         recipes.add(mRecipe)
         villager.recipes = recipes
-    }
-    override fun onDisable() {
-        VillagerAcquireTradeEvent.getHandlerList().unregister(this)
-        VillagerReplenishTradeEvent.getHandlerList().unregister(this)
-        VillagerCareerChangeEvent.getHandlerList().unregister(this)
-        PlayerInteractEntityEvent.getHandlerList().unregister(this)
     }
 }

@@ -1,5 +1,6 @@
 package com.astrainteractive.empire_items.api.drop
 
+import com.astrainteractive.empire_items.api.EmpireAPI
 import com.astrainteractive.empire_items.api.utils.getCustomItemsFiles
 import com.astrainteractive.empire_items.api.utils.getCustomItemsSections
 import org.bukkit.configuration.ConfigurationSection
@@ -16,8 +17,13 @@ data class AstraDrop(
     val calculatedAmount: Int
         get() = Random(System.currentTimeMillis()).nextInt(minAmount, maxAmount + 1)
 
+    fun validate(): Boolean {
+        return EmpireAPI.isGameObjectOrItem(dropFrom)
+    }
+
     companion object {
-        fun getDrops(): List<AstraDrop> = getCustomItemsSections("loot")?.flatMap {getMapDrop(it)} ?: listOf()
+        fun getDrops(): List<AstraDrop> = getCustomItemsSections("loot")?.flatMap { getMapDrop(it) } ?: listOf()
+        fun <T> ifExist(block: () -> T?) = block
 
         private fun getMapDrop(section: ConfigurationSection?) = section?.getKeys(false)?.mapNotNull { itemId ->
             val s = section.getConfigurationSection(itemId) ?: return@mapNotNull null

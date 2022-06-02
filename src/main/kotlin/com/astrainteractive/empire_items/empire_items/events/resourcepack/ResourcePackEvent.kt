@@ -1,26 +1,21 @@
 package com.astrainteractive.empire_items.empire_items.events.resourcepack
 
-import com.astrainteractive.astralibs.EventListener
+import com.astrainteractive.astralibs.events.EventListener
 import com.astrainteractive.astralibs.Logger
+import com.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.empire_items.EmpirePlugin
 import com.astrainteractive.empire_items.empire_items.util.Config
 import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
+import org.bukkit.event.inventory.PrepareAnvilEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerResourcePackStatusEvent
 
-class ResourcePackEvent : EventListener {
+class ResourcePackEvent {
 
     val TAG = "ResourcePack"
 
-    override fun onDisable() {
-        PlayerJoinEvent.getHandlerList().unregister(this)
-        PlayerResourcePackStatusEvent.getHandlerList().unregister(this)
-    }
-
-
-    @EventHandler
-    fun onJoin(e: PlayerJoinEvent) {
+    val onJoin = DSLEvent.event(PlayerJoinEvent::class.java)  { e ->
         val p = e.player
         if (Config.requestPackOnJoin || !p.hasPlayedBefore()) {
             Bukkit.getScheduler().runTaskLater(EmpirePlugin.instance, Runnable {
@@ -36,8 +31,7 @@ class ResourcePackEvent : EventListener {
     }
 
 
-    @EventHandler
-    fun onResourcePack(e: PlayerResourcePackStatusEvent) {
+    val onResourcePack = DSLEvent.event(PlayerResourcePackStatusEvent::class.java)  { e ->
         val p = e.player
         when (e.status) {
             PlayerResourcePackStatusEvent.Status.DECLINED -> {
@@ -56,7 +50,7 @@ class ResourcePackEvent : EventListener {
             }
             PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED -> {
                 if (System.currentTimeMillis() - p.firstPlayed>1000*60*10)
-                    return
+                    return@event
                 p.sendTitle(
                     ":first_join:",
                     "", 5, 1000, 5

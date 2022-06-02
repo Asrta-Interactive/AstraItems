@@ -2,6 +2,8 @@ package com.astrainteractive.empire_items.empire_items.events.genericevents
 
 import com.astrainteractive.astralibs.*
 import com.astrainteractive.astralibs.async.AsyncHelper.callSyncMethod
+import com.astrainteractive.astralibs.events.DSLEvent
+import com.astrainteractive.astralibs.events.EventListener
 import com.astrainteractive.empire_items.api.crafting.CraftingApi
 import com.astrainteractive.empire_items.api.items.data.ItemApi
 import com.astrainteractive.empire_items.api.items.data.ItemApi.getAstraID
@@ -21,7 +23,7 @@ import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import java.util.concurrent.Future
 
-class ItemInteractEvent : EventListener {
+class ItemInteractEvent {
 
     private val cooldown = mutableMapOf<String, Long>()
 
@@ -86,68 +88,43 @@ class ItemInteractEvent : EventListener {
         }
 
 
-    @EventHandler
-    fun onClick(event: PlayerInteractEvent) {
-
-        if (event.hand == EquipmentSlot.HAND)
-            executeEvent(item = event.player.inventory.itemInMainHand, player = event.player, event = event.action.name)
-        if (event.hand == EquipmentSlot.OFF_HAND)
-            executeEvent(item = event.player.inventory.itemInOffHand, player = event.player, event = event.action.name)
+    val onClick = DSLEvent.event(PlayerInteractEvent::class.java)  { e ->
+        if (e.hand == EquipmentSlot.HAND)
+            executeEvent(item = e.player.inventory.itemInMainHand, player = e.player, event = e.action.name)
+        if (e.hand == EquipmentSlot.OFF_HAND)
+            executeEvent(item = e.player.inventory.itemInOffHand, player = e.player, event = e.action.name)
     }
 
-    @EventHandler
-    fun onDrink(event: PlayerItemConsumeEvent) {
-        val executed = executeEvent(item = event.player.inventory.itemInMainHand, player = event.player, event = event.eventName)
+    val onDrink = DSLEvent.event(PlayerItemConsumeEvent::class.java)  { e ->
+        val executed = executeEvent(item = e.player.inventory.itemInMainHand, player = e.player, event = e.eventName)
         if (executed)
-            event.replacement = ItemStack(Material.AIR)
+            e.replacement = ItemStack(Material.AIR)
     }
 
-    @EventHandler
-    fun onFurnaceEnded(event: FurnaceSmeltEvent){
-        val id = event.source.getAstraID()?:return
-        val returnId = CraftingApi.getFurnaceByInputId(id).firstOrNull { it.returns != null }?.returns?.toAstraItemOrItem() ?:return
-        if (event.block.state !is Furnace)
-            return
-        val furnace = event.block.state as Furnace
+    val onFurnaceEnded = DSLEvent.event(FurnaceSmeltEvent::class.java)  { e ->
+        val id = e.source.getAstraID()?:return@event
+        val returnId = CraftingApi.getFurnaceByInputId(id).firstOrNull { it.returns != null }?.returns?.toAstraItemOrItem() ?:return@event
+        if (e.block.state !is Furnace)
+            return@event
+        val furnace = e.block.state as Furnace
         furnace.inventory.smelting = returnId
     }
-    @EventHandler
-    fun onEntityDamage(event: EntityDamageEvent) {
-        if (event.entity !is Player)
-            return
+    val onEntityDamage = DSLEvent.event(EntityDamageEvent::class.java)  { e ->
+        if (e.entity !is Player)
+            return@event
         executeEvent(
-            item = (event.entity as Player).inventory.itemInMainHand,
-            player = (event.entity as Player),
-            event = event.eventName
+            item = (e.entity as Player).inventory.itemInMainHand,
+            player = (e.entity as Player),
+            event = e.eventName
         )
     }
 
-    @EventHandler
-    fun onPlayerMove(event: PlayerMoveEvent) {
-//        AsyncHelper.runBackground {
-//            executeEvent(item = event.player.inventory.itemInMainHand, player = event.player, event = event.eventName)
-//        }
-    }
-
-
-    @EventHandler
-    fun onPlayerJoin(e: PlayerJoinEvent) {
+    val onPlayerJoin = DSLEvent.event(PlayerJoinEvent::class.java)  { e ->
         cooldown.remove(e.player.name)
     }
 
 
-    @EventHandler
-    fun onPlayerJoin(e: PlayerQuitEvent) {
+    val onPlayerQuit = DSLEvent.event(PlayerQuitEvent::class.java)  { e ->
         cooldown.remove(e.player.name)
-    }
-
-    override fun onDisable() {
-        PlayerQuitEvent.getHandlerList().unregister(this)
-        PlayerJoinEvent.getHandlerList().unregister(this)
-        PlayerMoveEvent.getHandlerList().unregister(this)
-        EntityDamageEvent.getHandlerList().unregister(this)
-        PlayerItemConsumeEvent.getHandlerList().unregister(this)
-        PlayerInteractEvent.getHandlerList().unregister(this)
-
     }
 }

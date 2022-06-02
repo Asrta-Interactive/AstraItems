@@ -4,6 +4,7 @@ import com.astrainteractive.astralibs.AstraLibs
 import com.astrainteractive.astralibs.LicenceChecker
 import com.astrainteractive.astralibs.Logger
 import com.astrainteractive.astralibs.async.AsyncHelper
+import com.astrainteractive.astralibs.events.GlobalEventManager
 import com.astrainteractive.empire_items.api.EmpireAPI
 import com.astrainteractive.empire_items.credit.EmpireCredit
 import com.astrainteractive.empire_items.empire_items.commands.CommandManager
@@ -90,27 +91,20 @@ class EmpirePlugin : JavaPlugin {
         mainDispatcher = runBlocking { coroutineContext[ContinuationInterceptor] as CoroutineDispatcher }
         mainThread = Thread.currentThread()
         instance = this
-        AstraLibs.create(this)
+        AstraLibs.rememberPlugin(this)
         Logger.prefix = "EmpireItems"
         translations = Translations()
         empireFiles = Files()
         Config.load()
         commandManager = CommandManager()
-        empireCredit = EmpireCredit()
+//        empireCredit = EmpireCredit()
         runBlocking {
             ModuleManager.onEnable()
             EmpireAPI.onEnable()
         }
-//        Timer().calculate {
-//
-//        }.also {
-//            Logger.log("ModuleManager and EmpireAPI time ${it}")
-//        }
         genericListener = GenericListener()
         if (server.pluginManager.getPlugin("WorldGuard") != null)
             KProtectionLib.init(this)
-//        licenceTimer.enable()
-
     }
 
 
@@ -118,9 +112,9 @@ class EmpirePlugin : JavaPlugin {
      * This function called when server stops
      */
     override fun onDisable() {
+        GlobalEventManager.onDisable()
         AsyncHelper.cancel()
         licenceTimer.onDisable()
-        AstraLibs.clearAllTasks()
         genericListener.onDisable()
         for (p in server.onlinePlayers)
             p.closeInventory()

@@ -1,27 +1,25 @@
 package com.astrainteractive.empire_items.empire_items.events.empireevents
 
-import com.astrainteractive.astralibs.EventListener
+import com.astrainteractive.astralibs.events.EventListener
 import com.astrainteractive.astralibs.async.AsyncHelper
+import com.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.empire_items.api.items.BlockParser
 import com.astrainteractive.empire_items.api.utils.BukkitConstants
 import com.astrainteractive.empire_items.api.utils.hasPersistentData
+import com.astrainteractive.empire_items.modules.enchants.api.EmpireEnchants
+import kotlinx.coroutines.launch
 import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
+import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 
-class LavaWalkerEvent : EventListener {
-
-
-    override fun onDisable() {
-        PlayerMoveEvent.getHandlerList().unregister(this)
-        EntityDamageEvent.getHandlerList().unregister(this)
-    }
+class LavaWalkerEvent{
 
     fun Block.setTypeFast(type: Material) =
         BlockParser.setTypeFast(this, type)
@@ -40,14 +38,13 @@ class LavaWalkerEvent : EventListener {
         block.getRelative(BlockFace.NORTH_WEST).lavaOrNull()?.setTypeFast(Material.COBBLESTONE)
     }
 
-    @EventHandler
-    fun playerFireEvent(e: EntityDamageEvent) {
+    val playerFireEvent = DSLEvent.event(EntityDamageEvent::class.java)  { e ->
         if (e.cause != EntityDamageEvent.DamageCause.FIRE && e.cause != EntityDamageEvent.DamageCause.FIRE_TICK && e.cause != EntityDamageEvent.DamageCause.LAVA)
-            return
+            return@event
         if (e.entity !is Player)
-            return
+            return@event
         val player = e.entity as Player
-        val equipment = player.equipment ?: return
+        val equipment = player.equipment ?: return@event
         if (allMagmaSet(equipment.armorContents)) {
             e.damage = 0.0
             player.fireTicks = 0
@@ -68,16 +65,15 @@ class LavaWalkerEvent : EventListener {
     }
 
     private fun hasLaveWalker(meta: ItemMeta?): Boolean =
-        meta?.hasPersistentData(BukkitConstants.EmpireEnchants.LAVA_WALKER_ENCHANT) == true
+        meta?.hasPersistentData(EmpireEnchants.LAVA_WALKER_ENCHANT) == true
 
 
-    @EventHandler
-    private fun playerMoveEvent(e: PlayerMoveEvent) {
-        val itemStack = e.player.inventory.boots ?: return
-        val itemMeta = itemStack.itemMeta ?: return
-        AsyncHelper.runBackground {
+    val playerMoveEvent = DSLEvent.event(PlayerMoveEvent::class.java)  { e ->
+        val itemStack = e.player.inventory.boots ?: return@event
+        val itemMeta = itemStack.itemMeta ?: return@event
+        AsyncHelper.launch {
 
-            if (!hasLaveWalker(itemMeta)) return@runBackground
+            if (!hasLaveWalker(itemMeta)) return@launch
             val onToBlock = e.to.block.getRelative(BlockFace.DOWN)
 
             if (onToBlock.type == Material.LAVA)

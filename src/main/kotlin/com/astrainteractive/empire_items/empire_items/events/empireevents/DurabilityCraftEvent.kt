@@ -1,6 +1,7 @@
 package com.astrainteractive.empire_items.empire_items.events.empireevents
 
-import com.astrainteractive.astralibs.EventListener
+import com.astrainteractive.astralibs.events.DSLEvent
+import com.astrainteractive.astralibs.events.EventListener
 import com.astrainteractive.empire_items.api.utils.BukkitConstants
 import com.astrainteractive.empire_items.api.utils.getPersistentData
 import com.astrainteractive.empire_items.api.utils.hasPersistentData
@@ -8,10 +9,11 @@ import com.astrainteractive.empire_items.api.utils.setPersistentDataType
 import org.bukkit.event.EventHandler
 import org.bukkit.event.inventory.CraftItemEvent
 import org.bukkit.event.inventory.InventoryAction
+import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.Damageable
 
-class DurabilityCraftEvent : EventListener {
+class DurabilityCraftEvent{
 
     fun ItemStack.manage(): ItemStack {
         val meta = itemMeta
@@ -29,15 +31,14 @@ class DurabilityCraftEvent : EventListener {
         return this
     }
 
-    @EventHandler
-    private fun entityResurrectEvent(e: CraftItemEvent) {
+    val entityResurrectEvent = DSLEvent.event(CraftItemEvent::class.java)  { e ->
 
         val a = e.inventory.matrix?.filter { it?.itemMeta?.hasPersistentData(BukkitConstants.CRAFT_DURABILITY)==true }
         if (a.isNullOrEmpty())
-            return
+            return@event
         if (e.action!=InventoryAction.PICKUP_ALL) {
             e.isCancelled = true
-            return
+            return@event
         }
         e.inventory.matrix?.toList()?.forEachIndexed { i, itemStack ->
             if (itemStack?.itemMeta?.hasPersistentData(BukkitConstants.CRAFT_DURABILITY)!=true)
@@ -45,9 +46,5 @@ class DurabilityCraftEvent : EventListener {
             e.inventory.setItem(i+1,itemStack.manage())
         }
 
-    }
-
-    override fun onDisable() {
-        CraftItemEvent.getHandlerList().unregister(this)
     }
 }

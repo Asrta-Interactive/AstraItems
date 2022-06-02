@@ -1,6 +1,7 @@
 package com.astrainteractive.empire_items.empire_items.events.empireevents
 
-import com.astrainteractive.astralibs.EventListener
+import com.astrainteractive.astralibs.events.DSLEvent
+import com.astrainteractive.astralibs.events.EventListener
 import com.astrainteractive.empire_items.api.items.data.ItemApi.getAstraID
 import com.astrainteractive.empire_items.api.items.data.ItemApi.getItemInfo
 import com.astrainteractive.empire_items.api.utils.BukkitConstants
@@ -12,6 +13,7 @@ import org.bukkit.entity.HumanEntity
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.block.Action
+import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerItemHeldEvent
 import org.bukkit.event.player.PlayerQuitEvent
@@ -19,7 +21,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 
-class GrapplingHook : EventListener {
+class GrapplingHook {
     private val activeHooks = mutableMapOf<String, Location>()
     private fun unCastHook(itemStack: ItemStack, player: Player) {
         val state = itemStack.itemMeta.getPersistentData(BukkitConstants.GRAPPLING_HOOK) ?: return
@@ -75,17 +77,16 @@ class GrapplingHook : EventListener {
         .data(null)
         .location(l.world, l.x, l.y, l.z)
 
-    @EventHandler
-    fun playerHookShootEvent(e: PlayerInteractEvent) {
+    val playerHookShootEvent = DSLEvent.event(PlayerInteractEvent::class.java)  { e ->
         val item = e.player.inventory.itemInMainHand
-        item.getAstraID() ?: return
-        val state = item.itemMeta.getPersistentData(BukkitConstants.GRAPPLING_HOOK) ?: return
+        item.getAstraID() ?: return@event
+        val state = item.itemMeta.getPersistentData(BukkitConstants.GRAPPLING_HOOK) ?: return@event
         if (e.action == Action.LEFT_CLICK_AIR || e.action == Action.LEFT_CLICK_BLOCK) {
             unCastHook(item, e.player)
-            return
+            return@event
         }
         if (e.player.gameMode != GameMode.CREATIVE && (e.player as HumanEntity).hasCooldown(item.type))
-            return
+            return@event
 
         val player = e.player
         if (activeHooks.containsKey(player.name)) {
@@ -95,14 +96,14 @@ class GrapplingHook : EventListener {
             unCastHook(item, e.player)
             val distance = location.clone().distance(player.location)
             if (distance > 400)
-                return
+                return@event
 
             val v3 = location.clone().subtract(player.location)
             val multiply = 0.4 - (distance / 1000)
             player.velocity = v3.toVector().multiply(multiply / 2)
             player.addPotionEffect(PotionEffect(PotionEffectType.SLOW_FALLING, 45, 1, false, false, false))
             (e.player as HumanEntity).setCooldown(item.type, 50)
-            return
+            return@event
         }
 
 
@@ -114,27 +115,20 @@ class GrapplingHook : EventListener {
                 activeHooks[player.name] = l.add(0.0, 1.0, 0.0)
                 bumpEffect(l).spawn()
                 castHook(item, player, l)
-                return
+                return@event
             }
         }
         castHook(item,player,null)
     }
 
-    @EventHandler
-    fun itemHeldEvent(e: PlayerItemHeldEvent) {
-        activeHooks[e.player.name] ?: return
-        val hook = e.player.inventory.getItem(e.previousSlot) ?: return
-        hook.itemMeta.getPersistentData(BukkitConstants.GRAPPLING_HOOK) ?: return
+    val itemHeldEvent = DSLEvent.event(PlayerItemHeldEvent::class.java)  { e ->
+        activeHooks[e.player.name] ?: return@event
+        val hook = e.player.inventory.getItem(e.previousSlot) ?: return@event
+        hook.itemMeta.getPersistentData(BukkitConstants.GRAPPLING_HOOK) ?: return@event
         unCastHook(hook, e.player)
     }
 
-    @EventHandler
-    fun playerLeaveEvent(e: PlayerQuitEvent) {
+    val playerLeaveEvent = DSLEvent.event(PlayerQuitEvent::class.java)  { e ->
         activeHooks.remove(e.player.name)
-    }
-
-    override fun onDisable() {
-        PlayerQuitEvent.getHandlerList().unregister(this)
-        PlayerInteractEvent.getHandlerList().unregister(this)
     }
 }

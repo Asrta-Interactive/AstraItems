@@ -1,7 +1,8 @@
 package com.astrainteractive.empire_items.empire_items.events.genericevents.drop
 
+import com.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.empire_items.api.drop.DropApi
-import com.astrainteractive.astralibs.EventListener
+import com.astrainteractive.astralibs.events.EventListener
 import com.astrainteractive.empire_items.api.items.BlockParser
 import com.astrainteractive.empire_items.api.items.data.ItemApi
 import com.astrainteractive.empire_items.api.mobs.MobApi
@@ -14,28 +15,27 @@ import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.entity.EntityDeathEvent
 import org.bukkit.event.player.PlayerFishEvent
 import org.bukkit.event.player.PlayerInteractEvent
+import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.loot.Lootable
 
-class ItemDropEvent : EventListener {
+class ItemDropEvent {
 
     private val blockLocations: MutableList<Location> = mutableListOf()
 
 
-    @EventHandler
-    fun onFishingEvent(e: PlayerFishEvent) {
-        val caught = e.caught ?: return
+    val onFishingEvent = DSLEvent.event(PlayerFishEvent::class.java)  { e ->
+        val caught = e.caught ?: return@event
         DropApi.spawnDrop("PlayerFishEvent", caught.location)
     }
 
-    @EventHandler
-    fun onBlockBreak(e: BlockBreakEvent) {
+    val onBlockBreak = DSLEvent.event(BlockBreakEvent::class.java)  { e ->
         val block: Block = e.block
         val customBlockData = BlockParser.getBlockData(e.block)
         val customBlock = ItemApi.getBlockInfoByData(customBlockData)
         val customBlockId = customBlock?.id
         if (customBlock?.block?.ignoreCheck != true) {
             if (blockLocations.contains(block.location))
-                return
+                return@event
             else
                 blockLocations.add(block.location)
             if (blockLocations.size > 60)
@@ -48,34 +48,24 @@ class ItemDropEvent : EventListener {
     }
 
 
-    @EventHandler
-    fun inventoryOpenEvent(e: PlayerInteractEvent) {
+    val inventoryOpenEvent = DSLEvent.event(PlayerInteractEvent::class.java)  { e ->
         if (e.action != Action.RIGHT_CLICK_BLOCK)
-            return
-        val block = e.clickedBlock ?: return
+            return@event
+        val block = e.clickedBlock ?: return@event
         if (block.state !is Chest)
-            return
+            return@event
         val chest = block.state as Chest
         val lootable = chest as Lootable
-        lootable.lootTable ?: return
+        lootable.lootTable ?: return@event
         val drops = DropApi.getDropsFrom("PlayerInteractEvent")
         DropApi.getDrops(drops).forEach {
             chest.blockInventory.addItem(it)
         }
     }
 
-    @EventHandler
-    fun onMobDeath(e: EntityDeathEvent) {
+    val onMobDeath = DSLEvent.event(EntityDeathEvent::class.java)  { e ->
         val dropFrom = MobApi.getActiveEntity(e.entity)?.empireMob?.id ?: e.entity.type.name
         MobApi.removeActiveEntity(e.entity)
         DropApi.spawnDrop(dropFrom, e.entity.location)
-    }
-
-    override fun onDisable() {
-        EntityDeathEvent.getHandlerList().unregister(this)
-        BlockBreakEvent.getHandlerList().unregister(this)
-        PlayerFishEvent.getHandlerList().unregister(this)
-        PlayerInteractEvent.getHandlerList().unregister(this)
-
     }
 }

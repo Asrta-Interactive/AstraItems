@@ -15,6 +15,7 @@ import com.astrainteractive.empire_items.api.utils.setDisplayName
 import com.astrainteractive.empire_items.api.v_trades.AstraVillagerTrade
 import com.astrainteractive.empire_items.api.v_trades.VillagerTradeApi
 import com.astrainteractive.empire_items.empire_items.util.EmpirePermissions
+import kotlinx.coroutines.launch
 import org.bukkit.ChatColor
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.*
@@ -28,6 +29,9 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility) :
     val usedInCraftIDS = CraftingApi.usedInCraft(itemID)
     val usedInCraftItemStacks = usedInCraftIDS.map { it.toAstraItemOrItem() }
 
+    override val prevButtonIndex: Int = 45
+    override val backButtonIndex: Int = 49
+    override val nextButtonIndex: Int = 53
 
     override var menuName: String = guiSettings.settings.workbenchText +  (itemID.toAstraItemOrItem()?.itemMeta?.displayName ?: "Крафтинг")
 
@@ -49,7 +53,7 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility) :
         super.handleMenu(e)
         when (e.slot) {
             backButtonIndex -> {
-                AsyncHelper.runBackground {
+                AsyncHelper.launch {
                     playerMenuUtility.prevItems.removeLast()
                     if (playerMenuUtility.prevItems.isEmpty())
                         GuiCategory(playerMenuUtility).open()

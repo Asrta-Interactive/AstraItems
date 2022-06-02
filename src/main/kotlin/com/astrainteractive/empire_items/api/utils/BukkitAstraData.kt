@@ -16,6 +16,7 @@ data class BukkitConstant<T, Z>(
     )
 }
 
+
 object BukkitConstants {
     fun ASTRA_ID() = BukkitConstant(NamespacedKey(AstraLibs.instance, "ASTRA_ID"), PersistentDataType.STRING)
     fun ASTRA_ATTRIBUTE(attr: Attribute) =
@@ -23,31 +24,6 @@ object BukkitConstants {
             NamespacedKey(AstraLibs.instance, ASTRA_UPGRADE + attr.name.lowercase()),
             PersistentDataType.DOUBLE
         )
-
-    object EmpireEnchants {
-        val EMPIRE_ENCHANT
-            get() = BukkitConstant("EMPIRE_ENCHANT", PersistentDataType.BYTE)
-        val LAVA_WALKER_ENCHANT
-            get() = BukkitConstant("LAVA_WALKER_ENCHANT", PersistentDataType.INTEGER)
-        val VAMPIRISM
-            get() = BukkitConstant("VAMPIRISM", PersistentDataType.INTEGER)
-        val FROST_ASPECT
-            get() = BukkitConstant("FROST_ASPECT", PersistentDataType.INTEGER)
-        val BUTCHER
-            get() = BukkitConstant("BUTCHER", PersistentDataType.INTEGER)
-        val VYDERLIGHT
-            get() = BukkitConstant("VYDERLIGHT", PersistentDataType.INTEGER)
-        val AQUALIGHT
-            get() = BukkitConstant("AQUALIGHT", PersistentDataType.INTEGER)
-        val STRIKE
-            get() = BukkitConstant("STRIKE", PersistentDataType.INTEGER)
-
-        val enchant: List<BukkitConstant<Int, Int>>
-            get() = listOf(LAVA_WALKER_ENCHANT, VAMPIRISM, STRIKE, FROST_ASPECT, BUTCHER, VYDERLIGHT,AQUALIGHT)
-        val enchantByName: Map<String, BukkitConstant<Int, Int>>
-            get() = enchant.associateBy { it.value.key.uppercase() }
-
-    }
 
     //Кастомные эвенты
     val MOLOTOV

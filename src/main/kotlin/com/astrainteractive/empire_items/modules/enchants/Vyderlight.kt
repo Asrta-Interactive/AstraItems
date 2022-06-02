@@ -3,6 +3,7 @@ package com.astrainteractive.empire_items.modules.enchants
 import com.astrainteractive.empire_items.api.utils.BukkitConstants
 import com.astrainteractive.empire_items.empire_items.util.calcChance
 import com.astrainteractive.empire_items.modules.enchants.api.EmpireEnchantEvent
+import com.astrainteractive.empire_items.modules.enchants.api.EmpireEnchants
 import org.bukkit.Material
 import org.bukkit.entity.Monster
 import org.bukkit.entity.Player
@@ -11,7 +12,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent
 
 
 class Vyderlight : EmpireEnchantEvent() {
-    override val enchant = BukkitConstants.EmpireEnchants.VYDERLIGHT
+    override val enchant = EmpireEnchants.VYDERLIGHT
     override val enchantKey = "Свет Богатсва"
     override val materialWhitelist: List<Material>
         get() = listOf(

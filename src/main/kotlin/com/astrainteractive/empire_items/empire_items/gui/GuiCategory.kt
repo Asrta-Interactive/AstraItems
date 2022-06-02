@@ -4,10 +4,11 @@ import com.astrainteractive.astralibs.async.AsyncHelper
 import com.astrainteractive.empire_items.empire_items.gui.data.GuiConfig
 import com.astrainteractive.astralibs.menu.AstraMenuSize
 import com.astrainteractive.empire_items.api.items.data.ItemApi.getItemStack
+import kotlinx.coroutines.launch
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
 
-class GuiCategory(playerMenuUtility: PlayerMenuUtility) :
+class GuiCategory(override val playerMenuUtility: PlayerMenuUtility) :
     AstraPaginatedMenu() {
 
     val guiSettings = GuiConfig.getGuiConfig()
@@ -16,11 +17,13 @@ class GuiCategory(playerMenuUtility: PlayerMenuUtility) :
     override var menuName: String = category.title
 
     override val menuSize: AstraMenuSize = AstraMenuSize.XL
-    override val playerMenuUtility: PlayerMenuUtility = playerMenuUtility
     override val backPageButton: ItemStack = guiSettings.settings.backButton
     override val maxItemsAmount: Int = category.items.size
     override val nextPageButton: ItemStack = guiSettings.settings.nextButton
     override var page: Int = playerMenuUtility.categoryPage
+    override val prevButtonIndex: Int = 45
+    override val backButtonIndex: Int = 49
+    override val nextButtonIndex: Int = 53
 
     override val prevPageButton: ItemStack = guiSettings.settings.prevButton
 
@@ -33,7 +36,7 @@ class GuiCategory(playerMenuUtility: PlayerMenuUtility) :
         super.handleMenu(e)
         when(e.slot){
             backButtonIndex->{
-                AsyncHelper.runBackground{
+                AsyncHelper.launch{
                     GuiCategories(playerMenuUtility.player).open()
                 }
             }
@@ -41,7 +44,7 @@ class GuiCategory(playerMenuUtility: PlayerMenuUtility) :
 
             }
             else->{
-                AsyncHelper.runBackground{
+                AsyncHelper.launch{
                     playerMenuUtility.prevItems.add(category.items[getIndex(e.slot)])
                     GuiCrafting(playerMenuUtility).open()
                 }

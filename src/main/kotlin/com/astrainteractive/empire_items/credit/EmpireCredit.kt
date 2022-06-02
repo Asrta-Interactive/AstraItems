@@ -1,6 +1,7 @@
 package com.astrainteractive.empire_items.credit
 
 import com.astrainteractive.astralibs.FileManager
+import com.astrainteractive.astralibs.catching
 import com.earth2me.essentials.Essentials
 import com.astrainteractive.empire_items.credit.commands.CommandManager
 import com.astrainteractive.empire_items.credit.data.CreditConfig
@@ -21,10 +22,12 @@ class EmpireCredit {
 
     private lateinit var placeholderHook:PlaceholderHook
 
-
+    inline fun <reified T> getPluginDependency(name:String) = catching{
+        return@catching Bukkit.getPluginManager().getPlugin("Essentials") as T
+    }
 
     private fun initCreditSystem() {
-        essentials = (Bukkit.getPluginManager().getPlugin("Essentials") ?: return) as Essentials
+        essentials = getPluginDependency("Essentials")!!
         instance = this
         configFile = FileManager("credit/credit.yml")
         config = CreditConfig.new()!!

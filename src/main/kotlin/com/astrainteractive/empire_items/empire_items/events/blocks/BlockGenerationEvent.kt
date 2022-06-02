@@ -2,17 +2,18 @@ package com.astrainteractive.empire_items.empire_items.events.blocks
 
 
 import com.astrainteractive.astralibs.*
+import com.astrainteractive.astralibs.async.AsyncHelper
+import com.astrainteractive.astralibs.events.DSLEvent
+import com.astrainteractive.astralibs.events.EventListener
 import com.astrainteractive.empire_items.EmpirePlugin
 import com.astrainteractive.empire_items.api.items.BlockParser
+import com.astrainteractive.empire_items.api.items.data.EmpireItem
 import com.astrainteractive.empire_items.api.items.data.ItemApi
 import com.astrainteractive.empire_items.empire_items.util.Config
 import com.astrainteractive.empire_items.empire_items.util.Timer
 import com.astrainteractive.empire_items.empire_items.util.TriplePair
 import com.astrainteractive.empire_items.empire_items.util.calcChance
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import net.minecraft.core.BlockPosition
 import net.minecraft.world.level.block.state.BlockBase
 import org.bukkit.Bukkit
@@ -21,16 +22,12 @@ import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.BlockFace
 import org.bukkit.event.EventHandler
+import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.event.world.ChunkLoadEvent
 import kotlin.coroutines.CoroutineContext
 import kotlin.random.Random
 
-class BlockGenerationEvent : EventListener, CoroutineScope {
-    private val job: Job
-        get() = Job()
-    override val coroutineContext: CoroutineContext
-        get() = job + Dispatchers.Default
-
+class BlockGenerationEvent {
     private val TAG: String
         get() = "BlockGenerationEvent"
     private var currentChunkProcessing = 0L
@@ -50,10 +47,6 @@ class BlockGenerationEvent : EventListener, CoroutineScope {
             }
         }.mapNotNull { (x, y, z) ->
             val loc = Location(world, this.x * 16.0 + x, y * 1.0, this.z * 16.0 + z)
-//            val blockData: BlockBase.BlockData =
-//                (world as CraftWorld).handle.a_(BlockPosition(x * 16, y, z)) as BlockBase.BlockData
-//            val blockName = (blockData.b().h().split(".").lastOrNull() ?: return@mapNotNull null).uppercase()
-
             val blockName = loc.block.type.name
             val chance = types[blockName] ?: return@mapNotNull null
             if (calcChance(chance))
@@ -73,6 +66,7 @@ class BlockGenerationEvent : EventListener, CoroutineScope {
             tempChunks.saveConfig()
         }
     }
+
     private inline fun isBlockGeneratedInChunk(chunk: Chunk, id: String): Boolean = synchronized(this) {
         return EmpirePlugin.empireFiles.tempChunks.getConfig().contains("${chunk}.$id")
     }
@@ -88,16 +82,15 @@ class BlockGenerationEvent : EventListener, CoroutineScope {
     /**
      * Заменяем блок на сгенерированный
      */
-    private fun replaceBlock(id:String, location:Location, material: String, faces:Map<String,Boolean>) = Bukkit.getScheduler().runTaskLaterAsynchronously(
-        EmpirePlugin.instance,
-        Runnable {
-            if (Config.generationDeepDebug)
-                log("Creating ${id} at {${location.x}; ${location.y}; ${location.z}}")
-            BlockParser.setTypeFast(location.block, Material.getMaterial(material)?:return@Runnable, faces)
-        }, 5L
-    )
+    private fun replaceBlock(id: String, location: Location, material: String, faces: Map<String, Boolean>) = AsyncHelper.launch {
+        delay(1000)
+        if (Config.generationDeepDebug)
+            log("Creating ${id} at {${location.x}; ${location.y}; ${location.z}}")
+        BlockParser.setTypeFast(location.block, Material.getMaterial(material) ?: return@launch, faces)
+    }
 
-    private val blocksToGenerate = ItemApi.getBlocksInfos().filter { it.block?.generate != null }
+    private val blocksToGenerate: List<EmpireItem>
+        get() = ItemApi.getBlocksInfos().filter { it.block?.generate != null }
 
     /**
      * Получение списка локация из чанка и добавление их в очередь
@@ -165,19 +158,17 @@ class BlockGenerationEvent : EventListener, CoroutineScope {
     }
 
 
-
-    @EventHandler
-    private fun chunkLoadEvent(e: ChunkLoadEvent) {
+    val chunkLoadEvent = DSLEvent.event(ChunkLoadEvent::class.java) { e ->
         val chunk = e.chunk
         if (!e.isNewChunk && Config.generateOnlyOnNewChunks)
-            return
+            return@event
         if (!Config.generateBlocks)
-            return
+            return@event
 
         if (currentChunkProcessing >= Config.generateMaxChunksAtOnce)
-            return
+            return@event
         currentChunkProcessing++
-        launch {
+        AsyncHelper.launch {
             generateChunk(chunk)
             currentChunkProcessing--
         }
@@ -186,9 +177,5 @@ class BlockGenerationEvent : EventListener, CoroutineScope {
 
 
     private fun log(message: String) = Logger.log(message, TAG)
-    override fun onDisable() {
-        ChunkLoadEvent.getHandlerList().unregister(this)
-    }
-
 }
 

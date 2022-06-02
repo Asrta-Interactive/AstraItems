@@ -1,7 +1,8 @@
 package com.astrainteractive.empire_items.empire_items.events.empireevents
 
 import com.astrainteractive.astralibs.HEX
-import com.astrainteractive.astralibs.EventListener
+import com.astrainteractive.astralibs.events.DSLEvent
+import com.astrainteractive.astralibs.events.EventListener
 import com.astrainteractive.empire_items.api.items.data.EmpireItem
 import com.astrainteractive.empire_items.api.items.data.ItemApi
 import com.astrainteractive.empire_items.api.items.data.ItemApi.getAstraID
@@ -17,11 +18,12 @@ import org.bukkit.event.block.Action
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockExplodeEvent
 import org.bukkit.event.player.PlayerInteractEvent
+import org.bukkit.event.player.PlayerMoveEvent
 
 /**
  * Эвент кастомных музыкальных дисков
  */
-class MusicDiscsEvent : EventListener {
+class MusicDiscsEvent:EventListener{
 
     /**
      * Список активных jukebox'ов с включенной музыкой
@@ -49,17 +51,16 @@ class MusicDiscsEvent : EventListener {
     /**
      * Срабатывает когда игрок пытается всунуть музкыальный диск.
      */
-    @EventHandler
-    fun onJukeboxInteract(e: PlayerInteractEvent) {
-        val jukebox = isJukebox(e) ?: return
+    val onJukeboxInteract = DSLEvent.event(PlayerInteractEvent::class.java)  { e ->
+        val jukebox = isJukebox(e) ?: return@event
 
         if (activeJukeboxes.contains(jukebox.location)) {
             stopMusic(jukebox.location)
             e.isCancelled = true
 
         } else {
-            val musicDisc = ItemApi.getItemInfo(e.item?.getAstraID())?: return
-            musicDisc.musicDisc?:return
+            val musicDisc = ItemApi.getItemInfo(e.item?.getAstraID())?: return@event
+            musicDisc.musicDisc?:return@event
             e.item!!.amount -= 1
             playMusic(musicDisc, jukebox.location)
             e.isCancelled = true
@@ -110,10 +111,6 @@ class MusicDiscsEvent : EventListener {
 
 
     override fun onDisable() {
-        PlayerInteractEvent.getHandlerList().unregister(this)
-        BlockBreakEvent.getHandlerList().unregister(this)
-        BlockExplodeEvent.getHandlerList().unregister(this)
-
         for (l in activeJukeboxes.keys)
             stopMusic(l)
     }

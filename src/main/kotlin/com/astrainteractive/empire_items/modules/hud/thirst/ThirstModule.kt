@@ -1,8 +1,8 @@
 package com.astrainteractive.empire_items.modules.hud.thirst
 
-import com.astrainteractive.astralibs.EventListener
-import com.astrainteractive.astralibs.EventManager
 import com.astrainteractive.astralibs.FileManager
+import com.astrainteractive.astralibs.events.EventListener
+import com.astrainteractive.astralibs.events.EventManager
 import com.astrainteractive.empire_items.modules.hud.HudView
 import org.bukkit.Bukkit
 

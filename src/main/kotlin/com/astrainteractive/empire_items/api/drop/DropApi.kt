@@ -9,6 +9,8 @@ import org.bukkit.inventory.ItemStack
 object DropApi : Disableable {
 
     private val _dropsMap: MutableList<AstraDrop> = mutableListOf()
+    val dropsMap: List<AstraDrop>
+        get() = _dropsMap
 
     override suspend fun onDisable() {
         _dropsMap.clear()
@@ -16,7 +18,6 @@ object DropApi : Disableable {
 
     override suspend fun onEnable() {
         _dropsMap.addAll(AstraDrop.getDrops().toMutableList())
-        println(_dropsMap)
     }
 
     fun getDropsFrom(dropFrom: String) = _dropsMap.filter { it.dropFrom == dropFrom }.toSet().toMutableList()
