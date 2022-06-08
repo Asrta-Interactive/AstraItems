@@ -2,8 +2,8 @@ package com.astrainteractive.empire_items.empire_items.events.empireevents
 
 import com.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.astralibs.events.EventListener
-import com.astrainteractive.empire_items.api.items.data.ItemApi.getAstraID
-import com.astrainteractive.empire_items.api.items.data.ItemApi.getItemInfo
+import com.astrainteractive.empire_items.api.EmpireItemsAPI
+import com.astrainteractive.empire_items.api.EmpireItemsAPI.empireID
 import com.astrainteractive.empire_items.api.utils.BukkitConstants
 import com.astrainteractive.empire_items.api.utils.getPersistentData
 import com.destroystokyo.paper.ParticleBuilder
@@ -25,8 +25,8 @@ class GrapplingHook {
     private val activeHooks = mutableMapOf<String, Location>()
     private fun unCastHook(itemStack: ItemStack, player: Player) {
         val state = itemStack.itemMeta.getPersistentData(BukkitConstants.GRAPPLING_HOOK) ?: return
-        val defaultcmd = state.split(";").firstOrNull()?.getItemInfo()?.customModelData ?: return
-        val castedcmd = state.split(";").lastOrNull()?.getItemInfo()?.customModelData ?: return
+        val defaultcmd = EmpireItemsAPI.itemYamlFilesByID[state.split(";").firstOrNull()]?.customModelData ?: return
+        val castedcmd = EmpireItemsAPI.itemYamlFilesByID[state.split(";").lastOrNull()]?.customModelData ?: return
 
         if (activeHooks.contains(player.name)) {
             player.playSound(Sound.BLOCK_CHAIN_BREAK)
@@ -40,8 +40,8 @@ class GrapplingHook {
 
     private fun castHook(itemStack: ItemStack, player: Player, location: Location?) {
         val state = itemStack.itemMeta.getPersistentData(BukkitConstants.GRAPPLING_HOOK) ?: return
-        val defaultcmd = state.split(";").firstOrNull()?.getItemInfo()?.customModelData ?: return
-        val castedcmd = state.split(";").lastOrNull()?.getItemInfo()?.customModelData ?: return
+        val defaultcmd = EmpireItemsAPI.itemYamlFilesByID[state.split(";").firstOrNull()]?.customModelData ?: return
+        val castedcmd = EmpireItemsAPI.itemYamlFilesByID[state.split(";").lastOrNull()]?.customModelData ?: return
 
         itemStack.setCustomModelDate(castedcmd)
         player.playSound(Sound.BLOCK_CHAIN_PLACE)
@@ -79,7 +79,7 @@ class GrapplingHook {
 
     val playerHookShootEvent = DSLEvent.event(PlayerInteractEvent::class.java)  { e ->
         val item = e.player.inventory.itemInMainHand
-        item.getAstraID() ?: return@event
+        item.empireID ?: return@event
         val state = item.itemMeta.getPersistentData(BukkitConstants.GRAPPLING_HOOK) ?: return@event
         if (e.action == Action.LEFT_CLICK_AIR || e.action == Action.LEFT_CLICK_BLOCK) {
             unCastHook(item, e.player)

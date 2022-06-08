@@ -1,8 +1,6 @@
 package com.astrainteractive.empire_items.api.mobs.data
 
-import com.astrainteractive.empire_items.api.items.data.EmpireItem.Companion.getIntOrNull
-import com.astrainteractive.empire_items.api.items.data.interact.PlayParticle
-import com.astrainteractive.empire_items.api.items.data.interact.PlayPotionEffect
+import com.astrainteractive.empire_items.api.YmlItem
 import com.astrainteractive.empire_items.api.utils.getCustomItemsFiles
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.entity.EntityType
@@ -28,14 +26,14 @@ data class MobAction(
 
     data class SummonProjectile(
         val damage: Int,
-        val playParticle: PlayParticle
+        val playParticle: YmlItem.Interact.PlayParticle
     )
 
     data class Minion(
         val type: String,
         val amount: Int,
         val attributes: List<EmpireMobAttribute>?,
-        val potionEffects: List<PlayPotionEffect>?,
+        val potionEffects: List<YmlItem.Interact.PlayPotionEffect>?,
     )
 
     companion object {
@@ -58,19 +56,15 @@ data class MobAction(
                     summonProjectile = summonProjectile.mapNotNull { (key, projectile) ->
                         SummonProjectile(
                             damage = projectile.getInt(SummonProjectile::damage.name),
-                            playParticle = PlayParticle.getSinglePlayParticle(
-                                projectile.getConfigurationSection(
-                                    SummonProjectile::playParticle.name
-                                )
-                            ) ?: return@mapNotNull null
+                            playParticle = YmlItem.Interact.PlayParticle("a")
                         )
                     },
                     summonMinion = summonMinions.mapNotNull {(key,minionSection)->
                         Minion(
                             type = minionSection.getString(Minion::type.name)?:return@mapNotNull null,
-                            amount = minionSection.getIntOrNull(Minion::amount.name)?:return@mapNotNull null,
+                            amount = minionSection.getInt(Minion::amount.name),
                             attributes = EmpireMobAttribute.get(minionSection.getConfigurationSection(Minion::attributes.name)),
-                            potionEffects = PlayPotionEffect.getMultiPlayPotionEffect(minionSection.getConfigurationSection(Minion::potionEffects.name)),
+                            potionEffects = listOf(YmlItem.Interact.PlayPotionEffect("a")),
                         )
                     }
                 )
@@ -86,7 +80,7 @@ data class EmpireMob(
     val decreaseDamageByRange: Boolean,
     val canBurn: Boolean,
     val idleSound: List<String>,
-    val potionEffects: List<PlayPotionEffect>,
+    val potionEffects: List<YmlItem.Interact.PlayPotionEffect>,
     val attributes: List<EmpireMobAttribute>,
     val hitDelay: Int,
     val hitRange: Int,
@@ -117,7 +111,7 @@ data class EmpireMob(
                 modelId = s.getString("modelId") ?: id,
                 attributes = attribute,
                 spawn = SpawnInfo.fromSection(s.getConfigurationSection("spawn")),
-                potionEffects = PlayPotionEffect.getMultiPlayPotionEffect(s.getConfigurationSection("potionEffects"))?: listOf(),
+                potionEffects = listOf(),
                 canBurn = s.getBoolean("canBurn", true),
                 idleSound = s.getStringList("idleSound"),
                 hitDelay = s.getInt("hitDelay", 0),

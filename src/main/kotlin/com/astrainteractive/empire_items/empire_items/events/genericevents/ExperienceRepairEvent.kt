@@ -1,16 +1,12 @@
 package com.astrainteractive.empire_items.empire_items.events.genericevents
 
 import com.astrainteractive.astralibs.events.DSLEvent
-import com.astrainteractive.astralibs.events.EventListener
-import com.astrainteractive.empire_items.api.EmpireAPI
-import com.astrainteractive.empire_items.api.items.data.ItemApi
-import com.astrainteractive.empire_items.api.items.data.ItemApi.getAstraID
+import com.astrainteractive.empire_items.api.EmpireItemsAPI
+import com.astrainteractive.empire_items.api.EmpireItemsAPI.empireID
 import com.astrainteractive.empire_items.api.utils.BukkitConstants
 import com.astrainteractive.empire_items.api.utils.getPersistentData
 import com.astrainteractive.empire_items.api.utils.setPersistentDataType
 
-import org.bukkit.event.EventHandler
-import org.bukkit.event.inventory.CraftItemEvent
 import org.bukkit.event.inventory.PrepareAnvilEvent
 import org.bukkit.event.player.PlayerItemDamageEvent
 import org.bukkit.event.player.PlayerItemMendEvent
@@ -25,7 +21,7 @@ class ExperienceRepairEvent{
     }
 
     val durabilityEvent = DSLEvent.event(PlayerItemDamageEvent::class.java)  { e ->
-        if (ItemApi.getItemInfo(e.item?.getAstraID())?.gun != null) {
+        if (EmpireItemsAPI.itemYamlFilesByID[e.item.empireID]?.gun != null) {
             e.isCancelled = true
             return@event
         }

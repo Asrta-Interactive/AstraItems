@@ -3,8 +3,9 @@ package com.astrainteractive.empire_items.empire_items.commands
 import com.astrainteractive.astralibs.AstraLibs
 import com.astrainteractive.astralibs.registerCommand
 import com.astrainteractive.empire_items.EmpirePlugin
-import com.astrainteractive.empire_items.api.items.data.ItemApi.getAstraID
-import com.astrainteractive.empire_items.api.items.data.ItemApi.getItemStack
+import com.astrainteractive.empire_items.api.EmpireItemsAPI.empireID
+import com.astrainteractive.empire_items.api.EmpireItemsAPI.toAstraItem
+import com.astrainteractive.empire_items.api.EmpireItemsAPI.toAstraItemOrItem
 import org.bukkit.entity.Player
 
 class Emreplace {
@@ -14,10 +15,10 @@ class Emreplace {
                 return@registerCommand
             val p = sender as Player
             var item = p.inventory.itemInMainHand
-            val id = item.getAstraID()?:return@registerCommand
+            val id = item.empireID?:return@registerCommand
             val amount = item.amount
             val durability = item.durability
-            item = id.getItemStack(amount)?:return@registerCommand
+            item = id.toAstraItem(amount)?:return@registerCommand
             item.durability = durability
             sender.inventory.setItemInMainHand(item)
             sender.sendMessage(EmpirePlugin.translations.itemReplaced)

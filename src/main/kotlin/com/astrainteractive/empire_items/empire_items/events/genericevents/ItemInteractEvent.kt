@@ -3,17 +3,15 @@ package com.astrainteractive.empire_items.empire_items.events.genericevents
 import com.astrainteractive.astralibs.*
 import com.astrainteractive.astralibs.async.AsyncHelper.callSyncMethod
 import com.astrainteractive.astralibs.events.DSLEvent
-import com.astrainteractive.astralibs.events.EventListener
-import com.astrainteractive.empire_items.api.crafting.CraftingApi
-import com.astrainteractive.empire_items.api.items.data.ItemApi
-import com.astrainteractive.empire_items.api.items.data.ItemApi.getAstraID
-import com.astrainteractive.empire_items.api.items.data.ItemApi.toAstraItemOrItem
+import com.astrainteractive.empire_items.api.CraftingApi
+import com.astrainteractive.empire_items.api.EmpireItemsAPI
+import com.astrainteractive.empire_items.api.EmpireItemsAPI.empireID
+import com.astrainteractive.empire_items.api.EmpireItemsAPI.toAstraItemOrItem
 import com.destroystokyo.paper.ParticleBuilder
 import org.bukkit.Material
 import org.bukkit.Particle
 import org.bukkit.block.Furnace
 import org.bukkit.entity.Player
-import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.inventory.FurnaceSmeltEvent
 import org.bukkit.event.player.*
@@ -36,80 +34,69 @@ class ItemInteractEvent {
     }
 
     fun executeEvent(item: ItemStack, player: Player, event: String): Boolean {
-        val id = item.getAstraID()
-        val itemInfo = ItemApi.getItemInfo(id) ?: return false
+        val id = item.empireID
+        val itemInfo = EmpireItemsAPI.itemYamlFilesByID[id] ?: return false
         val interact = itemInfo.interact ?: return false
         var executed = false
-        interact.forEach {
+        interact.forEach { (_, it) ->
             executed = true
-            if (it.eventList?.contains(event) == false)
+            if (!it.eventList.contains(event))
                 return@forEach
             if (hasCooldown(player, event, it.cooldown ?: 0))
                 return@forEach
-            it.playCommand?.syncForEach { cmd ->
-                    if (cmd.asConsole)
-                        AstraLibs.instance.server.dispatchCommand(AstraLibs.instance.server.consoleSender, cmd.command)
-                    else player.performCommand(cmd.command)
+            it.playCommand.values.syncForEach { cmd ->
+                if (cmd.asConsole)
+                    AstraLibs.instance.server.dispatchCommand(AstraLibs.instance.server.consoleSender, cmd.command)
+                else player.performCommand(cmd.command)
             }
-            it.playParticle?.syncForEach playParticle@{ particle ->
-                    ParticleBuilder(valueOfOrNull<Particle>(particle.name) ?: return@playParticle)
-                        .count(particle.count)
-                        .extra(particle.time)
-                        .location(player.location.add(0.0, 1.5, 0.0)).spawn()
+            it.playParticle.values.syncForEach playParticle@{ particle ->
+                ParticleBuilder(valueOfOrNull<Particle>(particle.name) ?: return@playParticle)
+                    .count(particle.count)
+                    .extra(particle.time)
+                    .location(player.location.add(0.0, 1.5, 0.0)).spawn()
             }
-            it.playPotionEffect?.syncForEach playPotion@{ effect ->
-                    player.addPotionEffect(
-                        PotionEffect(
-                            PotionEffectType.getByName(effect.effect) ?: return@playPotion,
-                            effect.duration,
-                            effect.amplifier
-                        )
-                    )
+            it.playPotionEffect.values.syncForEach playPotion@{ effect ->
+                effect.play(player)
+            }
+            it.removePotionEffect.syncForEach removeEffect@{ effect ->
+                PotionEffectType.getByName(effect)?.let { player.removePotionEffect(it) }
 
             }
-            it.potionEffectsRemove?.syncForEach removeEffect@{ effect ->
-                    player.removePotionEffect(PotionEffectType.getByName(effect) ?: return@removeEffect)
-            }
-            it.playSound?.syncForEach { sound ->
-                    player.world.playSound(
-                        player.location,
-                        sound.name,
-                        sound.volume ?: 1.0f,
-                        sound.pitch ?: 1.0f
-                    )
+            it.playSound.values?.syncForEach { sound ->
+                sound.play(player.location)
             }
         }
         return executed
     }
 
     private inline fun <T> Iterable<T>.syncForEach(crossinline action: (T) -> Unit): Future<Unit>? =
-        callSyncMethod{
+        callSyncMethod {
             for (element in this) action(element)
         }
 
 
-    val onClick = DSLEvent.event(PlayerInteractEvent::class.java)  { e ->
+    val onClick = DSLEvent.event(PlayerInteractEvent::class.java) { e ->
         if (e.hand == EquipmentSlot.HAND)
             executeEvent(item = e.player.inventory.itemInMainHand, player = e.player, event = e.action.name)
         if (e.hand == EquipmentSlot.OFF_HAND)
             executeEvent(item = e.player.inventory.itemInOffHand, player = e.player, event = e.action.name)
     }
 
-    val onDrink = DSLEvent.event(PlayerItemConsumeEvent::class.java)  { e ->
+    val onDrink = DSLEvent.event(PlayerItemConsumeEvent::class.java) { e ->
         val executed = executeEvent(item = e.player.inventory.itemInMainHand, player = e.player, event = e.eventName)
         if (executed)
             e.replacement = ItemStack(Material.AIR)
     }
 
-    val onFurnaceEnded = DSLEvent.event(FurnaceSmeltEvent::class.java)  { e ->
-        val id = e.source.getAstraID()?:return@event
-        val returnId = CraftingApi.getFurnaceByInputId(id).firstOrNull { it.returns != null }?.returns?.toAstraItemOrItem() ?:return@event
+    val onFurnaceEnded = DSLEvent.event(FurnaceSmeltEvent::class.java) { e ->
+        val id = e.source.empireID ?: return@event
+        val returnId = CraftingApi.getFurnaceByInputId(id)?.returns?.toAstraItemOrItem() ?: return@event
         if (e.block.state !is Furnace)
             return@event
         val furnace = e.block.state as Furnace
         furnace.inventory.smelting = returnId
     }
-    val onEntityDamage = DSLEvent.event(EntityDamageEvent::class.java)  { e ->
+    val onEntityDamage = DSLEvent.event(EntityDamageEvent::class.java) { e ->
         if (e.entity !is Player)
             return@event
         executeEvent(
@@ -119,12 +106,12 @@ class ItemInteractEvent {
         )
     }
 
-    val onPlayerJoin = DSLEvent.event(PlayerJoinEvent::class.java)  { e ->
+    val onPlayerJoin = DSLEvent.event(PlayerJoinEvent::class.java) { e ->
         cooldown.remove(e.player.name)
     }
 
 
-    val onPlayerQuit = DSLEvent.event(PlayerQuitEvent::class.java)  { e ->
+    val onPlayerQuit = DSLEvent.event(PlayerQuitEvent::class.java) { e ->
         cooldown.remove(e.player.name)
     }
 }

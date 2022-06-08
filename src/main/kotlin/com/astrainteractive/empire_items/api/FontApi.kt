@@ -1,38 +1,19 @@
-package com.astrainteractive.empire_items.api.font
+package com.astrainteractive.empire_items.api
 
 import com.astrainteractive.astralibs.observer.MutableLiveData
 import com.astrainteractive.empire_items.api.utils.Disableable
 import kotlin.math.abs
 import kotlin.math.sign
 
-object FontApi: Disableable {
-    var enabled: Boolean = false
-        private set
-
-
-    var fonts = mutableListOf<AstraFont>()
-    var map = mutableMapOf<String, AstraFont>()
-
-    var actionBar = MutableLiveData<String>()
-
+object FontApi : Disableable {
     override suspend fun onDisable() {
-        fonts.clear()
-        map.clear()
-        enabled = false
     }
 
     override suspend fun onEnable() {
-
-        onDisable()
-
-        fonts = AstraFont.getFonts().toMutableList()
-        map = fonts.associateBy { it.id }.toMutableMap()
-        enabled = true
     }
 
-    fun allFonts() = fonts.toList()
-    fun playerFonts() = fonts.filter { !it.blockSend }
-    fun fontById() = map.mapKeys { ":${it.key}:" }.mapValues { it.value.char }
+    fun playerFonts() = EmpireItemsAPI.fontByID.filter { !it.value.blockSend }
+
     enum class HudOffsets(val offset: Int, val char: String) {
         LEFT_1(-1, "\uF801"),
         LEFT_2(-2, "\uF802"),
@@ -64,13 +45,13 @@ object FontApi: Disableable {
         RIGHT_1024(1024, "\uF82E");
 
 
-
         companion object {
             private fun nearestAndSmaller(value: Int): HudOffsets? {
                 val sign = value.sign
                 return values().filter { it.offset.sign == sign }.filter { abs(it.offset) <= abs(value) }
                     .maxByOrNull { abs(it.offset) }
             }
+
             fun getOffsets(_offset: Int): String {
                 val isEven = _offset % 2
                 var offset = _offset - isEven

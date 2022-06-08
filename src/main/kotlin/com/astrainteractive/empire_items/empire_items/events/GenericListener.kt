@@ -5,7 +5,6 @@ import com.astrainteractive.astralibs.events.EventListener
 import com.astrainteractive.astralibs.events.EventManager
 import com.astrainteractive.astralibs.menu.MenuListener
 import com.astrainteractive.empire_items.empire_items.events.blocks.*
-import com.astrainteractive.empire_items.empire_items.events.decoration.DecorationEvent
 import com.astrainteractive.empire_items.empire_items.events.empireevents.*
 import com.astrainteractive.empire_items.empire_items.events.genericevents.BookSignEvent
 import com.astrainteractive.empire_items.empire_items.events.genericevents.ExperienceRepairEvent
@@ -13,7 +12,6 @@ import com.astrainteractive.empire_items.empire_items.events.genericevents.ItemI
 import com.astrainteractive.empire_items.empire_items.events.genericevents.drop.ItemDropEvent
 import com.astrainteractive.empire_items.empire_items.events.resourcepack.ProtocolLibResourcePackEvent
 import com.astrainteractive.empire_items.empire_items.events.resourcepack.ResourcePackEvent
-import com.astrainteractive.empire_items.empire_items.events.upgrade.UpgradeEvent
 import com.astrainteractive.empire_items.empire_items.events.villagers.VillagerEvent
 
 import com.astrainteractive.empire_items.empire_items.events.empireevents.MusicDiscsEvent
@@ -50,7 +48,7 @@ class GenericListener : EventManager {
         DurabilityCraftEvent()
         GunEvent()
         MenuListener().onEnable(this)
-        UpgradeEvent()
+//        UpgradeEvent()
         ItemDropEvent()
         ItemInteractEvent()
         VillagerEvent()
@@ -60,7 +58,7 @@ class GenericListener : EventManager {
         MushroomBlockPlaceEvent()
         MushroomBlockBreakEvent()
         MushroomCancelEvent()
-        DecorationEvent()
+//        DecorationEvent()
 
 
     }

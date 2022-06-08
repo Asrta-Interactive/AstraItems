@@ -1,19 +1,16 @@
 package com.astrainteractive.empire_items.empire_items.gui
 
-import com.astrainteractive.empire_items.api.drop.DropApi
 import com.astrainteractive.astralibs.HEX
 import com.astrainteractive.astralibs.async.AsyncHelper
 import com.astrainteractive.empire_items.empire_items.gui.data.GuiConfig
 import com.astrainteractive.astralibs.menu.AstraMenuSize
 import com.astrainteractive.empire_items.EmpirePlugin
-import com.astrainteractive.empire_items.api.crafting.CraftingApi
-import com.astrainteractive.empire_items.api.items.data.ItemApi
-import com.astrainteractive.empire_items.api.items.data.ItemApi.getAstraID
-import com.astrainteractive.empire_items.api.items.data.ItemApi.toAstraItemOrItem
-import com.astrainteractive.empire_items.api.upgrade.UpgradeApi
+import com.astrainteractive.empire_items.api.CraftingApi
+import com.astrainteractive.empire_items.api.EmpireItemsAPI
+import com.astrainteractive.empire_items.api.EmpireItemsAPI.empireID
+import com.astrainteractive.empire_items.api.EmpireItemsAPI.toAstraItemOrItem
+import com.astrainteractive.empire_items.api.VillagerTradeInfo
 import com.astrainteractive.empire_items.api.utils.setDisplayName
-import com.astrainteractive.empire_items.api.v_trades.AstraVillagerTrade
-import com.astrainteractive.empire_items.api.v_trades.VillagerTradeApi
 import com.astrainteractive.empire_items.empire_items.util.EmpirePermissions
 import kotlinx.coroutines.launch
 import org.bukkit.ChatColor
@@ -25,7 +22,7 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility) :
 
     val guiSettings = GuiConfig.getGuiConfig()
     val itemID = playerMenuUtility.prevItems.last()
-    val recipes = ItemApi.getItemRecipes(itemID)
+    val recipes = listOf(CraftingApi.recipesMap[itemID])
     val usedInCraftIDS = CraftingApi.usedInCraft(itemID)
     val usedInCraftItemStacks = usedInCraftIDS.map { it.toAstraItemOrItem() }
 
@@ -33,7 +30,8 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility) :
     override val backButtonIndex: Int = 49
     override val nextButtonIndex: Int = 53
 
-    override var menuName: String = guiSettings.settings.workbenchText +  (itemID.toAstraItemOrItem()?.itemMeta?.displayName ?: "Крафтинг")
+    override var menuName: String =
+        guiSettings.settings.workbenchText + (itemID.toAstraItemOrItem()?.itemMeta?.displayName ?: "Крафтинг")
 
     override val menuSize: AstraMenuSize = AstraMenuSize.XL
     override val playerMenuUtility: PlayerMenuUtility = playerMenuUtility
@@ -70,13 +68,13 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility) :
             }
             11, 12, 13, 20, 21, 22, 29, 30, 31 -> {
                 val itemStack = inventory.getItem(e.slot)
-                playerMenuUtility.prevItems.add(itemStack?.getAstraID() ?: itemStack?.type?.name ?: return)
+                playerMenuUtility.prevItems.add(itemStack?.empireID ?: itemStack?.type?.name ?: return)
                 GuiCrafting(playerMenuUtility).open()
             }
 
             36, 37, 38, 39, 40, 41, 42, 43, 44 -> {
                 val itemStack = inventory.getItem(e.slot)
-                playerMenuUtility.prevItems.add(itemStack?.getAstraID() ?: itemStack?.type?.name ?: return)
+                playerMenuUtility.prevItems.add(itemStack?.empireID ?: itemStack?.type?.name ?: return)
                 GuiCrafting(playerMenuUtility).open()
             }
             34 -> {
@@ -100,14 +98,14 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility) :
         inventory.setItem(invPos++, recipe.ingredientMap[recipe.shape.getOrNull(2)?.getOrNull(0)])
         inventory.setItem(invPos++, recipe.ingredientMap[recipe.shape.getOrNull(2)?.getOrNull(1)])
         inventory.setItem(invPos++, recipe.ingredientMap[recipe.shape.getOrNull(2)?.getOrNull(2)])
-        inventory.setItem(25,inventory.getItem(25).apply { this?.amount = recipe.result.amount })
-        recipeType="Верстак"
+        inventory.setItem(25, inventory.getItem(25).apply { this?.amount = recipe.result.amount })
+        recipeType = "Верстак"
     }
 
     fun setFurnaceRecipe(recipe: FurnaceRecipe) {
         inventory.setItem(21, recipe.input)
-        inventory.setItem(25,inventory.getItem(25).apply { this?.amount = recipe.result.amount })
-        recipeType="Печь"
+        inventory.setItem(25, inventory.getItem(25).apply { this?.amount = recipe.result.amount })
+        recipeType = "Печь"
     }
 
     fun setShapelessRecipe(recipe: ShapelessRecipe) {
@@ -123,11 +121,11 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility) :
         inventory.setItem(32, recipe.ingredientList.getOrNull(6))
         inventory.setItem(33, recipe.ingredientList.getOrNull(7))
         inventory.setItem(34, recipe.ingredientList.getOrNull(8))
-        inventory.setItem(25,inventory.getItem(25).apply { this?.amount = recipe.result.amount })
-        recipeType="Верстак"
+        inventory.setItem(25, inventory.getItem(25).apply { this?.amount = recipe.result.amount })
+        recipeType = "Верстак"
     }
 
-    var recipeType="Верстак"
+    var recipeType = "Верстак"
     fun setRecipe() {
         if (currentRecipe >= recipes?.size ?: return)
             currentRecipe = 0
@@ -146,64 +144,71 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility) :
     fun clearMenu() {
         inventory.clear()
     }
-    fun setVillagerInfo(){
-        val v = VillagerTradeApi.villagerTrades.mapNotNull {
-            val filtered = it.trades.filter { it.id==itemID }
+
+    fun setVillagerInfo() {
+        val v = EmpireItemsAPI.villagerTradeInfoByID.values.mapNotNull {
+
+            val filtered = it.trades.filter { it.value.id == itemID }
             if (filtered.isEmpty())
                 null
             else
-            AstraVillagerTrade(it.profession,filtered)
+                VillagerTradeInfo(it.id, it.profession, filtered)
         }
         if (v.isEmpty())
             return
         val item = guiSettings.settings.moreButton.clone().apply {
             val meta = itemMeta!!
-            meta.setDisplayName((EmpirePlugin.translations.guiInfoDropColor+"Можно купить у жителя:").HEX())
+            meta.setDisplayName((EmpirePlugin.translations.guiInfoDropColor + "Можно купить у жителя:").HEX())
             meta.lore = v.map { "${ChatColor.GRAY}${it.profession}" }
             itemMeta = meta
         }
-        inventory.setItem(backButtonIndex-2,item)
+        inventory.setItem(backButtonIndex - 2, item)
     }
-    fun setUpgradeInfo(){
-        val u = UpgradeApi.getAvailableUpgradesForItemStack(itemID.toAstraItemOrItem()?:return)
-        if (u.isEmpty())
-            return
-        val item = guiSettings.settings.moreButton.clone().apply {
-            val meta = itemMeta!!
-            meta.setDisplayName((EmpirePlugin.translations.guiInfoDropColor+"Улучшает:").HEX())
-            meta.lore = u.map { "${ChatColor.GRAY}${UpgradeApi.attrMap[it.attribute.name]} [${it.addMin};${it.addMax}]" }
-            itemMeta = meta
-        }
-        inventory.setItem(backButtonIndex+2,item)
+
+    fun setUpgradeInfo() {
+//        val u = UpgradeApi.getAvailableUpgradesForItemStack(itemID.toAstraItemOrItem()?:return)
+//        if (u.isEmpty())
+//            return
+//        val item = guiSettings.settings.moreButton.clone().apply {
+//            val meta = itemMeta!!
+//            meta.setDisplayName((EmpirePlugin.translations.guiInfoDropColor+"Улучшает:").HEX())
+//            meta.lore = u.map { "${ChatColor.GRAY}${UpgradeApi.attrMap[it.attribute.name]} [${it.addMin};${it.addMax}]" }
+//            itemMeta = meta
+//        }
+//        inventory.setItem(backButtonIndex+2,item)
 
     }
-    fun setBlockInfo(){
-        val b = ItemApi.getItemInfo(itemID)?.block?.generate?:return
+
+    fun setBlockInfo() {
+        val b = EmpireItemsAPI.itemYamlFilesByID[itemID]?.block?.generate ?: return
         val item = guiSettings.settings.moreButton.clone().apply {
             val meta = itemMeta!!
-            meta.setDisplayName((EmpirePlugin.translations.guiInfoDropColor+"Генерируется:").HEX())
+            meta.setDisplayName((EmpirePlugin.translations.guiInfoDropColor + "Генерируется:").HEX())
             meta.lore = listOf(
-            ("${ChatColor.GRAY}На высоте [${b.minY};${b.maxY}]"),
-            ("${ChatColor.GRAY}Количество в чанке [${b.minPerChunk};${b.maxPerChunk}]"),
-            ("${ChatColor.GRAY}Количество в депозите [${b.minPerDeposit};${b.maxPerDeposit}]"),
-            ("${ChatColor.GRAY}В мире: ${b.world ?: "любом"}"),
-            ("${ChatColor.GRAY}С шансом: ${b.generateInChunkChance}%"))
+                ("${ChatColor.GRAY}На высоте [${b.minY};${b.maxY}]"),
+                ("${ChatColor.GRAY}Количество в чанке [${b.minPerChunk};${b.maxPerChunk}]"),
+                ("${ChatColor.GRAY}Количество в депозите [${b.minPerDeposit};${b.maxPerDeposit}]"),
+                ("${ChatColor.GRAY}В мире: ${b.world ?: "любом"}"),
+                ("${ChatColor.GRAY}С шансом: ${b.generateInChunkChance}%")
+            )
             itemMeta = meta
         }
-        inventory.setItem(backButtonIndex+1,item)
+        inventory.setItem(backButtonIndex + 1, item)
     }
-    fun setDropInfo(){
-        val drops = DropApi.getDropsById(itemID)
+
+    fun setDropInfo() {
+        val drops = EmpireItemsAPI.dropByDropFrom[itemID] ?: listOf()
         if (drops.isEmpty())
             return
         val item = guiSettings.settings.moreButton.clone().apply {
             val meta = itemMeta!!
-            meta.setDisplayName((EmpirePlugin.translations.guiInfoDropColor+EmpirePlugin.translations.guiInfoDrop).HEX())
-            meta.lore =  drops.map { "${ChatColor.GRAY}${it.dropFrom}: [${it.minAmount};${it.maxAmount}] ${it.chance}%" }
+            meta.setDisplayName((EmpirePlugin.translations.guiInfoDropColor + EmpirePlugin.translations.guiInfoDrop).HEX())
+            meta.lore = drops.map { "${ChatColor.GRAY}${it.dropFrom}: [${it.minAmount};${it.maxAmount}] ${it.chance}%" }
             itemMeta = meta
         }
-        inventory.setItem(backButtonIndex-1,item)
+        inventory.setItem(backButtonIndex - 1, item)
     }
+
     override fun setMenuItems() {
         addManageButtons()
         for (i in 36 until 36 + 9) {
@@ -217,7 +222,7 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility) :
         inventory.setItem(25, itemID.toAstraItemOrItem())
         setRecipe()
         if (recipes?.isNotEmpty() == true)
-            inventory.setItem(8, guiSettings.settings.craftingTableButton.apply { setDisplayName(recipeType)})
+            inventory.setItem(8, guiSettings.settings.craftingTableButton.apply { setDisplayName(recipeType) })
         inventory.setItem(34, guiSettings.settings.giveButton)
 
 

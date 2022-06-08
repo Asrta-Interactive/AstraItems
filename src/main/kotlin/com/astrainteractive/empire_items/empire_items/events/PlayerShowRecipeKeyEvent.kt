@@ -4,15 +4,12 @@ import com.astrainteractive.astralibs.*
 import com.astrainteractive.astralibs.async.AsyncHelper
 import com.astrainteractive.astralibs.async.AsyncHelper.callSyncMethod
 import com.astrainteractive.astralibs.events.DSLEvent
-import com.astrainteractive.astralibs.events.EventListener
-import com.astrainteractive.empire_items.api.crafting.CraftingApi
-import com.astrainteractive.empire_items.api.items.data.ItemApi.getAstraID
+import com.astrainteractive.empire_items.api.CraftingApi
+import com.astrainteractive.empire_items.api.EmpireItemsAPI.empireID
 import kotlinx.coroutines.launch
 import org.bukkit.entity.Player
-import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.EntityPickupItemEvent
 import org.bukkit.event.inventory.CraftItemEvent
-import org.bukkit.event.world.ChunkLoadEvent
 import org.bukkit.inventory.ItemStack
 
 /**
@@ -53,7 +50,7 @@ class PlayerShowRecipeKeyEvent {
         player: Player
     ) {
         AsyncHelper.launch {
-            val mainItemId = itemStack.getAstraID() ?: itemStack.type.name
+            val mainItemId = itemStack.empireID ?: itemStack.type.name
             val ids = mutableListOf(mainItemId).apply { addAll(CraftingApi.usedInCraft(mainItemId)) }
             val toDiscover =
                 ids.flatMap { CraftingApi.getKeysById(it) ?: listOf() }.filter { !player.hasDiscoveredRecipe(it) }

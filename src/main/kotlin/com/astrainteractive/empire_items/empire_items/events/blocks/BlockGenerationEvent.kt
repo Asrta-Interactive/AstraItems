@@ -4,27 +4,19 @@ package com.astrainteractive.empire_items.empire_items.events.blocks
 import com.astrainteractive.astralibs.*
 import com.astrainteractive.astralibs.async.AsyncHelper
 import com.astrainteractive.astralibs.events.DSLEvent
-import com.astrainteractive.astralibs.events.EventListener
 import com.astrainteractive.empire_items.EmpirePlugin
+import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.items.BlockParser
-import com.astrainteractive.empire_items.api.items.data.EmpireItem
-import com.astrainteractive.empire_items.api.items.data.ItemApi
+import com.astrainteractive.empire_items.api.YmlItem
 import com.astrainteractive.empire_items.empire_items.util.Config
-import com.astrainteractive.empire_items.empire_items.util.Timer
 import com.astrainteractive.empire_items.empire_items.util.TriplePair
 import com.astrainteractive.empire_items.empire_items.util.calcChance
 import kotlinx.coroutines.*
-import net.minecraft.core.BlockPosition
-import net.minecraft.world.level.block.state.BlockBase
-import org.bukkit.Bukkit
 import org.bukkit.Chunk
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.BlockFace
-import org.bukkit.event.EventHandler
-import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.event.world.ChunkLoadEvent
-import kotlin.coroutines.CoroutineContext
 import kotlin.random.Random
 
 class BlockGenerationEvent {
@@ -89,8 +81,8 @@ class BlockGenerationEvent {
         BlockParser.setTypeFast(location.block, Material.getMaterial(material) ?: return@launch, faces)
     }
 
-    private val blocksToGenerate: List<EmpireItem>
-        get() = ItemApi.getBlocksInfos().filter { it.block?.generate != null }
+    private val blocksToGenerate: List<YmlItem>
+        get() = EmpireItemsAPI.itemYamlFilesByID.values.filter { it.block?.generate != null }
 
     /**
      * Получение списка локация из чанка и добавление их в очередь

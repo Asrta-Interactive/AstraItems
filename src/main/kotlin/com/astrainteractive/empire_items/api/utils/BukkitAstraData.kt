@@ -18,7 +18,9 @@ data class BukkitConstant<T, Z>(
 
 
 object BukkitConstants {
-    fun ASTRA_ID() = BukkitConstant(NamespacedKey(AstraLibs.instance, "ASTRA_ID"), PersistentDataType.STRING)
+    val ASTRA_ID
+        get() = BukkitConstant(NamespacedKey(AstraLibs.instance, "ASTRA_ID"), PersistentDataType.STRING)
+
     fun ASTRA_ATTRIBUTE(attr: Attribute) =
         BukkitConstant(
             NamespacedKey(AstraLibs.instance, ASTRA_UPGRADE + attr.name.lowercase()),

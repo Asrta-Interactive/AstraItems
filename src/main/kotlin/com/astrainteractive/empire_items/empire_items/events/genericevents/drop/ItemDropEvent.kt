@@ -1,10 +1,9 @@
 package com.astrainteractive.empire_items.empire_items.events.genericevents.drop
 
 import com.astrainteractive.astralibs.events.DSLEvent
-import com.astrainteractive.empire_items.api.drop.DropApi
 import com.astrainteractive.astralibs.events.EventListener
+import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.items.BlockParser
-import com.astrainteractive.empire_items.api.items.data.ItemApi
 import com.astrainteractive.empire_items.api.mobs.MobApi
 import org.bukkit.Location
 import org.bukkit.block.Block
@@ -25,13 +24,15 @@ class ItemDropEvent {
 
     val onFishingEvent = DSLEvent.event(PlayerFishEvent::class.java)  { e ->
         val caught = e.caught ?: return@event
-        DropApi.spawnDrop("PlayerFishEvent", caught.location)
+        EmpireItemsAPI.dropByDropFrom["PlayerFishEvent"]?.forEach {
+            it.performDrop(caught.location)
+        }
     }
 
     val onBlockBreak = DSLEvent.event(BlockBreakEvent::class.java)  { e ->
         val block: Block = e.block
         val customBlockData = BlockParser.getBlockData(e.block)
-        val customBlock = ItemApi.getBlockInfoByData(customBlockData)
+        val customBlock = EmpireItemsAPI.itemYamlFilesByID.values.firstOrNull { it.block?.data==customBlockData }
         val customBlockId = customBlock?.id
         if (customBlock?.block?.ignoreCheck != true) {
             if (blockLocations.contains(block.location))
@@ -43,8 +44,11 @@ class ItemDropEvent {
         }
 
         val dropFrom = customBlockId ?: block.blockData.material.name
-        if (DropApi.spawnDrop(dropFrom, block.location))
+        EmpireItemsAPI.dropByDropFrom[dropFrom]?.forEach {
+            it.performDrop(block.location)
+        }?.let {
             e.isDropItems = false
+        }
     }
 
 
@@ -57,15 +61,16 @@ class ItemDropEvent {
         val chest = block.state as Chest
         val lootable = chest as Lootable
         lootable.lootTable ?: return@event
-        val drops = DropApi.getDropsFrom("PlayerInteractEvent")
-        DropApi.getDrops(drops).forEach {
-            chest.blockInventory.addItem(it)
+        EmpireItemsAPI.dropByDropFrom["PlayerInteractEvent"]?.forEach {
+            it.generateItem()?.let { chest.blockInventory.addItem(it) }
         }
     }
 
     val onMobDeath = DSLEvent.event(EntityDeathEvent::class.java)  { e ->
         val dropFrom = MobApi.getActiveEntity(e.entity)?.empireMob?.id ?: e.entity.type.name
         MobApi.removeActiveEntity(e.entity)
-        DropApi.spawnDrop(dropFrom, e.entity.location)
+        EmpireItemsAPI.dropByDropFrom[dropFrom]?.forEach {
+            it.performDrop(e.entity.location)
+        }
     }
 }

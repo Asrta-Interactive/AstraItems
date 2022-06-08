@@ -5,11 +5,15 @@ import com.astrainteractive.astralibs.LicenceChecker
 import com.astrainteractive.astralibs.Logger
 import com.astrainteractive.astralibs.async.AsyncHelper
 import com.astrainteractive.astralibs.events.GlobalEventManager
-import com.astrainteractive.empire_items.api.EmpireAPI
+import com.astrainteractive.empire_items.api.CraftingApi
+import com.astrainteractive.empire_items.api.EmpireItemsAPI
+import com.astrainteractive.empire_items.api.ItemYamlFile
+import com.astrainteractive.empire_items.api.utils.getCustomItemsFiles
 import com.astrainteractive.empire_items.credit.EmpireCredit
 import com.astrainteractive.empire_items.empire_items.commands.CommandManager
 import com.astrainteractive.empire_items.empire_items.events.GenericListener
 import com.astrainteractive.empire_items.empire_items.util.Config
+import com.astrainteractive.empire_items.empire_items.util.EmpireSerializer
 import com.astrainteractive.empire_items.empire_items.util.Files
 import com.astrainteractive.empire_items.empire_items.util.Translations
 import com.astrainteractive.empire_items.empire_items.util.protection.KProtectionLib
@@ -26,8 +30,6 @@ import java.io.File
 import kotlin.coroutines.ContinuationInterceptor
 
 
-
-
 class EmpirePlugin : JavaPlugin {
     constructor() : super() {}
     constructor(
@@ -39,6 +41,7 @@ class EmpirePlugin : JavaPlugin {
         loader!!, description!!, dataFolder!!, file!!
     ) {
     }
+
     companion object {
 
         /**
@@ -97,10 +100,14 @@ class EmpirePlugin : JavaPlugin {
         empireFiles = Files()
         Config.load()
         commandManager = CommandManager()
-//        empireCredit = EmpireCredit()
+        val customFiles = getCustomItemsFiles()?.mapNotNull {
+            EmpireSerializer.toClass<ItemYamlFile>(it.getFile())
+        }?.mapNotNull { it.yml_items?.mapNotNull { it.value } }?.flatten()
+        println("Loaded ${customFiles?.size} custom items")
         runBlocking {
+            EmpireItemsAPI.onEnable()
             ModuleManager.onEnable()
-            EmpireAPI.onEnable()
+            CraftingApi.onEnable()
         }
         genericListener = GenericListener()
         if (server.pluginManager.getPlugin("WorldGuard") != null)
@@ -121,9 +128,11 @@ class EmpirePlugin : JavaPlugin {
         HandlerList.unregisterAll(this)
         Bukkit.getScheduler().cancelTasks(this)
         runBlocking {
-            EmpireAPI.onDisable()
             ModuleManager.onDisable()
+            EmpireItemsAPI.onDisable()
+            CraftingApi.onDisable()
         }
+
         AsyncHelper.cancel()
 
     }

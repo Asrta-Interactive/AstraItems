@@ -1,17 +1,16 @@
 package com.astrainteractive.empire_items.modules.enchants.data
 
 import com.astrainteractive.astralibs.FileManager
-import com.astrainteractive.empire_items.api.items.data.interact.PlayPotionEffect
+import com.astrainteractive.empire_items.api.YmlItem
 import org.bukkit.configuration.ConfigurationSection
 
 data class PlayerPotionEnchant(
-    val effects: List<PlayPotionEffect>
+    val effects: List<YmlItem.Interact.PlayPotionEffect>
 ) {
     companion object {
         fun fromSection(s: ConfigurationSection?): PlayerPotionEnchant? {
             return PlayerPotionEnchant(
-                effects = PlayPotionEffect.getMultiPlayPotionEffect(s?.getConfigurationSection("playPotionEffect"))
-                    ?: return null
+                effects = listOf()
             )
         }
     }

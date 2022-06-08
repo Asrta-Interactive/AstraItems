@@ -3,13 +3,11 @@ package com.astrainteractive.empire_items.empire_items.events.empireevents
 import com.astrainteractive.astralibs.AstraLibs
 import com.astrainteractive.astralibs.catching
 import com.astrainteractive.astralibs.events.DSLEvent
-import com.astrainteractive.astralibs.events.EventListener
 import com.astrainteractive.astralibs.valueOfOrNull
-import com.astrainteractive.empire_items.api.items.data.Gun
-import com.astrainteractive.empire_items.api.items.data.ItemApi
-import com.astrainteractive.empire_items.api.items.data.ItemApi.getAstraID
-import com.astrainteractive.empire_items.api.items.data.ItemApi.toAstraItemOrItem
-import com.astrainteractive.empire_items.api.items.data.interact.PlayPotionEffect
+import com.astrainteractive.empire_items.api.EmpireItemsAPI
+import com.astrainteractive.empire_items.api.EmpireItemsAPI.empireID
+import com.astrainteractive.empire_items.api.EmpireItemsAPI.toAstraItemOrItem
+import com.astrainteractive.empire_items.api.YmlItem
 import com.astrainteractive.empire_items.api.utils.BukkitConstants
 import com.astrainteractive.empire_items.api.utils.getPersistentData
 import com.astrainteractive.empire_items.api.utils.setPersistentDataType
@@ -23,17 +21,10 @@ import org.bukkit.block.BlockFace
 import org.bukkit.entity.Entity
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
-import org.bukkit.event.EventHandler
 import org.bukkit.event.block.Action
-import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.player.*
-import org.bukkit.inventory.EntityEquipment
-import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.Damageable
-import java.lang.IllegalArgumentException
-import java.lang.NumberFormatException
-import kotlin.math.max
 
 class GunEvent {
 
@@ -47,7 +38,7 @@ class GunEvent {
 
     private val lastShootMap: MutableMap<String, Long> = mutableMapOf()
 
-    private fun canShoot(player: Player, gun: Gun): Boolean {
+    private fun canShoot(player: Player, gun: YmlItem.Gun): Boolean {
         val lastShoot = lastShootMap[player.name]
         return when {
             System.currentTimeMillis().minus(lastShoot ?: 0) >= gun.cooldown ?: 0 -> {
@@ -73,7 +64,7 @@ class GunEvent {
         item.itemMeta = itemMeta
     }
 
-    private fun reloadGun(player: Player, itemStack: ItemStack, gun: Gun) {
+    private fun reloadGun(player: Player, itemStack: ItemStack, gun: YmlItem.Gun) {
         val itemMeta = itemStack.itemMeta
         val currentClipSize = itemMeta.getPersistentData(BukkitConstants.CLIP_SIZE) ?: return
         if (currentClipSize == gun.clipSize) {
@@ -125,8 +116,8 @@ class GunEvent {
     val playerInteractEvent = DSLEvent.event(PlayerInteractEvent::class.java) { e ->
 
         val itemStack = e.item ?: return@event
-        val id = itemStack.getAstraID()
-        val gunInfo = ItemApi.getItemInfo(id)?.gun ?: return@event
+        val id = itemStack.empireID
+        val gunInfo =  EmpireItemsAPI.itemYamlFilesByID[id]?.gun ?: return@event
         val player = e.player
         val action = e.action
         if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
@@ -185,13 +176,12 @@ class GunEvent {
             }
 
             for (ent: Entity in getEntityByLocation(l, r)) {
-                gunInfo.onContact?.play(ent, creator = player)
                 if (ent is LivingEntity && ent != player) {
                     gunInfo.damage?.let {
-                        var damage = (1 - i / gunInfo.bulletTrace) * it
+                        var damage = (1.0 - i / gunInfo.bulletTrace) * it
                         gunInfo.advanced?.onHit?.let { onHit ->
                             onHit.playPotionEffect?.forEach {
-                                it.play(ent)
+                                it.value.play(ent)
                             }
                             onHit.fireTicks?.let { ent.fireTicks = it }
                         }
@@ -199,7 +189,7 @@ class GunEvent {
 
                             ent.equipment?.let { eq ->
                                 listOf(eq.helmet, eq.chestplate, eq.leggings, eq.boots).forEach { armor ->
-                                    val id = armor?.getAstraID() ?: armor?.type?.name ?: return@forEach
+                                    val id = armor?.empireID ?: armor?.type?.name ?: return@forEach
                                     val multiplier = it[id] ?: return@forEach
                                     damage *= multiplier
                                 }

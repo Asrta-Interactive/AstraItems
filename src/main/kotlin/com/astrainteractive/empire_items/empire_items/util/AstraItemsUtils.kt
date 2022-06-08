@@ -1,7 +1,8 @@
 package com.astrainteractive.empire_items.empire_items.util
 
 import com.astrainteractive.astralibs.convertHex
-import com.astrainteractive.empire_items.api.font.FontApi
+import com.astrainteractive.empire_items.api.EmpireItemsAPI
+import com.astrainteractive.empire_items.api.FontApi
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
@@ -39,7 +40,7 @@ object EmpireUtils {
     fun emojiPattern(lines: List<String>): List<String> = lines.map { emojiPattern(it) }
 
     fun emojiPattern(_line: String): String {
-        val map = FontApi.fontById().toMutableMap()
+        val map = EmpireItemsAPI.fontByID.entries.associate { ":${it.key}:" to it.value.char }.toMutableMap()
         FontApi.getOffsets().forEach { (k, v) -> map[":$k:"] = v }
         var matcher: Matcher = emojiPattern.matcher(_line)
         var line = _line

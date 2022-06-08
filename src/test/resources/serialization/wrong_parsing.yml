@@ -4,10 +4,10 @@ crafting_table:
     id: shield_crafting_table
     result: shield1
     amount: 1
-    pattern:
-      - XXX
-      - XDX
-      - XXX
+    #pattern:
+    #  - XXX
+    #  - XDX
+    #  - XXX
     ingredients:
       D: DIAMOND
   shield2:
@@ -17,11 +17,11 @@ crafting_table:
     pattern:
       - XX
       - XD
-    ingredients:
-      D: DIAMOND
+    #ingredients:
+    #  D: DIAMOND
 shapeless:
   shield1:
-    id: shield_shapeless
+    #id: shield_shapeless
     result: shield1
     amount: 2
     input: NETHERITE_INGOT
@@ -77,6 +77,7 @@ villagerTrades:
 
 yml_items:
   shield1:
+    id: shield1
     displayName: "&2Новый предмет"
     material: BARRIER
     texturePath: item/new_item
@@ -127,7 +128,7 @@ yml_items:
             name: minecraft:entity.ender_dragon.growl
             pitch: 1
             volume: 1
-        executeCommand:
+        playCommand:
           command1:
             asConsole: false
             command: "home"

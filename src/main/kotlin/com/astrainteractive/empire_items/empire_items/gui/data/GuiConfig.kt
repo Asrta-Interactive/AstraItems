@@ -3,7 +3,7 @@ package com.astrainteractive.empire_items.empire_items.gui.data
 import com.astrainteractive.astralibs.getHEXString
 import com.astrainteractive.astralibs.getHEXStringList
 import com.astrainteractive.empire_items.EmpirePlugin
-import com.astrainteractive.empire_items.api.items.data.ItemApi.getItemStack
+import com.astrainteractive.empire_items.api.EmpireItemsAPI.toAstraItemOrItem
 import com.astrainteractive.empire_items.api.utils.setDisplayName
 import org.bukkit.Material
 import org.bukkit.configuration.ConfigurationSection
@@ -47,15 +47,15 @@ data class GuiConfig(
                 val workbenchText = s?.getHEXString("workbenchText","")?:""
                 val categoriesText = s?.getHEXString("categoriesText", "")?:""
                 val soundsText = s?.getHEXString("soundsText", "")?:""
-                val moreButton = s?.getString("moreButton").getItemStack() ?: getItemStackButton("Подробнее")
-                val nextButton = s?.getString("nextButton").getItemStack() ?: getItemStackButton("Дальше")
-                val prevButton = s?.getString("prevButton").getItemStack() ?: getItemStackButton("Раньше")
-                val backButton = s?.getString("backButton").getItemStack() ?: getItemStackButton("Назад")
-                val closeButton = s?.getString("closeButton").getItemStack() ?: getItemStackButton("Закрыть")
-                val giveButton = s?.getString("giveButton").getItemStack() ?: getItemStackButton("Получить")
-                val furnaceButton = s?.getString("furnaceButton").getItemStack() ?: getItemStackButton("Плавка")
+                val moreButton = s?.getString("moreButton").toAstraItemOrItem() ?: getItemStackButton("Подробнее")
+                val nextButton = s?.getString("nextButton").toAstraItemOrItem() ?: getItemStackButton("Дальше")
+                val prevButton = s?.getString("prevButton").toAstraItemOrItem() ?: getItemStackButton("Раньше")
+                val backButton = s?.getString("backButton").toAstraItemOrItem() ?: getItemStackButton("Назад")
+                val closeButton = s?.getString("closeButton").toAstraItemOrItem() ?: getItemStackButton("Закрыть")
+                val giveButton = s?.getString("giveButton").toAstraItemOrItem() ?: getItemStackButton("Получить")
+                val furnaceButton = s?.getString("furnaceButton").toAstraItemOrItem() ?: getItemStackButton("Плавка")
                 val craftingTableButton =
-                    s?.getString("craftingTableButton").getItemStack() ?: getItemStackButton("Крафти")
+                    s?.getString("craftingTableButton").toAstraItemOrItem() ?: getItemStackButton("Крафти")
                 val workbenchSound = s?.getString("workbenchSound")
                 val categoriesSound = s?.getString("categoriesSound")
                 val categorySound = s?.getString("categorySound")
@@ -105,7 +105,7 @@ data class GuiConfig(
                 val id = s?.name ?: return null
                 val title = s.getHEXString("title", "")
                 val name = s.getHEXString("name", "")
-                val icon = s.getString("icon")?.getItemStack() ?: ItemStack(Material.PAPER)
+                val icon = s.getString("icon")?.toAstraItemOrItem() ?: ItemStack(Material.PAPER)
                 val lore = s.getHEXStringList("lore")
                 val permission = s.getString("permission")
                 val items = s.getStringList("items")

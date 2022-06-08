@@ -388,7 +388,6 @@ object MobApi : Disableable {
         if (Bukkit.getServer().pluginManager.getPlugin("ModelEngine") == null) return
 
         empireMobs = EmpireMob.getAll().toMutableList()
-        println(empireMobs)
         empireMobsById = empireMobs.associateBy { it.id }
         AsyncHelper.callSyncMethod {
             val entities = Bukkit.getWorlds().flatMap { world ->

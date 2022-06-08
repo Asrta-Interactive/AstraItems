@@ -13,11 +13,15 @@ import org.bukkit.event.inventory.PrepareAnvilEvent
 import org.bukkit.inventory.ItemStack
 import kotlin.random.Random
 
+@Suppress("PROVIDED_RUNTIME_TOO_LOW")
+@kotlinx.serialization.Serializable
 data class PotionEnchant(
     val potionEffectType: String,
     val id: String,
     val itemTypes: List<EnchantItemType>
 ) {
+    @Suppress("PROVIDED_RUNTIME_TOO_LOW")
+    @kotlinx.serialization.Serializable
     enum class EnchantItemType {
         ARMOR, SWORDS, AXES, PICKAXES;
 
@@ -54,7 +58,7 @@ object EmpireEnchantApi : Disableable {
     override suspend fun onEnable() {
         empireEnchantments = EmpireEnchantment.loadALl()
         empireEnchantmentById = empireEnchantments.associateBy { it.id }
-        potionEffectEnchants =PotionEnchant.get()
+        potionEffectEnchants = PotionEnchant.get()
         println(potionEffectEnchants)
 
     }

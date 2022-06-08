@@ -1,6 +1,6 @@
 package com.astrainteractive.empire_items.empire_items.util.resource_pack.data
 
-import com.astrainteractive.empire_items.api.font.AstraFont
+import com.astrainteractive.empire_items.api.FontImage
 import org.apache.commons.lang.StringEscapeUtils
 
 data class Providers(
@@ -17,7 +17,7 @@ data class Providers(
         val ascent:Int?=null
     ){
         companion object{
-            fun fromAstraFont(a: AstraFont)=
+            fun fromAstraFont(a: FontImage)=
                 Provider(
                     type = "bitmap",
                     file=a.path,

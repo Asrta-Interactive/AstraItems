@@ -2,8 +2,8 @@ package com.astrainteractive.empire_items.empire_items.events.blocks
 
 import com.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.astralibs.events.EventListener
+import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.items.BlockParser
-import com.astrainteractive.empire_items.api.items.data.ItemApi
 import net.minecraft.core.BlockPosition
 import net.minecraft.network.protocol.game.PacketPlayOutBlockBreakAnimation
 import org.bukkit.block.Block
@@ -57,7 +57,7 @@ class BlockHardnessEvent {
         val block = e.player.getTargetBlock(null, 100)
         val player = e.player
         val data = BlockParser.getBlockData(block) ?: return@event
-        val itemInfo = ItemApi.getBlockInfoByData(data)?: return@event
+        val itemInfo = EmpireItemsAPI.itemYamlFilesByID.values.firstOrNull { it.block?.data==data }?: return@event
         val empireBlock = itemInfo.block?:return@event
         empireBlock.hardness?:return@event
         val digMultiplier = e.player.inventory.itemInMainHand.enchantments[Enchantment.DIG_SPEED] ?: 1

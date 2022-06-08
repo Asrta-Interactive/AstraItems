@@ -3,10 +3,10 @@ package com.astrainteractive.empire_items.empire_items.events.empireevents
 import com.astrainteractive.astralibs.HEX
 import com.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.astralibs.events.EventListener
-import com.astrainteractive.empire_items.api.items.data.EmpireItem
-import com.astrainteractive.empire_items.api.items.data.ItemApi
-import com.astrainteractive.empire_items.api.items.data.ItemApi.getAstraID
-import com.astrainteractive.empire_items.api.items.data.ItemApi.toAstraItemOrItem
+import com.astrainteractive.empire_items.api.EmpireItemsAPI
+import com.astrainteractive.empire_items.api.EmpireItemsAPI.empireID
+import com.astrainteractive.empire_items.api.EmpireItemsAPI.toAstraItemOrItem
+import com.astrainteractive.empire_items.api.YmlItem
 import net.md_5.bungee.api.ChatMessageType
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Location
@@ -18,7 +18,6 @@ import org.bukkit.event.block.Action
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockExplodeEvent
 import org.bukkit.event.player.PlayerInteractEvent
-import org.bukkit.event.player.PlayerMoveEvent
 
 /**
  * Эвент кастомных музыкальных дисков
@@ -28,7 +27,7 @@ class MusicDiscsEvent:EventListener{
     /**
      * Список активных jukebox'ов с включенной музыкой
      */
-    val activeJukeboxes: MutableMap<Location, EmpireItem> = mutableMapOf()
+    val activeJukeboxes: MutableMap<Location, YmlItem> = mutableMapOf()
 
 
     @EventHandler
@@ -43,7 +42,7 @@ class MusicDiscsEvent:EventListener{
         stopMusic(e.block.location)
     }
 
-    fun dropDisc(location: Location, item: EmpireItem?) {
+    fun dropDisc(location: Location, item: YmlItem?) {
         location.world?.dropItem(location.add(0.0, 1.0, 0.0), item?.id.toAstraItemOrItem() ?: return)
     }
 
@@ -59,7 +58,7 @@ class MusicDiscsEvent:EventListener{
             e.isCancelled = true
 
         } else {
-            val musicDisc = ItemApi.getItemInfo(e.item?.getAstraID())?: return@event
+            val musicDisc = EmpireItemsAPI.itemYamlFilesByID[e.item?.empireID]?: return@event
             musicDisc.musicDisc?:return@event
             e.item!!.amount -= 1
             playMusic(musicDisc, jukebox.location)
@@ -84,7 +83,7 @@ class MusicDiscsEvent:EventListener{
     /**
      * Включение проигрывания звука
      */
-    fun playMusic(item: EmpireItem, location: Location) {
+    fun playMusic(item: YmlItem, location: Location) {
         location.world?.playSound(location, "${item.namespace}:${item.musicDisc!!.name}", 2f, 1f)
         activeJukeboxes[location] = item
         getPlayerInDistance(location).forEach { player ->

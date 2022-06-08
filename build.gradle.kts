@@ -1,27 +1,11 @@
-
 import java.util.Properties
 import java.io.FileInputStream
-var astraPropsFile = file("astra.properties")
-if (!astraPropsFile.exists())
-    astraPropsFile.createNewFile()
-var astraProps = Properties().apply { load(FileInputStream(astraPropsFile)) }
-val gprUser = astraProps.getProperty("gpr.user")
-val gprPassword = astraProps.getProperty("gpr.password")
-if (gprUser == null || gprPassword == null) {
-    if (gprUser == null)
-        astraProps.setProperty("gpr.user", "SET_GPR_USERNAME_HERE")
-    if (gprPassword == null)
-        astraProps.setProperty("gpr.password", "SET_GPR_KEY_HERE")
-    astraProps.store(astraPropsFile.outputStream(), "")
-    throw GradleException("You need to set your GPR keys")
-}
-var versionPropsFile = file("version.properties")
-if (!versionPropsFile.exists())
-    versionPropsFile.createNewFile()
-var versionProps = Properties().apply { load(FileInputStream(versionPropsFile)) }
-var versionBuildRelease = (versionProps.getProperty("VERSION_BUILD_RELEASE","0").toIntOrNull())?:0
-versionProps.setProperty("VERSION_BUILD_RELEASE","${++versionBuildRelease}")
-versionProps.store(versionPropsFile.outputStream(),"")
+
+val kotlin_version: String by project
+val kotlin_coroutines_version: String by project
+val kotlin_json_version: String by project
+val kaml: String by project
+
 group = "com.astrainteractive"
 version = "3.3.9"
 val name = "EmpireItems"
@@ -32,9 +16,9 @@ plugins {
     java
     `maven-publish`
     `java-library`
-    kotlin("jvm") version "1.6.21"
-    id("com.github.johnrengelman.shadow") version "7.1.0"
-    kotlin("plugin.serialization") version "1.6.21"
+    kotlin("jvm") version "1.6.20"
+    kotlin("plugin.serialization") version "1.6.20"
+    id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 java {
     withSourcesJar()
@@ -45,17 +29,6 @@ repositories {
     mavenLocal()
     mavenCentral()
     maven("https://repo.maven.apache.org/maven2/")
-    maven {
-        name = "GitHubPackages"
-        url = uri("https://maven.pkg.github.com/Astra-Interactive/AstraLibs")
-        credentials {
-            username = gprUser
-            password = gprPassword
-        }
-        metadataSources {
-            artifact()
-        }
-    }
     maven("https://repo1.maven.org/maven2/")
     maven("https://repo.dmulloy2.net/repository/public/")
     maven("https://papermc.io/repo/repository/maven-public/")
@@ -78,21 +51,27 @@ repositories {
 }
 
 dependencies {
-    val kotlinVersion = "1.6.21"
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.6.1")
-    implementation("org.jetbrains.kotlin:kotlin-serialization:$kotlinVersion")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
-    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
+    // Kotlin
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version")
+    // Coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_coroutines_version")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:$kotlin_coroutines_version")
+    // Serialization
+    implementation("org.jetbrains.kotlin:kotlin-serialization:$kotlin_version")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlin_json_version")
+    implementation("com.charleskorn.kaml:kaml:$kaml")
 
+
+    // AstraLibs
+    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
+    // Test
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.5.20")
     testImplementation("junit:junit:4.13.2")
     testImplementation("com.github.seeseemelk:MockBukkit-v1.18:1.24.1")
     testImplementation("io.kotest:kotest-runner-junit5:5.2.1")
     testImplementation("io.kotest:kotest-assertions-core:5.2.1")
     testImplementation(kotlin("test"))
+    // Spigot dependencies
     compileOnly("net.essentialsx:EssentialsX:2.19.0-SNAPSHOT")
     compileOnly("io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT")
     compileOnly("org.spigotmc:spigot-api:1.18.2-R0.1-SNAPSHOT")
@@ -105,14 +84,11 @@ dependencies {
     compileOnly("net.coreprotect:coreprotect:20.0")
     compileOnly("com.ticxo.modelengine:api:R2.5.0")
 }
+kotlin.sourceSets["main"].kotlin.srcDirs("src")
+kotlin.sourceSets["test"].kotlin.srcDirs("test")
 
-
-
-publishing {
-    publications.create<MavenPublication>("maven") {
-        from(components["java"])
-    }
-}
+sourceSets["main"].resources.srcDirs("resources")
+sourceSets["test"].resources.srcDirs("testresources")
 
 tasks.withType<JavaCompile>() {
     options.encoding = "UTF-8"
@@ -120,63 +96,46 @@ tasks.withType<JavaCompile>() {
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()
 }
-
-
-
-tasks {
-    processResources {
-        from(sourceSets.main.get().resources.srcDirs) {
-            filesMatching("plugin.yml") {
-                expand(
-                    "name" to project.name,
-                    "version" to project.version,
-                    "description" to project.description
-                )
-            }
-            duplicatesStrategy = DuplicatesStrategy.INCLUDE
+tasks.processResources {
+    from(sourceSets.main.get().resources.srcDirs) {
+        filesMatching("plugin.yml") {
+            expand(
+                "name" to project.name,
+                "version" to project.version,
+                "description" to project.description
+            )
         }
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
     }
-
-    compileJava {
-        options.encoding = "UTF-8"
+}
+artifacts {
+    archives(tasks.shadowJar)
+}
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    kotlinOptions.jvmTarget = "17"
+}
+tasks.withType<Jar> {
+    archiveClassifier.set("min")
+}
+tasks.compileJava {
+    options.encoding = "UTF-8"
+}
+tasks.shadowJar {
+    dependencies{
+        include(dependency(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar",".aar")))))
+        include(dependency("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"))
+        include(dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_coroutines_version"))
+        include(dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:$kotlin_coroutines_version"))
+        include(dependency("org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"))
+        include(dependency("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlin_json_version"))
+        include(dependency("com.charleskorn.kaml:kaml:$kaml"))
     }
-
-    shadowJar {
-        dependencies {
-            val kotlinVersion = "1.6.21"
-            include(dependency(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar",".aar")))))
-            include(dependency("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"))
-            include(dependency("org.jetbrains.kotlin:kotlin-runtime:$kotlinVersion"))
-            include(dependency("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"))
-            include(dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1"))
-            include(dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.6.1"))
-            include(dependency("org.jetbrains.kotlin:kotlin-serialization:$kotlinVersion"))
-            include(dependency("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3"))
-        }
-        isReproducibleFileOrder = true
-
-        from(sourceSets.main.get().output)
-        from(project.configurations.runtimeClasspath)
-        manifest.attributes("Main-Class" to "com.astrainteractive.astratemplate.AstraTemplate")
-        minimize()
-        destinationDir = File( "D:\\Minecraft Servers\\TEST_SERVER\\plugins")
-    }
-
-    test {
-        useJUnit()
-        testLogging {
-            events("passed", "skipped", "failed")
-            this.showStandardStreams = true
-        }
-    }
-
-
-    register<Copy>("copyToServer") {
-        val path = "D:\\Minecraft Servers\\TEST_SERVER\\plugins"
-        if (path.toString().isEmpty()) {
-            println("targetDir is not set in gradle properties")
-            return@register
-        }
-        destinationDir = File(path.toString())
-    }
+    isReproducibleFileOrder = true
+    mergeServiceFiles()
+    dependsOn(configurations)
+    archiveClassifier.set(null as String?)
+    from(sourceSets.main.get().output)
+    from(project.configurations.runtimeClasspath)
+    minimize()
+    destinationDirectory.set(File("D:\\Minecraft Servers\\TEST_SERVER\\plugins"))
 }
