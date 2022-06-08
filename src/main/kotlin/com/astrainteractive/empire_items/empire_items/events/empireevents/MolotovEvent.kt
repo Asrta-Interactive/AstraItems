@@ -35,14 +35,15 @@ class MolotovEvent{
             "Player ${player.name} threw molotov at blockLocation=${e.hitBlock?.location} playerLocation=${player.location}",
             "Molotov"
         )
-        Igniter(instance, e.hitBlock ?: return@event, molotovPower.toInt(), player)
+        Igniter( e.hitBlock ?: return@event, molotovPower.toInt(), player)
     }
 
-    class Igniter(val plugin: EmpirePlugin, block: Block, radius: Int, player: Player) {
+    class Igniter(block: Block, radius: Int, player: Player?,particle:Boolean=true) {
         private val listLocations: MutableList<Location> = mutableListOf()
 
         init {
-            block.location.world?.spawnParticle(Particle.SMOKE_LARGE, block.location, 300, 0.0, 0.0, 0.0, 0.2)
+            if (particle)
+                block.location.world?.spawnParticle(Particle.SMOKE_LARGE, block.location, 300, 0.0, 0.0, 0.0, 0.2)
             setFire(block, radius, player)
         }
 
@@ -77,7 +78,7 @@ class MolotovEvent{
             return true
         }
 
-        private fun setFire(block: Block, radius: Int, player: Player) {
+        private fun setFire(block: Block, radius: Int, player: Player?) {
             if (!KProtectionLib.canIgnite(null, block?.location))
                 return
             if (radius == 0)

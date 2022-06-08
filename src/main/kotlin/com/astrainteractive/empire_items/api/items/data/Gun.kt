@@ -31,14 +31,27 @@ data class Gun(
     val advanced: Advanced?
 ) {
     data class Advanced(
-        val armorPenetration: Map<String, Double>
+        val armorPenetration: Map<String, Double>,
+        val onHit: OnHit
     ) {
+        data class OnHit(
+            val playPotionEffect: List<PlayPotionEffect>?,
+            val fireTicks: Int?,
+            val ignite:Int,
+        )
+
         companion object {
             fun get(s: ConfigurationSection?): Advanced? {
                 s ?: return null
                 val armorPenetration =
-                    s.getConfigurationSection("armorPenetration").getMap<String, Double>() ?: return null
-                return Advanced(armorPenetration)
+                    s.getConfigurationSection("armorPenetration").getMap<String, Double>()?: mapOf()
+                return Advanced(
+                    armorPenetration = armorPenetration, onHit = OnHit(
+                        playPotionEffect = PlayPotionEffect.getMultiPlayPotionEffect(s.getConfigurationSection("onHit.playPotionEffect")),
+                        fireTicks = s.getIntOrNull("onHit.fireTicks"),
+                        ignite = s.getInt("onHit.ignite")
+                    )
+                )
             }
         }
     }

@@ -62,7 +62,9 @@ data class EmpireItem(
             itemMeta.addEnchant(k, v, true)
         }
         attributes?.forEach { (k, v) ->
-            itemMeta.addAttribute(k, v, *EquipmentSlot.values())
+
+//            itemMeta.addAttribute(k, v, *EquipmentSlot.values())
+            itemMeta.addAttribute(k, v, itemStack.type.equipmentSlot)
         }
         if (material == Material.POTION) {
             (itemMeta as PotionMeta).color = Color.WHITE

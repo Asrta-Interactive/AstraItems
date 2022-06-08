@@ -28,7 +28,7 @@ data class EmpireMobAttribute(
             val attribute = s.getString("name") ?: s.name
             val minAmount = s.getDoubleOrNull("min")
             val maxAmount = s.getDoubleOrNull("max")
-            val amount = s.getDoubleOrNull("amount")
+            val amount = s.getDoubleOrNull("amount")?:s.parent?.getDoubleOrNull(attribute)
             if (minAmount == null && maxAmount == null)
                 return EmpireMobAttribute(
                     attribute = attribute,

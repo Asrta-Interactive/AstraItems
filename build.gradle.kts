@@ -23,7 +23,7 @@ var versionBuildRelease = (versionProps.getProperty("VERSION_BUILD_RELEASE","0")
 versionProps.setProperty("VERSION_BUILD_RELEASE","${++versionBuildRelease}")
 versionProps.store(versionPropsFile.outputStream(),"")
 group = "com.astrainteractive"
-version = "3.3.6"
+version = "3.3.9"
 val name = "EmpireItems"
 description = "Custom items plugin for EmpireProjekt"
 java.sourceCompatibility = JavaVersion.VERSION_16
@@ -32,8 +32,9 @@ plugins {
     java
     `maven-publish`
     `java-library`
-    kotlin("jvm") version "1.5.21"
+    kotlin("jvm") version "1.6.21"
     id("com.github.johnrengelman.shadow") version "7.1.0"
+    kotlin("plugin.serialization") version "1.6.21"
 }
 java {
     withSourcesJar()
@@ -77,10 +78,15 @@ repositories {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.21")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.5.21")
+    val kotlinVersion = "1.6.21"
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.6.1")
+    implementation("org.jetbrains.kotlin:kotlin-serialization:$kotlinVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
+    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
+
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.5.20")
     testImplementation("junit:junit:4.13.2")
     testImplementation("com.github.seeseemelk:MockBukkit-v1.18:1.24.1")
@@ -98,7 +104,6 @@ dependencies {
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
     compileOnly("net.coreprotect:coreprotect:20.0")
     compileOnly("com.ticxo.modelengine:api:R2.5.0")
-    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 }
 
 
@@ -138,12 +143,15 @@ tasks {
 
     shadowJar {
         dependencies {
+            val kotlinVersion = "1.6.21"
             include(dependency(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar",".aar")))))
-            include(dependency("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.21"))
-            include(dependency("org.jetbrains.kotlin:kotlin-runtime:1.5.21"))
-            include(dependency("org.jetbrains.kotlin:kotlin-stdlib:1.5.21"))
+            include(dependency("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"))
+            include(dependency("org.jetbrains.kotlin:kotlin-runtime:$kotlinVersion"))
+            include(dependency("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"))
             include(dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1"))
             include(dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.6.1"))
+            include(dependency("org.jetbrains.kotlin:kotlin-serialization:$kotlinVersion"))
+            include(dependency("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3"))
         }
         isReproducibleFileOrder = true
 
@@ -151,6 +159,7 @@ tasks {
         from(project.configurations.runtimeClasspath)
         manifest.attributes("Main-Class" to "com.astrainteractive.astratemplate.AstraTemplate")
         minimize()
+        destinationDir = File( "D:\\Minecraft Servers\\TEST_SERVER\\plugins")
     }
 
     test {

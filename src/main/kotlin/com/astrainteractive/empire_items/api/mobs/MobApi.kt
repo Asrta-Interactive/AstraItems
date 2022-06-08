@@ -1,5 +1,6 @@
 package com.astrainteractive.empire_items.api.mobs
 
+import com.astrainteractive.astralibs.Logger
 import com.astrainteractive.astralibs.async.AsyncHelper
 import com.astrainteractive.astralibs.valueOfOrNull
 import com.astrainteractive.empire_items.EmpirePlugin
@@ -13,6 +14,7 @@ import com.ticxo.modelengine.api.generator.blueprint.BlueprintBone
 import com.ticxo.modelengine.api.model.ActiveModel
 import com.ticxo.modelengine.api.model.ModeledEntity
 import kotlinx.coroutines.*
+import org.apache.commons.lang.math.DoubleRange
 import org.bukkit.*
 import org.bukkit.attribute.Attribute
 import org.bukkit.attribute.AttributeModifier
@@ -51,25 +53,12 @@ object MobApi : Disableable {
      */
     fun getEmpireMob(id: String) = empireMobsById[id]
 
-    fun getModelEngineMobs() = ModelEngineAPI.api.modelManager.modelRegistry.registeredModel.keys
-
     /**
      * Play animation for selected [ActiveModel]
      */
     fun ActiveModel.playAnimation(state: String) {
         addState(state, 1, 1, 1.0)
     }
-
-    /**
-     * Run task later
-     */
-    fun runLater(time: Long, block: () -> Unit) {
-        AsyncHelper.launch {
-            delay(time)
-            block()
-        }
-    }
-
 
     /**
      * @return [ModeledEntity]
@@ -83,30 +72,22 @@ object MobApi : Disableable {
     val ModeledEntity.activeModel: ActiveModel?
         get() = this.allActiveModel?.values?.firstOrNull()
 
-    /**
-     * @return id of [ModeledEntity]
-     */
-    val ModeledEntity.modelId: String?
-        get() = this.activeModel?.modelId
-
 
     /**
      * @param [e] - Naturally spawned entity
      * @return list of models, which can replace current entity
      */
     fun getByNaturalSpawn(e: Entity): List<EmpireMob>? {
-        val mobs = MobApi.empireMobs.filter { emob ->
+        val mobs = empireMobs.filter { emob ->
             emob.spawn?.conditions?.firstOrNull { cond ->
-
                 val chance = cond.replace[e.type.name]
                 val c1 = calcChance(chance?.toFloat() ?: -1f)
                 val c2 = e.location.y > cond.minY && e.location.y < cond.maxY
-                val c3 = if (cond.biomes.isNullOrEmpty()) true else cond.biomes.contains(e.location.getBiome().name)
+                val c3 = if (cond.biomes.isEmpty()) true else cond.biomes.contains(e.location.getBiome().name)
                 c1 && c2 && c3
             } != null
         }
-        if (mobs.isNullOrEmpty())
-            return null
+        if (mobs.isEmpty()) return null
         return mobs
     }
 
@@ -169,11 +150,7 @@ object MobApi : Disableable {
             //(e as LivingEntity).equipment?.setHelmet(ItemStack(Material.BARRIER), true)
         }
         eMob.potionEffects.forEach { effect ->
-            val potionEffect = PotionEffectType.getByName(effect.effect) ?: return@forEach
-
-            (e as LivingEntity).addPotionEffect(
-                PotionEffect(potionEffect, effect.duration, effect.level, false, false, false)
-            )
+            effect.copy(duration = Int.MAX_VALUE).play(e)
         }
         e.isSilent = true
         val model = ModelEngineAPI.api.modelManager.createActiveModel(eMob.id)
@@ -265,7 +242,8 @@ object MobApi : Disableable {
                 }
                 activeModel.playAnimation("attack")
             } else return@launch
-            runLater(empireMob.hitDelay.toLong()) {
+            AsyncHelper.launch {
+                delay(empireMob.hitDelay * 1L)
                 entities.forEach { entity ->
                     val distance = damager.location.distance(entity.location)
                     if (distance > (empireMob.hitRange ?: 5))
@@ -276,6 +254,9 @@ object MobApi : Disableable {
 
                     empireMob.events["onDamage"]?.let { event ->
                         executeEvent(entity, activeModel, event, "onDamage")
+                        event.addPlayerPotionEffect?.forEach {effect->
+                            entities.forEach { effect.play(it as? LivingEntity) }
+                        }
                     }
                     AsyncHelper.callSyncMethod {
                         if ((damager as LivingEntity).health > 0)
@@ -329,11 +310,85 @@ object MobApi : Disableable {
         playParticle(entity, model, event.bones)
     }
 
+    fun executeAction(entityInfo: CustomEntityInfo, event: String) {
+        val actions = entityInfo.empireMob.events[event] ?: return
+        actions.actions.forEach { action ->
+            AsyncHelper.launch {
+                delay(action.startAfter * 1L)
+                val condition = action.condition
+                // Check conditions
+                (entityInfo.entity as? LivingEntity)?.let {
+                    if (it.health > condition.whenHPBelow) {
+                        println("Hp check->return")
+                        return@launch
+                    }
+                }
+                if (eventTimers.hasCooldown("${action.id}_${entityInfo.entity.hashCode()}}", action.condition.cooldown)) {
+                    return@launch
+                } else
+                    eventTimers.setCooldown("${action.id}_${entityInfo.entity.hashCode()}}")
+                if (!calcChance(condition.chance)) return@launch
+                if (condition.animationNames.isNotEmpty()) {
+                    val isRightAnimation = condition.animationNames.mapNotNull {
+                        entityInfo.activeModel.getState(it)?.frame
+                    }.any { it > 0 }
+                    if (!isRightAnimation) {
+                        return@launch
+                    }
+                }
+                // Summon minions
+                action.summonMinion.forEach { summonMinion ->
+                    val entityType = EntityType.fromName(summonMinion.type) ?: kotlin.run {
+                        Logger.warn("Entity ${summonMinion.type} not exists")
+                        return@forEach
+                    }
+                    val location = entityInfo.entity.location
+                    ignoreSpawnForLocation(location)
+                    for (i in 0 until summonMinion.amount)
+                        AsyncHelper.callSyncMethod {
+                            val spawnedEntity = location.world.spawnEntity(location, entityType).apply {
+                                val entity = (this as? LivingEntity) ?: return@apply
+                                summonMinion.potionEffects?.forEach { _effect ->
+                                    val effect = _effect.copy(duration = Int.MAX_VALUE)
+                                    AsyncHelper.callSyncMethod {
+                                        effect.play(entity)
+                                    }
+                                }
+                                summonMinion.attributes?.forEach {
+                                    val attr = valueOfOrNull<Attribute>(it.attribute) ?: return@forEach
+                                    val amount = it.amount
+                                    entity.registerAttribute(attr)
+                                    entity.getAttribute(attr)!!.addModifier(
+                                        AttributeModifier(
+                                            UUID.randomUUID(),
+                                            attr.name,
+                                            amount,
+                                            AttributeModifier.Operation.ADD_NUMBER
+                                        )
+                                    )
+                                    if (attr == Attribute.GENERIC_MAX_HEALTH)
+                                        entity.health = amount
+                                }
+                            }
+                        }
+
+                }
+                // Summon projectiles
+                action.summonProjectile.forEach { summonProjectile ->
+
+                }
+
+            }
+
+        }
+
+    }
 
     override suspend fun onEnable() {
         if (Bukkit.getServer().pluginManager.getPlugin("ModelEngine") == null) return
 
         empireMobs = EmpireMob.getAll().toMutableList()
+        println(empireMobs)
         empireMobsById = empireMobs.associateBy { it.id }
         AsyncHelper.callSyncMethod {
             val entities = Bukkit.getWorlds().flatMap { world ->

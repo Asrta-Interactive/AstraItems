@@ -1,5 +1,6 @@
 package com.astrainteractive.empire_items.api.items.data.interact
 
+import com.astrainteractive.astralibs.Logger
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.entity.LivingEntity
 import org.bukkit.potion.PotionEffect
@@ -10,9 +11,12 @@ data class PlayPotionEffect(
     val amplifier:Int,
     val duration:Int
 ){
-    fun play(ent: LivingEntity) {
-        val effect = PotionEffectType.getByName(effect)?:return
-        ent.addPotionEffect(PotionEffect(effect,duration,amplifier))
+    fun play(ent: LivingEntity?) {
+        val effect = PotionEffectType.getByName(effect)?: kotlin.run {
+            Logger.warn("No effect named $effect")
+            return
+        }
+        ent?.addPotionEffect(PotionEffect(effect,duration,amplifier))
     }
 
     companion object{

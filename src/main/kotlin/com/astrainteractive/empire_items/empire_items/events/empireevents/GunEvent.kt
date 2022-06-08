@@ -176,16 +176,27 @@ class GunEvent {
                     l.direction.z
                 )
 
-            if (!l.block.isPassable)
+            if (!l.block.isPassable) {
+                gunInfo.advanced?.onHit?.ignite?.let {
+                    println("Block ${l.block.location} power: ${it}")
+                    MolotovEvent.Igniter(l.block.getRelative(BlockFace.UP),it,null, particle = false)
+                }
                 break
+            }
 
             for (ent: Entity in getEntityByLocation(l, r)) {
                 gunInfo.onContact?.play(ent, creator = player)
                 if (ent is LivingEntity && ent != player) {
                     gunInfo.damage?.let {
                         var damage = (1 - i / gunInfo.bulletTrace) * it
-
+                        gunInfo.advanced?.onHit?.let { onHit ->
+                            onHit.playPotionEffect?.forEach {
+                                it.play(ent)
+                            }
+                            onHit.fireTicks?.let { ent.fireTicks = it }
+                        }
                         gunInfo.advanced?.armorPenetration?.let {
+
                             ent.equipment?.let { eq ->
                                 listOf(eq.helmet, eq.chestplate, eq.leggings, eq.boots).forEach { armor ->
                                     val id = armor?.getAstraID() ?: armor?.type?.name ?: return@forEach
@@ -194,6 +205,7 @@ class GunEvent {
                                 }
                             }
                         }
+
                         ent.damage(damage, player)
                     }
                 }
