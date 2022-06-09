@@ -2,6 +2,7 @@ package com.astrainteractive.empire_items.empire_items.gui
 
 import com.astrainteractive.astralibs.HEX
 import com.astrainteractive.astralibs.async.AsyncHelper
+import com.astrainteractive.astralibs.convertHex
 import com.astrainteractive.astralibs.menu.AstraMenuSize
 import com.astrainteractive.empire_items.EmpirePlugin
 import com.astrainteractive.empire_items.api.CraftingApi
@@ -30,8 +31,8 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility) :
     override val backButtonIndex: Int = 49
     override val nextButtonIndex: Int = 53
 
-    override var menuName: String =
-        GUI_CONFIG.settings.titles.workbenchText + (itemID.toAstraItemOrItem()?.itemMeta?.displayName ?: "Крафтинг")
+    override var menuName: String = convertHex(GUI_CONFIG.settings.titles.workbenchText + (itemID.toAstraItemOrItem()?.itemMeta?.displayName ?: "Крафтинг"))
+
 
     override val menuSize: AstraMenuSize = AstraMenuSize.XL
     override val playerMenuUtility: PlayerMenuUtility = playerMenuUtility

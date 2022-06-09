@@ -1,20 +1,17 @@
-package com.astrainteractive.empire_items.empire_items.events.genericevents.drop
+package com.astrainteractive.empire_items.empire_items.events.genericevents
 
 import com.astrainteractive.astralibs.events.DSLEvent
-import com.astrainteractive.astralibs.events.EventListener
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.items.BlockParser
 import com.astrainteractive.empire_items.api.mobs.MobApi
 import org.bukkit.Location
 import org.bukkit.block.Block
 import org.bukkit.block.Chest
-import org.bukkit.event.EventHandler
 import org.bukkit.event.block.Action
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.entity.EntityDeathEvent
 import org.bukkit.event.player.PlayerFishEvent
 import org.bukkit.event.player.PlayerInteractEvent
-import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.loot.Lootable
 
 class ItemDropEvent {

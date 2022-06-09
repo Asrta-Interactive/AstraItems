@@ -20,10 +20,10 @@ object EmpireSerializer {
         )
         yaml.decodeFromString(serializer(T::class.java), file.readText()) as? T
     } catch (e: EmptyYamlDocumentException) {
-        Logger.warn("${e.message} ${file.name}", TAG)
+        Logger.error("${e.message} ${file.name}", TAG)
         null
     } catch (e: DuplicateKeyException) {
-        Logger.warn(e.message, TAG)
+        Logger.error(e.message, TAG)
         null
     } catch (e: kotlinx.serialization.SerializationException) {
         Logger.error("Error serializing file ${file.name} with class ${T::class.simpleName}: ${e.message ?: e.localizedMessage}", TAG)

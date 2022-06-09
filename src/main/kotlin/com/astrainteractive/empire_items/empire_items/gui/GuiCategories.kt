@@ -1,8 +1,10 @@
 package com.astrainteractive.empire_items.empire_items.gui
 
 import com.astrainteractive.astralibs.async.AsyncHelper
+import com.astrainteractive.astralibs.convertHex
 import com.astrainteractive.astralibs.menu.AstraMenuSize
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.toAstraItemOrItem
+import com.astrainteractive.empire_items.api.utils.setDisplayName
 import com.astrainteractive.empire_items.models.GUI_CONFIG
 import kotlinx.coroutines.launch
 import org.bukkit.entity.Player
@@ -12,7 +14,7 @@ import org.bukkit.inventory.ItemStack
 class GuiCategories(player: Player, override val playerMenuUtility: PlayerMenuUtility = PlayerMenuUtility(player)) :
     AstraPaginatedMenu() {
 
-    override var menuName: String = GUI_CONFIG.settings.titles.categoriesText
+    override var menuName: String = convertHex(GUI_CONFIG.settings.titles.categoriesText)
 
     override val menuSize: AstraMenuSize = AstraMenuSize.XL
     override val backPageButton: ItemStack = GUI_CONFIG.settings.buttons.backButton.toAstraItemOrItem()!!
@@ -52,7 +54,12 @@ class GuiCategories(player: Player, override val playerMenuUtility: PlayerMenuUt
         val items = GUI_CONFIG.categories.values ?: return
         for (i in 0 until maxItemsPerPage) {
             val index = getIndex(i)
-            inventory.setItem(i, items.elementAtOrNull(index)?.icon?.toAstraItemOrItem() ?: continue)
+            val category = items.elementAtOrNull(index)?:continue
+            val item = category.icon.toAstraItemOrItem()?.apply {
+                this.setDisplayName(convertHex(category.name))
+                this.lore = category.lore
+            }?:continue
+            inventory.setItem(i, item ?: continue)
         }
 
     }

@@ -38,7 +38,7 @@ data class Interact(
         val name: String,
         val pitch: Float = 1f,
         val volume: Float = 1f,
-        val cooldown:Int?
+        val cooldown:Int? = null
     ) {
         fun play(l: Location) {
             l.world.playSound(l, name, volume, pitch)

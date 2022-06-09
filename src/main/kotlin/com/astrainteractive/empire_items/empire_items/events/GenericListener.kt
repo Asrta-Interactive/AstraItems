@@ -10,7 +10,7 @@ import com.astrainteractive.empire_items.empire_items.events.empireevents.*
 import com.astrainteractive.empire_items.empire_items.events.genericevents.BookSignEvent
 import com.astrainteractive.empire_items.empire_items.events.genericevents.ExperienceRepairEvent
 import com.astrainteractive.empire_items.empire_items.events.genericevents.ItemInteractEvent
-import com.astrainteractive.empire_items.empire_items.events.genericevents.drop.ItemDropEvent
+import com.astrainteractive.empire_items.empire_items.events.genericevents.ItemDropEvent
 import com.astrainteractive.empire_items.empire_items.events.resourcepack.ProtocolLibResourcePackEvent
 import com.astrainteractive.empire_items.empire_items.events.resourcepack.ResourcePackEvent
 import com.astrainteractive.empire_items.empire_items.events.villagers.VillagerEvent

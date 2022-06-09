@@ -40,6 +40,7 @@ object EmpireItemsAPI : Disableable {
 
     override suspend fun onEnable() {
         itemYamlFiles = getCustomItemsFiles()?.mapNotNull {
+            println("File ${it.getFile().name}")
             EmpireSerializer.toClass<ItemYamlFile>(it.getFile())
         } ?: listOf()
         itemYamlFilesByID =
@@ -57,6 +58,7 @@ object EmpireItemsAPI : Disableable {
             itemYamlFiles.mapNotNull { it.villagerTrades?.values?.map { it } }.flatten().associateBy { it.id }
         villagerTradeInfoByProfession = villagerTradeInfoByID.values.groupBy { it.profession }
         ymlMobById = itemYamlFiles.flatMap { it.ymlMob.values }.associateBy { it.id }
+        println(ymlMobById.keys)
     }
 
     override suspend fun onDisable() {

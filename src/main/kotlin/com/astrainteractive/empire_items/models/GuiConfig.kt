@@ -69,7 +69,7 @@ data class _GuiConfig(
         val title: String,
         val name: String,
         val icon: String,
-        val lore: List<String>,
+        val lore: List<String> = listOf(),
         val items: List<String>
 
     )

@@ -1,6 +1,7 @@
 package com.astrainteractive.empire_items.empire_items.gui
 
 import com.astrainteractive.astralibs.async.AsyncHelper
+import com.astrainteractive.astralibs.convertHex
 import com.astrainteractive.astralibs.menu.AstraMenuSize
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.toAstraItemOrItem
 import com.astrainteractive.empire_items.models.GUI_CONFIG
@@ -13,7 +14,7 @@ class GuiCategory(override val playerMenuUtility: PlayerMenuUtility) :
 
     val category = GUI_CONFIG.categories[playerMenuUtility.categoryId]!!
 
-    override var menuName: String = category.title
+    override var menuName: String = convertHex(category.title)
 
     override val menuSize: AstraMenuSize = AstraMenuSize.XL
     override val backPageButton: ItemStack = GUI_CONFIG.settings.buttons.backButton.toAstraItemOrItem()!!

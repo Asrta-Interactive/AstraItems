@@ -35,7 +35,6 @@ data class _Config(
         val enabled: Boolean,
         val onlyOnNewChunks: Boolean,
         val generateChunksAtOnce: Int,
-
         )
 
     @Suppress("PROVIDED_RUNTIME_TOO_LOW")

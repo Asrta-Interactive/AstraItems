@@ -7,7 +7,7 @@ val kotlin_json_version: String by project
 val kaml: String by project
 
 group = "com.astrainteractive"
-version = "3.3.9"
+version = "4.0.0"
 val name = "EmpireItems"
 description = "Custom items plugin for EmpireProjekt"
 java.sourceCompatibility = JavaVersion.VERSION_16
@@ -120,6 +120,7 @@ tasks.withType<Jar> {
 tasks.compileJava {
     options.encoding = "UTF-8"
 }
+
 tasks.shadowJar {
     dependencies{
         include(dependency(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar",".aar")))))

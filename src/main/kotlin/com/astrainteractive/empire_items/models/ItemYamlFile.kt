@@ -44,6 +44,8 @@ data class ItemYamlFile(
     val villagerTrades: Map<String, VillagerTradeInfo>? = null,
     val fontImages: Map<String, FontImage> = mapOf(),
     val yml_items: Map<String, YmlItem>? = null,
-    val ymlSounds: Map<String, YmlSound>? = null,
+    @SerialName("sounds")
+    val ymlSounds: Map<String, YmlSound> = mapOf(),
+    @SerialName("mobs")
     val ymlMob: Map<String, YmlMob> = mapOf()
 )

@@ -15,12 +15,12 @@ data class YmlMob(
     val canBurn: Boolean = true,
     val idleSound: List<String> = listOf(),
     val potionEffects: Map<String, Interact.PlayPotionEffect> = mapOf(),
-    val attributes: Map<String, RandomAttribute>,
+    val attributes: Map<String, RandomAttribute> = emptyMap(),
     val hitDelay: Int = 0,
     val hitRange: Double,
     val spawn: Map<String, SpawnInfo>? = null,
     val bossBar: YmlMobBossBar? = null,
-    val ignoreMobs: List<String>,
+    val ignoreMobs: List<String> = emptyList(),
     val events: Map<String, YmlMobEvent> = mapOf()
 ) {
 
@@ -30,17 +30,17 @@ data class YmlMob(
     data class YmlMobEvent(
         val id: String,
         val cooldown: Int = 0,
-        val eventName: String,
-        val playSound: Interact.PlaySound,
-        val boneParticle: Map<String, BoneParticle>,
-        val playPotionEffect: Map<String, Interact.PlayPotionEffect>,
-        val actions: Map<String, MobAction>
+        val eventName: String = id,
+        val playSound: Interact.PlaySound? = null,
+        val boneParticle: Map<String, BoneParticle> = emptyMap(),
+        val playPotionEffect: Map<String, Interact.PlayPotionEffect> = emptyMap(),
+        val actions: Map<String, MobAction> = emptyMap()
     ) {
         @Suppress("PROVIDED_RUNTIME_TOO_LOW")
         @Serializable
         data class BoneParticle(
             val bones: List<String>,
-            val cooldown:Int?,
+            val cooldown: Int?,
             val particle: Interact.PlayParticle
         )
 
@@ -50,8 +50,8 @@ data class YmlMob(
             val id: String,
             val startAfter: Int,
             val condition: Condition? = null,
-            val summonProjectile: Map<String, SummonProjectile>,
-            val summonMinions: Map<String, SummonMinion>
+            val summonProjectile: Map<String, SummonProjectile> = emptyMap(),
+            val summonMinions: Map<String, SummonMinion> = emptyMap()
         ) {
             @Suppress("PROVIDED_RUNTIME_TOO_LOW")
             @Serializable
@@ -87,7 +87,7 @@ data class YmlMob(
         val name: String,
         val color: String,
         val barStyle: String = BarStyle.SOLID.name,
-        val flags: List<String>
+        val flags: List<String> = listOf()
     )
 
     @Suppress("PROVIDED_RUNTIME_TOO_LOW")

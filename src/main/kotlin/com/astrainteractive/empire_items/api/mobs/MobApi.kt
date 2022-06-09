@@ -112,6 +112,7 @@ object MobApi : Disableable {
     fun replaceEntity(eMob: YmlMob, e: Entity, naturalSpawn: Boolean = false): CustomEntityInfo? {
         if (naturalSpawn) {
             val loc = e.location.clone()
+            e.remove()
             spawnMob(eMob, loc)
             return null
         }
@@ -298,10 +299,10 @@ object MobApi : Disableable {
     val eventTimers: Cooldown<String> = Cooldown()
 
     fun executeEvent(entity: Entity, model: ActiveModel, event: YmlMob.YmlMobEvent, eventId: String) {
-        val hasSoundCooldown = eventTimers.hasCooldown("${eventId}S${entity.hashCode()}", event.playSound.cooldown)
-        if (event.playSound.cooldown == null || event.playSound.cooldown == 0 || !hasSoundCooldown) {
+        val hasSoundCooldown = eventTimers.hasCooldown("${eventId}S${entity.hashCode()}", event.playSound?.cooldown)
+        if (event.playSound?.cooldown == null || event.playSound.cooldown == 0 || !hasSoundCooldown) {
             eventTimers.setCooldown("${eventId}S${entity.hashCode()}")
-            entity.location.playSound(event.playSound.name)
+            entity.location.playSound(event.playSound?.name)
         }
         playParticle(entity, model, event.boneParticle.values.toList())
     }

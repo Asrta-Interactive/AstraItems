@@ -89,8 +89,6 @@ class BlockGenerationEvent {
      * Получение списка локация из чанка и добавление их в очередь
      */
     private fun generateChunk(chunk: Chunk) {
-        if (CONFIG.generation.debug)
-            log("Generating Queue")
         blocksToGenerate.forEach { itemInfo ->
             val block = itemInfo.block ?: return@forEach
             //Сгенерирован ли блок в чанке
