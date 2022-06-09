@@ -3,7 +3,19 @@ package com.astrainteractive.empire_items.empire_items.util
 import com.astrainteractive.astralibs.FileManager
 import java.io.File
 
-class Files {
+val Files: _Files
+    get() = _Files.instance
+
+class _Files {
+    companion object {
+        lateinit var instance: _Files
+            private set
+    }
+
+    init {
+        instance = this
+    }
+
     val configFile: FileManager =
         FileManager("config.yml")
     val guiConfig: FileManager =

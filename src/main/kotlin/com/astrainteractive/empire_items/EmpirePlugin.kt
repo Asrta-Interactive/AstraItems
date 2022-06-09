@@ -7,16 +7,17 @@ import com.astrainteractive.astralibs.async.AsyncHelper
 import com.astrainteractive.astralibs.events.GlobalEventManager
 import com.astrainteractive.empire_items.api.CraftingApi
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
-import com.astrainteractive.empire_items.api.ItemYamlFile
+import com.astrainteractive.empire_items.models.ItemYamlFile
 import com.astrainteractive.empire_items.api.utils.getCustomItemsFiles
 import com.astrainteractive.empire_items.credit.EmpireCredit
 import com.astrainteractive.empire_items.empire_items.commands.CommandManager
 import com.astrainteractive.empire_items.empire_items.events.GenericListener
-import com.astrainteractive.empire_items.empire_items.util.Config
 import com.astrainteractive.empire_items.empire_items.util.EmpireSerializer
-import com.astrainteractive.empire_items.empire_items.util.Files
+import com.astrainteractive.empire_items.empire_items.util._Files
 import com.astrainteractive.empire_items.empire_items.util.Translations
 import com.astrainteractive.empire_items.empire_items.util.protection.KProtectionLib
+import com.astrainteractive.empire_items.models._Config
+import com.astrainteractive.empire_items.models._GuiConfig
 import com.astrainteractive.empire_items.modules.ModuleManager
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.cancel
@@ -48,13 +49,6 @@ class EmpirePlugin : JavaPlugin {
          *Plugin instance
          */
         lateinit var instance: EmpirePlugin
-            private set
-
-
-        /**
-         *Files instance
-         */
-        lateinit var empireFiles: Files
             private set
 
 
@@ -97,8 +91,9 @@ class EmpirePlugin : JavaPlugin {
         AstraLibs.rememberPlugin(this)
         Logger.prefix = "EmpireItems"
         translations = Translations()
-        empireFiles = Files()
-        Config.load()
+        _Files()
+        _GuiConfig.create()
+        _Config.create()
         commandManager = CommandManager()
         val customFiles = getCustomItemsFiles()?.mapNotNull {
             EmpireSerializer.toClass<ItemYamlFile>(it.getFile())

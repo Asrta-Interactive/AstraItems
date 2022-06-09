@@ -6,7 +6,7 @@ import com.astrainteractive.astralibs.events.EventListener
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.empireID
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.toAstraItemOrItem
-import com.astrainteractive.empire_items.api.YmlItem
+import com.astrainteractive.empire_items.models.yml_item.YmlItem
 import net.md_5.bungee.api.ChatMessageType
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Location

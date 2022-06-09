@@ -1,7 +1,7 @@
 package com.astrainteractive.empire_items.modules.hud
 
 import com.astrainteractive.astralibs.uuid
-import com.astrainteractive.empire_items.api.FontImage
+import com.astrainteractive.empire_items.models.FontImage
 import com.astrainteractive.empire_items.modules.hud.thirst.RepeatableTask
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player

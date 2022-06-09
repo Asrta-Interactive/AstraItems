@@ -4,17 +4,17 @@ import com.astrainteractive.astralibs.Logger
 import com.astrainteractive.astralibs.async.AsyncHelper
 import com.astrainteractive.astralibs.valueOfOrNull
 import com.astrainteractive.empire_items.EmpirePlugin
-import com.astrainteractive.empire_items.api.mobs.data.*
+import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.utils.Cooldown
 import com.astrainteractive.empire_items.api.utils.Disableable
 import com.astrainteractive.empire_items.empire_items.util.*
+import com.astrainteractive.empire_items.models.mob.YmlMob
 import com.destroystokyo.paper.ParticleBuilder
 import com.ticxo.modelengine.api.ModelEngineAPI
 import com.ticxo.modelengine.api.generator.blueprint.BlueprintBone
 import com.ticxo.modelengine.api.model.ActiveModel
 import com.ticxo.modelengine.api.model.ModeledEntity
 import kotlinx.coroutines.*
-import org.apache.commons.lang.math.DoubleRange
 import org.bukkit.*
 import org.bukkit.attribute.Attribute
 import org.bukkit.attribute.AttributeModifier
@@ -25,33 +25,26 @@ import org.bukkit.boss.BossBar
 import org.bukkit.entity.Entity
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.LivingEntity
-import org.bukkit.inventory.ItemStack
-import org.bukkit.potion.PotionEffect
-import org.bukkit.potion.PotionEffectType
 import java.util.*
 import kotlin.math.max
 
+data class CustomEntityInfo(
+    val entity: Entity,
+    val ymlMob: YmlMob,
+    val modeledEntity: ModeledEntity,
+    val activeModel: ActiveModel
+)
+
 object MobApi : Disableable {
 
-    private var empireMobs: MutableList<EmpireMob> = mutableListOf()
-    private var empireMobsById: Map<String, EmpireMob> = mapOf()
 
     private val _activeMobs: MutableList<CustomEntityInfo> = mutableListOf()
     val activeMobs: List<CustomEntityInfo>
         get() = _activeMobs
 
-    /**
-     * @return list of all ids of [EmpireMob]
-     */
-    fun getEmpireMobsList() = empireMobs.map { it.id }
 
     private val ignoredSpawn = mutableSetOf<Location>()
 
-    /**
-     * Get [EmpireMob] by its id
-     * @return [EmpireMob]
-     */
-    fun getEmpireMob(id: String) = empireMobsById[id]
 
     /**
      * Play animation for selected [ActiveModel]
@@ -77,15 +70,15 @@ object MobApi : Disableable {
      * @param [e] - Naturally spawned entity
      * @return list of models, which can replace current entity
      */
-    fun getByNaturalSpawn(e: Entity): List<EmpireMob>? {
-        val mobs = empireMobs.filter { emob ->
-            emob.spawn?.conditions?.firstOrNull { cond ->
+    fun getByNaturalSpawn(e: Entity): List<YmlMob>? {
+        val mobs = EmpireItemsAPI.ymlMobById.values.filter { ymlMob ->
+            !ymlMob.spawn?.values?.filter { cond ->
                 val chance = cond.replace[e.type.name]
                 val c1 = calcChance(chance?.toFloat() ?: -1f)
                 val c2 = e.location.y > cond.minY && e.location.y < cond.maxY
                 val c3 = if (cond.biomes.isEmpty()) true else cond.biomes.contains(e.location.getBiome().name)
                 c1 && c2 && c3
-            } != null
+            }.isNullOrEmpty()
         }
         if (mobs.isEmpty()) return null
         return mobs
@@ -94,7 +87,7 @@ object MobApi : Disableable {
     val bossBars = mutableMapOf<Entity, BossBar>()
 
     fun bossBarKey(id: Int) = NamespacedKey(EmpirePlugin.instance, id.toString())
-    fun createEntityBossBar(e: Entity, id: String, bossBar: MobBossBar) {
+    fun createEntityBossBar(e: Entity, id: String, bossBar: YmlMob.YmlMobBossBar) {
         val key = bossBarKey(e.entityId)
         val barColor = valueOfOrNull<BarColor>(bossBar.color) ?: BarColor.RED
         val barStyle = valueOfOrNull<BarStyle>(bossBar.barStyle) ?: BarStyle.SOLID
@@ -116,15 +109,15 @@ object MobApi : Disableable {
     /**
      * Replace entity [e] with [EmpireMob] as Custom ModelEngine entity
      */
-    fun replaceEntity(eMob: EmpireMob, e: Entity, naturalSpawn: Boolean = false): CustomEntityInfo? {
+    fun replaceEntity(eMob: YmlMob, e: Entity, naturalSpawn: Boolean = false): CustomEntityInfo? {
         if (naturalSpawn) {
             val loc = e.location.clone()
             spawnMob(eMob, loc)
             return null
         }
         eMob.attributes.forEach {
-            val attr = valueOfOrNull<Attribute>(it.attribute) ?: return@forEach
-            val amount = it.amount
+            val attr = valueOfOrNull<Attribute>(it.value.name) ?: return@forEach
+            val amount = it.value.realValue
             (e as LivingEntity).registerAttribute(attr)
             (e as LivingEntity).getAttribute(attr)!!.addModifier(
                 AttributeModifier(
@@ -150,7 +143,7 @@ object MobApi : Disableable {
             //(e as LivingEntity).equipment?.setHelmet(ItemStack(Material.BARRIER), true)
         }
         eMob.potionEffects.forEach { effect ->
-            effect.copy(duration = Int.MAX_VALUE).play(e)
+            effect.value.copy(duration = Int.MAX_VALUE).play(e)
         }
         e.isSilent = true
         val model = ModelEngineAPI.api.modelManager.createActiveModel(eMob.id)
@@ -201,9 +194,11 @@ object MobApi : Disableable {
      * Spawn an [EmpireMob] in location [l]
      * @return [CustomEntityInfo]
      */
-    fun spawnMob(eMob: EmpireMob, l: Location): CustomEntityInfo? {
+    fun spawnMob(eMob: YmlMob, l: Location): CustomEntityInfo? {
         ignoreSpawnForLocation(l)
         val mob = l.world.spawnEntity(l, EntityType.fromName(eMob.entity) ?: return null)
+        mob.customName = eMob.id
+        mob.isCustomNameVisible = false
         return replaceEntity(eMob, mob)
     }
 
@@ -216,9 +211,10 @@ object MobApi : Disableable {
      * @return [CustomEntityInfo]
      */
     fun getCustomEntityInfo(e: Entity): CustomEntityInfo? {
+        val id = e.customName ?: return null
         val modeledEntity = e.modeledEntity ?: return null
         val activeModel = modeledEntity.activeModel ?: return null
-        val empireMob = getEmpireMob(activeModel.modelId) ?: return null
+        val empireMob = EmpireItemsAPI.ymlMobById[id] ?: return null
         return CustomEntityInfo(e, empireMob, modeledEntity, activeModel)
     }
 
@@ -229,7 +225,7 @@ object MobApi : Disableable {
         entityInfo ?: return
         val modeledEntity = entityInfo.modeledEntity
         val activeModel = entityInfo.activeModel
-        val empireMob = entityInfo.empireMob
+        val empireMob = entityInfo.ymlMob
         val damager = entityInfo.entity
         AsyncHelper.launch {
             val frame = activeModel.getState("attack")?.frame
@@ -246,7 +242,7 @@ object MobApi : Disableable {
                 delay(empireMob.hitDelay * 1L)
                 entities.forEach { entity ->
                     val distance = damager.location.distance(entity.location)
-                    if (distance > (empireMob.hitRange ?: 5))
+                    if (distance > empireMob.hitRange)
                         return@forEach
                     val damage = if (empireMob.decreaseDamageByRange)
                         _damage / max(1.0, distance)
@@ -254,8 +250,8 @@ object MobApi : Disableable {
 
                     empireMob.events["onDamage"]?.let { event ->
                         executeEvent(entity, activeModel, event, "onDamage")
-                        event.addPlayerPotionEffect?.forEach {effect->
-                            entities.forEach { effect.play(it as? LivingEntity) }
+                        event.playPotionEffect.forEach { effect ->
+                            entities.forEach { effect.value.play(it as? LivingEntity) }
                         }
                     }
                     AsyncHelper.callSyncMethod {
@@ -270,17 +266,17 @@ object MobApi : Disableable {
 
     private val particleCooldown: Cooldown<Int> = Cooldown()
 
-    private fun playParticle(e: Entity, model: ActiveModel, bonesInfo: List<BoneInfo>?) {
+    private fun playParticle(e: Entity, model: ActiveModel, bonesInfo: List<YmlMob.YmlMobEvent.BoneParticle>?) {
         bonesInfo?.forEach { boneInfo ->
-            if (particleCooldown.hasCooldown(e.entityId, boneInfo.particle.cooldown))
+            if (particleCooldown.hasCooldown(e.entityId, boneInfo.cooldown))
                 return
             else particleCooldown.setCooldown(e.entityId)
             var particleBuilder = ParticleBuilder(Particle.valueOf(boneInfo.particle.name))
                 .extra(boneInfo.particle.extra)
-                .count(boneInfo.particle.amount)
+                .count(boneInfo.particle.count)
                 .force(true)
             particleBuilder = if (boneInfo.particle.color != null)
-                particleBuilder.color(boneInfo.particle.color)
+                particleBuilder.color(boneInfo.particle.realColor)
             else particleBuilder
 
             boneInfo.bones.forEach { bones ->
@@ -301,43 +297,45 @@ object MobApi : Disableable {
 
     val eventTimers: Cooldown<String> = Cooldown()
 
-    fun executeEvent(entity: Entity, model: ActiveModel, event: EmpireMobEvent, eventId: String) {
-        val hasSoundCooldown = eventTimers.hasCooldown("${eventId}S${entity.hashCode()}", event.sound?.cooldown)
-        if (event.sound?.cooldown == null || event.sound.cooldown == 0 || !hasSoundCooldown) {
+    fun executeEvent(entity: Entity, model: ActiveModel, event: YmlMob.YmlMobEvent, eventId: String) {
+        val hasSoundCooldown = eventTimers.hasCooldown("${eventId}S${entity.hashCode()}", event.playSound.cooldown)
+        if (event.playSound.cooldown == null || event.playSound.cooldown == 0 || !hasSoundCooldown) {
             eventTimers.setCooldown("${eventId}S${entity.hashCode()}")
-            entity.location.playSound(event.sound?.sound)
+            entity.location.playSound(event.playSound.name)
         }
-        playParticle(entity, model, event.bones)
+        playParticle(entity, model, event.boneParticle.values.toList())
     }
 
     fun executeAction(entityInfo: CustomEntityInfo, event: String) {
-        val actions = entityInfo.empireMob.events[event] ?: return
-        actions.actions.forEach { action ->
+        val actions = entityInfo.ymlMob.events[event] ?: return
+        actions.actions.forEach { (key, action) ->
             AsyncHelper.launch {
                 delay(action.startAfter * 1L)
                 val condition = action.condition
                 // Check conditions
                 (entityInfo.entity as? LivingEntity)?.let {
-                    if (it.health > condition.whenHPBelow) {
-                        println("Hp check->return")
+                    if (it.health > (condition?.whenHPBelow ?: Int.MAX_VALUE))
                         return@launch
-                    }
                 }
-                if (eventTimers.hasCooldown("${action.id}_${entityInfo.entity.hashCode()}}", action.condition.cooldown)) {
+                if (eventTimers.hasCooldown(
+                        "${action.id}_${entityInfo.entity.hashCode()}}",
+                        action.condition?.cooldown
+                    )
+                ) {
                     return@launch
                 } else
                     eventTimers.setCooldown("${action.id}_${entityInfo.entity.hashCode()}}")
-                if (!calcChance(condition.chance)) return@launch
-                if (condition.animationNames.isNotEmpty()) {
-                    val isRightAnimation = condition.animationNames.mapNotNull {
+                if (!calcChance(condition?.chance ?: 100.0)) return@launch
+                if (!condition?.animationNames.isNullOrEmpty()) {
+                    val isRightAnimation = condition?.animationNames?.mapNotNull {
                         entityInfo.activeModel.getState(it)?.frame
-                    }.any { it > 0 }
-                    if (!isRightAnimation) {
+                    }?.any { it > 0 }
+                    if (!(isRightAnimation ?: false)) {
                         return@launch
                     }
                 }
                 // Summon minions
-                action.summonMinion.forEach { summonMinion ->
+                action.summonMinions.forEach { (key, summonMinion) ->
                     val entityType = EntityType.fromName(summonMinion.type) ?: kotlin.run {
                         Logger.warn("Entity ${summonMinion.type} not exists")
                         return@forEach
@@ -348,15 +346,15 @@ object MobApi : Disableable {
                         AsyncHelper.callSyncMethod {
                             val spawnedEntity = location.world.spawnEntity(location, entityType).apply {
                                 val entity = (this as? LivingEntity) ?: return@apply
-                                summonMinion.potionEffects?.forEach { _effect ->
+                                summonMinion.potionEffects.forEach { (key, _effect) ->
                                     val effect = _effect.copy(duration = Int.MAX_VALUE)
                                     AsyncHelper.callSyncMethod {
                                         effect.play(entity)
                                     }
                                 }
-                                summonMinion.attributes?.forEach {
-                                    val attr = valueOfOrNull<Attribute>(it.attribute) ?: return@forEach
-                                    val amount = it.amount
+                                summonMinion.attributes.forEach { (key, it) ->
+                                    val attr = valueOfOrNull<Attribute>(it.name) ?: return@forEach
+                                    val amount = it.realValue
                                     entity.registerAttribute(attr)
                                     entity.getAttribute(attr)!!.addModifier(
                                         AttributeModifier(
@@ -386,9 +384,6 @@ object MobApi : Disableable {
 
     override suspend fun onEnable() {
         if (Bukkit.getServer().pluginManager.getPlugin("ModelEngine") == null) return
-
-        empireMobs = EmpireMob.getAll().toMutableList()
-        empireMobsById = empireMobs.associateBy { it.id }
         AsyncHelper.callSyncMethod {
             val entities = Bukkit.getWorlds().flatMap { world ->
                 world.entities.mapNotNull {
@@ -405,7 +400,6 @@ object MobApi : Disableable {
             it.modeledEntity.removeModel(it.activeModel.modelId)
             it.entity.remove()
         }
-        empireMobs.clear()
         _activeMobs.clear()
         bossBars.toMap().forEach { deleteEntityBossBar(it.key) }
     }

@@ -2,7 +2,7 @@
 //
 //import com.astrainteractive.astralibs.events.DSLEvent
 //import com.astrainteractive.astralibs.events.EventListener
-//import com.astrainteractive.empire_items.api.upgrade.UpgradeApi
+//import com.astrainteractive.empire_items.api.UpgradeApi
 //import org.bukkit.event.EventHandler
 //import org.bukkit.event.entity.EntityDeathEvent
 //import org.bukkit.event.inventory.InventoryClickEvent

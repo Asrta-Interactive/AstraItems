@@ -2,7 +2,7 @@
 //
 //import com.astrainteractive.empire_items.api.drop.AstraDrop
 //import com.astrainteractive.empire_items.api.drop.CustomDropSection
-//import com.astrainteractive.empire_items.api.ItemYamlFile
+//import com.astrainteractive.empire_items.models.ItemYamlFile
 //import com.astrainteractive.empire_items.empire_items.util.EmpireSerializer
 //import junit.framework.Assert.assertEquals
 //import org.junit.Test

@@ -5,6 +5,12 @@ import com.astrainteractive.empire_items.api.utils.Disableable
 import com.astrainteractive.empire_items.api.utils.getCustomItemsFiles
 import com.astrainteractive.empire_items.api.utils.getPersistentData
 import com.astrainteractive.empire_items.empire_items.util.EmpireSerializer
+import com.astrainteractive.empire_items.models.*
+import com.astrainteractive.empire_items.models.mob.YmlMob
+import com.astrainteractive.empire_items.models.recipies.CraftingTable
+import com.astrainteractive.empire_items.models.recipies.Furnace
+import com.astrainteractive.empire_items.models.recipies.Shapeless
+import com.astrainteractive.empire_items.models.yml_item.YmlItem
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
@@ -29,6 +35,8 @@ object EmpireItemsAPI : Disableable {
         private set
     var villagerTradeInfoByProfession: Map<String, List<VillagerTradeInfo>> = mapOf()
         private set
+    var ymlMobById: Map<String, YmlMob> = mapOf()
+        private set
 
     override suspend fun onEnable() {
         itemYamlFiles = getCustomItemsFiles()?.mapNotNull {
@@ -48,6 +56,7 @@ object EmpireItemsAPI : Disableable {
         villagerTradeInfoByID =
             itemYamlFiles.mapNotNull { it.villagerTrades?.values?.map { it } }.flatten().associateBy { it.id }
         villagerTradeInfoByProfession = villagerTradeInfoByID.values.groupBy { it.profession }
+        ymlMobById = itemYamlFiles.flatMap { it.ymlMob.values }.associateBy { it.id }
     }
 
     override suspend fun onDisable() {
@@ -59,7 +68,7 @@ object EmpireItemsAPI : Disableable {
     }
 
     fun String?.toAstraItemOrItem(amount: Int = 1): ItemStack? = toAstraItemOrItemByID(this, amount)
-    fun String?.toAstraItem(amount: Int = 1):ItemStack? = itemYamlFilesByID[this]?.toItemStack()
+    fun String?.toAstraItem(amount: Int = 1): ItemStack? = itemYamlFilesByID[this]?.toItemStack()
     val ItemStack.empireID: String?
         get() = this.itemMeta?.getPersistentData(BukkitConstants.ASTRA_ID)
 

@@ -1,25 +1,18 @@
 package com.astrainteractive.empire_items.empire_items.events
 
-import com.astrainteractive.astralibs.async.AsyncHelper
 import com.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.astralibs.events.EventListener
 import com.astrainteractive.empire_items.EmpirePlugin
 import com.astrainteractive.empire_items.api.mobs.MobApi
-import com.astrainteractive.empire_items.api.mobs.MobApi.activeModel
-import com.astrainteractive.empire_items.api.mobs.MobApi.modeledEntity
-import com.astrainteractive.empire_items.api.mobs.data.CustomEntityInfo
 import com.astrainteractive.empire_items.empire_items.util.playSound
 import io.papermc.paper.event.entity.EntityMoveEvent
-import kotlinx.coroutines.launch
 import org.bukkit.Bukkit
 import org.bukkit.attribute.Attribute
 import org.bukkit.entity.LivingEntity
-import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDeathEvent
 import org.bukkit.event.entity.EntitySpawnEvent
 import org.bukkit.event.entity.EntityTargetEvent
-import org.bukkit.event.player.PlayerInteractEvent
 import kotlin.random.Random
 
 class ModelEngineEvent : EventListener {
@@ -41,8 +34,8 @@ class ModelEngineEvent : EventListener {
     val entitySoundScheduler = Bukkit.getScheduler().runTaskTimerAsynchronously(EmpirePlugin.instance, Runnable {
         MobApi.activeMobs.forEach { mobInfo ->
             if (Random.nextDouble(100.0) < 5)
-                mobInfo.entity.location.playSound(mobInfo.empireMob.idleSound[Random.nextInt(mobInfo.empireMob.idleSound.size)])
-            MobApi.executeAction(mobInfo,"onTick")
+                mobInfo.entity.location.playSound(mobInfo.ymlMob.idleSound[Random.nextInt(mobInfo.ymlMob.idleSound.size)])
+            MobApi.executeAction(mobInfo, "onTick")
         }
     }, 0L, 20L)
 
@@ -56,47 +49,36 @@ class ModelEngineEvent : EventListener {
 
 
     val entityMove = DSLEvent.event(EntityMoveEvent::class.java) { e ->
-        val modeledEntity = e.entity.modeledEntity ?: return@event
-        val activeModel = modeledEntity.activeModel ?: return@event
-        val empireMob = MobApi.getEmpireMob(activeModel.modelId) ?: return@event
-        val event = empireMob.events["onMove"] ?: return@event
-        MobApi.executeEvent(e.entity, activeModel, event, "onMove")
+        val empireMob = MobApi.getCustomEntityInfo(e.entity) ?: return@event
+        val event = empireMob.ymlMob.events["onMove"] ?: return@event
+        MobApi.executeEvent(empireMob.entity, empireMob.activeModel, event, "onMove")
     }
 
     val onEntityTarget = DSLEvent.event(EntityTargetEvent::class.java) { e ->
-        val name = e.target?.name?.uppercase()?:return@event
-        val modeledEntity = e.entity.modeledEntity ?: return@event
-        val activeModel = modeledEntity.activeModel ?: return@event
-        val empireMob = MobApi.getEmpireMob(activeModel.modelId) ?: return@event
-        if (empireMob.ignoreMobs.contains(name))
+        val name = e.target?.name?.uppercase() ?: return@event
+        val entityInfo = MobApi.getCustomEntityInfo(e.entity) ?: return@event
+        if (entityInfo.ymlMob.ignoreMobs.contains(name))
             e.isCancelled = true
     }
 
     val onMobDamage = DSLEvent.event(EntityDamageByEntityEvent::class.java) { e ->
-        val modeledEntity = e.entity.modeledEntity ?: return@event
-        val activeModel = modeledEntity.activeModel ?: return@event
-        val empireMob = MobApi.getEmpireMob(activeModel.modelId) ?: return@event
+        val entityInfo = MobApi.getCustomEntityInfo(e.entity) ?: return@event
+
         val livingEntity = (e.entity as LivingEntity)
         MobApi.bossBars[e.entity]?.let {
             it.progress = livingEntity.health / livingEntity.maxHealth
         }
-        val event = empireMob.events["onDamaged"]?.let {
-            MobApi.executeEvent(e.entity, activeModel, it, "onDamaged")
-            it.addPlayerPotionEffect?.forEach {effect->
+        val event = entityInfo.ymlMob.events["onDamaged"]?.let {
+            MobApi.executeEvent(e.entity, entityInfo.activeModel, it, "onDamaged")
+            it.playPotionEffect.forEach { (key, effect) ->
                 effect.play(e.damager as? LivingEntity)
             }
             Attribute.GENERIC_MAX_HEALTH
         }
-        MobApi.executeAction(
-            CustomEntityInfo(
-                e.entity,
-                empireMob,
-                modeledEntity, activeModel
-            ), "onDamaged"
-        )
+        MobApi.executeAction(entityInfo, "onDamaged")
         if (livingEntity.health - e.damage < 0)
-            empireMob.events["onDeath"]?.let {
-                MobApi.executeEvent(e.entity, activeModel, it, "onDeath")
+            entityInfo.ymlMob.events["onDeath"]?.let {
+                MobApi.executeEvent(e.entity, entityInfo.activeModel, it, "onDeath")
             }
 
 
@@ -106,9 +88,9 @@ class ModelEngineEvent : EventListener {
         if (e.entity !is LivingEntity)
             return@event
         val entityInfo = MobApi.getCustomEntityInfo(e.damager) ?: return@event
-        if (MobApi.isAttackAnimationTracked(e.damager) || entityInfo?.empireMob?.hitDelay < 0) {
+        if (MobApi.isAttackAnimationTracked(e.damager) || entityInfo.ymlMob.hitDelay < 0) {
             MobApi.stopAttackAnimationTrack(e.damager)
-            entityInfo.empireMob.events["onDamage"]?.let {
+            entityInfo.ymlMob.events["onDamage"]?.let {
                 it.actions
             }
             return@event
@@ -120,11 +102,9 @@ class ModelEngineEvent : EventListener {
 
     val onDeath = DSLEvent.event(EntityDeathEvent::class.java) { e ->
         MobApi.deleteEntityBossBar(e.entity)
-        val modeledEntity = e.entity.modeledEntity ?: return@event
-        val activeModel = modeledEntity.activeModel ?: return@event
-        val empireMob = MobApi.getEmpireMob(activeModel.modelId) ?: return@event
-        val event = empireMob.events["onDeath"] ?: return@event
-        MobApi.executeEvent(e.entity, activeModel, event, "onDeath")
+        val entityInfo = MobApi.getCustomEntityInfo(e.entity) ?: return@event
+        val event = entityInfo.ymlMob.events["onDeath"] ?: return@event
+        MobApi.executeEvent(e.entity, entityInfo.activeModel, event, "onDeath")
     }
 
 

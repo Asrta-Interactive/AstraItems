@@ -67,7 +67,7 @@ class ItemDropEvent {
     }
 
     val onMobDeath = DSLEvent.event(EntityDeathEvent::class.java)  { e ->
-        val dropFrom = MobApi.getActiveEntity(e.entity)?.empireMob?.id ?: e.entity.type.name
+        val dropFrom = MobApi.getActiveEntity(e.entity)?.ymlMob?.id ?: e.entity.type.name
         MobApi.removeActiveEntity(e.entity)
         EmpireItemsAPI.dropByDropFrom[dropFrom]?.forEach {
             it.performDrop(e.entity.location)

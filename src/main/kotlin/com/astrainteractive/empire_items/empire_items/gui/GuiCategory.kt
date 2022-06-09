@@ -1,9 +1,9 @@
 package com.astrainteractive.empire_items.empire_items.gui
 
 import com.astrainteractive.astralibs.async.AsyncHelper
-import com.astrainteractive.empire_items.empire_items.gui.data.GuiConfig
 import com.astrainteractive.astralibs.menu.AstraMenuSize
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.toAstraItemOrItem
+import com.astrainteractive.empire_items.models.GUI_CONFIG
 import kotlinx.coroutines.launch
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
@@ -11,21 +11,20 @@ import org.bukkit.inventory.ItemStack
 class GuiCategory(override val playerMenuUtility: PlayerMenuUtility) :
     AstraPaginatedMenu() {
 
-    val guiSettings = GuiConfig.getGuiConfig()
-    val category = guiSettings.categories?.get(playerMenuUtility.categoryId)!!
+    val category = GUI_CONFIG.categories[playerMenuUtility.categoryId]!!
 
     override var menuName: String = category.title
 
     override val menuSize: AstraMenuSize = AstraMenuSize.XL
-    override val backPageButton: ItemStack = guiSettings.settings.backButton
+    override val backPageButton: ItemStack = GUI_CONFIG.settings.buttons.backButton.toAstraItemOrItem()!!
     override val maxItemsAmount: Int = category.items.size
-    override val nextPageButton: ItemStack = guiSettings.settings.nextButton
+    override val nextPageButton: ItemStack = GUI_CONFIG.settings.buttons.nextButton.toAstraItemOrItem()!!
     override var page: Int = playerMenuUtility.categoryPage
     override val prevButtonIndex: Int = 45
     override val backButtonIndex: Int = 49
     override val nextButtonIndex: Int = 53
 
-    override val prevPageButton: ItemStack = guiSettings.settings.prevButton
+    override val prevPageButton: ItemStack = GUI_CONFIG.settings.buttons.prevButton.toAstraItemOrItem()!!
 
 
     override fun loadPage(next:Int){
@@ -53,7 +52,7 @@ class GuiCategory(override val playerMenuUtility: PlayerMenuUtility) :
     }
     override fun setMenuItems() {
         addManageButtons()
-        val items = guiSettings.categories?.values ?: return
+        val items = GUI_CONFIG.categories.values ?: return
         for (i in 0 until maxItemsPerPage) {
             val index = getIndex(i)
             inventory.setItem(i, category.items.getOrNull(index)?.toAstraItemOrItem()?:continue)

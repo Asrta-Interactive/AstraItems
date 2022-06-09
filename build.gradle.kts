@@ -65,12 +65,12 @@ dependencies {
     // AstraLibs
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
     // Test
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.5.20")
-    testImplementation("junit:junit:4.13.2")
-    testImplementation("com.github.seeseemelk:MockBukkit-v1.18:1.24.1")
-    testImplementation("io.kotest:kotest-runner-junit5:5.2.1")
-    testImplementation("io.kotest:kotest-assertions-core:5.2.1")
-    testImplementation(kotlin("test"))
+//    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.5.20")
+//    testImplementation("junit:junit:4.13.2")
+//    testImplementation("com.github.seeseemelk:MockBukkit-v1.18:1.24.1")
+//    testImplementation("io.kotest:kotest-runner-junit5:5.2.1")
+//    testImplementation("io.kotest:kotest-assertions-core:5.2.1")
+//    testImplementation(kotlin("test"))
     // Spigot dependencies
     compileOnly("net.essentialsx:EssentialsX:2.19.0-SNAPSHOT")
     compileOnly("io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT")

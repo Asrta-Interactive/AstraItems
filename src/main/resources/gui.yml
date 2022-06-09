@@ -1,19 +1,21 @@
 settings:
-  workbenchText: "&f:l_16::workbench_menu::l_128::l_32::l_4:"
-  categoriesText: "&f:l_16::grid_menu_6::l_128::l_32::l_4:#1bbce0Категории "
-  soundsText: "&f:l_16::grid_menu_6::l_128:#11d417Звуки "
-  moreButton: more
-  nextButton: next_button
-  prevButton: prev_button
-  backButton: back
-  closeButton: cancel
-  giveButton: ender_chest_opened
-  furnaceButton: furnace
-  craftingTableButton: crafting_table
-
-  workbenchSound: empire_items:gui.next_page
-  categoriesSound: empire_items:gui.open_menu
-  categorySound: empire_items:gui.open_menu
+  titles:
+    workbenchText: "&f:l_16::workbench_menu::l_128::l_32::l_4:"
+    categoriesText: "&f:l_16::grid_menu_6::l_128::l_32::l_4:#1bbce0Категории "
+    soundsText: "&f:l_16::grid_menu_6::l_128:#11d417Звуки "
+  buttons:
+    moreButton: more
+    nextButton: next_button
+    prevButton: prev_button
+    backButton: back
+    closeButton: cancel
+    giveButton: ender_chest_opened
+    furnaceButton: furnace
+    craftingTableButton: crafting_table
+  sounds:
+    workbenchSound: empire_items:gui.next_page
+    categoriesSound: empire_items:gui.open_menu
+    categorySound: empire_items:gui.open_menu
 
 categories:
   items:

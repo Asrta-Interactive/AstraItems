@@ -7,11 +7,12 @@ import com.astrainteractive.astralibs.valueOfOrNull
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.empireID
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.toAstraItemOrItem
-import com.astrainteractive.empire_items.api.YmlItem
 import com.astrainteractive.empire_items.api.utils.BukkitConstants
 import com.astrainteractive.empire_items.api.utils.getPersistentData
 import com.astrainteractive.empire_items.api.utils.setPersistentDataType
 import com.astrainteractive.empire_items.empire_items.util.protection.KProtectionLib
+import com.astrainteractive.empire_items.models.yml_item.Gun
+import com.astrainteractive.empire_items.models.yml_item.YmlItem
 import com.comphenix.protocol.PacketType
 import com.comphenix.protocol.ProtocolLibrary
 import com.comphenix.protocol.ProtocolManager
@@ -38,7 +39,7 @@ class GunEvent {
 
     private val lastShootMap: MutableMap<String, Long> = mutableMapOf()
 
-    private fun canShoot(player: Player, gun: YmlItem.Gun): Boolean {
+    private fun canShoot(player: Player, gun: Gun): Boolean {
         val lastShoot = lastShootMap[player.name]
         return when {
             System.currentTimeMillis().minus(lastShoot ?: 0) >= gun.cooldown ?: 0 -> {
@@ -64,7 +65,7 @@ class GunEvent {
         item.itemMeta = itemMeta
     }
 
-    private fun reloadGun(player: Player, itemStack: ItemStack, gun: YmlItem.Gun) {
+    private fun reloadGun(player: Player, itemStack: ItemStack, gun: Gun) {
         val itemMeta = itemStack.itemMeta
         val currentClipSize = itemMeta.getPersistentData(BukkitConstants.CLIP_SIZE) ?: return
         if (currentClipSize == gun.clipSize) {

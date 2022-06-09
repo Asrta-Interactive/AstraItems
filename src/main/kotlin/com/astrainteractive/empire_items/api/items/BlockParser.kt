@@ -30,7 +30,7 @@ object BlockParser {
             BlockFace.WEST.name.lowercase() to false
         )
 
-    inline fun setTypeFast(block: Block, type: Material, facing: Map<String, Boolean> = mutableMapOf()){
+    fun setTypeFast(block: Block, type: Material, facing: Map<String, Boolean> = mutableMapOf()){
         val oldCraftBlock = (block as CraftBlock)
         val position=oldCraftBlock.position
         val newData = type.createBlockData()

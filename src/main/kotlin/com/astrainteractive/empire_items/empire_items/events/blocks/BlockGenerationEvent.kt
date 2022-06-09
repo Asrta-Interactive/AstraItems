@@ -7,10 +7,11 @@ import com.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.empire_items.EmpirePlugin
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.items.BlockParser
-import com.astrainteractive.empire_items.api.YmlItem
-import com.astrainteractive.empire_items.empire_items.util.Config
+import com.astrainteractive.empire_items.empire_items.util.Files
 import com.astrainteractive.empire_items.empire_items.util.TriplePair
 import com.astrainteractive.empire_items.empire_items.util.calcChance
+import com.astrainteractive.empire_items.models.CONFIG
+import com.astrainteractive.empire_items.models.yml_item.YmlItem
 import kotlinx.coroutines.*
 import org.bukkit.Chunk
 import org.bukkit.Location
@@ -52,7 +53,7 @@ class BlockGenerationEvent {
      * Загружает в файл информацию о том, что чанк был сгенерирован
      */
     private fun setChunkHasGenerated(chunk: Chunk, id: String) = synchronized(this) {
-        val tempChunks = EmpirePlugin.empireFiles.tempChunks
+        val tempChunks = Files.tempChunks
         if (!tempChunks.getConfig().contains("${chunk}.$id")) {
             tempChunks.getConfig().set("${chunk}.$id", true)
             tempChunks.saveConfig()
@@ -60,7 +61,7 @@ class BlockGenerationEvent {
     }
 
     private inline fun isBlockGeneratedInChunk(chunk: Chunk, id: String): Boolean = synchronized(this) {
-        return EmpirePlugin.empireFiles.tempChunks.getConfig().contains("${chunk}.$id")
+        return Files.tempChunks.getConfig().contains("${chunk}.$id")
     }
 
     /**
@@ -76,7 +77,7 @@ class BlockGenerationEvent {
      */
     private fun replaceBlock(id: String, location: Location, material: String, faces: Map<String, Boolean>) = AsyncHelper.launch {
         delay(1000)
-        if (Config.generationDeepDebug)
+        if (CONFIG.generation.debug)
             log("Creating ${id} at {${location.x}; ${location.y}; ${location.z}}")
         BlockParser.setTypeFast(location.block, Material.getMaterial(material) ?: return@launch, faces)
     }
@@ -88,7 +89,7 @@ class BlockGenerationEvent {
      * Получение списка локация из чанка и добавление их в очередь
      */
     private fun generateChunk(chunk: Chunk) {
-        if (Config.generationDeepDebug)
+        if (CONFIG.generation.debug)
             log("Generating Queue")
         blocksToGenerate.forEach { itemInfo ->
             val block = itemInfo.block ?: return@forEach
@@ -152,12 +153,12 @@ class BlockGenerationEvent {
 
     val chunkLoadEvent = DSLEvent.event(ChunkLoadEvent::class.java) { e ->
         val chunk = e.chunk
-        if (!e.isNewChunk && Config.generateOnlyOnNewChunks)
+        if (!e.isNewChunk && CONFIG.generation.onlyOnNewChunks)
             return@event
-        if (!Config.generateBlocks)
+        if (!CONFIG.generation.enabled)
             return@event
 
-        if (currentChunkProcessing >= Config.generateMaxChunksAtOnce)
+        if (currentChunkProcessing >= CONFIG.generation.generateChunksAtOnce)
             return@event
         currentChunkProcessing++
         AsyncHelper.launch {

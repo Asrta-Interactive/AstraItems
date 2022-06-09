@@ -7,8 +7,8 @@ import com.comphenix.protocol.ProtocolLibrary
 import com.comphenix.protocol.ProtocolManager
 import com.comphenix.protocol.events.*
 import com.astrainteractive.empire_items.EmpirePlugin
-import com.astrainteractive.empire_items.empire_items.util.Config
 import com.astrainteractive.empire_items.empire_items.util.EmpireUtils
+import com.astrainteractive.empire_items.models.CONFIG
 
 
 import me.clip.placeholderapi.PlaceholderAPI
@@ -20,7 +20,6 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerJoinEvent
-import org.jetbrains.annotations.NotNull
 
 /**
  * todo переделать в PlaceholderAPI
@@ -30,7 +29,7 @@ class FontProtocolLibEvent : EventListener {
     private lateinit var packetListener: PacketListener
     private fun changePlayerTabName(player: Player?) {
         player ?: return
-        var format: String = Config.tabPrefix + player.name
+        var format: String = CONFIG.tabPrefix + player.name
         if (EmpirePlugin.instance.server.pluginManager.getPlugin("placeholderapi") != null)
             format = PlaceholderAPI.setPlaceholders(player, format)
 

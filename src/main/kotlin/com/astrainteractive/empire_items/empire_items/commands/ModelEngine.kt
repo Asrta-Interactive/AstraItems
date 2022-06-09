@@ -4,6 +4,7 @@ import com.astrainteractive.astralibs.AstraLibs
 import com.astrainteractive.astralibs.registerCommand
 import com.astrainteractive.astralibs.registerTabCompleter
 import com.astrainteractive.astralibs.withEntry
+import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.mobs.MobApi
 import com.astrainteractive.empire_items.empire_items.util.EmpirePermissions
 import com.astrainteractive.empire_items.empire_items.util.Translations
@@ -26,7 +27,7 @@ class ModelEngine {
                 sender.sendMessage(Translations.instance.wrongArgs)
                 return@registerCommand
             }
-            val empireMob = MobApi.getEmpireMob(id)
+            val empireMob = EmpireItemsAPI.ymlMobById[id]
             if (empireMob == null) {
                 sender.sendMessage(Translations.instance.mobNotExist)
                 return@registerCommand
@@ -40,7 +41,7 @@ class ModelEngine {
 
         }
     val tabCompleter = AstraLibs.registerTabCompleter("spawnmodel") { sender, args ->
-        val models = MobApi.getEmpireMobsList()
+        val models = EmpireItemsAPI.ymlMobById.keys
         return@registerTabCompleter models.toList().withEntry(args.firstOrNull() ?: "")
     }
 }

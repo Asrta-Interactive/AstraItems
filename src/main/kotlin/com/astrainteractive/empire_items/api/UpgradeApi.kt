@@ -1,7 +1,6 @@
-//package com.astrainteractive.empire_items.api.upgrade
+//package com.astrainteractive.empire_items.api
 //
 //import com.astrainteractive.empire_items.EmpirePlugin
-//import com.astrainteractive.empire_items.api.items.data.ItemApi.getAstraID
 //import com.astrainteractive.empire_items.api.utils.*
 //import com.astrainteractive.empire_items.api.utils.Disableable
 //import com.astrainteractive.empire_items.empire_items.util.Translations

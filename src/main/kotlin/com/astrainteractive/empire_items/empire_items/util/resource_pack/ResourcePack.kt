@@ -3,12 +3,11 @@ package com.astrainteractive.empire_items.empire_items.util.resource_pack
 import com.astrainteractive.astralibs.AstraLibs
 import com.astrainteractive.astralibs.Logger
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
-import com.astrainteractive.empire_items.api.FontApi
-import com.astrainteractive.empire_items.api.YmlItem
-import com.astrainteractive.empire_items.api.YmlSound
+import com.astrainteractive.empire_items.models.YmlSound
 import com.astrainteractive.empire_items.api.items.BlockParser
 import com.astrainteractive.empire_items.empire_items.util.Timer
 import com.astrainteractive.empire_items.empire_items.util.resource_pack.data.*
+import com.astrainteractive.empire_items.models.yml_item.YmlItem
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonParser

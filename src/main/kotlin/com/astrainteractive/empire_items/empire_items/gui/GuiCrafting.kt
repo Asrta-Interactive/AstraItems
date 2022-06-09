@@ -2,16 +2,16 @@ package com.astrainteractive.empire_items.empire_items.gui
 
 import com.astrainteractive.astralibs.HEX
 import com.astrainteractive.astralibs.async.AsyncHelper
-import com.astrainteractive.empire_items.empire_items.gui.data.GuiConfig
 import com.astrainteractive.astralibs.menu.AstraMenuSize
 import com.astrainteractive.empire_items.EmpirePlugin
 import com.astrainteractive.empire_items.api.CraftingApi
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.empireID
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.toAstraItemOrItem
-import com.astrainteractive.empire_items.api.VillagerTradeInfo
+import com.astrainteractive.empire_items.models.VillagerTradeInfo
 import com.astrainteractive.empire_items.api.utils.setDisplayName
 import com.astrainteractive.empire_items.empire_items.util.EmpirePermissions
+import com.astrainteractive.empire_items.models.GUI_CONFIG
 import kotlinx.coroutines.launch
 import org.bukkit.ChatColor
 import org.bukkit.event.inventory.InventoryClickEvent
@@ -20,7 +20,7 @@ import org.bukkit.inventory.*
 class GuiCrafting(playerMenuUtility: PlayerMenuUtility) :
     AstraPaginatedMenu() {
 
-    val guiSettings = GuiConfig.getGuiConfig()
+
     val itemID = playerMenuUtility.prevItems.last()
     val recipes = listOf(CraftingApi.recipesMap[itemID])
     val usedInCraftIDS = CraftingApi.usedInCraft(itemID)
@@ -31,16 +31,16 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility) :
     override val nextButtonIndex: Int = 53
 
     override var menuName: String =
-        guiSettings.settings.workbenchText + (itemID.toAstraItemOrItem()?.itemMeta?.displayName ?: "Крафтинг")
+        GUI_CONFIG.settings.titles.workbenchText + (itemID.toAstraItemOrItem()?.itemMeta?.displayName ?: "Крафтинг")
 
     override val menuSize: AstraMenuSize = AstraMenuSize.XL
     override val playerMenuUtility: PlayerMenuUtility = playerMenuUtility
-    override val backPageButton: ItemStack = guiSettings.settings.backButton
+    override val backPageButton: ItemStack = GUI_CONFIG.settings.buttons.backButton.toAstraItemOrItem()!!
     override val maxItemsPerPage = 9
     override val maxItemsAmount: Int = usedInCraftItemStacks.size
-    override val nextPageButton: ItemStack = guiSettings.settings.nextButton
+    override val nextPageButton: ItemStack = GUI_CONFIG.settings.buttons.nextButton.toAstraItemOrItem()!!
     override var page: Int = playerMenuUtility.craftingPage
-    override val prevPageButton: ItemStack = guiSettings.settings.prevButton
+    override val prevPageButton: ItemStack = GUI_CONFIG.settings.buttons.prevButton.toAstraItemOrItem()!!
     var currentRecipe = 0
     override fun loadPage(next: Int) {
         super.loadPage(next)
@@ -156,7 +156,7 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility) :
         }
         if (v.isEmpty())
             return
-        val item = guiSettings.settings.moreButton.clone().apply {
+        val item = GUI_CONFIG.settings.buttons.moreButton.toAstraItemOrItem()!!.apply {
             val meta = itemMeta!!
             meta.setDisplayName((EmpirePlugin.translations.guiInfoDropColor + "Можно купить у жителя:").HEX())
             meta.lore = v.map { "${ChatColor.GRAY}${it.profession}" }
@@ -181,7 +181,7 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility) :
 
     fun setBlockInfo() {
         val b = EmpireItemsAPI.itemYamlFilesByID[itemID]?.block?.generate ?: return
-        val item = guiSettings.settings.moreButton.clone().apply {
+        val item = GUI_CONFIG.settings.buttons.moreButton.toAstraItemOrItem()!!.apply {
             val meta = itemMeta!!
             meta.setDisplayName((EmpirePlugin.translations.guiInfoDropColor + "Генерируется:").HEX())
             meta.lore = listOf(
@@ -200,7 +200,7 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility) :
         val drops = EmpireItemsAPI.dropByDropFrom[itemID] ?: listOf()
         if (drops.isEmpty())
             return
-        val item = guiSettings.settings.moreButton.clone().apply {
+        val item = GUI_CONFIG.settings.buttons.moreButton.toAstraItemOrItem()!!.apply {
             val meta = itemMeta!!
             meta.setDisplayName((EmpirePlugin.translations.guiInfoDropColor + EmpirePlugin.translations.guiInfoDrop).HEX())
             meta.lore = drops.map { "${ChatColor.GRAY}${it.dropFrom}: [${it.minAmount};${it.maxAmount}] ${it.chance}%" }
@@ -221,9 +221,12 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility) :
         setUpgradeInfo()
         inventory.setItem(25, itemID.toAstraItemOrItem())
         setRecipe()
-        if (recipes?.isNotEmpty() == true)
-            inventory.setItem(8, guiSettings.settings.craftingTableButton.apply { setDisplayName(recipeType) })
-        inventory.setItem(34, guiSettings.settings.giveButton)
+        if (recipes.isNotEmpty())
+            inventory.setItem(
+                8,
+                GUI_CONFIG.settings.buttons.craftingTableButton.toAstraItemOrItem()!!
+                    .apply { setDisplayName(recipeType) })
+        inventory.setItem(34, GUI_CONFIG.settings.buttons.giveButton.toAstraItemOrItem()!!)
 
 
     }
