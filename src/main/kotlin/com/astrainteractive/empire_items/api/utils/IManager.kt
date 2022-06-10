@@ -1,6 +1,6 @@
 package com.astrainteractive.empire_items.api.utils
 
-interface Disableable {
+interface IManager {
     suspend fun onEnable()
     suspend fun onDisable()
 }

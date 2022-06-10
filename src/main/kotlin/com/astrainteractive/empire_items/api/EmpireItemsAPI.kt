@@ -1,7 +1,7 @@
 package com.astrainteractive.empire_items.api
 
 import com.astrainteractive.empire_items.api.utils.BukkitConstants
-import com.astrainteractive.empire_items.api.utils.Disableable
+import com.astrainteractive.empire_items.api.utils.IManager
 import com.astrainteractive.empire_items.api.utils.getCustomItemsFiles
 import com.astrainteractive.empire_items.api.utils.getPersistentData
 import com.astrainteractive.empire_items.empire_items.util.EmpireSerializer
@@ -14,7 +14,7 @@ import com.astrainteractive.empire_items.models.yml_item.YmlItem
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
-object EmpireItemsAPI : Disableable {
+object EmpireItemsAPI : IManager {
     var itemYamlFiles: List<ItemYamlFile> = listOf()
         private set
     var itemYamlFilesByID: Map<String, YmlItem> = mapOf()

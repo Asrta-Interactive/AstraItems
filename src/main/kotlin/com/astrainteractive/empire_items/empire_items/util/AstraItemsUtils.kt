@@ -69,3 +69,5 @@ fun Location.playSound(name:String?){
 fun Location.getBiome()= world.getBiome(this)
 
 
+
+infix fun <T> Boolean.then(param: T): T? = if (this) param else null

@@ -1,11 +1,10 @@
 package com.astrainteractive.empire_items.api
 
-import com.astrainteractive.astralibs.observer.MutableLiveData
-import com.astrainteractive.empire_items.api.utils.Disableable
+import com.astrainteractive.empire_items.api.utils.IManager
 import kotlin.math.abs
 import kotlin.math.sign
 
-object FontApi : Disableable {
+object FontApi : IManager {
     override suspend fun onDisable() {
     }
 

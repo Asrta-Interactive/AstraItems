@@ -6,7 +6,7 @@ import com.astrainteractive.astralibs.valueOfOrNull
 import com.astrainteractive.empire_items.EmpirePlugin
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.utils.Cooldown
-import com.astrainteractive.empire_items.api.utils.Disableable
+import com.astrainteractive.empire_items.api.utils.IManager
 import com.astrainteractive.empire_items.empire_items.util.*
 import com.astrainteractive.empire_items.models.mob.YmlMob
 import com.destroystokyo.paper.ParticleBuilder
@@ -35,7 +35,7 @@ data class CustomEntityInfo(
     val activeModel: ActiveModel
 )
 
-object MobApi : Disableable {
+object MobApi : IManager {
 
 
     private val _activeMobs: MutableList<CustomEntityInfo> = mutableListOf()

@@ -40,8 +40,7 @@ class EmpirePlugin : JavaPlugin {
         file: File?
     ) : super(
         loader!!, description!!, dataFolder!!, file!!
-    ) {
-    }
+    )
 
     companion object {
 
@@ -50,8 +49,6 @@ class EmpirePlugin : JavaPlugin {
          */
         lateinit var instance: EmpirePlugin
             private set
-
-
         /**
          *Translations instance
          */

@@ -4,12 +4,12 @@ import com.astrainteractive.astralibs.AstraLibs
 import com.astrainteractive.astralibs.Logger
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.empireID
 import com.astrainteractive.empire_items.api.utils.BukkitConstants
-import com.astrainteractive.empire_items.api.utils.Disableable
+import com.astrainteractive.empire_items.api.utils.IManager
 import org.bukkit.Bukkit
 import org.bukkit.NamespacedKey
 import org.bukkit.inventory.*
 
-object CraftingApi : Disableable {
+object CraftingApi : IManager {
     private object CraftingManager {
         private fun isCustomRecipe(key: NamespacedKey): Boolean =
             key.key.contains(BukkitConstants.ASTRA_CRAFTING)

@@ -5,7 +5,7 @@ import com.astrainteractive.astralibs.FileManager
 import com.astrainteractive.empire_items.api.utils.BukkitConstant
 import com.astrainteractive.empire_items.api.utils.getPersistentData
 import com.astrainteractive.empire_items.api.utils.setPersistentDataType
-import com.astrainteractive.empire_items.api.utils.Disableable
+import com.astrainteractive.empire_items.api.utils.IManager
 import com.astrainteractive.empire_items.modules.enchants.data.EmpireEnchantment
 import org.bukkit.ChatColor
 import org.bukkit.Material
@@ -48,7 +48,7 @@ data class PotionEnchant(
     }
 }
 
-object EmpireEnchantApi : Disableable {
+object EmpireEnchantApi : IManager {
     private var empireEnchantments: List<EmpireEnchantment> = listOf()
     private var empireEnchantmentById: Map<String, EmpireEnchantment> = mapOf()
     var potionEffectEnchants: List<PotionEnchant> = listOf()

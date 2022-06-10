@@ -1,9 +1,9 @@
 package com.astrainteractive.empire_items.modules
 
-import com.astrainteractive.empire_items.api.utils.Disableable
+import com.astrainteractive.empire_items.api.utils.IManager
 import com.astrainteractive.empire_items.modules.enchants.EnchantManager
 
-object ModuleManager: Disableable {
+object ModuleManager: IManager {
 
     lateinit var enchantManager:EnchantManager
     override suspend fun onEnable() {

@@ -1,34 +1,35 @@
 import be.seeseemelk.mockbukkit.MockBukkit
-import be.seeseemelk.mockbukkit.ServerMock
 import be.seeseemelk.mockbukkit.inventory.meta.ItemMetaMock
-import com.astrainteractive.astralibs.catching
 import com.astrainteractive.empire_items.EmpirePlugin
-import com.astrainteractive.empire_items.api.CraftingApi
 import com.astrainteractive.empire_items.api.utils.*
-import com.astrainteractive.empire_items.empire_items.util.calcChance
-import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.shouldBe
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
+import io.kotest.common.runBlocking
+import junit.framework.TestCase.assertEquals
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.persistence.PersistentDataType
-import org.junit.After
-import org.junit.Before
 import org.junit.Test
-import kotlin.test.assertEquals
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
 
-class ApiTests : StringSpec({
-    catching {
+class BlockParserTest {
+    var enabled:Boolean = false
+    @BeforeAll
+    fun setupMockServer() {
         runBlocking {
-            server = MockBukkit.mock()
-            plugin = (MockBukkit.load(EmpirePlugin::class.java) as EmpirePlugin)
-//            Utility.sendTestFiles()
+            enabled = false
+            val server = MockBukkit.mock()
+            val plugin = (MockBukkit.load(EmpirePlugin::class.java) as EmpirePlugin)
+            Utility.sendTestFiles()
             plugin.reloadConfig()
-        }.catching { null }
+            enabled = true
+        }
     }
-    "Проверка Cooldown" {
+    fun initialize(){
+        while (!enabled) continue
+    }
+    @Test
+    fun `Cooldown check`(){
+        initialize()
         val cooldown = Cooldown<String>()
         cooldown.setCooldown("test")
         assertEquals(cooldown.hasCooldown("text"), true)
@@ -36,7 +37,9 @@ class ApiTests : StringSpec({
         assertEquals(cooldown.hasCooldown("text", -10L), false)
         assertEquals(cooldown.hasCooldown("text", 0L), false)
     }
-    "Проверка BukkitAstraData" {
+    @Test
+    fun `Check BukkitAstraData`(){
+        initialize()
         val someConstant = BukkitConstant("someKey", PersistentDataType.INTEGER)
         val itemStack = ItemStack(Material.DIAMOND).apply { itemMeta = ItemMetaMock() }
         val itemMeta = itemStack.itemMeta!!
@@ -48,24 +51,8 @@ class ApiTests : StringSpec({
 
     }
 
-
-
-
-    afterTest {
-        catching {
-            runBlocking {
-                MockBukkit.unmock()
-            }
-        }
+    @AfterAll
+    fun onDisable() {
+        MockBukkit.unmock()
     }
-}) {
-    companion object {
-        lateinit var server: ServerMock
-        lateinit var plugin: EmpirePlugin
-        var enabled: Boolean = false
-    }
-
-
 }
-
-private fun <T> Unit.catching(function: () -> T?) = function.invoke()

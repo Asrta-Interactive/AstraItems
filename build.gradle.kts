@@ -29,6 +29,7 @@ repositories {
     mavenLocal()
     mavenCentral()
     maven("https://repo.maven.apache.org/maven2/")
+    maven("https://repo.maven.apache.org/maven2/")
     maven("https://repo1.maven.org/maven2/")
     maven("https://repo.dmulloy2.net/repository/public/")
     maven("https://papermc.io/repo/repository/maven-public/")
@@ -65,12 +66,12 @@ dependencies {
     // AstraLibs
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
     // Test
-//    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.5.20")
-//    testImplementation("junit:junit:4.13.2")
-//    testImplementation("com.github.seeseemelk:MockBukkit-v1.18:1.24.1")
-//    testImplementation("io.kotest:kotest-runner-junit5:5.2.1")
-//    testImplementation("io.kotest:kotest-assertions-core:5.2.1")
-//    testImplementation(kotlin("test"))
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.5.20")
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("com.github.seeseemelk:MockBukkit-v1.18:1.24.1")
+    testImplementation("io.kotest:kotest-runner-junit5:5.2.1")
+    testImplementation("io.kotest:kotest-assertions-core:5.2.1")
+    testImplementation(kotlin("test"))
     // Spigot dependencies
     compileOnly("net.essentialsx:EssentialsX:2.19.0-SNAPSHOT")
     compileOnly("io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT")
@@ -84,11 +85,11 @@ dependencies {
     compileOnly("net.coreprotect:coreprotect:20.0")
     compileOnly("com.ticxo.modelengine:api:R2.5.0")
 }
-kotlin.sourceSets["main"].kotlin.srcDirs("src")
-kotlin.sourceSets["test"].kotlin.srcDirs("test")
+//kotlin.sourceSets["main"].kotlin.srcDirs("src")
+//kotlin.sourceSets["test"].kotlin.srcDirs("test")
 
-sourceSets["main"].resources.srcDirs("resources")
-sourceSets["test"].resources.srcDirs("testresources")
+//sourceSets["main"].resources.srcDirs("resources")
+//sourceSets["test"].resources.srcDirs("testresources")
 
 tasks.withType<JavaCompile>() {
     options.encoding = "UTF-8"
@@ -139,4 +140,11 @@ tasks.shadowJar {
     from(project.configurations.runtimeClasspath)
     minimize()
     destinationDirectory.set(File("D:\\Minecraft Servers\\TEST_SERVER\\plugins"))
+}
+tasks.test {
+    useJUnit()
+    testLogging {
+        events("passed", "skipped", "failed")
+        this.showStandardStreams = true
+    }
 }
