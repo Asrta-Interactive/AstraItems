@@ -13,6 +13,8 @@ object EmpireEnchants {
         get() = BukkitConstant("VAMPIRISM", PersistentDataType.INTEGER)
     val ANTI_FALL
         get() = BukkitConstant("ANTI_FALL", PersistentDataType.INTEGER)
+    val MEGA_JUMP
+        get() = BukkitConstant("MEGA_JUMP", PersistentDataType.INTEGER)
     val DOUBLE_JUMP
         get() = BukkitConstant("DOUBLE_JUMP", PersistentDataType.INTEGER)
     val INFINITE_POTION_EFFECT
@@ -39,7 +41,8 @@ object EmpireEnchants {
             AQUALIGHT,
             ANTI_FALL,
             INFINITE_POTION_EFFECT,
-            DOUBLE_JUMP
+            DOUBLE_JUMP,
+            MEGA_JUMP
         )
     val byKey: Map<String, BukkitConstant<Int, Int>>
         get() = values.associateBy { it.value.key.uppercase() }

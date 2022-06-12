@@ -20,6 +20,9 @@ import org.bukkit.inventory.meta.LeatherArmorMeta
 import org.bukkit.inventory.meta.PotionMeta
 import org.bukkit.persistence.PersistentDataType
 
+fun a(){
+Attribute.GENERIC_MAX_HEALTH
+}
 
 @Suppress("PROVIDED_RUNTIME_TOO_LOW")
 @Serializable

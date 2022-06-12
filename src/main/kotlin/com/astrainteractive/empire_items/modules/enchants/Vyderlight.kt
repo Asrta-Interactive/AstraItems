@@ -1,9 +1,10 @@
 package com.astrainteractive.empire_items.modules.enchants
 
-import com.astrainteractive.empire_items.api.utils.BukkitConstants
 import com.astrainteractive.empire_items.empire_items.util.calcChance
 import com.astrainteractive.empire_items.modules.enchants.api.EmpireEnchantEvent
 import com.astrainteractive.empire_items.modules.enchants.api.EmpireEnchants
+import com.astrainteractive.empire_items.modules.enchants.data.EmpireEnchantsConfig
+import com.astrainteractive.empire_items.modules.enchants.data.enchants.GenericValueEnchant
 import org.bukkit.Material
 import org.bukkit.entity.Monster
 import org.bukkit.entity.Player
@@ -23,18 +24,18 @@ class Vyderlight : EmpireEnchantEvent() {
             Material.IRON_SWORD,
             Material.WOODEN_SWORD
         )
+    override val empireEnchant: GenericValueEnchant = EmpireEnchantsConfig.enchants.VYDERLIGHT
 
 
     @EventHandler
     private fun onEntityDamage(e: EntityDamageByEntityEvent) {
-        val eEnchant = empireEnchant ?: return
         if (e.damager !is Player) return
         if (e.entity is Monster)
             return
         val p = e.damager as Player
         val level = getEnchantLevel(p.inventory.itemInMainHand) ?: return
         if (calcChance(20))
-            p.damage(level * eEnchant.increaseModifier * eEnchant.value * e.damage)
+            p.damage(level * empireEnchant.value * e.damage)
         if (calcChance(20))
             p.location.world.strikeLightning(p.location)
         if (calcChance(10))

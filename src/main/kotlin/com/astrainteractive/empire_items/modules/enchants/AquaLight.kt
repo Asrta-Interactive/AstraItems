@@ -1,8 +1,9 @@
 package com.astrainteractive.empire_items.modules.enchants
 
-import com.astrainteractive.empire_items.api.utils.BukkitConstants
 import com.astrainteractive.empire_items.modules.enchants.api.EmpireEnchantEvent
 import com.astrainteractive.empire_items.modules.enchants.api.EmpireEnchants
+import com.astrainteractive.empire_items.modules.enchants.data.EmpireEnchantsConfig
+import com.astrainteractive.empire_items.modules.enchants.data.enchants.GenericValueEnchant
 import org.bukkit.Material
 import org.bukkit.entity.Monster
 import org.bukkit.entity.Player
@@ -24,11 +25,11 @@ class AquaLight : EmpireEnchantEvent() {
             Material.IRON_SWORD,
             Material.WOODEN_SWORD
         )
+    override val empireEnchant: GenericValueEnchant = EmpireEnchantsConfig.enchants.AQUALIGHT
 
 
     @EventHandler
     private fun onEntityDamage(e: EntityDamageByEntityEvent) {
-        val eEnchant = empireEnchant ?: return
         if (e.damager !is Player) return
         if (e.entity is Monster)
             return
@@ -36,7 +37,7 @@ class AquaLight : EmpireEnchantEvent() {
         val level = getEnchantLevel(p.inventory.itemInMainHand) ?: return
 
         p.remainingAir = -10
-        p.damage(e.damage/level*eEnchant.totalMultiplier)
+        p.damage(e.damage/level*empireEnchant.value)
         p.addPotionEffect(
             PotionEffect(
                 PotionEffectType.BLINDNESS,

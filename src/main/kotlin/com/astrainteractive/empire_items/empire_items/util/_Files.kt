@@ -22,4 +22,7 @@ class _Files {
         FileManager("gui.yml")
     val tempChunks: FileManager =
         FileManager("temp" + File.separator + "generated_chunks.yml")
+
+    val enchantsModule: FileManager =
+        FileManager("modules" + File.separator + "empire_enchants.yml")
 }

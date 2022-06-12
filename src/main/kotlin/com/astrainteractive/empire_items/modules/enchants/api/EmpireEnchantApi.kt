@@ -6,68 +6,14 @@ import com.astrainteractive.empire_items.api.utils.BukkitConstant
 import com.astrainteractive.empire_items.api.utils.getPersistentData
 import com.astrainteractive.empire_items.api.utils.setPersistentDataType
 import com.astrainteractive.empire_items.api.utils.IManager
-import com.astrainteractive.empire_items.modules.enchants.data.EmpireEnchantment
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.event.inventory.PrepareAnvilEvent
 import org.bukkit.inventory.ItemStack
 import kotlin.random.Random
 
-@Suppress("PROVIDED_RUNTIME_TOO_LOW")
-@kotlinx.serialization.Serializable
-data class PotionEnchant(
-    val potionEffectType: String,
-    val id: String,
-    val itemTypes: List<EnchantItemType>
-) {
-    @Suppress("PROVIDED_RUNTIME_TOO_LOW")
-    @kotlinx.serialization.Serializable
-    enum class EnchantItemType {
-        ARMOR, SWORDS, AXES, PICKAXES;
-
-        val getList: List<Material>
-            get() {
-                return when (this) {
-                    ARMOR -> EmpireEnchantApi.armorItems
-                    SWORDS -> EmpireEnchantApi.swords
-                    AXES -> EmpireEnchantApi.axes
-                    PICKAXES -> EmpireEnchantApi.pickaxes
-                }
-            }
-    }
-
-    companion object {
-        fun get(): List<PotionEnchant> {
-            val s = FileManager("modules/empire_enchants.yml").getConfig().getConfigurationSection("potion_enchants")
-                ?: return listOf()
-            return s.getKeys(false).mapNotNull { key ->
-                val section = s.getConfigurationSection(key)!!
-                AstraYamlParser.configurationSectionToClass<PotionEnchant>(section)
-            }
-        }
-    }
-}
 
 object EmpireEnchantApi : IManager {
-    private var empireEnchantments: List<EmpireEnchantment> = listOf()
-    private var empireEnchantmentById: Map<String, EmpireEnchantment> = mapOf()
-    var potionEffectEnchants: List<PotionEnchant> = listOf()
-
-    fun getEnchantment(id: String) = empireEnchantmentById[id]
-
-    override suspend fun onEnable() {
-        empireEnchantments = EmpireEnchantment.loadALl()
-        empireEnchantmentById = empireEnchantments.associateBy { it.id }
-        potionEffectEnchants = PotionEnchant.get()
-        println(potionEffectEnchants)
-
-    }
-
-    override suspend fun onDisable() {
-        empireEnchantments = emptyList()
-        empireEnchantmentById = emptyMap()
-
-    }
 
     fun getEnchantementLevel(tableLevel: Int, maxLevel: Int): Int {
         fun calc(i: Int): Int {
@@ -142,6 +88,12 @@ object EmpireEnchantApi : IManager {
             Material.LEATHER_LEGGINGS,
             Material.LEATHER_BOOTS,
         )
+
+    override suspend fun onEnable() {
+    }
+
+    override suspend fun onDisable() {
+    }
 }
 
 fun parseAnvilEnchant(e: PrepareAnvilEvent, enchant: BukkitConstant<Int, Int>, key: String): Int? {

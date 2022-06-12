@@ -3,6 +3,7 @@ package com.astrainteractive.empire_items.empire_items.events
 import com.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.astralibs.events.EventListener
 import com.astrainteractive.empire_items.EmpirePlugin
+import com.astrainteractive.empire_items.api.mobs.BossBarManager
 import com.astrainteractive.empire_items.api.mobs.MobApi
 import com.astrainteractive.empire_items.empire_items.util.playSound
 import io.papermc.paper.event.entity.EntityMoveEvent
@@ -19,7 +20,7 @@ class ModelEngineEvent : EventListener {
 
 
     val bossBarScheduler = Bukkit.getScheduler().runTaskTimerAsynchronously(EmpirePlugin.instance, Runnable {
-        MobApi.bossBars.toMap().forEach bossBarsEntities@{
+        BossBarManager.bossBars.toMap().forEach bossBarsEntities@{
             val entity = it.key
             val bossBar = it.value
 
@@ -65,7 +66,7 @@ class ModelEngineEvent : EventListener {
         val entityInfo = MobApi.getCustomEntityInfo(e.entity) ?: return@event
 
         val livingEntity = (e.entity as LivingEntity)
-        MobApi.bossBars[e.entity]?.let {
+        BossBarManager.bossBars[e.entity]?.let {
             it.progress = livingEntity.health / livingEntity.maxHealth
         }
         val event = entityInfo.ymlMob.events["onDamaged"]?.let {
@@ -101,7 +102,7 @@ class ModelEngineEvent : EventListener {
     }
 
     val onDeath = DSLEvent.event(EntityDeathEvent::class.java) { e ->
-        MobApi.deleteEntityBossBar(e.entity)
+        BossBarManager.deleteEntityBossBar(e.entity)
         val entityInfo = MobApi.getCustomEntityInfo(e.entity) ?: return@event
         val event = entityInfo.ymlMob.events["onDeath"] ?: return@event
         MobApi.executeEvent(e.entity, entityInfo.activeModel, event, "onDeath")

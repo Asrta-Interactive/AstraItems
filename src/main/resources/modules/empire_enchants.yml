@@ -1,19 +1,153 @@
 enabled: true
+# Список энчантов-зелий
+# В это списке высокоми буквами надо написать название энчанта
+# Потом в секцию enchants добавить его как обычные другие энчанты
+potion_enchants:
+  SPEED:
+    generic:
+      min_level: 1
+      max_level: 5
+      exp_per_level: 6
+      chances: [ 10,10,10 ]
+      enchanting_table: true
+      anvil: true
+    value: 1
+    effect: SPEED
+    id: SPEED
+    # ARMOR SWORDS AXES PICKAXES
+    item_types:
+      - "ARMOR"
+  NIGHT_VISION:
+    generic:
+      min_level: 1
+      max_level: 5
+      exp_per_level: 6
+      chances: [ 10,10,10 ]
+      enchanting_table: true
+      anvil: true
+    value: 1
+    effect: NIGHT_VISION
+    id: NIGHT_VISION
+    # ARMOR SWORDS AXES PICKAXES
+    item_types:
+      - "ARMOR"
+  WATER_BREATHING:
+    generic:
+      min_level: 1
+      max_level: 5
+      exp_per_level: 6
+      chances: [ 10,10,10 ]
+      enchanting_table: true
+      anvil: true
+    value: 1
+    effect: WATER_BREATHING
+    id: WATER_BREATHING
+    # ARMOR SWORDS AXES PICKAXES
+    item_types:
+      - "ARMOR"
+  FAST_DIGGING:
+    generic:
+      min_level: 1
+      max_level: 5
+      exp_per_level: 6
+      chances: [ 10,10,10 ]
+      enchanting_table: true
+      anvil: true
+    value: 3
+    effect: FAST_DIGGING
+    id: FAST_DIGGING
+    item_types:
+      - "PICKAXES"
 enchants:
   VAMPIRISM:
-    maxLevel: 5
-    # Количества опыта, которое требуется на зачарование одного уровня книжкой
-    # Не забываем про формулу (5 уровней зачарования)*(6 уровней игрока) = 30
-    expPerLevel: 6
-    # Шанс с которым зачарование попадется на 1,2 и 3 уровне стола зачарования
-    # Если игрока качает первый уровень в столе зачарованиея - попадется рандомный уровень следующим образом:
-    # Если первый уровень зачарования и max_level=6, то попадется уровень в диапазоне [0;2]
-    # Если второй - [2;4]
-    # Если третий - [4;6]
-    chances: [ 10,10,10 ]
+    generic:
+      min_level: 1
+      max_level: 5
+      # Количества опыта, которое требуется на зачарование одного уровня книжкой
+      # Не забываем про формулу (5 уровней зачарования)*(6 уровней игрока) = 30
+      exp_per_level: 6
+      # Шанс с которым зачарование попадется на 1,2 и 3 уровне стола зачарования
+      # Если игрока качает первый уровень в столе зачарованиея - попадется рандомный уровень следующим образом:
+      # Если первый уровень зачарования и max_level=6, то попадется уровень в диапазоне [0;2]
+      # Если второй - [2;4]
+      # Если третий - [4;6]
+      chances: [ 10,10,10 ]
+      enchanting_table: true
+      anvil: true
     # Процент HP, который зачарованный предмет будет забирать при ударе
     value: 0.2
-    # По умолчание новое значение вычисляется по формуле: current_level*value*increaseModifer, где current_level - текущий уровень зачарования
-    increaseModifier: 1.0
-    enchantingTableEnabled: true
-    anvilEnchantingEnabled: true
+  FROST_ASPECT:
+    # Каждый кастомный энчант имеет это поле
+    generic:
+      # Минимальный уровень энчанта
+      # defaultValue: 1
+      min_level: 1
+      # Максимальный уровень энчанта
+      # defaultValue: 5
+      max_level: 5
+      # Сколько опыта нужно чтобы зачаровать один уровень
+      exp_per_level: 6
+      # Шансы выпадения энчанта в столе зачарования
+      # 1-й уровень 2-й уровень и 3-1 уровень
+      chances: [ 10,10,10 ]
+      # Включено стол зачарований
+      enchanting_table: true
+      # Включена наковальня
+      anvil: true
+    # VAMPIRISM - довольно простой энчант, поэтому кастомное поле у него одно
+    # enchantLevel*value - колчество здоровья, которое получит игрок при ударе по другой сущности
+    value: 1.0
+  LAVA_WALKER_ENCHANT:
+    generic:
+      min_level: 1
+      max_level: 5
+      exp_per_level: 6
+      chances: [ 10,10,10 ]
+      enchanting_table: true
+      anvil: true
+    value: 1.0
+  BUTCHER:
+    generic:
+      min_level: 1
+      max_level: 5
+      exp_per_level: 6
+      chances: [ 10,10,10 ]
+      enchanting_table: true
+      anvil: true
+    value: 1.0
+  VYDERLIGHT:
+    generic:
+      min_level: 1
+      max_level: 5
+      exp_per_level: 6
+      chances: [ 10,10,10 ]
+      enchanting_table: false
+      anvil: false
+    value: 1.0
+  AQUALIGHT:
+    generic:
+      min_level: 1
+      max_level: 5
+      exp_per_level: 6
+      chances: [ 10,10,10 ]
+      enchanting_table: false
+      anvil: false
+    value: 1.0
+  ANTI_FALL:
+    generic:
+      min_level: 1
+      max_level: 5
+      exp_per_level: 6
+      chances: [ 10,10,10 ]
+      enchanting_table: false
+      anvil: false
+    value: 0.0000000001
+  MEGA_JUMP:
+    generic:
+      min_level: 1
+      max_level: 5
+      exp_per_level: 6
+      chances: [ 10,10,10 ]
+      enchanting_table: false
+      anvil: false
+    value: 1.0

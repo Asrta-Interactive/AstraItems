@@ -7,6 +7,7 @@ import com.astrainteractive.astralibs.async.AsyncHelper
 import com.astrainteractive.astralibs.events.GlobalEventManager
 import com.astrainteractive.empire_items.api.CraftingApi
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
+import com.astrainteractive.empire_items.api.mobs.MobApi
 import com.astrainteractive.empire_items.models.ItemYamlFile
 import com.astrainteractive.empire_items.api.utils.getCustomItemsFiles
 import com.astrainteractive.empire_items.credit.EmpireCredit
@@ -19,6 +20,7 @@ import com.astrainteractive.empire_items.empire_items.util.protection.KProtectio
 import com.astrainteractive.empire_items.models._Config
 import com.astrainteractive.empire_items.models._GuiConfig
 import com.astrainteractive.empire_items.modules.ModuleManager
+import com.astrainteractive.empire_items.modules.enchants.data._EmpireEnchantsConfig
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.runBlocking
@@ -91,6 +93,7 @@ class EmpirePlugin : JavaPlugin {
         _Files()
         _GuiConfig.create()
         _Config.create()
+        _EmpireEnchantsConfig.create()
         commandManager = CommandManager()
         val customFiles = getCustomItemsFiles()?.mapNotNull {
             EmpireSerializer.toClass<ItemYamlFile>(it.getFile())
@@ -100,6 +103,7 @@ class EmpirePlugin : JavaPlugin {
             EmpireItemsAPI.onEnable()
             ModuleManager.onEnable()
             CraftingApi.onEnable()
+            MobApi.onEnable()
         }
         genericListener = GenericListener()
         if (server.pluginManager.getPlugin("WorldGuard") != null)
@@ -123,6 +127,7 @@ class EmpirePlugin : JavaPlugin {
             ModuleManager.onDisable()
             EmpireItemsAPI.onDisable()
             CraftingApi.onDisable()
+            MobApi.onDisable()
         }
 
         AsyncHelper.cancel()

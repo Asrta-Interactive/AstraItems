@@ -2,6 +2,7 @@ package com.astrainteractive.empire_items.api.mobs
 
 import com.astrainteractive.astralibs.Logger
 import com.astrainteractive.astralibs.async.AsyncHelper
+import com.astrainteractive.astralibs.convertHex
 import com.astrainteractive.astralibs.valueOfOrNull
 import com.astrainteractive.empire_items.EmpirePlugin
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
@@ -35,16 +36,40 @@ data class CustomEntityInfo(
     val activeModel: ActiveModel
 )
 
+object BossBarManager {
+
+    val bossBars = mutableMapOf<Entity, BossBar>()
+
+    fun bossBarKey(id: Int) = NamespacedKey(EmpirePlugin.instance, id.toString())
+    fun createEntityBossBar(e: Entity, id: String, bossBar: YmlMob.YmlMobBossBar) {
+        val key = bossBarKey(e.entityId)
+        val barColor = valueOfOrNull<BarColor>(bossBar.color) ?: BarColor.RED
+        val barStyle = valueOfOrNull<BarStyle>(bossBar.barStyle) ?: BarStyle.SOLID
+        val barFlags = bossBar.flags.mapNotNull { valueOfOrNull<BarFlag>(it) }.toTypedArray()
+        val bar =
+            Bukkit.createBossBar(key, convertHex(bossBar.name), barColor, barStyle, *barFlags)
+        bar.isVisible = true
+        bar.progress = 1.0
+        bossBars[e] = bar
+    }
+
+    fun deleteEntityBossBar(e: Entity) {
+        val bar = bossBars.remove(e) ?: return
+        bar.isVisible = false
+        Bukkit.getOnlinePlayers().forEach { bar.removePlayer(it) }
+        bar.removeAll()
+    }
+
+    fun deleteBossBars() {
+        bossBars.toMap().forEach { deleteEntityBossBar(it.key) }
+    }
+}
+
 object MobApi : IManager {
-
-
     private val _activeMobs: MutableList<CustomEntityInfo> = mutableListOf()
     val activeMobs: List<CustomEntityInfo>
         get() = _activeMobs
-
-
     private val ignoredSpawn = mutableSetOf<Location>()
-
 
     /**
      * Play animation for selected [ActiveModel]
@@ -84,27 +109,6 @@ object MobApi : IManager {
         return mobs
     }
 
-    val bossBars = mutableMapOf<Entity, BossBar>()
-
-    fun bossBarKey(id: Int) = NamespacedKey(EmpirePlugin.instance, id.toString())
-    fun createEntityBossBar(e: Entity, id: String, bossBar: YmlMob.YmlMobBossBar) {
-        val key = bossBarKey(e.entityId)
-        val barColor = valueOfOrNull<BarColor>(bossBar.color) ?: BarColor.RED
-        val barStyle = valueOfOrNull<BarStyle>(bossBar.barStyle) ?: BarStyle.SOLID
-        val barFlags = bossBar.flags.mapNotNull { valueOfOrNull<BarFlag>(it) }.toTypedArray()
-        val bar =
-            Bukkit.createBossBar(key, bossBar.name, barColor, barStyle, *barFlags)
-        bar.isVisible = true
-        bar.progress = 1.0
-        bossBars[e] = bar
-    }
-
-    fun deleteEntityBossBar(e: Entity) {
-        val bar = bossBars.remove(e) ?: return
-        bar.isVisible = false
-        Bukkit.getOnlinePlayers().forEach { bar.removePlayer(it) }
-        bar.removeAll()
-    }
 
     /**
      * Replace entity [e] with [EmpireMob] as Custom ModelEngine entity
@@ -133,8 +137,7 @@ object MobApi : IManager {
 
         }
         eMob.bossBar?.let { bossBar ->
-            createEntityBossBar(e, eMob.id, bossBar)
-
+            BossBarManager.createEntityBossBar(e, eMob.id, bossBar)
         }
         (e as LivingEntity).equipment?.clear()
 
@@ -402,7 +405,7 @@ object MobApi : IManager {
             it.entity.remove()
         }
         _activeMobs.clear()
-        bossBars.toMap().forEach { deleteEntityBossBar(it.key) }
+        BossBarManager.deleteBossBars()
     }
 
 }

@@ -1,17 +1,35 @@
 namespace: empire_items
+# Звуки, которые будут добавлены
+sounds:
+  music_disc_josuke_theme:
+    # id звука
+    id: "music_disc.josuke_theme"
+    # namespace звуков
+    namespace: "empire_items"
+    # Список звуков - путь к им
+    sounds:
+      - "music_disc/josuke_theme"
+# Список крафта предметов для игрока и на верстаке
 crafting_table:
+  # Пример крафта на верстаке
   shield1:
+    # id крафта
     id: shield_crafting_table
+    # Предмет, который получится в результате
     result: shield1
+    # Количестов, которое получится в результате
     amount: 1
+    # Паттерн
     pattern:
       - XXX
       - XDX
       - XXX
+    # Ингредиенты
     ingredients:
       D: DIAMOND
+  # Пример крафта в инвентаре игрока
   shield2:
-    id: shield_crafting_table
+    id: shield_inventory
     result: shield1
     amount: 1
     pattern:
@@ -19,125 +37,437 @@ crafting_table:
       - XD
     ingredients:
       D: DIAMOND
+mobs:
+  kindletronsr:
+    # Кастомны ID моба
+    id: kindletronsr
+    # Сущность, над которой кастомный моб будет обёрнут
+    entity: ZOGLIN
+    # ID модели моба
+    modelID: kindletronsr
+    # Чем дальше игрок - тем слабее атака
+    decreaseDamageByRange: true
+    # Будет ли гореть на свету
+    canBurn: false
+    # На этих мобов кастомный моб не будет нападать
+    ignoreMobs:
+    - "ZOMBIE"
+    - "VEX"
+    - "BLAZE"
+    - "GUARDIAN"
+    # Звуки, которые будут проигрываться с определенной периодичностью
+    idleSound:
+      - "empire_items:plasmafire"
+      - "empire_items:arc2"
+    # Эффекты зелий, наложенные на моба
+    potionEffects:
+      FIRE_RESISTANCE:
+        name: FIRE_RESISTANCE
+        amplifier: 255
+        duration: 999999
+    # Атрибуты, наложенные на моба
+    attributes:
+      GENERIC_MAX_HEALTH:
+        name: GENERIC_MAX_HEALTH
+        minValue: 300
+        maxValue: 301
+    # Задержка при ударе
+    hitDelay: 800
+    # Радиус атаки
+    hitRange: 20
+    # Настройки спавна
+    spawn:
+      DESERT:
+        # Биомы, в которых будет спавниться моб
+        # Если не указаны - значит в любом
+        biomes:
+          - "PLAINS"
+        # Инвертировать спавн по биомам
+        invertBiomes: false
+        # Минимальная высота по Y
+        minY: -70
+        # Максимальна высота по Y
+        maxY: 512
+        # Этих мобов кастомный моб будет заменять при спавне
+        replace:
+          HUSK: 2
+          ZOMBIE: 100.0
+    # Можно добавить кастомный боссбар для моба
+    bossBar:
+      # Имя в боссбаре
+      name: "#a84632Страж металла"
+      # Цвет
+      # PINK,BLUE,RED,GREEN,YELLOW,PURPLE,WHITE
+      color: RED
+      # SOLID, SEGMENTED_6, SEGMENTED_10, SEGMENTED_12, SEGMENTED_20
+      barStyle: SOLID
+      # Функционал есть, но это не работает в игре с оптифайном
+      flags:
+        - "CREATE_FOG"
+        - "PLAY_BOSS_MUSIC"
+        - "DARKEN_SKY"
+    # То же самое что и в onAnimation
+    events:
+      onMove:
+        # ID эвента
+        id: onMove
+        # Кулдаун эвента в миллисекундах
+        cooldown: 20
+        # Название эвента - по умолчанию берется id
+        eventName: onMove
+        # Будет проигрываться этот звук
+        playSound:
+          name: empire_items:summon2
+          cooldown: 0
+        # Действия, которые происходят в эвенте
+        actions:
+          custom_action_1:
+            # ID действия
+            id: blaze_spawn
+            # Стартует после этого количества миллисекунд
+            startAfter: 5000
+            # Стартует при этих условиях
+            condition:
+              chance: 50.0
+              cooldown: 30000
+              whenHPBelow: 2000
+            # Призыв миньонов
+            summonMinions:
+              1:
+                # Тип моба
+                type: BLAZE
+                # Количество мобов
+                amount: 3
+                # Эффекты зелий, наложенные на моба
+                potionEffects:
+                  FIRE_RESISTANCE:
+                    name: FIRE_RESISTANCE
+                    amplifier: 255
+                    duration: 999999
+                # Атрибуты, наложенные на моба
+                attributes:
+                  GENERIC_MAX_HEALTH:
+                    name: GENERIC_MAX_HEALTH
+                    minValue: 300
+                    maxValue: 301
+        # Будет наложен, если моб ударит игрока или сущность
+        playPotionEffect:
+          HEALING:
+            name: HEALING
+            amplifier: 10
+            duration: 200
+            # Если указать false - не будут отображаться эффекты на игроке, но будут действовать
+            display: true
+        boneParticle:
+          glow:
+            # Путь к костям, на которых будет отображаться particle
+            bones: [ kindletronsr.leftarm.lefthand ]
+            cooldown: 10
+            particle:
+              name: REDSTONE
+              color: "#c4a01d"
+              count: 10
+              extra: 0.005
+fontImages:
+  # Чтобы отправить это эмодзи в чат - необходимо написать :armor:
+  armor:
+    # ID фонта
+    id: armor
+    # Высота картинки
+    height: 10
+    # Ширина картинки
+    ascent: 8
+    # Путь к картинке
+    path: "ui:attributes/armor.png"
+    # Дата картинки
+    data: 74
+    # Если указано true - игроки не смогут это использовать
+    blockSend: false
+# Крафт, в котором предметы можно положить в любые слоты
 shapeless:
   shield1:
+    # ID крафта
     id: shield_shapeless
+    # Результат крафта
     result: shield1
+    # Количество результата
     amount: 2
+    # Предмет, который надо положить, чтобы скравтить
+    # !!!! НАДО УКАЗАТЬ ЧТО_ТО ОДНО
     input: NETHERITE_INGOT
-
+    # Список предметов, которые надо положить
+    # !!!! НАДО УКАЗАТЬ ЧТО_ТО ОДНО
+    inputs:
+      - "IRON_INGOT"
+      - "NETHERITE_INGOT"
+# Крафт в печке
 furnace:
   shield_furnace:
-    # После того, как печь закончит плавить - на слот, гдже был input вернется returns
+    # После того, как печь закончит плавить - на слот, где был input вернется returns
     returns: bottle_for_slime
     id: shield_furnace
     result: shield1
     amount: 2
+    # Что нужно положить в верхний слот
     input: IRON_INGOT
+    # Время готовки в тиках
     cookTime: 200
+    # Опыт, который получим, когда закончит готовиться
     exp: 20
+# Список кастомных дропов
 loot:
-  bottle_for_slime:
+  bottle_for_slime_custom_name:
+    # ID дропа - название предмета
     id: bottle_for_slime
+    # Из чего выпадает
     dropFrom: ZOMBIE
+    # Минимальное количество
     minAmount: 1
+    # Максимальное количество
     maxAmount: 2
+    # Шанс выпадения
     chance: 0.2
 villagerTrades:
-  WEAPONSMITH_1:
-    #Если profession не указана - возьмется название поля - WEAPONSMITH_1
+  custom_villager_trade_1:
+    # ID
+    id: custom_villager_trade_1
+    # Профессия жителя
     profession: WEAPONSMITH
     trades:
       pistol_1:
-        #Если id не указана - возьмется название поля - pistol_1
+        # ID предмета, который продает житель
         id: "pistol"
-        #Если шанс не указан - по умолчанию 100
+        # Шанс, с которым появится у него предмет
         chance: 100
-        # Если amount не указан - по умолчанию значение 1
+        # Количество этого предмета, которое будет продавать
         amount: 1
-        # Если не указаны minUses,maxUses -  по умолчанию 1 и 1
+        # Минимальное количество использований купли-продажи
         minUses: 2
+        # Максимальное количество использований купли-продажи
         maxUses: 5
+        # Минимальный уровень жителя для отображения этого предмета
+        minLevel: 1
+        # Максимальный уровень жителя для отображения этого предмета
+        maxLevel: 1
+        # Предмет в левом слоту
         leftItem:
-          # Если minAmount или minAmount - будет браться значение amount
-          # Если указаны - возьмется случайное число
+          # Минимальное количество предмета
           minAmount: 3
+          # Максимальное количество предмета
           maxAmount: 5
-          # По умолчанию значение 1
+          # Количество предмета
           amount: 1
+          # ID предмета
           id: ruby
+        # Предмет в среднем слоту
         middleItem:
           minAmount: 3
           maxAmount: 5
           amount: 5
           id: steel_ingot
-        # По умолчанию значения 1 и 1
-        minLevel: 1
-        maxLevel: 1
 
-yml_items:
-  shield1:
-    displayName: "&2Новый предмет"
-    material: BARRIER
-    texturePath: item/new_item
-    modelPath: item/new_item
-    customModelData: 100
-    itemFlags:
-      - HIDE_ATTRIBUTES
-    enchantements:
-      sharpness: 2
-    durability: 100
-    attributes:
-      GENERIC_ATTACK_DAMAGE: 10
-    customTags:
-      - "{tag_name: tag_value}"
-      - "tag_2"
-    block:
-      breakParticle: NETHERRACK
-      breakSound: minecraft:block.amethyst_block.break
-      placeSound: minecraft:block.amethyst_block.break
-      data: 1
-      generate:
-        generateInChunkChance: 0
-        minPerChunk: 100
-        maxPerChunk: 300
-        minPerDeposit: 50
-        maxPerDeposit: 100
-        minY: 50
-        maxY: 140
-        replace_blocks:
-          AIR: 70
-          GRASS_BLOCK: 70
-      hardness: 200
-    musicDisc:
-      name: minecraft:entity.ender_dragon.growl
-      pitch: 1
-      volume: 1
-    interact:
-      event1:
-        eventList: [LEFT_CLICK_AIR]
-        cooldown: 20
-        playParticle:
-          customName1:
-            count: 100
-            name: DRAGON_BREATH
-            time: 0.1
-        playSound:
-          sound1:
-            name: minecraft:entity.ender_dragon.growl
-            pitch: 1
-            volume: 1
-        executeCommand:
-          command1:
-            asConsole: false
-            command: "home"
+tabletki:
+  # ID предмета - должно дублировать верхний ключ
+  # ОБЯЗАТЕЛЬНОЕ ПОЛЕ
+  id: tabletkie
+  # Название предмета
+  # ОБЯЗАТЕЛЬНОЕ ПОЛЕ
+  display_name: "#d91892Таблетки деда"
+  # Описание предмета
+  lore:
+    - '&4Не для употребления'
+    - '&4Вызывает зависимость'
+  # Материал предмета
+  # ОБЯЗАТЕЛЬНОЕ ПОЛЕ
+  material: POTION
+  # customModelData предмета
+  customModelData: 12
+  # Путь к папке
+  namespace: "empire_items"
+  # Путь к текстурке предмета
+  texturePath: "items/tabletki"
+  # Путь к модельке предмета
+  modelPath: "items/tabletki"
+  # Флаги предмета
+  itemFlags:
+    - "HIDE_ATTRIBUTES"
+  # Кастомные чары
+  # Подробнее на странице чар
+  empireEnchants:
+    VAMPIRISM: 2
+  # Стандартные чары игры
+  enchantments:
+    DIG_SPEED: 5
+  # Кастомная дюрабилити
+  # Для предметов с дюрабилити
+  durability: 100
+  # Для кастомной брони
+  # В HEX формате
+  armorColor: "#f2f2f2"
+  # Атрибуты
+  # !!! Будут работаеть только в правильной позиции инвентаря
+  # То есть щит - в левой руке
+  # Меч - в правой руке
+  # Броня - на месте брони
+  attributes:
+    GENERIC_MAX_HEALTH: 10.0
+  # Можно добавлять пушки
+  gun:
+    # Кулдаун при стрельбе
+    # NULLABLE
+    # В миллисекундах
+    cooldown: 5
+    # Величина отдачи
+    # NULLABLE
+    recoil: 2.0
+    # Величина боезапаса
+    # Если не указано - будет бесконечным
+    # NULLABLE
+    clipSize: 10
+    # Вес пули. Чем выше вес - тем быстрее она будет падать
+    # Должно быть в диапазоне [0.0;1.0]
+    bulletWeight: 0.7
+    # Длина стрельбы
+    bulletTrace: 100
+    # Предмет, которым перезаряжать
+    # NULLABLE
+    reload: reload_item
+    # Партикл, который будет отображаться при полете пули
+    particle: REDSTONE
+    # Звук, когда нет боезапаса
+    noAmmoSound: "empire_items.noAmmoSound"
+    # Звук перезарядки
+    reloadSound: "empire_items.reloadSound"
+    # Звук, когда пытаешься перезарядтить, но обойма полная
+    fullSound: "empire_items.fullSound"
+    # Звук стрельбы
+    shootSound: "empire_items.shootSound"
+    # Радиус поражения пули
+    radius: 1.0
+    # Радиус поражения пули при нажатом шифте
+    radiusSneak: 4.0
+    # Величина взрыва при попадании пули
+    # NULLABLE
+    explosion: 5.0
+    # Урон от пули
+    # NULLABLE
+    damage: 10.0
+    # Цвет particle
+    # Чтобы работаело - должен быть указан particle REDSTONE
+    # NULLABLE
+    color: "#FFFFFF"
+    advanced:
+      # Можно указать броню, которая будет сильнее защищать от пуль
+      # NULLABLE
+      armorPenetration:
+        # Когда у игрока надета это броня - урон от пули будет слабее
+        # Тоесть если был урон 100 - то он станет 100*0.9 = 90
+        anti_gun_armor: 0.9
+      # При попадании в живую сущность сработает onHit
+      # NULLABLE
+      onHit:
+        # Поджигает на N тиков
+        # NULLABLE
+        fireTicks: 10
+        # Поджигает блоки в радиусе N
+        # NULLABLE
+        ignite: 8
+        # Будет наложен эффект
+        # NULLABLE
         playPotionEffect:
-          effect1:
-            amplifier: 4
+          HEALING:
+            name: HEALING
+            amplifier: 10
             duration: 200
-            name: HEAL
-        removePotionEffect:
-          - "HEALTH_BOOST"
-
-
-
+            # Если указать false - не будут отображаться эффекты на игроке, но будут действовать
+            display: true
+  # Можно добавлять кастомные музыкальные диски
+  # В такое случае надо также добавить кастомные звуки - если надо
+  musicDisc:
+    # Название кастомной песни
+    name: "empire_items.custom_music
+  # Взаимодействие с предметом
+  interact:    
+    right_click_custom_name:
+      # Список эвентов, при которых будет проигрываться эвент
+      eventList: ["PlayerInteractEvent"]
+      # Будет ли проигрываться эвент, если предмет в главной руке
+      # NOT_IMPLEMENTED
+      #main_hand: true
+      # Будет ли проигрываться эвент, если предмет в главной руке
+      # NOT_IMPLEMENTED
+      #off_hand: true
+      # Кулдаун эвента
+            cooldown: 10
+      # Эти эффекты будут убраны
+            removePotionEffect:
+              - "HEALING"
+      # Эти команды будут проиграны
+            playCommand:
+              command1:
+                command: "heal"
+                # Проиграть как консоль или как игрок
+                asConsole: true
+      # Будут проиграны эти звуки
+            playSound:
+              sound1:
+                name: "mincraft.sound"
+                pitch: 1.0
+                volume: 1.0
+                cooldown: 10
+      # Будут проиграны эти партиклы
+            playParticle:
+              particle1:
+                name: REDSTONE
+                count: 20
+                time: 0.2
+                color: #FFFFFF
+                extra: 0.0
+  # Блок - чтобы предмет можно было исопльзовать как блок
+  # В таком случае в поле material нужно указать какой-то блок
+  block:
+    # Этот эффект будет на месте сломанного блока
+    # defaultValue: ""
+    breakParticle: "REDSTONE"
+    # Этот звук будет при создании блока
+    # defaultValue: ""
+    breakSound: "minecraft.sound.break"
+    # Этот звук будет при поломке блока
+    # defaultValue: ""
+    placeSound: "minecraft.sound.place"
+    # Это дата предмета
+    # Вычисляется по спецаильной формуле
+    # Используются только грибные блоки.
+    # Их всего 3
+    # У каждого блока 6 сторон и 32 вариации того, как их можно поставить
+    # Следовательно, максимальная data 3*32 = 96
+    # Однако надо не забывать, что некоторые грибные блоки в мире уже стоят на занятых позициях
+    # Поэтому data нужно подбирать осторожно - чтобы не было таких же грибных блоков в мире
+    data: 1
+    # Дополнительая прочность блока
+    # Чем выше прочность - тем дольше его ломать
+    hardness: 5
+    # Если игрок поставит блок на позицию и сломает его несколько раз - кастомный дроп из него будет игнорироваться
+    # Это поле отключает такую функцию
+    ignoreCheck: true
+    generate:
+      # Вероятность генерации в чанке
+      generateInChunkChance: 90
+      # Минимальное число в чанке
+      minPerChunk: 5
+      # Максимальное число в чанке
+      maxPerChunk: 10
+      # Минимальное число в депозите
+      minPerDeposit: 1
+      # Максимальное число в депозите
+      maxPerDeposit: 4
+      # Минимальная высота генерации
+      minY: 10
+      # Максимальная высота генерации
+      maxY: 30
+      # Мир, в котором будет генерироваться блок
+      # NULLABLE
+      world: world
+      # Блоки, которые будут заменяться сгенерированным
+      replaceBlocks:
+        DIRT: 100

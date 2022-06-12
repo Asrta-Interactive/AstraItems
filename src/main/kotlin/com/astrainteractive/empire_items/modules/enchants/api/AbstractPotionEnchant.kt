@@ -1,7 +1,10 @@
 package com.astrainteractive.empire_items.modules.enchants.api
 
+import com.astrainteractive.astralibs.Logger
 import com.astrainteractive.astralibs.async.AsyncHelper
 import com.astrainteractive.empire_items.EmpirePlugin
+import com.astrainteractive.empire_items.modules.enchants.data._EmpireEnchantsConfig
+import com.astrainteractive.empire_items.modules.enchants.data.enchants.GenericValueEnchant
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.event.entity.EntityDamageByEntityEvent
@@ -15,7 +18,10 @@ abstract class AbstractPotionEnchant : EmpireEnchantEvent() {
     abstract val potionEffectType: PotionEffectType
     val executor = Bukkit.getScheduler().runTaskTimerAsynchronously(EmpirePlugin.instance, Runnable {
         Bukkit.getOnlinePlayers().forEach { player ->
-            val eEnchant = empireEnchant ?: return@forEach
+            val eEnchant = empireEnchant as? _EmpireEnchantsConfig.PotionEnchant?:run{
+                Logger.error("Enchant ${enchantKey} is not PotionEnchant! Check yml config!")
+                return@forEach
+            }
             val inv = player.inventory
             listOfNotNull(inv.helmet, inv.chestplate, inv.leggings, inv.boots,inv.itemInMainHand,inv.itemInOffHand).forEach items@{
                 val level = getEnchantLevel(it) ?: return@items
@@ -25,7 +31,7 @@ abstract class AbstractPotionEnchant : EmpireEnchantEvent() {
                         PotionEffect(
                             potionEffectType,
                             300,
-                            (level * eEnchant.totalMultiplier).toInt() - 1,
+                            (level * eEnchant.value).toInt() - 1,
                             false,
                             false,
                             false
