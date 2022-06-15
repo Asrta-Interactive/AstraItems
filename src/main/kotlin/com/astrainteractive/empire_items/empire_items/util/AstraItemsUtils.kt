@@ -1,5 +1,6 @@
 package com.astrainteractive.empire_items.empire_items.util
 
+import com.astrainteractive.astralibs.async.AsyncHelper
 import com.astrainteractive.astralibs.convertHex
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.FontApi
@@ -64,7 +65,10 @@ fun calcChance(chance:Double) = chance>=Random.nextDouble(0.0,100.0)
 fun calcChance(chance:Float) = calcChance(chance.toDouble())
 
 fun Location.playSound(name:String?){
-    this.world.playSound(this,name?:return,2f,1f)
+    AsyncHelper.callSyncMethod {
+        this.world.playSound(this,name?:return@callSyncMethod,2f,1f)
+    }
+
 }
 fun Location.getBiome()= world.getBiome(this)
 

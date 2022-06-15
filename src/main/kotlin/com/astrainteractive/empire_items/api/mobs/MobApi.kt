@@ -305,7 +305,7 @@ object MobApi : IManager {
         val hasSoundCooldown = eventTimers.hasCooldown("${eventId}S${entity.hashCode()}", event.playSound?.cooldown)
         if (event.playSound?.cooldown == null || event.playSound.cooldown == 0 || !hasSoundCooldown) {
             eventTimers.setCooldown("${eventId}S${entity.hashCode()}")
-            entity.location.playSound(event.playSound?.name)
+            event.playSound?.play(entity.location)
         }
         playParticle(entity, model, event.boneParticle.values.toList())
     }

@@ -10,20 +10,21 @@ group = "com.astrainteractive"
 version = "4.0.0"
 val name = "EmpireItems"
 description = "Custom items plugin for EmpireProjekt"
-java.sourceCompatibility = JavaVersion.VERSION_16
 
 plugins {
     java
     `maven-publish`
     `java-library`
-    kotlin("jvm") version "1.6.20"
-    kotlin("plugin.serialization") version "1.6.20"
+    kotlin("jvm") version "1.6.21"
+    kotlin("plugin.serialization") version "1.6.21"
     id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 java {
     withSourcesJar()
     withJavadocJar()
-    sourceCompatibility = JavaVersion.VERSION_17
+    java.sourceCompatibility = JavaVersion.VERSION_1_8
+    java.targetCompatibility = JavaVersion.VERSION_17
+//    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 }
 repositories {
     mavenLocal()
@@ -52,6 +53,16 @@ repositories {
 }
 
 dependencies {
+    val spigot = "1.19-R0.1-SNAPSHOT"
+    val placeholderapi = "2.11.1"
+    val protocolLib = "4.8.0"
+    val worldguard = "7.0.5"
+    val vault = "1.7"
+    val coreprotect = "21.2"
+    val modelengine = "R2.5.0"
+    val essentials = "2.19.4-SNAPSHOT"
+    val discordSRV = "1.24.0"
+    val luckPerms = "5.3"
     // Kotlin
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version")
     // Coroutines
@@ -74,9 +85,9 @@ dependencies {
     testImplementation(kotlin("test"))
     // Spigot dependencies
     compileOnly("net.essentialsx:EssentialsX:2.19.0-SNAPSHOT")
-    compileOnly("io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT")
-    compileOnly("org.spigotmc:spigot-api:1.18.2-R0.1-SNAPSHOT")
-    compileOnly("org.spigotmc:spigot:1.18.2-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:$spigot")
+    compileOnly("org.spigotmc:spigot-api:$spigot")
+    compileOnly("org.spigotmc:spigot:$spigot")
     compileOnly("com.comphenix.protocol:ProtocolLib:4.7.0")
     compileOnly("me.clip:placeholderapi:2.10.9")
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.5")

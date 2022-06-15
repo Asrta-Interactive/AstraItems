@@ -7,8 +7,8 @@ import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
 import org.bukkit.block.data.MultipleFacing
-import org.bukkit.craftbukkit.v1_18_R2.block.CraftBlock
-import org.bukkit.craftbukkit.v1_18_R2.block.data.CraftBlockData
+import org.bukkit.craftbukkit.v1_19_R1.block.CraftBlock
+import org.bukkit.craftbukkit.v1_19_R1.block.data.CraftBlockData
 import java.lang.NumberFormatException
 
 object BlockParser {

@@ -1,11 +1,18 @@
 package com.astrainteractive.empire_items.models.yml_item
 
+import com.astrainteractive.astralibs.AstraLibs
+import com.astrainteractive.astralibs.async.AsyncHelper
+import com.astrainteractive.astralibs.valueOfOrNull
+import com.destroystokyo.paper.ParticleBuilder
 import kotlinx.serialization.Serializable
 import org.bukkit.Color
 import org.bukkit.Location
+import org.bukkit.Particle
 import org.bukkit.entity.LivingEntity
+import org.bukkit.entity.Player
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
+import org.jetbrains.annotations.Async
 
 
 @Suppress("PROVIDED_RUNTIME_TOO_LOW")
@@ -30,6 +37,15 @@ data class Interact(
     ) {
         val realColor: Color?
             get() = if (color != null) Color.fromRGB(Integer.decode(color?.replace("#", "0x"))) else null
+        val particle: Particle?
+            get() = valueOfOrNull<Particle>(name)
+
+        fun play(location: Location) {
+            ParticleBuilder(particle ?: return)
+                .count(count)
+                .extra(time)
+                .location(location).spawn()
+        }
     }
 
     @Suppress("PROVIDED_RUNTIME_TOO_LOW")
@@ -38,10 +54,12 @@ data class Interact(
         val name: String,
         val pitch: Float = 1f,
         val volume: Float = 1f,
-        val cooldown:Int? = null
+        val cooldown: Int? = null
     ) {
         fun play(l: Location) {
-            l.world.playSound(l, name, volume, pitch)
+            AsyncHelper.callSyncMethod {
+                l.world.playSound(l, name, volume, pitch)
+            }
         }
     }
 
@@ -50,7 +68,13 @@ data class Interact(
     data class PlayCommand(
         val command: String,
         val asConsole: Boolean = false
-    )
+    ) {
+        fun play(player: Player?) {
+            if (asConsole)
+                AstraLibs.instance.server.dispatchCommand(AstraLibs.instance.server.consoleSender, command)
+            else player?.performCommand(command)
+        }
+    }
 
     @Suppress("PROVIDED_RUNTIME_TOO_LOW")
     @Serializable
