@@ -26,6 +26,8 @@ class CommandManager {
         Ezip()
         General()
         ModelEngine()
+        villagerInventory()
+        villagerInventoryAutoComplete()
 
     }
 }

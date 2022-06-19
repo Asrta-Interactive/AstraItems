@@ -43,6 +43,7 @@ data class ItemYamlFile(
     val loot: Map<String, Loot>? = null,
     val villagerTrades: Map<String, VillagerTradeInfo>? = null,
     val fontImages: Map<String, FontImage> = mapOf(),
+    val merchant_recipes:Map<String,YamlMerchantRecipe>? = null,
     val yml_items: Map<String, YmlItem>? = null,
     @SerialName("sounds")
     val ymlSounds: Map<String, YmlSound> = mapOf(),
