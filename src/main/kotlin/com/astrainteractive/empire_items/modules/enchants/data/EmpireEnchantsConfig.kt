@@ -5,6 +5,7 @@ import com.astrainteractive.empire_items.empire_items.util.Files
 import com.astrainteractive.empire_items.models._GuiConfig
 import com.astrainteractive.empire_items.modules.enchants.api.EmpireEnchantApi
 import com.astrainteractive.empire_items.modules.enchants.data.enchants.GenericValueEnchant
+import com.astrainteractive.empire_items.modules.enchants.data.enchants.SpawnMobArenaEnchant
 import kotlinx.serialization.SerialName
 import org.bukkit.Material
 
@@ -60,6 +61,7 @@ data class _EmpireEnchantsConfig(
         val AQUALIGHT: GenericValueEnchant,
         val ANTI_FALL: GenericValueEnchant,
         val MEGA_JUMP: GenericValueEnchant,
+        val MOB_ARENA_ENCHANT: SpawnMobArenaEnchant
     )
 
     companion object {

@@ -8,6 +8,8 @@ import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.mobs.MobApi
 import com.astrainteractive.empire_items.empire_items.util.EmpirePermissions
 import com.astrainteractive.empire_items.empire_items.util.Translations
+import org.bukkit.Bukkit
+import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.BlockFace
 import org.bukkit.entity.Player
@@ -18,23 +20,25 @@ class ModelEngine {
 
     val spawnmodel =
         AstraLibs.registerCommand("spawnmodel", permission = EmpirePermissions.spawnModel) { sender, args ->
-            if (sender !is Player) {
-                sender.sendMessage(Translations.instance.notPlayer)
-                return@registerCommand
-            }
-            val id = args.firstOrNull()
-            if (id == null) {
+
+            val id = args.firstOrNull() ?: run {
                 sender.sendMessage(Translations.instance.wrongArgs)
                 return@registerCommand
             }
-            val empireMob = EmpireItemsAPI.ymlMobById[id]
-            if (empireMob == null) {
+            val empireMob = EmpireItemsAPI.ymlMobById[id] ?: run {
                 sender.sendMessage(Translations.instance.mobNotExist)
                 return@registerCommand
             }
-            sender as Player
-            val block = sender.getTargetBlock(transparent, 64).getRelative(BlockFace.UP)
-            val spawned = MobApi.spawnMob(empireMob, block.location)
+            val world = args.getOrNull(1)?.let { Bukkit.getWorld(it)}
+            val x = args.getOrNull(2)?.toDoubleOrNull()
+            val y = args.getOrNull(3)?.toDoubleOrNull()
+            val z = args.getOrNull(4)?.toDoubleOrNull()
+            val location = x?.let { x -> y?.let { y -> z?.let { z -> Location(world, x, y, z) } } }
+
+
+
+            val l = location ?: (sender as? Player)?.getTargetBlock(transparent, 64)?.getRelative(BlockFace.UP)?.location?:return@registerCommand
+            val spawned = MobApi.spawnMob(empireMob, l)
             if (spawned == null) {
                 sender.sendMessage(Translations.instance.mobFailedToSpawn)
             }

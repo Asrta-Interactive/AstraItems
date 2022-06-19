@@ -27,6 +27,7 @@ class EnchantManager : EventManager {
         AquaLight().onEnable(this)
         AntiFall().onEnable(this)
         MegaJump().onEnable(this)
+        MobArenaEnchant().onEnable(this)
         EmpireEnchantsConfig.potionEnchants.forEach { (key, it) ->
             val potionEffectType = PotionEffectType.getByName(it.effect) ?: return@forEach
             val enchant = BukkitConstant(it.id, PersistentDataType.INTEGER)

@@ -1,5 +1,3 @@
-import java.util.Properties
-import java.io.FileInputStream
 
 val kotlin_version: String by project
 val kotlin_coroutines_version: String by project
@@ -7,7 +5,7 @@ val kotlin_json_version: String by project
 val kaml: String by project
 
 group = "com.astrainteractive"
-version = "4.0.0"
+version = "4.0.1"
 val name = "EmpireItems"
 description = "Custom items plugin for EmpireProjekt"
 
@@ -29,27 +27,25 @@ java {
 repositories {
     mavenLocal()
     mavenCentral()
-    maven("https://repo.maven.apache.org/maven2/")
-    maven("https://repo.maven.apache.org/maven2/")
-    maven("https://repo1.maven.org/maven2/")
-    maven("https://repo.dmulloy2.net/repository/public/")
-    maven("https://papermc.io/repo/repository/maven-public/")
-    maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
-    maven("https://maven.enginehub.org/repo/")
-    maven("https://repo.essentialsx.net/snapshots/")
+    maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
+    maven("https://papermc.io/repo/repository/maven-public/")
     maven("https://nexus.scarsz.me/content/groups/public/")
-    maven("https://jitpack.io")
+    maven("https://repo.dmulloy2.net/repository/public/")
+    maven("https://repo.essentialsx.net/snapshots/")
+    maven("https://repo.maven.apache.org/maven2/")
+    maven("https://repo.maven.apache.org/maven2/")
+    maven("https://maven.enginehub.org/repo/")
+    maven("https://repo1.maven.org/maven2/")
     maven("https://maven.playpro.com")
+    maven("https://jitpack.io")
     maven {
         url = uri("https://mvn.lumine.io/repository/maven-public/")
         metadataSources {
             artifact()
         }
     }
-    flatDir {
-        dirs("libs")
-    }
+    flatDir { dirs("libs") }
 }
 
 dependencies {
@@ -96,46 +92,46 @@ dependencies {
     compileOnly("net.coreprotect:coreprotect:20.0")
     compileOnly("com.ticxo.modelengine:api:R2.5.0")
 }
-//kotlin.sourceSets["main"].kotlin.srcDirs("src")
-//kotlin.sourceSets["test"].kotlin.srcDirs("test")
 
-//sourceSets["main"].resources.srcDirs("resources")
-//sourceSets["test"].resources.srcDirs("testresources")
-
-tasks.withType<JavaCompile>() {
-    options.encoding = "UTF-8"
-}
-tasks.withType<Test>().configureEach {
-    useJUnitPlatform()
-}
-tasks.processResources {
-    from(sourceSets.main.get().resources.srcDirs) {
-        filesMatching("plugin.yml") {
-            expand(
-                "name" to project.name,
-                "version" to project.version,
-                "description" to project.description
-            )
+tasks{
+    withType<JavaCompile>() {
+        options.encoding = "UTF-8"
+    }
+    withType<Test>().configureEach {
+        useJUnitPlatform()
+    }
+    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+        kotlinOptions.jvmTarget = "17"
+    }
+    withType<Jar> {
+        archiveClassifier.set("min")
+    }
+    compileJava {
+        options.encoding = "UTF-8"
+    }
+    test {
+        useJUnit()
+        testLogging {
+            events("passed", "skipped", "failed")
+            this.showStandardStreams = true
         }
-        duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    }
+    processResources {
+        from(sourceSets.main.get().resources.srcDirs) {
+            filesMatching("plugin.yml") {
+                expand(
+                    "name" to project.name,
+                    "version" to project.version,
+                    "description" to project.description
+                )
+            }
+            duplicatesStrategy = DuplicatesStrategy.INCLUDE
+        }
     }
 }
-artifacts {
-    archives(tasks.shadowJar)
-}
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions.jvmTarget = "17"
-}
-tasks.withType<Jar> {
-    archiveClassifier.set("min")
-}
-tasks.compileJava {
-    options.encoding = "UTF-8"
-}
-
 tasks.shadowJar {
-    dependencies{
-        include(dependency(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar",".aar")))))
+    dependencies {
+        include(dependency(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar", ".aar")))))
         include(dependency("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"))
         include(dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_coroutines_version"))
         include(dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:$kotlin_coroutines_version"))
@@ -151,11 +147,4 @@ tasks.shadowJar {
     from(project.configurations.runtimeClasspath)
     minimize()
     destinationDirectory.set(File("D:\\Minecraft Servers\\TEST_SERVER\\plugins"))
-}
-tasks.test {
-    useJUnit()
-    testLogging {
-        events("passed", "skipped", "failed")
-        this.showStandardStreams = true
-    }
 }
