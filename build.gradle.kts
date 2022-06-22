@@ -5,7 +5,7 @@ val kotlin_json_version: String by project
 val kaml: String by project
 
 group = "com.astrainteractive"
-version = "4.0.1"
+version = "4.0.2"
 val name = "EmpireItems"
 description = "Custom items plugin for EmpireProjekt"
 
