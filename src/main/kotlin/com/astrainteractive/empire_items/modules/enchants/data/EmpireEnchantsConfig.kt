@@ -71,7 +71,6 @@ data class _EmpireEnchantsConfig(
         fun create(): _EmpireEnchantsConfig {
             val _config = EmpireSerializer.toClass<_EmpireEnchantsConfig>(Files.enchantsModule.getFile())
             instance = _config!!
-            println(instance)
             return instance
         }
     }

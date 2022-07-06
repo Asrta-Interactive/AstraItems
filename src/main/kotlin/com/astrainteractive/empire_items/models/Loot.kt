@@ -27,7 +27,7 @@ data class Loot(
             )
             return null
         }
-        val amount = if (minAmount == maxAmount) minAmount else Random.nextInt(minAmount, maxAmount)
+        val amount = if (minAmount == maxAmount) minAmount else Random.nextInt(minAmount, maxAmount+1)
         return id.toAstraItemOrItem(amount)
     }
 

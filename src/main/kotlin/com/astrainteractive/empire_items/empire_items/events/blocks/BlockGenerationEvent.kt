@@ -1,10 +1,9 @@
 package com.astrainteractive.empire_items.empire_items.events.blocks
 
 
-import com.astrainteractive.astralibs.*
+import com.astrainteractive.astralibs.Logger
 import com.astrainteractive.astralibs.async.AsyncHelper
 import com.astrainteractive.astralibs.events.DSLEvent
-import com.astrainteractive.empire_items.EmpirePlugin
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.items.BlockParser
 import com.astrainteractive.empire_items.empire_items.util.Files
@@ -24,6 +23,7 @@ class BlockGenerationEvent {
     private val TAG: String
         get() = "BlockGenerationEvent"
     private var currentChunkProcessing = 0L
+    private val scope = CoroutineScope(Dispatchers.IO.limitedParallelism(1))
 
     /**
      * Получаем список координат блоков, которые необходимо будет заменить
@@ -52,34 +52,26 @@ class BlockGenerationEvent {
     /**
      * Загружает в файл информацию о том, что чанк был сгенерирован
      */
-    private fun setChunkHasGenerated(chunk: Chunk, id: String) = synchronized(this) {
+    private suspend fun setChunkHasGenerated(chunk: Chunk, id: String): Boolean = withContext(scope.coroutineContext) {
         val tempChunks = Files.tempChunks
         if (!tempChunks.getConfig().contains("${chunk}.$id")) {
             tempChunks.getConfig().set("${chunk}.$id", true)
             tempChunks.saveConfig()
         }
+        true
     }
 
-    private inline fun isBlockGeneratedInChunk(chunk: Chunk, id: String): Boolean = synchronized(this) {
-        return Files.tempChunks.getConfig().contains("${chunk}.$id")
-    }
+    private suspend fun isBlockGeneratedInChunk(chunk: Chunk, id: String): Boolean =
+        withContext(scope.coroutineContext) {
+            Files.tempChunks.getConfig().contains("${chunk}.$id")
+        }
 
     /**
      * Получаем рандомное направление чтобы получить связный блок
      */
-    fun getRandomBlockFace(): BlockFace {
+    private fun getRandomBlockFace(): BlockFace {
         val faces = BlockFace.values()
         return faces[Random.nextInt(faces.size)]
-    }
-
-    /**
-     * Заменяем блок на сгенерированный
-     */
-    private fun replaceBlock(id: String, location: Location, material: String, faces: Map<String, Boolean>) = AsyncHelper.launch {
-        delay(1000)
-        if (CONFIG.generation.debug)
-            log("Creating ${id} at {${location.x}; ${location.y}; ${location.z}}")
-        BlockParser.setTypeFast(location.block, Material.getMaterial(material) ?: return@launch, faces)
     }
 
     private val blocksToGenerate: List<YmlItem>
@@ -88,7 +80,7 @@ class BlockGenerationEvent {
     /**
      * Получение списка локация из чанка и добавление их в очередь
      */
-    private fun generateChunk(chunk: Chunk) {
+    private suspend fun generateChunk(chunk: Chunk) {
         blocksToGenerate.forEach { itemInfo ->
             val block = itemInfo.block ?: return@forEach
             //Сгенерирован ли блок в чанке
@@ -138,8 +130,14 @@ class BlockGenerationEvent {
                         }
                     }
 
-                    replaceBlock(itemInfo.id, faceBlock.location.clone(), material.name, facing)
                     setChunkHasGenerated(chunk, itemInfo.id)
+                    AsyncHelper.launch {
+                        val l = faceBlock.location.clone()
+                        delay(2000)
+                        if (CONFIG.generation.debug)
+                            log("Creating ${itemInfo.id} at {${l.x}; ${l.y}; ${l.z}}")
+                        BlockParser.setTypeFast(l.block, Material.getMaterial(material.name) ?: return@launch, facing)
+                    }
 
                     generated++
                 }
@@ -157,7 +155,8 @@ class BlockGenerationEvent {
             return@event
 
         if (currentChunkProcessing >= CONFIG.generation.generateChunksAtOnce)
-            return@event
+            if (CONFIG.generation.generateChunksAtOnce > 0)
+                return@event
         currentChunkProcessing++
         AsyncHelper.launch {
             generateChunk(chunk)

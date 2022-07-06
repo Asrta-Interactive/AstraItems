@@ -109,6 +109,6 @@ data class YmlMob(
         val name: String
     ) {
         val realValue: Double
-            get() = value ?: Random.nextDouble(minValue!!, maxValue!!)
+            get() = value ?: Random.nextDouble(minValue!!, maxValue!!+1)
     }
 }

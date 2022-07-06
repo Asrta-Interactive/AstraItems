@@ -38,6 +38,7 @@ class Events : EventListener {
     fun onDrink(e: PlayerItemConsumeEvent) {
         when (e.item.type) {
             Material.POTION, Material.LINGERING_POTION, Material.SPLASH_POTION -> ThirstService.update(e.player, 5)
+            else->return
         }
     }
 

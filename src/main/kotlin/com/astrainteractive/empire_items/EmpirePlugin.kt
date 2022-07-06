@@ -24,7 +24,12 @@ import com.astrainteractive.empire_items.modules.enchants.data._EmpireEnchantsCo
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.runBlocking
+import net.minecraft.world.level.block.state.properties.BlockStateBoolean
 import org.bukkit.Bukkit
+import org.bukkit.Material
+import org.bukkit.block.data.MultipleFacing
+import org.bukkit.craftbukkit.v1_19_R1.block.data.CraftBlockData
+import org.bukkit.craftbukkit.v1_19_R1.block.data.CraftMultipleFacing
 import org.bukkit.event.HandlerList
 import org.bukkit.plugin.PluginDescriptionFile
 import org.bukkit.plugin.java.JavaPlugin

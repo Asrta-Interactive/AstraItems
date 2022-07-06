@@ -170,7 +170,6 @@ class GunEvent {
 
             if (!l.block.isPassable) {
                 gunInfo.advanced?.onHit?.ignite?.let {
-                    println("Block ${l.block.location} power: ${it}")
                     MolotovEvent.Igniter(l.block.getRelative(BlockFace.UP),it,null, particle = false)
                 }
                 break

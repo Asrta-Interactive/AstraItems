@@ -36,7 +36,9 @@ class ModelEngineEvent : EventListener {
     val entitySoundScheduler = Bukkit.getScheduler().runTaskTimerAsynchronously(EmpirePlugin.instance, Runnable {
         MobApi.activeMobs.forEach { mobInfo ->
             if (Random.nextDouble(100.0) < 5) {
-                Interact.PlaySound(mobInfo.ymlMob.idleSound[Random.nextInt(mobInfo.ymlMob.idleSound.size)]).play(mobInfo.entity.location)
+                if (mobInfo.ymlMob.idleSound.isNotEmpty())
+                    Interact.PlaySound(mobInfo.ymlMob.idleSound[Random.nextInt(mobInfo.ymlMob.idleSound.size)])
+                        .play(mobInfo.entity.location)
             }
             MobApi.executeAction(mobInfo, "onTick")
         }

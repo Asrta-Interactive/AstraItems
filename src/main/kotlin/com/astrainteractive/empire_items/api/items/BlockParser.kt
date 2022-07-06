@@ -3,13 +3,15 @@ package com.astrainteractive.empire_items.api.items
 import com.astrainteractive.astralibs.catching
 import net.minecraft.world.level.GeneratorAccess
 import net.minecraft.world.level.block.state.IBlockData
+import net.minecraft.world.level.block.state.properties.BlockStateBoolean
+import net.minecraft.world.level.block.state.properties.IBlockState
 import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
 import org.bukkit.block.data.MultipleFacing
 import org.bukkit.craftbukkit.v1_19_R1.block.CraftBlock
 import org.bukkit.craftbukkit.v1_19_R1.block.data.CraftBlockData
-import java.lang.NumberFormatException
+import org.bukkit.craftbukkit.v1_19_R1.block.impl.CraftHugeMushroom
 
 object BlockParser {
 
@@ -30,21 +32,67 @@ object BlockParser {
             BlockFace.WEST.name.lowercase() to false
         )
 
-    fun setTypeFast(block: Block, type: Material, facing: Map<String, Boolean> = mutableMapOf()){
-        val oldCraftBlock = (block as CraftBlock)
-        val position=oldCraftBlock.position
-        val newData = type.createBlockData()
-        catching {
-            for (f in facing)
-                ((newData as CraftBlockData) as MultipleFacing).setFace(BlockFace.valueOf(f.key.uppercase()), f.value)
-        }
-        val newCraftBlockData: IBlockData = (newData as CraftBlockData).state
-        val generatorAccess = (oldCraftBlock.craftWorld.handle as GeneratorAccess)
-        com.astrainteractive.astralibs.async.AsyncHelper.callSyncMethod{
-            generatorAccess.a(position, newCraftBlockData, 1042,512)
-            generatorAccess.minecraftWorld.a(position, oldCraftBlock.nms, newCraftBlockData, 3);
+    @Suppress("UNCHECKED_CAST")
+    fun <T, K> getDeclaredField(clazz: Class<T>, name: String): K? = catching(true) {
+        clazz.getDeclaredField(name).run {
+            isAccessible = true
+            val field = this.get(null)
+            isAccessible = false
+            field as? K?
         }
     }
+
+    @Suppress("UNCHECKED_CAST")
+    fun <T, K> getField(clazz: Class<T>, name: String): K? = catching(true) {
+        clazz.getField(name).run {
+            isAccessible = true
+            val field = this.get(null)
+            isAccessible = false
+            field as? K?
+        }
+    }
+
+    fun <T, K> setDeclaredField(clazz: Class<T>, instance: T, name: String, value: K?) = catching(true) {
+        clazz.getDeclaredField(name).run {
+            isAccessible = true
+            set(instance, value)
+            isAccessible = false
+        }
+
+    }
+
+    fun setTypeFast(block: Block, type: Material, facing: Map<String, Boolean> = emptyMap()) {
+        val newData = type.createBlockData().apply {
+            val craftBlockData = this as CraftBlockData
+            val craftHugeMushroom = craftBlockData as MultipleFacing as CraftHugeMushroom
+            val FACES: Array<BlockStateBoolean> = getDeclaredField(craftHugeMushroom::class.java, "FACES")!!
+            setDeclaredField(
+                craftHugeMushroom.javaClass.superclass,
+                craftHugeMushroom,
+                "parsedStates",
+                null as Map<IBlockState<*>, Comparable<*>>?
+            )
+            for (f in facing) {
+                val face = BlockFace.valueOf(f.key.uppercase())
+                val state = FACES[face.ordinal]
+                val newState = (craftHugeMushroom.state as IBlockData).a(state, f.value)
+                setDeclaredField(craftHugeMushroom.javaClass.superclass, craftHugeMushroom, "state", newState)
+            }
+
+        }
+
+        val oldCraftBlock = (block as CraftBlock)
+        val blockPosition = oldCraftBlock.position
+
+        val newCraftBlockData: IBlockData = (newData as CraftBlockData).state
+        val generatorAccess = (oldCraftBlock.craftWorld.handle as GeneratorAccess)
+        com.astrainteractive.astralibs.async.AsyncHelper.callSyncMethod {
+            generatorAccess.a(blockPosition, newCraftBlockData, 1042, 512)
+            generatorAccess.minecraftWorld.a(blockPosition, oldCraftBlock.nms, newCraftBlockData, 3);
+        }
+
+    }
+
 
     fun getMultipleFacing(block: Block): MultipleFacing? {
         if (block.blockData !is MultipleFacing)

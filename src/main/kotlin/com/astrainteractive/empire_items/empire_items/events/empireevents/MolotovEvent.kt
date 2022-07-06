@@ -79,7 +79,7 @@ class MolotovEvent{
         }
 
         private fun setFire(block: Block, radius: Int, player: Player?) {
-            if (!KProtectionLib.canIgnite(null, block?.location))
+            if (block?.location?.let { KProtectionLib.canIgnite(null, it) } != true)
                 return
             if (radius == 0)
                 return

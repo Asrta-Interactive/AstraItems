@@ -86,9 +86,8 @@ class VillagerEvent {
 
         val mRecipe =
             MerchantRecipe(trade.id.toAstraItemOrItem()?.clone()?.apply { amount = trade.amount }
-                ?: return, Random.nextInt(trade.minUses, trade.maxUses))
-        mRecipe.maxUses = Random.nextInt(trade.minUses, trade.maxUses)
-        println("MaxUses of ${trade.id} ${mRecipe.maxUses}")
+                ?: return, Random.nextInt(trade.minUses, trade.maxUses+1))
+        mRecipe.maxUses = Random.nextInt(trade.minUses, trade.maxUses+1)
         mRecipe.addIngredient(trade.leftItem.id.toAstraItemOrItem()?.clone()?.apply {
             amount = trade.leftItem.amount
         }

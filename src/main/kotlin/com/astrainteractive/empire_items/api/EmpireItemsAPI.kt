@@ -45,7 +45,8 @@ object EmpireItemsAPI : IManager {
         } ?: listOf()
         itemYamlFilesByID =
             itemYamlFiles.mapNotNull { it.yml_items?.values?.map { it } }.flatten().associateBy { it.id }
-        fontByID = itemYamlFiles.flatMap { it.fontImages?.values?.map { it } }.associateBy { it.id }
+
+        fontByID = itemYamlFiles.flatMap { it.fontImages.values?.toList()?: emptyList() }.associateBy { it.id }
         furnaceRecipeByID = itemYamlFiles.mapNotNull { it.furnace?.values?.map { it } }.flatten().associateBy { it.id }
         shapelessRecipeByID =
             itemYamlFiles.mapNotNull { it.shapeless?.values?.map { it } }.flatten().associateBy { it.id }
@@ -58,7 +59,6 @@ object EmpireItemsAPI : IManager {
             itemYamlFiles.mapNotNull { it.villagerTrades?.values?.map { it } }.flatten().associateBy { it.id }
         villagerTradeInfoByProfession = villagerTradeInfoByID.values.groupBy { it.profession }
         ymlMobById = itemYamlFiles.flatMap { it.ymlMob.values }.associateBy { it.id }
-        println(ymlMobById.keys)
     }
 
     override suspend fun onDisable() {

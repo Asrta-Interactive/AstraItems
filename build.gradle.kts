@@ -1,11 +1,24 @@
-
-val kotlin_version: String by project
-val kotlin_coroutines_version: String by project
-val kotlin_json_version: String by project
-val kaml: String by project
+object Kotlin {
+    const val version = "1.7.0"
+    const val coroutines = "1.6.3"
+    const val json = "1.3.3"
+    const val kaml = "0.46.0"
+}
+object Spigot {
+    const val version = "1.19-R0.1-SNAPSHOT"
+    const val placeholderAPI = "2.11.2"
+    const val protocolLib = "4.8.0"
+    const val worldGuard = "7.0.7"
+    const val vault = "1.7"
+    const val coreProtect = "21.2"
+    const val modelEngine = "R2.5.0"
+    const val essentials = "2.19.5-SNAPSHOT"
+    const val discordSRV = "1.25.0"
+    const val luckPerms = "5.4"
+}
 
 group = "com.astrainteractive"
-version = "4.0.2"
+version = "4.0.4"
 val name = "EmpireItems"
 description = "Custom items plugin for EmpireProjekt"
 
@@ -13,8 +26,8 @@ plugins {
     java
     `maven-publish`
     `java-library`
-    kotlin("jvm") version "1.6.21"
-    kotlin("plugin.serialization") version "1.6.21"
+    kotlin("jvm") version "1.7.0"
+    kotlin("plugin.serialization") version "1.7.0"
     id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 java {
@@ -22,7 +35,6 @@ java {
     withJavadocJar()
     java.sourceCompatibility = JavaVersion.VERSION_1_8
     java.targetCompatibility = JavaVersion.VERSION_17
-//    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 }
 repositories {
     mavenLocal()
@@ -37,6 +49,7 @@ repositories {
     maven("https://repo.maven.apache.org/maven2/")
     maven("https://maven.enginehub.org/repo/")
     maven("https://repo1.maven.org/maven2/")
+    maven("https://m2.dv8tion.net/releases")
     maven("https://maven.playpro.com")
     maven("https://jitpack.io")
     maven {
@@ -49,51 +62,39 @@ repositories {
 }
 
 dependencies {
-    val spigot = "1.19-R0.1-SNAPSHOT"
-    val placeholderapi = "2.11.1"
-    val protocolLib = "4.8.0"
-    val worldguard = "7.0.5"
-    val vault = "1.7"
-    val coreprotect = "21.2"
-    val modelengine = "R2.5.0"
-    val essentials = "2.19.4-SNAPSHOT"
-    val discordSRV = "1.24.0"
-    val luckPerms = "5.3"
     // Kotlin
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version")
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${Kotlin.version}")
     // Coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_coroutines_version")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:$kotlin_coroutines_version")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Kotlin.coroutines}")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:${Kotlin.coroutines}")
     // Serialization
-    implementation("org.jetbrains.kotlin:kotlin-serialization:$kotlin_version")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlin_json_version")
-    implementation("com.charleskorn.kaml:kaml:$kaml")
-
-
+    implementation("org.jetbrains.kotlin:kotlin-serialization:${Kotlin.version}")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:${Kotlin.json}")
+    implementation("com.charleskorn.kaml:kaml:${Kotlin.kaml}")
     // AstraLibs
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
     // Test
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.5.20")
     testImplementation("junit:junit:4.13.2")
-    testImplementation("com.github.seeseemelk:MockBukkit-v1.18:1.24.1")
-    testImplementation("io.kotest:kotest-runner-junit5:5.2.1")
-    testImplementation("io.kotest:kotest-assertions-core:5.2.1")
+    testImplementation("com.github.seeseemelk:MockBukkit-v1.18:2.26.0")
+    testImplementation("io.kotest:kotest-runner-junit5:5.3.1")
+    testImplementation("io.kotest:kotest-assertions-core:5.3.1")
     testImplementation(kotlin("test"))
     // Spigot dependencies
-    compileOnly("net.essentialsx:EssentialsX:2.19.0-SNAPSHOT")
-    compileOnly("io.papermc.paper:paper-api:$spigot")
-    compileOnly("org.spigotmc:spigot-api:$spigot")
-    compileOnly("org.spigotmc:spigot:$spigot")
-    compileOnly("com.comphenix.protocol:ProtocolLib:4.7.0")
-    compileOnly("me.clip:placeholderapi:2.10.9")
-    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.5")
-    compileOnly("com.discordsrv:discordsrv:1.22.0")
-    compileOnly("com.github.MilkBowl:VaultAPI:1.7")
-    compileOnly("net.coreprotect:coreprotect:20.0")
-    compileOnly("com.ticxo.modelengine:api:R2.5.0")
+    compileOnly("net.essentialsx:EssentialsX:${Spigot.essentials}")
+    compileOnly("io.papermc.paper:paper-api:${Spigot.version}")
+    compileOnly("org.spigotmc:spigot-api:${Spigot.version}")
+    compileOnly("org.spigotmc:spigot:${Spigot.version}")
+    compileOnly("com.comphenix.protocol:ProtocolLib:${Spigot.protocolLib}")
+    compileOnly("me.clip:placeholderapi:${Spigot.placeholderAPI}")
+    compileOnly("com.sk89q.worldguard:worldguard-bukkit:${Spigot.worldGuard}")
+    compileOnly("com.discordsrv:discordsrv:${Spigot.discordSRV}")
+    compileOnly("com.github.MilkBowl:VaultAPI:${Spigot.vault}")
+    compileOnly("net.coreprotect:coreprotect:${Spigot.coreProtect}")
+    compileOnly("com.ticxo.modelengine:api:${Spigot.modelEngine}")
 }
 
-tasks{
+tasks {
     withType<JavaCompile>() {
         options.encoding = "UTF-8"
     }
@@ -132,12 +133,12 @@ tasks{
 tasks.shadowJar {
     dependencies {
         include(dependency(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar", ".aar")))))
-        include(dependency("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"))
-        include(dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_coroutines_version"))
-        include(dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:$kotlin_coroutines_version"))
-        include(dependency("org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"))
-        include(dependency("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlin_json_version"))
-        include(dependency("com.charleskorn.kaml:kaml:$kaml"))
+        include(dependency("org.jetbrains.kotlin:kotlin-gradle-plugin:${Kotlin.version}"))
+        include(dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Kotlin.coroutines}"))
+        include(dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:${Kotlin.coroutines}"))
+        include(dependency("org.jetbrains.kotlin:kotlin-serialization:${Kotlin.version}"))
+        include(dependency("org.jetbrains.kotlinx:kotlinx-serialization-json:${Kotlin.json}"))
+        include(dependency("com.charleskorn.kaml:kaml:${Kotlin.kaml}"))
     }
     isReproducibleFileOrder = true
     mergeServiceFiles()
@@ -146,5 +147,5 @@ tasks.shadowJar {
     from(sourceSets.main.get().output)
     from(project.configurations.runtimeClasspath)
     minimize()
-    destinationDirectory.set(File("D:\\Minecraft Servers\\TEST_SERVER\\plugins"))
+    destinationDirectory.set(File("D:\\Minecraft Servers\\1_19\\paper\\plugins"))
 }
