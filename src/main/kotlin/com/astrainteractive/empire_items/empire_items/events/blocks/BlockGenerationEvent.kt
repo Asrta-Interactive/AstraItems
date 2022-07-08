@@ -6,18 +6,54 @@ import com.astrainteractive.astralibs.async.AsyncHelper
 import com.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.items.BlockParser
+import com.astrainteractive.empire_items.empire_items.events.blocks.BlockGenerationEventUtils.getBlocksLocations
 import com.astrainteractive.empire_items.empire_items.util.Files
-import com.astrainteractive.empire_items.empire_items.util.TriplePair
 import com.astrainteractive.empire_items.empire_items.util.calcChance
 import com.astrainteractive.empire_items.models.CONFIG
 import com.astrainteractive.empire_items.models.yml_item.YmlItem
 import kotlinx.coroutines.*
+import net.minecraft.core.BlockPosition
+import net.minecraft.world.level.block.state.IBlockData
 import org.bukkit.Chunk
 import org.bukkit.Location
 import org.bukkit.Material
+import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
+import org.bukkit.craftbukkit.v1_19_R1.CraftChunk
+import org.bukkit.craftbukkit.v1_19_R1.CraftWorld
+import org.bukkit.craftbukkit.v1_19_R1.block.CraftBlock
 import org.bukkit.event.world.ChunkLoadEvent
 import kotlin.random.Random
+
+
+object BlockGenerationEventUtils {
+
+    /**
+     * Получаем список координат блоков, которые необходимо будет заменить
+     */
+    fun Chunk.getBlocksLocations(
+        yMin: Int,
+        yMax: Int,
+        types: Map<String, Int>
+    ): List<Pair<String, Location>> {
+        val craftChunk = (this as CraftChunk)
+        return (0 until 15).shuffled().flatMap { x ->
+            (0 until 15).shuffled().flatMap { z ->
+                (yMin until yMax).shuffled().mapNotNull { y ->
+                    val block = CraftBlock(
+                        craftChunk.craftWorld.handle,
+                        BlockPosition(this.x shl 4 or x, y, this.z shl 4 or z)
+                    ) as Block
+                    val chance = types[block.type.name] ?: return@mapNotNull null
+                    if (calcChance(chance))
+                        Pair(block.type.name, block.location)
+                    else null
+                }
+            }
+        }
+    }
+
+}
 
 class BlockGenerationEvent {
     private val TAG: String
@@ -25,29 +61,6 @@ class BlockGenerationEvent {
     private var currentChunkProcessing = 0L
     private val scope = CoroutineScope(Dispatchers.IO.limitedParallelism(1))
 
-    /**
-     * Получаем список координат блоков, которые необходимо будет заменить
-     */
-    private fun Chunk.getBlocksLocations(
-        yMin: Int,
-        yMax: Int,
-        types: Map<String, Int>
-    ): List<Pair<String, Location>> {
-        val xZShuffled = (0 until 15).shuffled() zip (0 until 15).shuffled()
-        return (yMin until yMax).shuffled().flatMap { y ->
-            return@flatMap xZShuffled.map { (x, z) ->
-                return@map TriplePair(x, y, z)
-            }
-        }.mapNotNull { (x, y, z) ->
-            val loc = Location(world, this.x * 16.0 + x, y * 1.0, this.z * 16.0 + z)
-            val blockName = loc.block.type.name
-            val chance = types[blockName] ?: return@mapNotNull null
-            if (calcChance(chance))
-                return@mapNotNull Pair(blockName, loc)
-            return@mapNotNull null
-        }
-
-    }
 
     /**
      * Загружает в файл информацию о том, что чанк был сгенерирован
@@ -92,22 +105,16 @@ class BlockGenerationEvent {
             if (block.generate.world != null && block.generate.world != chunk.world.name)
                 return@forEach
             //Проверяем рандом
-            if (generate.generateInChunkChance < Random.nextDouble(100.0)) {
+            if (!calcChance(generate.generateInChunkChance)) {
                 setChunkHasGenerated(chunk, itemInfo.id)
                 return@forEach
             }
 
 
             //Получаем список локаций блоков по их типу
-            val blockLocByType =
-                chunk.getBlocksLocations(
-                    generate.minY ?: return@forEach,
-                    generate.maxY ?: return@forEach,
-                    generate.replaceBlocks ?: return@forEach
-                )
-
-            if (blockLocByType.isEmpty())
+            val blockLocByType = chunk.getBlocksLocations(generate.minY, generate.maxY, generate.replaceBlocks).ifEmpty {
                 return@forEach
+            }
 
             val material = BlockParser.getMaterialByData(block.data)
             val facing = BlockParser.getFacingByData(block.data)
@@ -131,7 +138,7 @@ class BlockGenerationEvent {
                     }
 
                     setChunkHasGenerated(chunk, itemInfo.id)
-                    AsyncHelper.launch {
+                    AsyncHelper.launch(Dispatchers.IO) {
                         val l = faceBlock.location.clone()
                         delay(2000)
                         if (CONFIG.generation.debug)
@@ -158,7 +165,7 @@ class BlockGenerationEvent {
             if (CONFIG.generation.generateChunksAtOnce > 0)
                 return@event
         currentChunkProcessing++
-        AsyncHelper.launch {
+        AsyncHelper.launch(Dispatchers.IO) {
             generateChunk(chunk)
             currentChunkProcessing--
         }
