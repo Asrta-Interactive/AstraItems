@@ -30,8 +30,8 @@ data class VillagerTradeInfo(
 
         fun toMerchantRecipe(): MerchantRecipe? {
             val result = id.toAstraItemOrItem(amount)?:return null
-            val left = leftItem.id.toAstraItemOrItem(amount)?:return null
-            val right = middleItem?.id?.toAstraItemOrItem(amount)
+            val left = leftItem.id.toAstraItemOrItem(leftItem.amount)?:return null
+            val right = middleItem?.id?.toAstraItemOrItem(middleItem.amount)
             return MerchantRecipe(result,0,Int.MAX_VALUE,false).apply {
                 addIngredient(left)
                 right?.let { addIngredient(it) }
