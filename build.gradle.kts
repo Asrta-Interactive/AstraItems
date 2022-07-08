@@ -18,7 +18,7 @@ object Spigot {
 }
 
 group = "com.astrainteractive"
-version = "4.0.6"
+version = "4.0.7"
 val name = "EmpireItems"
 description = "Custom items plugin for EmpireProjekt"
 
@@ -147,6 +147,6 @@ tasks.shadowJar {
     from(sourceSets.main.get().output)
     from(project.configurations.runtimeClasspath)
     minimize()
-//    destinationDirectory.set(File("D:\\Minecraft Servers\\1_19\\paper\\plugins"))
-    destinationDirectory.set(File("/media/makeevrserg/Новый том/Servers/Server/plugins"))
+    destinationDirectory.set(File("D:\\Minecraft Servers\\1_19\\paper\\plugins"))
+//    destinationDirectory.set(File("/media/makeevrserg/Новый том/Servers/Server/plugins"))
 }
