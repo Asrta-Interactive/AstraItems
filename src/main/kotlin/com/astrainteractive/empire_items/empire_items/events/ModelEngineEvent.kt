@@ -62,7 +62,8 @@ class ModelEngineEvent : EventListener {
     val onEntityTarget = DSLEvent.event(EntityTargetEvent::class.java) { e ->
         val name = e.target?.name?.uppercase() ?: return@event
         val entityInfo = MobApi.getCustomEntityInfo(e.entity) ?: return@event
-        if (entityInfo.ymlMob.ignoreMobs.contains(name))
+
+        if (entityInfo.ymlMob.ignoreMobs.filter { it.equals(name, ignoreCase = true) }.isNotEmpty())
             e.isCancelled = true
     }
 

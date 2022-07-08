@@ -66,7 +66,7 @@ object EmpireItemsAPI : IManager {
 
 
     fun toAstraItemOrItemByID(id: String?, amount: Int = 1): ItemStack? = id?.let { id ->
-        return@let Material.getMaterial(id)?.let { ItemStack(it, amount) } ?: itemYamlFilesByID[id]?.toItemStack()
+        return@let Material.getMaterial(id)?.let { ItemStack(it, amount) } ?: itemYamlFilesByID[id]?.toItemStack(amount)
     }
 
     fun String?.toAstraItemOrItem(amount: Int = 1): ItemStack? = toAstraItemOrItemByID(this, amount)
