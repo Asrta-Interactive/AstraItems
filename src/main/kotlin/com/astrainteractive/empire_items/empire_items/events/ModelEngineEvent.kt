@@ -21,6 +21,7 @@ class ModelEngineEvent : EventListener {
 
 
     val bossBarScheduler = Bukkit.getScheduler().runTaskTimerAsynchronously(EmpirePlugin.instance, Runnable {
+
         BossBarManager.bossBars.toMap().forEach bossBarsEntities@{
             val entity = it.key
             val bossBar = it.value

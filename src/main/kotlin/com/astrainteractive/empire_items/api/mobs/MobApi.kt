@@ -40,7 +40,7 @@ object BossBarManager {
 
     val bossBars = mutableMapOf<Entity, BossBar>()
 
-    fun bossBarKey(id: Int) = NamespacedKey(EmpirePlugin.instance, id.toString())
+    fun bossBarKey(id: Int) = NamespacedKey(EmpirePlugin.instance, "esmp$id")
     fun createEntityBossBar(e: Entity, id: String, bossBar: YmlMob.YmlMobBossBar) {
         val key = bossBarKey(e.entityId)
         val barColor = valueOfOrNull<BarColor>(bossBar.color) ?: BarColor.RED
@@ -387,6 +387,10 @@ object MobApi : IManager {
     }
 
     override suspend fun onEnable() {
+        Bukkit.getBossBars().forEach {
+            if(it.key.key.contains("esmp"))
+                it.removeAll()
+        }
         if (Bukkit.getServer().pluginManager.getPlugin("ModelEngine") == null) return
         AsyncHelper.callSyncMethod {
             val entities = Bukkit.getWorlds().flatMap { world ->
