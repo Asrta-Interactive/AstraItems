@@ -7,6 +7,7 @@ import com.astrainteractive.empire_items.api.mobs.BossBarManager
 import com.astrainteractive.empire_items.api.mobs.MobApi
 import com.astrainteractive.empire_items.empire_items.util.playSound
 import com.astrainteractive.empire_items.models.yml_item.Interact
+import com.astrainteractive.empire_items.modules.boss_fight.PlayersInviteViewModel
 import io.papermc.paper.event.entity.EntityMoveEvent
 import org.bukkit.Bukkit
 import org.bukkit.attribute.Attribute
@@ -112,6 +113,13 @@ class ModelEngineEvent : EventListener {
         val entityInfo = MobApi.getCustomEntityInfo(e.entity) ?: return@event
         val event = entityInfo.ymlMob.events["onDeath"] ?: return@event
         MobApi.executeEvent(e.entity, entityInfo.activeModel, event, "onDeath")
+    }
+    private val onBossKillEvent = DSLEvent.event(EntityDeathEvent::class.java) {
+        if (it.entity.entityId == PlayersInviteViewModel.customEntityInfo?.entity?.entityId) {
+            println("Entity died: ${it.entity.entityId}; ${PlayersInviteViewModel.customEntityInfo?.entity?.entityId}")
+            PlayersInviteViewModel.customEntityInfo = null
+            PlayersInviteViewModel.executor = null
+        }
     }
 
 

@@ -4,10 +4,12 @@ import com.astrainteractive.astralibs.AstraLibs
 import com.astrainteractive.astralibs.HEX
 import com.astrainteractive.astralibs.async.AsyncHelper
 import com.astrainteractive.astralibs.catching
+import com.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.astralibs.menu.AstraPlayerMenuUtility
 import com.astrainteractive.astralibs.registerCommand
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.items.BlockParser
+import com.astrainteractive.empire_items.api.mobs.CustomEntityInfo
 import com.astrainteractive.empire_items.api.mobs.MobApi
 import com.astrainteractive.empire_items.empire_items.commands.CommandManager
 import com.astrainteractive.empire_items.models.CONFIG
@@ -26,6 +28,7 @@ import org.bukkit.Material
 import org.bukkit.Particle
 import org.bukkit.Sound
 import org.bukkit.entity.Player
+import org.bukkit.event.entity.EntityDeathEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.SkullMeta
 import java.io.InputStreamReader
@@ -44,7 +47,7 @@ data class PlayerInvite(
 fun CommandManager.inviteAcceptCommand() = AstraLibs.registerCommand("emaccept") { sender, args ->
     if (sender !is Player) return@registerCommand
     val player = args.getOrNull(0)?.let { Bukkit.getPlayer(it) } ?: kotlin.run {
-        sender.sendMessage("Такого игрока нет")
+        sender.sendMessage("#fc1c03Такого игрока нет".HEX())
         return@registerCommand
     }
     PlayersInviteViewModel.onInviteAccepted(player, sender)
@@ -63,6 +66,17 @@ class PlayersInviteViewModel(val playerMenuUtility: AstraPlayerMenuUtility) {
             }
             instance.onInviteAccepted(player = sender)
         }
+
+        private var initializing: Boolean = false
+        var customEntityInfo: CustomEntityInfo? = null
+        var executor: String? = null
+        fun canTeleport(player: Player): Boolean {
+            val isOnline = Bukkit.getOnlinePlayers().firstOrNull { it.name.equals(executor, ignoreCase = true) } != null
+            if (initializing) return false
+            if (!isOnline) return true
+            return executor == player.name || customEntityInfo == null || customEntityInfo?.entity?.isDead == true
+        }
+
     }
 
     private val onlinePlayers = Bukkit.getOnlinePlayers()
@@ -110,9 +124,15 @@ class PlayersInviteViewModel(val playerMenuUtility: AstraPlayerMenuUtility) {
             add(playerMenuUtility.player)
         }
         if (!ready) return
+        if (!canTeleport(playerMenuUtility.player)) {
+            playerMenuUtility.player.sendMessage("#fc1c03Босс уже на арене. Телепортироваться может только ${PlayersInviteViewModel.executor}")
+            return
+        }
+        initializing = true
+        executor = playerMenuUtility.player.name
         players.forEach {
             it.sendMessage("&2 Через &6${CONFIG.arenaCommand.playersTeleportDelay / 1000} &2секунд вас телепортирует к боссу".HEX())
-            Interact.PlaySound("minecraft:block.bell.use",1f,10f).play(it.location)
+            Interact.PlaySound("minecraft:block.bell.use", 1f, 10f).play(it.location)
         }
         AsyncHelper.launch {
             delay(CONFIG.arenaCommand.playersTeleportDelay)
@@ -126,8 +146,13 @@ class PlayersInviteViewModel(val playerMenuUtility: AstraPlayerMenuUtility) {
             delay(CONFIG.arenaCommand.bossSpawnDelay)
             val mob = EmpireItemsAPI.ymlMobById[CONFIG.arenaCommand.mobID]!!
             AsyncHelper.callSyncMethod {
-                MobApi.spawnMob(mob, CONFIG.arenaCommand.bossLocation.toBukkitLocation())
+                if (customEntityInfo != null) return@callSyncMethod
+                customEntityInfo = MobApi.spawnMob(mob, CONFIG.arenaCommand.bossLocation.toBukkitLocation())
             }
+        }
+        AsyncHelper.launch {
+            delay(CONFIG.arenaCommand.bossSpawnDelay + CONFIG.arenaCommand.playersTeleportDelay)
+            initializing = false
         }
     }
 
