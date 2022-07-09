@@ -31,6 +31,8 @@ object EmpireItemsAPI : IManager {
         private set
     var dropByDropFrom: Map<String, List<Loot>> = mapOf()
         private set
+    var dropsByID: Map<String, List<Loot>> = mapOf()
+        private set
     var villagerTradeInfoByID: Map<String, VillagerTradeInfo> = mapOf()
         private set
     var villagerTradeInfoByProfession: Map<String, List<VillagerTradeInfo>> = mapOf()
@@ -55,6 +57,7 @@ object EmpireItemsAPI : IManager {
         dropByID =
             itemYamlFiles.mapNotNull { it.loot?.values?.map { it } }.flatten().associateBy { it.id }
         dropByDropFrom = dropByID.values.groupBy { it.dropFrom }
+        dropsByID = dropByID.values.groupBy { it.id }
         villagerTradeInfoByID =
             itemYamlFiles.mapNotNull { it.villagerTrades?.values?.map { it } }.flatten().associateBy { it.id }
         villagerTradeInfoByProfession = villagerTradeInfoByID.values.groupBy { it.profession }

@@ -198,7 +198,7 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility) :
     }
 
     fun setDropInfo() {
-        val drops = EmpireItemsAPI.dropByDropFrom[itemID] ?: listOf()
+        val drops = EmpireItemsAPI.dropsByID[itemID] ?: listOf()
         if (drops.isEmpty())
             return
         val item = GUI_CONFIG.settings.buttons.moreButton.toAstraItemOrItem()!!.apply {

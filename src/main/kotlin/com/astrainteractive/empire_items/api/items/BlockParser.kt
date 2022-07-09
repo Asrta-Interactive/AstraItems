@@ -52,7 +52,7 @@ object BlockParser {
         }
     }
 
-    fun <T, K> setDeclaredField(clazz: Class<T>, instance: T, name: String, value: K?) = catching(true) {
+    fun <T, K> setDeclaredField(clazz: Class<T>, instance: Any, name: String, value: K?) = catching(true) {
         clazz.getDeclaredField(name).run {
             isAccessible = true
             set(instance, value)

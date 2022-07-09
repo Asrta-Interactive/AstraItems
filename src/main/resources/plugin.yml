@@ -11,6 +11,8 @@ softdepend: [PlaceholderAPI,ProtocolLib,WorldGuard,ModelEngine]
 depend: []
 commands:
   villager_inventory:
+  player_invite:
+  emaccept:
   ereload:
   edice:
   emreplace:
