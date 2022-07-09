@@ -1,6 +1,7 @@
 package com.astrainteractive.empire_items.empire_items.events.blocks
 
 
+import com.astrainteractive.astralibs.AstraEstimator
 import com.astrainteractive.astralibs.Logger
 import com.astrainteractive.astralibs.async.AsyncHelper
 import com.astrainteractive.astralibs.events.DSLEvent
@@ -13,16 +14,15 @@ import com.astrainteractive.empire_items.models.CONFIG
 import com.astrainteractive.empire_items.models.yml_item.YmlItem
 import kotlinx.coroutines.*
 import net.minecraft.core.BlockPosition
-import net.minecraft.world.level.block.state.IBlockData
 import org.bukkit.Chunk
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
 import org.bukkit.craftbukkit.v1_19_R1.CraftChunk
-import org.bukkit.craftbukkit.v1_19_R1.CraftWorld
 import org.bukkit.craftbukkit.v1_19_R1.block.CraftBlock
 import org.bukkit.event.world.ChunkLoadEvent
+import kotlin.math.pow
 import kotlin.random.Random
 
 
@@ -34,7 +34,7 @@ object BlockGenerationEventUtils {
     fun Chunk.getBlocksLocations(
         yMin: Int,
         yMax: Int,
-        types: Map<String, Int>
+        chanceByType: Map<String, Int>
     ): List<Pair<String, Location>> {
         val craftChunk = (this as CraftChunk)
         return (0 until 15).shuffled().flatMap { x ->
@@ -44,7 +44,7 @@ object BlockGenerationEventUtils {
                         craftChunk.craftWorld.handle,
                         BlockPosition(this.x shl 4 or x, y, this.z shl 4 or z)
                     ) as Block
-                    val chance = types[block.type.name] ?: return@mapNotNull null
+                    val chance = chanceByType[block.type.name] ?: return@mapNotNull null
                     if (calcChance(chance))
                         Pair(block.type.name, block.location)
                     else null
@@ -59,8 +59,11 @@ class BlockGenerationEvent {
     private val TAG: String
         get() = "BlockGenerationEvent"
     private var currentChunkProcessing = 0L
+
     private val scope = CoroutineScope(Dispatchers.IO.limitedParallelism(1))
 
+    private val blockGenerationPool = newFixedThreadPoolContext(4, "blockGenerationPool")
+    private val blockParsingPool = newFixedThreadPoolContext(4, "blockParsingPool")
 
     /**
      * Загружает в файл информацию о том, что чанк был сгенерирован
@@ -90,66 +93,118 @@ class BlockGenerationEvent {
     private val blocksToGenerate: List<YmlItem>
         get() = EmpireItemsAPI.itemYamlFilesByID.values.filter { it.block?.generate != null }
 
+    class MeanTimeCalculator(private val tag: String, private val onEvery: Int = 50) {
+        private var amount: Int = 0
+        private var time: Long = 0
+        fun onAnother(time: Long) {
+            this.time += time
+            amount++
+            if (amount % onEvery == 0) {
+                Logger.log("${time / amount.toDouble() / 1000.0}", tag)
+            }
+        }
+
+        fun <T> calculate(block: () -> T): T {
+            var value: T? = null
+            val time = AstraEstimator.invoke {
+                value = block()
+            }
+            onAnother(time)
+            return value!!
+        }
+    }
+
+    val calculator = MeanTimeCalculator("blockLoc")
+
+    class BlockInfo(
+        val block: Block,
+        val material: Material,
+        val data: Int,
+        val facing: Map<String, Boolean>
+    )
+
     /**
      * Получение списка локация из чанка и добавление их в очередь
      */
     private suspend fun generateChunk(chunk: Chunk) {
-        blocksToGenerate.forEach { itemInfo ->
-            val block = itemInfo.block ?: return@forEach
+
+        val map = blocksToGenerate.mapNotNull { itemInfo ->
+            val block = itemInfo.block ?: return@mapNotNull null
             //Сгенерирован ли блок в чанке
             if (isBlockGeneratedInChunk(chunk, itemInfo.id))
-                return@forEach
+                return@mapNotNull null
             //Надо ли генерировать блок
-            val generate = block.generate ?: return@forEach
+            val generate = block.generate ?: return@mapNotNull null
             //Если указан мир и он не равен миру чанка - пропускаем
             if (block.generate.world != null && block.generate.world != chunk.world.name)
-                return@forEach
+                return@mapNotNull null
             //Проверяем рандом
-            if (!calcChance(generate.generateInChunkChance)) {
-                setChunkHasGenerated(chunk, itemInfo.id)
-                return@forEach
-            }
+            setChunkHasGenerated(chunk, itemInfo.id)
+            if (!calcChance(generate.generateInChunkChance))
+                return@mapNotNull null
 
 
             //Получаем список локаций блоков по их типу
-            val blockLocByType = chunk.getBlocksLocations(generate.minY, generate.maxY, generate.replaceBlocks).ifEmpty {
-                return@forEach
-            }
+            val blockLocByType = chunk.getBlocksLocations(generate.minY, generate.maxY, generate.replaceBlocks)
+                .ifEmpty { return@mapNotNull null }
+
 
             val material = BlockParser.getMaterialByData(block.data)
             val facing = BlockParser.getFacingByData(block.data)
+
             //Количество сгенерированных блоков
             var generated = 0
-            blockLocByType.forEach block@{ (_, location) ->
+
+            blockLocByType.mapNotNull block@{ (_, location) ->
                 if (generated > generate.maxPerChunk)
-                    return@block
+                    return@block null
+
                 var faceBlock = location.block
                 val originalBlockType = faceBlock.type
+
                 val depositAmount = Random.nextInt(generate.minPerDeposit, generate.maxPerDeposit + 1)
-                for (unnamed in 0 until depositAmount) {
-                    if (generated > generate.maxPerChunk)
-                        return@block
-                    for (i in 0 until 10) {
-                        val newFaceBlock = faceBlock.getRelative(getRandomBlockFace())
-                        if (newFaceBlock.type == originalBlockType) {
-                            faceBlock = newFaceBlock
-                            break
+                val range = IntRange(0, depositAmount.toDouble().pow(1 / 3.0).toInt())
+                range.flatMap { x ->
+                    range.flatMap { y ->
+                        range.mapNotNull { z ->
+                            if (generated > generate.maxPerChunk)
+                                return@block null
+                            val newFaceBlock = faceBlock.getRelative(x, y, z)
+                            if (newFaceBlock.type != originalBlockType) return@mapNotNull null
+                            generated++
+                            val blockToReplace = newFaceBlock.location.block
+                            BlockInfo(
+                                blockToReplace,
+                                Material.getMaterial(material.name)!!,
+                                block.data,
+                                facing
+                            )
                         }
                     }
-
-                    setChunkHasGenerated(chunk, itemInfo.id)
-                    AsyncHelper.launch(Dispatchers.IO) {
-                        val l = faceBlock.location.clone()
-                        delay(2000)
-                        if (CONFIG.generation.debug)
-                            log("Creating ${itemInfo.id} at {${l.x}; ${l.y}; ${l.z}}")
-                        BlockParser.setTypeFast(l.block, Material.getMaterial(material.name) ?: return@launch, facing)
-                    }
-
-                    generated++
                 }
-
             }
+        }.flatten().flatten().groupBy { it.data }
+        if (CONFIG.generation.debug) {
+            val map = map.mapNotNull {
+                it.value.firstOrNull()?.let {
+                    val it = it.block
+                    "(${it.location.x.toInt()}; ${it.location.y.toInt()}; ${it.location.z.toInt()})"
+                }
+            }
+            if (map.isEmpty())
+                Logger.log("Generated list is empty")
+            else
+                Logger.log("${map}")
+        }
+        map.forEach {
+            AsyncHelper.launch(blockGenerationPool) {
+                val blocks = it.value.map { it.block }
+
+                it.value.firstOrNull()?.let {
+                    BlockParser.setTypeFast(blocks, it.material, it.facing, it.data)
+                }
+            }
+
         }
     }
 
@@ -165,7 +220,7 @@ class BlockGenerationEvent {
             if (CONFIG.generation.generateChunksAtOnce > 0)
                 return@event
         currentChunkProcessing++
-        AsyncHelper.launch(Dispatchers.IO) {
+        AsyncHelper.launch(blockParsingPool) {
             generateChunk(chunk)
             currentChunkProcessing--
         }

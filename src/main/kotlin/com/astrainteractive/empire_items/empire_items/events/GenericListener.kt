@@ -59,7 +59,7 @@ class GenericListener : EventManager {
         MushroomBlockPlaceEvent()
         MushroomBlockBreakEvent()
         MushroomCancelEvent()
-//        TestMushroomEvent()
+        TestMushroomEvent()
         DecorationEvent()
 
 

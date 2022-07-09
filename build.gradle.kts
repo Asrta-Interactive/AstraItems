@@ -18,7 +18,7 @@ object Spigot {
 }
 
 group = "com.astrainteractive"
-version = "4.0.8"
+version = "4.0.9"
 val name = "EmpireItems"
 description = "Custom items plugin for EmpireProjekt"
 

@@ -1,14 +1,21 @@
 package com.astrainteractive.empire_items.api.items
 
+import com.astrainteractive.astralibs.async.AsyncHelper
 import com.astrainteractive.astralibs.catching
+import net.minecraft.core.Holder
 import net.minecraft.world.level.GeneratorAccess
+import net.minecraft.world.level.biome.BiomeBase
 import net.minecraft.world.level.block.state.IBlockData
 import net.minecraft.world.level.block.state.properties.BlockStateBoolean
 import net.minecraft.world.level.block.state.properties.IBlockState
+import net.minecraft.world.level.chunk.ChunkSection
+import net.minecraft.world.level.chunk.DataPaletteBlock
 import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
+import org.bukkit.block.data.BlockData
 import org.bukkit.block.data.MultipleFacing
+import org.bukkit.craftbukkit.v1_19_R1.CraftChunk
 import org.bukkit.craftbukkit.v1_19_R1.block.CraftBlock
 import org.bukkit.craftbukkit.v1_19_R1.block.data.CraftBlockData
 import org.bukkit.craftbukkit.v1_19_R1.block.impl.CraftHugeMushroom
@@ -61,8 +68,18 @@ object BlockParser {
 
     }
 
-    fun setTypeFast(block: Block, type: Material, facing: Map<String, Boolean> = emptyMap()) {
-        val newData = type.createBlockData().apply {
+    private val cachedBlockMap = mutableMapOf<Int, BlockData>()
+
+    fun setTypeFast(block: Block, type: Material, facing: Map<String, Boolean> = emptyMap(), blockData: Int? = null) =
+        setTypeFast(listOf(block), type, facing, blockData)
+
+    fun setTypeFast(
+        blocks: List<Block>,
+        type: Material,
+        facing: Map<String, Boolean> = emptyMap(),
+        blockData: Int? = null
+    ) {
+        val newData = cachedBlockMap[blockData] ?: type.createBlockData().apply {
             val craftBlockData = this as CraftBlockData
             val craftHugeMushroom = craftBlockData as MultipleFacing as CraftHugeMushroom
             val FACES: Array<BlockStateBoolean> = getDeclaredField(craftHugeMushroom::class.java, "FACES")!!
@@ -78,19 +95,22 @@ object BlockParser {
                 val newState = (craftHugeMushroom.state as IBlockData).a(state, f.value)
                 setDeclaredField(craftHugeMushroom.javaClass.superclass, craftHugeMushroom, "state", newState)
             }
-
+        }
+        blockData?.let {
+            if (!cachedBlockMap.contains(blockData))
+                cachedBlockMap[blockData] = newData
         }
 
-        val oldCraftBlock = (block as CraftBlock)
-        val blockPosition = oldCraftBlock.position
-
-        val newCraftBlockData: IBlockData = (newData as CraftBlockData).state
-        val generatorAccess = (oldCraftBlock.craftWorld.handle as GeneratorAccess)
-        com.astrainteractive.astralibs.async.AsyncHelper.callSyncMethod {
-            generatorAccess.a(blockPosition, newCraftBlockData, 1042, 512)
-            generatorAccess.minecraftWorld.a(blockPosition, oldCraftBlock.nms, newCraftBlockData, 3);
+        AsyncHelper.callSyncMethod {
+            blocks.forEach { block ->
+                val world = ((block as CraftBlock).craftWorld.handle as GeneratorAccess)
+                val position = (block as CraftBlock).position
+                val old = world.a_(position);
+                val blockData: IBlockData = (newData as CraftBlockData).state
+                world.a(position, blockData, 1042);
+                world.minecraftWorld.a(position, old, blockData, 3)
+            }
         }
-
     }
 
 

@@ -22,7 +22,8 @@ import org.bukkit.inventory.meta.ItemMeta
 class LavaWalkerEvent{
 
     fun Block.setTypeFast(type: Material) =
-        BlockParser.setTypeFast(this, type)
+        AsyncHelper.launch { BlockParser.setTypeFast(this@setTypeFast, type) }
+
 
     private fun Block.lavaOrNull() = if (this.type == Material.LAVA) this else null
 
