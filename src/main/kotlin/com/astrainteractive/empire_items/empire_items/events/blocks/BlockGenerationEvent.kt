@@ -22,6 +22,7 @@ import org.bukkit.block.BlockFace
 import org.bukkit.craftbukkit.v1_19_R1.CraftChunk
 import org.bukkit.craftbukkit.v1_19_R1.block.CraftBlock
 import org.bukkit.event.world.ChunkLoadEvent
+import kotlin.math.ceil
 import kotlin.math.pow
 import kotlin.random.Random
 
@@ -37,9 +38,9 @@ object BlockGenerationEventUtils {
         chanceByType: Map<String, Int>
     ): List<Pair<String, Location>> {
         val craftChunk = (this as CraftChunk)
-        return (0 until 15).shuffled().flatMap { x ->
-            (0 until 15).shuffled().flatMap { z ->
-                (yMin until yMax).shuffled().mapNotNull { y ->
+        return (0 until 15).flatMap { x ->
+            (0 until 15).flatMap { z ->
+                (yMin until yMax).mapNotNull { y ->
                     val block = CraftBlock(
                         craftChunk.craftWorld.handle,
                         BlockPosition(this.x shl 4 or x, y, this.z shl 4 or z)
@@ -50,7 +51,7 @@ object BlockGenerationEventUtils {
                     else null
                 }
             }
-        }
+        }.shuffled()
     }
 
 }
@@ -153,10 +154,11 @@ class BlockGenerationEvent {
             val facing = BlockParser.getFacingByData(block.data)
 
             //Количество сгенерированных блоков
-            var generated = 0
+            var generatedPerChunk = 0
 
             blockLocByType.mapNotNull block@{ (_, location) ->
-                if (generated > generate.maxPerChunk)
+                var generatedPerDeposit = 0
+                if (generatedPerChunk > generate.maxPerChunk)
                     return@block null
 
                 var faceBlock = location.block
@@ -167,11 +169,14 @@ class BlockGenerationEvent {
                 range.flatMap { x ->
                     range.flatMap { y ->
                         range.mapNotNull { z ->
-                            if (generated > generate.maxPerChunk)
-                                return@block null
+                            if (generatedPerChunk > generate.maxPerChunk)
+                                return@mapNotNull null
+                            if (generatedPerDeposit>generate.maxPerDeposit)
+                                return@mapNotNull  null
                             val newFaceBlock = faceBlock.getRelative(x, y, z)
                             if (newFaceBlock.type != originalBlockType) return@mapNotNull null
-                            generated++
+                            generatedPerChunk++
+                            generatedPerDeposit++
                             val blockToReplace = newFaceBlock.location.block
                             BlockInfo(
                                 blockToReplace,
