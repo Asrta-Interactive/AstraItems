@@ -39,10 +39,13 @@ data class _Config(
         val playersLocation: Location,
         @SerialName("boss_location")
         val bossLocation: Location,
+        @SerialName("spawn_location")
+        val spawnLocation: Location,
         @SerialName("boss_spawn_delay")
         val bossSpawnDelay: Long = 0,
         @SerialName("players_teleport_delay")
-        val playersTeleportDelay: Long = 0
+        val playersTeleportDelay: Long = 0,
+        val itemID:String,
     ) {
         @Suppress("PROVIDED_RUNTIME_TOO_LOW")
         @Serializable

@@ -8,6 +8,7 @@ import com.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.astralibs.menu.AstraPlayerMenuUtility
 import com.astrainteractive.astralibs.registerCommand
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
+import com.astrainteractive.empire_items.api.EmpireItemsAPI.empireID
 import com.astrainteractive.empire_items.api.items.BlockParser
 import com.astrainteractive.empire_items.api.mobs.CustomEntityInfo
 import com.astrainteractive.empire_items.api.mobs.MobApi
@@ -70,6 +71,7 @@ class PlayersInviteViewModel(val playerMenuUtility: AstraPlayerMenuUtility) {
         private var initializing: Boolean = false
         var customEntityInfo: CustomEntityInfo? = null
         var executor: String? = null
+        var currentTeam = mutableListOf<Player>()
         fun canTeleport(player: Player): Boolean {
             val isOnline = Bukkit.getOnlinePlayers().firstOrNull { it.name.equals(executor, ignoreCase = true) } != null
             if (initializing) return false
@@ -128,6 +130,14 @@ class PlayersInviteViewModel(val playerMenuUtility: AstraPlayerMenuUtility) {
             playerMenuUtility.player.sendMessage("#fc1c03Босс уже на арене. Телепортироваться может только ${PlayersInviteViewModel.executor}")
             return
         }
+        val secretItem =
+            playerMenuUtility.player.inventory.contents?.firstOrNull { it?.empireID == CONFIG.arenaCommand.itemID }
+        if (secretItem == null) {
+            playerMenuUtility.player.sendMessage("#fc1c03Нет предмета в руке ${CONFIG.arenaCommand.itemID}".HEX())
+            return
+        }
+        secretItem.amount -= 1
+
         initializing = true
         executor = playerMenuUtility.player.name
         players.forEach {

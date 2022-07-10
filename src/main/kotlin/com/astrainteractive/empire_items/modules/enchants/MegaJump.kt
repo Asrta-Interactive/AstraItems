@@ -36,7 +36,6 @@ class MegaJump : EmpireEnchantEvent() {
         val sum = e.player.inventory.armorContents?.mapNotNull {
             it?.let { getEnchantLevel(it) }?.times(empireEnchant.value)
         }?.sum()?:return
-        println("Sum = ${sum}")
         AsyncHelper.launch {
             val total = empireEnchant.value
             if (e.player.isSneaking)

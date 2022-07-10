@@ -164,7 +164,7 @@ class BlockGenerationEvent {
                 var faceBlock = location.block
                 val originalBlockType = faceBlock.type
 
-                val depositAmount = Random.nextInt(generate.minPerDeposit, generate.maxPerDeposit + 1)
+                val depositAmount = Random.nextInt(generate.minPerDeposit, generate.maxPerDeposit)
                 val range = IntRange(0, depositAmount.toDouble().pow(1 / 3.0).toInt())
                 range.flatMap { x ->
                     range.flatMap { y ->

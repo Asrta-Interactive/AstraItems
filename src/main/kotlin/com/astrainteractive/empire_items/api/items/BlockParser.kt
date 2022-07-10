@@ -68,8 +68,6 @@ object BlockParser {
 
     }
 
-    private val cachedBlockMap = mutableMapOf<Int, BlockData>()
-
     fun setTypeFast(block: Block, type: Material, facing: Map<String, Boolean> = emptyMap(), blockData: Int? = null) =
         setTypeFast(listOf(block), type, facing, blockData)
 
@@ -79,7 +77,7 @@ object BlockParser {
         facing: Map<String, Boolean> = emptyMap(),
         blockData: Int? = null
     ) {
-        val newData = cachedBlockMap[blockData] ?: type.createBlockData().apply {
+        val newData = type.createBlockData().apply {
             val craftBlockData = this as CraftBlockData
             val craftHugeMushroom = craftBlockData as MultipleFacing as CraftHugeMushroom
             val FACES: Array<BlockStateBoolean> = getDeclaredField(craftHugeMushroom::class.java, "FACES")!!
@@ -95,10 +93,6 @@ object BlockParser {
                 val newState = (craftHugeMushroom.state as IBlockData).a(state, f.value)
                 setDeclaredField(craftHugeMushroom.javaClass.superclass, craftHugeMushroom, "state", newState)
             }
-        }
-        blockData?.let {
-            if (!cachedBlockMap.contains(blockData))
-                cachedBlockMap[blockData] = newData
         }
 
         AsyncHelper.callSyncMethod {

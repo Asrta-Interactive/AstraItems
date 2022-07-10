@@ -12,10 +12,12 @@ import io.papermc.paper.event.entity.EntityMoveEvent
 import org.bukkit.Bukkit
 import org.bukkit.attribute.Attribute
 import org.bukkit.entity.LivingEntity
+import org.bukkit.entity.Player
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDeathEvent
 import org.bukkit.event.entity.EntitySpawnEvent
 import org.bukkit.event.entity.EntityTargetEvent
+import org.bukkit.event.entity.PlayerDeathEvent
 import kotlin.random.Random
 
 class ModelEngineEvent : EventListener {
@@ -116,9 +118,27 @@ class ModelEngineEvent : EventListener {
     }
     private val onBossKillEvent = DSLEvent.event(EntityDeathEvent::class.java) {
         if (it.entity.entityId == PlayersInviteViewModel.customEntityInfo?.entity?.entityId) {
-            println("Entity died: ${it.entity.entityId}; ${PlayersInviteViewModel.customEntityInfo?.entity?.entityId}")
             PlayersInviteViewModel.customEntityInfo = null
             PlayersInviteViewModel.executor = null
+            PlayersInviteViewModel.currentTeam.clear()
+        }
+    }
+    private val bossKilledPlayerEvent = DSLEvent.event(PlayerDeathEvent::class.java) {
+        if (PlayersInviteViewModel.executor == null || PlayersInviteViewModel.customEntityInfo == null) return@event
+        PlayersInviteViewModel.currentTeam.remove(it.player)
+        if (PlayersInviteViewModel.currentTeam.isEmpty()) {
+            val entity = PlayersInviteViewModel.customEntityInfo
+            val l = entity?.entity?.location
+            entity?.entity?.let(BossBarManager::deleteEntityBossBar)
+            entity?.entity?.remove()
+            entity?.modeledEntity?.removeModel(entity.activeModel.modelId)
+
+            PlayersInviteViewModel.customEntityInfo = null
+            PlayersInviteViewModel.executor = null
+            PlayersInviteViewModel.currentTeam.clear()
+            l?.getNearbyEntities(200.0, 200.0, 200.0)?.forEach {
+                if (it !is Player) it.remove()
+            }
         }
     }
 
