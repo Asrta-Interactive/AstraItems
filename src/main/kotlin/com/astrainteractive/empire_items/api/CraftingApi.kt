@@ -41,7 +41,7 @@ object CraftingApi : IManager {
     }
 
     private val keyMap = mutableMapOf<String, MutableList<NamespacedKey>>()
-    val recipesMap: MutableMap<String, Recipe> = mutableMapOf()
+    val recipesMap: MutableMap<String, List<Recipe>> = mutableMapOf()
 
     private fun addToMap(id: String, key: NamespacedKey) {
         if (!keyMap.containsKey(id))
@@ -82,7 +82,10 @@ object CraftingApi : IManager {
 
     fun addRecipe(id: String, result: String, recipe: Recipe) = try {
         Bukkit.addRecipe(recipe)
-        recipesMap[result] = recipe
+        recipesMap[result] = mutableListOf<Recipe>().apply {
+            addAll(recipesMap[result]?: listOf())
+            add(recipe)
+        }
     } catch (e: IllegalStateException) {
         Logger.warn(
             "Не удалось добавить крафт id:${id} result:${result}. ID не должны повтаряться! ${e.message}",

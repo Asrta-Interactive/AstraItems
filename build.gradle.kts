@@ -18,7 +18,7 @@ object Spigot {
 }
 
 group = "com.astrainteractive"
-version = "4.0.9"
+version = "4.0.10"
 val name = "EmpireItems"
 description = "Custom items plugin for EmpireProjekt"
 
@@ -92,6 +92,7 @@ dependencies {
     compileOnly("com.github.MilkBowl:VaultAPI:${Spigot.vault}")
     compileOnly("net.coreprotect:coreprotect:${Spigot.coreProtect}")
     compileOnly("com.ticxo.modelengine:api:${Spigot.modelEngine}")
+    implementation(kotlin("script-runtime"))
 }
 
 tasks {
