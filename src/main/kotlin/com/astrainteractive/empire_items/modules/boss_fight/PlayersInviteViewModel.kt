@@ -71,12 +71,12 @@ class PlayersInviteViewModel(val playerMenuUtility: AstraPlayerMenuUtility) {
         private var initializing: Boolean = false
         var customEntityInfo: CustomEntityInfo? = null
         var executor: String? = null
-        var currentTeam = mutableListOf<Player>()
+        var currentTeam = mutableSetOf<Player>()
         fun canTeleport(player: Player): Boolean {
             val isOnline = Bukkit.getOnlinePlayers().firstOrNull { it.name.equals(executor, ignoreCase = true) } != null
             if (initializing) return false
             if (!isOnline) return true
-            return executor == player.name || customEntityInfo == null || customEntityInfo?.entity?.isDead == true
+            return customEntityInfo == null || customEntityInfo?.entity?.isDead == true
         }
 
     }
@@ -137,6 +137,7 @@ class PlayersInviteViewModel(val playerMenuUtility: AstraPlayerMenuUtility) {
             return
         }
         secretItem.amount -= 1
+        currentTeam.addAll(players)
 
         initializing = true
         executor = playerMenuUtility.player.name
@@ -156,7 +157,6 @@ class PlayersInviteViewModel(val playerMenuUtility: AstraPlayerMenuUtility) {
             delay(CONFIG.arenaCommand.bossSpawnDelay)
             val mob = EmpireItemsAPI.ymlMobById[CONFIG.arenaCommand.mobID]!!
             AsyncHelper.callSyncMethod {
-                if (customEntityInfo != null) return@callSyncMethod
                 customEntityInfo = MobApi.spawnMob(mob, CONFIG.arenaCommand.bossLocation.toBukkitLocation())
             }
         }
@@ -177,10 +177,11 @@ class PlayersInviteViewModel(val playerMenuUtility: AstraPlayerMenuUtility) {
     suspend fun getHead(player: Player): ItemStack {
         val item = ItemStack(Material.PLAYER_HEAD)
         val meta: SkullMeta = item.itemMeta as SkullMeta
-        val profile = GameProfile(UUID.randomUUID(), null)
-        val skin = getSkinByName(player.name)
-        profile.properties.put("textures", Property("textures", skin?.first, skin?.second))
-        BlockParser.setDeclaredField(meta::class.java, meta, "profile", profile)
+        meta.owningPlayer = Bukkit.getOfflinePlayer(player.uniqueId)
+//        val profile = GameProfile(UUID.randomUUID(), null)
+//        val skin = getSkinByName(player.name)
+//        profile.properties.put("textures", Property("textures", skin?.first, skin?.second))
+//        BlockParser.setDeclaredField(meta::class.java, meta, "profile", profile)
         item.itemMeta = meta
         return item
     }

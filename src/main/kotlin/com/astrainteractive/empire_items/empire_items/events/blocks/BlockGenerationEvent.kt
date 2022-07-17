@@ -41,6 +41,7 @@ object BlockGenerationEventUtils {
         return (0 until 15).flatMap { x ->
             (0 until 15).flatMap { z ->
                 (yMin until yMax).mapNotNull { y ->
+//                    val block = this.getBlock(x,y,z)
                     val block = CraftBlock(
                         craftChunk.craftWorld.handle,
                         BlockPosition(this.x shl 4 or x, y, this.z shl 4 or z)

@@ -26,8 +26,8 @@ fun CommandManager.playerInvite() = AstraLibs.registerCommand("player_invite") {
         sender.sendMessage("#fc1c03Нет предмета в руке ${CONFIG.arenaCommand.itemID}".HEX())
         return@registerCommand
     }
-    if (sender.location.distance(CONFIG.arenaCommand.spawnLocation.toBukkitLocation()) > 300) {
-        sender.sendMessage("#fc1c03Вы слишком далеко от спавна".HEX())
+    if (sender.location.distance(CONFIG.arenaCommand.spawnLocation.toBukkitLocation()) > CONFIG.arenaCommand.radius) {
+        sender.sendMessage("#fc1c03Вы слишком далеко от NPC: (${CONFIG.arenaCommand.spawnLocation.x};${CONFIG.arenaCommand.spawnLocation.y};${CONFIG.arenaCommand.spawnLocation.z})".HEX())
         return@registerCommand
     }
     if (!PlayersInviteViewModel.canTeleport(sender)) {

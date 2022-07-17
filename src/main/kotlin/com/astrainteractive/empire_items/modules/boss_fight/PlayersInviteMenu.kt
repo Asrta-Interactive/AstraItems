@@ -117,12 +117,13 @@ class PlayersInviteMenu(override val playerMenuUtility: AstraPlayerMenuUtility) 
         override val handlers: MutableList<EventListener> = mutableListOf()
         private val menuCloseHandler = DSLEvent.event(InventoryCloseEvent::class.java, this) {
             if (it.player != playerMenuUtility.player) return@event
-            if (it.inventory.holder !is PlayersInviteMenu) return@event
+            if (it.inventory.holder != inventory.holder) return@event
             viewModel.onDestroy()
             job.cancel()
             onDisable()
         }
     }
+
     private val innerClassHolder = CloseInventoryEventManager()
 
 }

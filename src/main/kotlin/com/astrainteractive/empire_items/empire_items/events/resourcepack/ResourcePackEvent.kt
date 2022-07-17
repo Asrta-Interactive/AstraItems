@@ -38,11 +38,11 @@ class ResourcePackEvent {
             }
             PlayerResourcePackStatusEvent.Status.FAILED_DOWNLOAD -> {
                 Logger.log("Игроку ${e.player.name} не удалось скачать ресурс-пак",TAG)
-                p.kickPlayer(
-                    """
-                    ${EmpirePlugin.translations.resourcePackDownloadError}
-                        """.trimIndent()
-                )
+//                p.kickPlayer(
+//                    """
+//                    ${EmpirePlugin.translations.resourcePackDownloadError}
+//                        """.trimIndent()
+//                )
                 p.sendMessage(EmpirePlugin.translations.resourcePackDownloadError)
             }
             PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED -> {
@@ -50,7 +50,7 @@ class ResourcePackEvent {
                     return@event
                 p.sendTitle(
                     ":first_join:",
-                    "", 5, 1000, 5
+                    "", 5, 100, 5
                 )
                 Logger.log("Игроку ${e.player.name} успешно загрузил ресурс-пак",TAG)
 

@@ -46,6 +46,7 @@ data class _Config(
         @SerialName("players_teleport_delay")
         val playersTeleportDelay: Long = 0,
         val itemID:String,
+        val radius:Double = 10.0,
     ) {
         @Suppress("PROVIDED_RUNTIME_TOO_LOW")
         @Serializable
