@@ -203,6 +203,9 @@ object MobApi : IManager {
         val mob = l.world.spawnEntity(l, EntityType.fromName(eMob.entity) ?: return null)
         mob.customName = eMob.id
         mob.isCustomNameVisible = false
+        (mob as? LivingEntity)?.let {
+            it.removeWhenFarAway = false
+        }
         return replaceEntity(eMob, mob)
     }
 

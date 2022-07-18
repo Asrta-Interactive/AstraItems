@@ -8,7 +8,9 @@ import com.astrainteractive.empire_items.api.mobs.MobApi
 import com.astrainteractive.empire_items.empire_items.util.playSound
 import com.astrainteractive.empire_items.models.yml_item.Interact
 import com.astrainteractive.empire_items.modules.boss_fight.PlayersInviteViewModel
+import com.destroystokyo.paper.event.entity.EntityRemoveFromWorldEvent
 import io.papermc.paper.event.entity.EntityMoveEvent
+import net.minecraft.world.entity.Entity
 import org.bukkit.Bukkit
 import org.bukkit.attribute.Attribute
 import org.bukkit.entity.LivingEntity
@@ -111,11 +113,18 @@ class ModelEngineEvent : EventListener {
     }
 
     val onDeath = DSLEvent.event(EntityDeathEvent::class.java) { e ->
-        BossBarManager.deleteEntityBossBar(e.entity)
-        val entityInfo = MobApi.getCustomEntityInfo(e.entity) ?: return@event
-        val event = entityInfo.ymlMob.events["onDeath"] ?: return@event
-        MobApi.executeEvent(e.entity, entityInfo.activeModel, event, "onDeath")
+        removeEntity(e.entity)
     }
+    val onRemovedFromWorld = DSLEvent.event(EntityRemoveFromWorldEvent::class.java) { e ->
+        removeEntity(e.entity)
+    }
+    fun removeEntity(entity:org.bukkit.entity.Entity){
+        BossBarManager.deleteEntityBossBar(entity)
+        val entityInfo = MobApi.getCustomEntityInfo(entity) ?: return
+        val event = entityInfo.ymlMob.events["onDeath"] ?: return
+        MobApi.executeEvent(entity, entityInfo.activeModel, event, "onDeath")
+    }
+
     private val onBossKillEvent = DSLEvent.event(EntityDeathEvent::class.java) {
         if (it.entity.entityId == PlayersInviteViewModel.customEntityInfo?.entity?.entityId) {
             PlayersInviteViewModel.customEntityInfo = null
