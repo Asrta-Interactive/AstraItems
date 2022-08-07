@@ -1,8 +1,8 @@
-package com.astrainteractive.empire_items.models.yml_item
+package com.astrainteractive.empire_items.api.models.yml_item
 
 import com.astrainteractive.astralibs.AstraLibs
 import com.astrainteractive.astralibs.async.AsyncHelper
-import com.astrainteractive.astralibs.valueOfOrNull
+import com.astrainteractive.astralibs.utils.valueOfOrNull
 import com.destroystokyo.paper.ParticleBuilder
 import kotlinx.serialization.Serializable
 import org.bukkit.Color

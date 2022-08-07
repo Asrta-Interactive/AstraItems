@@ -1,12 +1,12 @@
 package com.astrainteractive.empire_items.empire_items.events.empireevents
 
-import com.astrainteractive.astralibs.HEX
 import com.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.astralibs.events.EventListener
+import com.astrainteractive.astralibs.utils.HEX
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.empireID
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.toAstraItemOrItem
-import com.astrainteractive.empire_items.models.yml_item.YmlItem
+import com.astrainteractive.empire_items.api.models.yml_item.YmlItem
 import net.md_5.bungee.api.ChatMessageType
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Location

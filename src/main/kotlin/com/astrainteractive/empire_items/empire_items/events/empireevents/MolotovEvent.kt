@@ -1,22 +1,16 @@
 package com.astrainteractive.empire_items.empire_items.events.empireevents
 
-import com.astrainteractive.astralibs.events.EventListener
 import com.astrainteractive.astralibs.Logger
 import com.astrainteractive.astralibs.events.DSLEvent
-import com.astrainteractive.empire_items.EmpirePlugin
-import com.astrainteractive.empire_items.EmpirePlugin.Companion.instance
 import com.astrainteractive.empire_items.api.utils.BukkitConstants
 import com.astrainteractive.empire_items.empire_items.util.protection.KProtectionLib
-
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.Particle
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
 import org.bukkit.entity.Player
-import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.ProjectileHitEvent
-import org.bukkit.event.player.PlayerInteractEntityEvent
 
 class MolotovEvent{
 

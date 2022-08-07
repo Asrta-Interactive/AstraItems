@@ -1,8 +1,6 @@
 package com.astrainteractive.empire_items.modules.hud.thirst
 
-import com.astrainteractive.astralibs.uuid
-import com.astrainteractive.empire_items.api.FontApi
-import com.astrainteractive.empire_items.modules.hud.HudView
+import com.astrainteractive.astralibs.utils.uuid
 import org.bukkit.entity.Player
 import kotlin.math.max
 import kotlin.math.min

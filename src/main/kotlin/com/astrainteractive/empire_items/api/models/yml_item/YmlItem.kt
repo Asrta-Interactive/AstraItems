@@ -1,7 +1,7 @@
-package com.astrainteractive.empire_items.models.yml_item
+package com.astrainteractive.empire_items.api.models.yml_item
 
-import com.astrainteractive.astralibs.convertHex
-import com.astrainteractive.astralibs.valueOfOrNull
+import com.astrainteractive.astralibs.utils.convertHex
+import com.astrainteractive.astralibs.utils.valueOfOrNull
 import com.astrainteractive.empire_items.api.utils.BukkitConstant
 import com.astrainteractive.empire_items.api.utils.BukkitConstants
 import com.astrainteractive.empire_items.api.utils.addAttribute

@@ -2,9 +2,9 @@ package com.astrainteractive.empire_items.empire_items.events.empireevents
 
 import com.astrainteractive.astralibs.AstraLibs
 import com.astrainteractive.astralibs.async.AsyncHelper
-import com.astrainteractive.astralibs.catching
 import com.astrainteractive.astralibs.events.DSLEvent
-import com.astrainteractive.astralibs.valueOfOrNull
+import com.astrainteractive.astralibs.utils.catching
+import com.astrainteractive.astralibs.utils.valueOfOrNull
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.empireID
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.toAstraItemOrItem
@@ -12,9 +12,9 @@ import com.astrainteractive.empire_items.api.utils.BukkitConstants
 import com.astrainteractive.empire_items.api.utils.getPersistentData
 import com.astrainteractive.empire_items.api.utils.setPersistentDataType
 import com.astrainteractive.empire_items.empire_items.util.protection.KProtectionLib
-import com.astrainteractive.empire_items.models.yml_item.Gun
-import com.astrainteractive.empire_items.models.yml_item.Interact
-import com.astrainteractive.empire_items.models.yml_item.YmlItem
+import com.astrainteractive.empire_items.api.models.yml_item.Gun
+import com.astrainteractive.empire_items.api.models.yml_item.Interact
+import com.astrainteractive.empire_items.api.models.yml_item.YmlItem
 import com.comphenix.protocol.PacketType
 import com.comphenix.protocol.ProtocolLibrary
 import com.comphenix.protocol.ProtocolManager

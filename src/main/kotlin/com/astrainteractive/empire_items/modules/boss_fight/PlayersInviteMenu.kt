@@ -1,21 +1,19 @@
 package com.astrainteractive.empire_items.modules.boss_fight
 
 import com.astrainteractive.astralibs.AstraLibs
-import com.astrainteractive.astralibs.HEX
 import com.astrainteractive.astralibs.async.AsyncHelper
-import com.astrainteractive.astralibs.convertHex
 import com.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.astralibs.events.EventListener
 import com.astrainteractive.astralibs.events.EventManager
 import com.astrainteractive.astralibs.menu.AstraMenuSize
 import com.astrainteractive.astralibs.menu.AstraPlayerMenuUtility
 import com.astrainteractive.astralibs.menu.PaginatedMenu
-import com.astrainteractive.astralibs.registerCommand
+import com.astrainteractive.astralibs.utils.HEX
+import com.astrainteractive.astralibs.utils.convertHex
+import com.astrainteractive.astralibs.utils.then
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.toAstraItemOrItem
 import com.astrainteractive.empire_items.api.utils.setDisplayName
-import com.astrainteractive.empire_items.empire_items.commands.CommandManager
-import com.astrainteractive.empire_items.empire_items.util.then
-import com.astrainteractive.empire_items.models.GUI_CONFIG
+import com.astrainteractive.empire_items.api.models.GUI_CONFIG
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -112,18 +110,9 @@ class PlayersInviteMenu(override val playerMenuUtility: AstraPlayerMenuUtility) 
             }
         }
     }
-
-    inner class CloseInventoryEventManager : EventManager {
-        override val handlers: MutableList<EventListener> = mutableListOf()
-        private val menuCloseHandler = DSLEvent.event(InventoryCloseEvent::class.java, this) {
-            if (it.player != playerMenuUtility.player) return@event
-            if (it.inventory.holder != inventory.holder) return@event
-            viewModel.onDestroy()
-            job.cancel()
-            onDisable()
-        }
+    override fun onInventoryClose(it: InventoryCloseEvent, manager: EventManager) {
+        viewModel.onDestroy()
+        job.cancel()
     }
-
-    private val innerClassHolder = CloseInventoryEventManager()
 
 }

@@ -1,6 +1,7 @@
 package com.astrainteractive.empire_items
 
 import com.astrainteractive.astralibs.AstraLibs
+import com.astrainteractive.astralibs.EmpireSerializer
 import com.astrainteractive.astralibs.LicenceChecker
 import com.astrainteractive.astralibs.Logger
 import com.astrainteractive.astralibs.async.AsyncHelper
@@ -8,17 +9,16 @@ import com.astrainteractive.astralibs.events.GlobalEventManager
 import com.astrainteractive.empire_items.api.CraftingApi
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.mobs.MobApi
-import com.astrainteractive.empire_items.models.ItemYamlFile
+import com.astrainteractive.empire_items.api.models.ItemYamlFile
 import com.astrainteractive.empire_items.api.utils.getCustomItemsFiles
 import com.astrainteractive.empire_items.credit.EmpireCredit
 import com.astrainteractive.empire_items.empire_items.commands.CommandManager
 import com.astrainteractive.empire_items.empire_items.events.GenericListener
-import com.astrainteractive.empire_items.empire_items.util.EmpireSerializer
 import com.astrainteractive.empire_items.empire_items.util._Files
 import com.astrainteractive.empire_items.empire_items.util.Translations
 import com.astrainteractive.empire_items.empire_items.util.protection.KProtectionLib
-import com.astrainteractive.empire_items.models._Config
-import com.astrainteractive.empire_items.models._GuiConfig
+import com.astrainteractive.empire_items.api.models._Config
+import com.astrainteractive.empire_items.api.models._GuiConfig
 import com.astrainteractive.empire_items.modules.ModuleManager
 import com.astrainteractive.empire_items.modules.enchants.data._EmpireEnchantsConfig
 import kotlinx.coroutines.CoroutineDispatcher

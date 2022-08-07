@@ -1,14 +1,14 @@
 package com.astrainteractive.empire_items.empire_items.events
 
-import com.astrainteractive.astralibs.convertHex
 import com.astrainteractive.astralibs.events.EventListener
+import com.astrainteractive.astralibs.utils.convertHex
 import com.comphenix.protocol.PacketType
 import com.comphenix.protocol.ProtocolLibrary
 import com.comphenix.protocol.ProtocolManager
 import com.comphenix.protocol.events.*
 import com.astrainteractive.empire_items.EmpirePlugin
 import com.astrainteractive.empire_items.empire_items.util.EmpireUtils
-import com.astrainteractive.empire_items.models.CONFIG
+import com.astrainteractive.empire_items.api.models.CONFIG
 
 
 import me.clip.placeholderapi.PlaceholderAPI

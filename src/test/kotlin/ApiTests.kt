@@ -1,7 +1,7 @@
 import be.seeseemelk.mockbukkit.MockBukkit
 import be.seeseemelk.mockbukkit.ServerMock
 import be.seeseemelk.mockbukkit.inventory.meta.ItemMetaMock
-import com.astrainteractive.astralibs.catching
+import com.astrainteractive.astralibs.utils.catching
 import com.astrainteractive.empire_items.EmpirePlugin
 import com.astrainteractive.empire_items.api.CraftingApi
 import com.astrainteractive.empire_items.api.utils.*

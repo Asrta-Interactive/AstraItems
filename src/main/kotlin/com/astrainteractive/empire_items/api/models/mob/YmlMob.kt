@@ -1,6 +1,6 @@
-package com.astrainteractive.empire_items.models.mob
+package com.astrainteractive.empire_items.api.models.mob
 
-import com.astrainteractive.empire_items.models.yml_item.Interact
+import com.astrainteractive.empire_items.api.models.yml_item.Interact
 import kotlinx.serialization.Serializable
 import org.bukkit.boss.BarStyle
 import kotlin.random.Random

@@ -1,4 +1,4 @@
-package com.astrainteractive.empire_items.models
+package com.astrainteractive.empire_items.api.models
 
 import kotlinx.serialization.Serializable
 

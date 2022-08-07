@@ -7,7 +7,7 @@ import com.astrainteractive.empire_items.api.CraftingApi
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.empireID
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.toAstraItemOrItem
-import com.astrainteractive.empire_items.models.yml_item.Interact.PlayCommand
+import com.astrainteractive.empire_items.api.models.yml_item.Interact.PlayCommand
 import com.destroystokyo.paper.ParticleBuilder
 import org.bukkit.Material
 import org.bukkit.Particle

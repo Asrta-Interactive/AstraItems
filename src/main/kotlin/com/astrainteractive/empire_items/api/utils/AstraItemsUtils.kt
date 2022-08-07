@@ -2,7 +2,7 @@ package com.astrainteractive.empire_items.api.utils
 
 import com.astrainteractive.astralibs.AstraLibs
 import com.astrainteractive.astralibs.FileManager
-import com.astrainteractive.astralibs.HEX
+import com.astrainteractive.astralibs.utils.HEX
 import com.google.common.io.Files
 import org.bukkit.attribute.Attribute
 import org.bukkit.attribute.AttributeModifier

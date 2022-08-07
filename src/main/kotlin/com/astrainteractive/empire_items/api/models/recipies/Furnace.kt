@@ -1,4 +1,4 @@
-package com.astrainteractive.empire_items.models.recipies
+package com.astrainteractive.empire_items.api.models.recipies
 
 import com.astrainteractive.empire_items.api.CraftingApi
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.toAstraItemOrItem

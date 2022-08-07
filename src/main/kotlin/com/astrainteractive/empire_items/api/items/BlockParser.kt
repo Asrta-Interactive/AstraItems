@@ -1,7 +1,7 @@
 package com.astrainteractive.empire_items.api.items
 
 import com.astrainteractive.astralibs.async.AsyncHelper
-import com.astrainteractive.astralibs.catching
+import com.astrainteractive.astralibs.utils.catching
 import net.minecraft.core.Holder
 import net.minecraft.world.level.GeneratorAccess
 import net.minecraft.world.level.biome.BiomeBase

@@ -10,8 +10,8 @@ import com.astrainteractive.empire_items.api.items.BlockParser
 import com.astrainteractive.empire_items.empire_items.events.blocks.BlockGenerationEventUtils.getBlocksLocations
 import com.astrainteractive.empire_items.empire_items.util.Files
 import com.astrainteractive.empire_items.empire_items.util.calcChance
-import com.astrainteractive.empire_items.models.CONFIG
-import com.astrainteractive.empire_items.models.yml_item.YmlItem
+import com.astrainteractive.empire_items.api.models.CONFIG
+import com.astrainteractive.empire_items.api.models.yml_item.YmlItem
 import kotlinx.coroutines.*
 import net.minecraft.core.BlockPosition
 import org.bukkit.Chunk

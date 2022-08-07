@@ -2,8 +2,7 @@ package com.astrainteractive.empire_items.empire_items.commands
 
 import com.astrainteractive.astralibs.AstraLibs
 import com.astrainteractive.astralibs.Logger
-import com.astrainteractive.astralibs.registerCommand
-import com.astrainteractive.astralibs.uuid
+import com.astrainteractive.astralibs.utils.registerCommand
 import com.astrainteractive.empire_items.EmpirePlugin
 import com.astrainteractive.empire_items.empire_items.util.EmpirePermissions
 import org.bukkit.attribute.Attribute

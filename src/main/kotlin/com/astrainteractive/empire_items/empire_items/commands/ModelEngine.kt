@@ -1,9 +1,9 @@
 package com.astrainteractive.empire_items.empire_items.commands
 
 import com.astrainteractive.astralibs.AstraLibs
-import com.astrainteractive.astralibs.registerCommand
-import com.astrainteractive.astralibs.registerTabCompleter
-import com.astrainteractive.astralibs.withEntry
+import com.astrainteractive.astralibs.utils.registerCommand
+import com.astrainteractive.astralibs.utils.registerTabCompleter
+import com.astrainteractive.astralibs.utils.withEntry
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.mobs.MobApi
 import com.astrainteractive.empire_items.empire_items.util.EmpirePermissions

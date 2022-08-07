@@ -1,8 +1,7 @@
 package com.astrainteractive.empire_items.modules.enchants.data
 
-import com.astrainteractive.empire_items.empire_items.util.EmpireSerializer
+import com.astrainteractive.astralibs.EmpireSerializer
 import com.astrainteractive.empire_items.empire_items.util.Files
-import com.astrainteractive.empire_items.models._GuiConfig
 import com.astrainteractive.empire_items.modules.enchants.api.EmpireEnchantApi
 import com.astrainteractive.empire_items.modules.enchants.data.enchants.GenericValueEnchant
 import com.astrainteractive.empire_items.modules.enchants.data.enchants.SpawnMobArenaEnchant

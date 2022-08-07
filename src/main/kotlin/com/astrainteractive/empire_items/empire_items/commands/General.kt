@@ -1,12 +1,12 @@
 package com.astrainteractive.empire_items.empire_items.commands
 
 import com.astrainteractive.astralibs.AstraLibs
-import com.astrainteractive.astralibs.HEX
-import com.astrainteractive.astralibs.registerCommand
-import com.astrainteractive.astralibs.registerTabCompleter
+import com.astrainteractive.astralibs.utils.HEX
+import com.astrainteractive.astralibs.utils.registerCommand
+import com.astrainteractive.astralibs.utils.registerTabCompleter
 import com.astrainteractive.empire_items.api.FontApi
 import com.astrainteractive.empire_items.empire_items.util.Translations
-import com.astrainteractive.empire_items.models.CONFIG
+import com.astrainteractive.empire_items.api.models.CONFIG
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import kotlin.random.Random

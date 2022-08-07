@@ -2,7 +2,7 @@ package com.astrainteractive.empire_items.empire_items.commands
 
 import com.astrainteractive.astralibs.AstraLibs
 import com.astrainteractive.astralibs.async.AsyncHelper
-import com.astrainteractive.astralibs.registerCommand
+import com.astrainteractive.astralibs.utils.registerCommand
 import com.astrainteractive.empire_items.EmpirePlugin
 import com.astrainteractive.empire_items.empire_items.util.EmpirePermissions
 import com.astrainteractive.empire_items.empire_items.util.resource_pack.ResourcePack

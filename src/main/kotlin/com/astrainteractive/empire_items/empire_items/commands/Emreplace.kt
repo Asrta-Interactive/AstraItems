@@ -3,7 +3,6 @@ package com.astrainteractive.empire_items.empire_items.commands
 import com.astrainteractive.astralibs.AstraLibs
 import com.astrainteractive.astralibs.Logger
 import com.astrainteractive.astralibs.commands.AstraDSLCommand
-import com.astrainteractive.astralibs.registerCommand
 import com.astrainteractive.empire_items.EmpirePlugin
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.empireID
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.toAstraItem

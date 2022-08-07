@@ -1,7 +1,7 @@
 package com.astrainteractive.empire_items.empire_items.util
 
 import com.astrainteractive.astralibs.async.AsyncHelper
-import com.astrainteractive.astralibs.convertHex
+import com.astrainteractive.astralibs.utils.convertHex
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.FontApi
 import org.bukkit.Location
@@ -71,7 +71,3 @@ fun Location.playSound(name:String?){
 
 }
 fun Location.getBiome()= world.getBiome(this)
-
-
-
-infix fun <T> Boolean.then(param: T): T? = if (this) param else null

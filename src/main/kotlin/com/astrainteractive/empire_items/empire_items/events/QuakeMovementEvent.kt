@@ -1,7 +1,7 @@
 package com.astrainteractive.empire_items.empire_items.events
 
 import com.astrainteractive.astralibs.events.EventListener
-import com.astrainteractive.astralibs.uuid
+import com.astrainteractive.astralibs.utils.uuid
 import com.astrainteractive.empire_items.empire_items.util.Timer
 import org.bukkit.Bukkit
 import org.bukkit.Location

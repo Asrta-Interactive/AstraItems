@@ -1,16 +1,19 @@
 package com.astrainteractive.empire_items.api
 
+import com.astrainteractive.astralibs.EmpireSerializer
+import com.astrainteractive.empire_items.api.models.FontImage
+import com.astrainteractive.empire_items.api.models.ItemYamlFile
+import com.astrainteractive.empire_items.api.models.Loot
+import com.astrainteractive.empire_items.api.models.VillagerTradeInfo
 import com.astrainteractive.empire_items.api.utils.BukkitConstants
 import com.astrainteractive.empire_items.api.utils.IManager
 import com.astrainteractive.empire_items.api.utils.getCustomItemsFiles
 import com.astrainteractive.empire_items.api.utils.getPersistentData
-import com.astrainteractive.empire_items.empire_items.util.EmpireSerializer
-import com.astrainteractive.empire_items.models.*
-import com.astrainteractive.empire_items.models.mob.YmlMob
-import com.astrainteractive.empire_items.models.recipies.CraftingTable
-import com.astrainteractive.empire_items.models.recipies.Furnace
-import com.astrainteractive.empire_items.models.recipies.Shapeless
-import com.astrainteractive.empire_items.models.yml_item.YmlItem
+import com.astrainteractive.empire_items.api.models.mob.YmlMob
+import com.astrainteractive.empire_items.api.models.recipies.CraftingTable
+import com.astrainteractive.empire_items.api.models.recipies.Furnace
+import com.astrainteractive.empire_items.api.models.recipies.Shapeless
+import com.astrainteractive.empire_items.api.models.yml_item.YmlItem
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 

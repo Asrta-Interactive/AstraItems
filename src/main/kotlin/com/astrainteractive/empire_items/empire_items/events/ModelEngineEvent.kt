@@ -6,7 +6,7 @@ import com.astrainteractive.empire_items.EmpirePlugin
 import com.astrainteractive.empire_items.api.mobs.BossBarManager
 import com.astrainteractive.empire_items.api.mobs.MobApi
 import com.astrainteractive.empire_items.empire_items.util.playSound
-import com.astrainteractive.empire_items.models.yml_item.Interact
+import com.astrainteractive.empire_items.api.models.yml_item.Interact
 import com.astrainteractive.empire_items.modules.boss_fight.PlayersInviteViewModel
 import com.destroystokyo.paper.event.entity.EntityRemoveFromWorldEvent
 import io.papermc.paper.event.entity.EntityMoveEvent

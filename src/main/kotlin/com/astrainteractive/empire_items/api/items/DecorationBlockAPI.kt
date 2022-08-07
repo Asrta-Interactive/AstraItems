@@ -4,7 +4,7 @@ import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.empireID
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.toAstraItemOrItem
 import com.astrainteractive.empire_items.empire_items.util.playSound
-import com.astrainteractive.empire_items.models.yml_item.YmlItem
+import com.astrainteractive.empire_items.api.models.yml_item.YmlItem
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.Rotation

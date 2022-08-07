@@ -1,32 +1,11 @@
 package block_generation
 
-import be.seeseemelk.mockbukkit.MockBukkit
-import be.seeseemelk.mockbukkit.inventory.meta.ItemMetaMock
 import com.astrainteractive.astralibs.AstraEstimator
-import com.astrainteractive.empire_items.EmpirePlugin
+import com.astrainteractive.astralibs.utils.TriplePair
 import com.astrainteractive.empire_items.api.utils.*
-import com.astrainteractive.empire_items.empire_items.events.blocks.BlockGenerationEventUtils
-import com.astrainteractive.empire_items.empire_items.events.blocks.BlockGenerationEventUtils.getBlocksLocations
-import com.astrainteractive.empire_items.empire_items.util.TriplePair
-import io.kotest.common.runBlocking
-import junit.framework.TestCase.assertEquals
-import org.bukkit.Chunk
-import org.bukkit.ChunkSnapshot
-import org.bukkit.Material
-import org.bukkit.World
-import org.bukkit.block.Block
-import org.bukkit.block.BlockState
-import org.bukkit.block.data.BlockData
-import org.bukkit.entity.Entity
-import org.bukkit.inventory.ItemStack
-import org.bukkit.persistence.PersistentDataContainer
-import org.bukkit.persistence.PersistentDataType
-import org.bukkit.plugin.Plugin
 import org.junit.Test
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
-import java.util.function.Predicate
-import kotlin.random.Random
 
 class BlockParserTest {
     @BeforeAll

@@ -4,7 +4,7 @@ import com.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.empireID
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.toAstraItemOrItem
-import com.astrainteractive.empire_items.models.VillagerTradeInfo
+import com.astrainteractive.empire_items.api.models.VillagerTradeInfo
 import org.bukkit.entity.Villager
 import org.bukkit.event.entity.VillagerAcquireTradeEvent
 import org.bukkit.event.player.PlayerInteractEntityEvent

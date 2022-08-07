@@ -3,11 +3,11 @@ package com.astrainteractive.empire_items.empire_items.commands
 import com.astrainteractive.astralibs.Logger
 import com.astrainteractive.astralibs.async.AsyncHelper
 import com.astrainteractive.astralibs.commands.AstraDSLCommand
-import com.astrainteractive.astralibs.convertHex
+import com.astrainteractive.astralibs.utils.convertHex
+import com.astrainteractive.astralibs.utils.then
 import com.astrainteractive.empire_items.api.FontApi
 import com.astrainteractive.empire_items.empire_items.gui.GuiCategories
 import com.astrainteractive.empire_items.empire_items.util.EmpireUtils
-import com.astrainteractive.empire_items.empire_items.util.then
 import com.astrainteractive.empire_items.modules.boss_fight.inviteAcceptCommand
 import kotlinx.coroutines.launch
 import org.bukkit.entity.Player

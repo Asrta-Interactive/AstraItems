@@ -1,6 +1,6 @@
 package com.astrainteractive.empire_items.modules.enchants.data.enchants
 
-import com.astrainteractive.empire_items.models.yml_item.Interact
+import com.astrainteractive.empire_items.api.models.yml_item.Interact
 import com.astrainteractive.empire_items.modules.enchants.data.GenericEnchant
 
 @Suppress("PROVIDED_RUNTIME_TOO_LOW")
@@ -14,7 +14,7 @@ data class GenericValueEnchant(
 @kotlinx.serialization.Serializable
 data class SpawnMobArenaEnchant(
     override val generic: GenericEnchant,
-    val playCommand: Map<String,Interact.PlayCommand>,
-    val playSound:Interact.PlaySound,
+    val playCommand: Map<String, Interact.PlayCommand>,
+    val playSound: Interact.PlaySound,
     val playParticle: Interact.PlayParticle,
 ) : GenericEnchant.IGenericEnchant

@@ -51,6 +51,7 @@ repositories {
     maven("https://repo1.maven.org/maven2/")
     maven("https://m2.dv8tion.net/releases")
     maven("https://maven.playpro.com")
+    maven("https://repo.clojars.org/")
     maven("https://jitpack.io")
     maven {
         url = uri("https://mvn.lumine.io/repository/maven-public/")
@@ -83,6 +84,7 @@ dependencies {
     // Spigot dependencies
     compileOnly("net.essentialsx:EssentialsX:${Spigot.essentials}")
     compileOnly("io.papermc.paper:paper-api:${Spigot.version}")
+//    compileOnly("com.github.puregero:multipaper-api:${Spigot.version}")
     compileOnly("org.spigotmc:spigot-api:${Spigot.version}")
     compileOnly("org.spigotmc:spigot:${Spigot.version}")
     compileOnly("com.comphenix.protocol:ProtocolLib:${Spigot.protocolLib}")

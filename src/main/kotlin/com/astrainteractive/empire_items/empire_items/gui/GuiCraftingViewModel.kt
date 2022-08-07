@@ -1,13 +1,13 @@
 package com.astrainteractive.empire_items.empire_items.gui
 
-import com.astrainteractive.astralibs.HEX
-import com.astrainteractive.astralibs.catching
+import com.astrainteractive.astralibs.utils.HEX
+import com.astrainteractive.astralibs.utils.catching
 import com.astrainteractive.empire_items.EmpirePlugin
 import com.astrainteractive.empire_items.api.CraftingApi
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.toAstraItemOrItem
-import com.astrainteractive.empire_items.models.GUI_CONFIG
-import com.astrainteractive.empire_items.models.VillagerTradeInfo
+import com.astrainteractive.empire_items.api.models.GUI_CONFIG
+import com.astrainteractive.empire_items.api.models.VillagerTradeInfo
 import org.bukkit.ChatColor
 import org.bukkit.inventory.FurnaceRecipe
 import org.bukkit.inventory.ItemStack

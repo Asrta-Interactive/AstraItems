@@ -1,9 +1,8 @@
 package com.astrainteractive.empire_items.empire_items.util
 
 import com.astrainteractive.astralibs.FileManager
-import com.astrainteractive.astralibs.HEX
-import com.astrainteractive.astralibs.getHEXString
-import java.io.File
+import com.astrainteractive.astralibs.utils.HEX
+import com.astrainteractive.astralibs.utils.getHEXString
 
 
 class Translations {

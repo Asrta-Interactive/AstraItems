@@ -1,22 +1,17 @@
 package com.astrainteractive.empire_items.empire_items.gui
 
-import com.astrainteractive.astralibs.HEX
 import com.astrainteractive.astralibs.async.AsyncHelper
-import com.astrainteractive.astralibs.convertHex
+import com.astrainteractive.astralibs.events.EventManager
 import com.astrainteractive.astralibs.menu.AstraMenuSize
-import com.astrainteractive.empire_items.EmpirePlugin
-import com.astrainteractive.empire_items.api.CraftingApi
-import com.astrainteractive.empire_items.api.EmpireItemsAPI
+import com.astrainteractive.astralibs.utils.convertHex
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.empireID
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.toAstraItemOrItem
-import com.astrainteractive.empire_items.models.VillagerTradeInfo
-import com.astrainteractive.empire_items.api.utils.setDisplayName
+import com.astrainteractive.empire_items.api.models.GUI_CONFIG
 import com.astrainteractive.empire_items.empire_items.util.EmpirePermissions
 import com.astrainteractive.empire_items.empire_items.util.emoji
-import com.astrainteractive.empire_items.models.GUI_CONFIG
 import kotlinx.coroutines.launch
-import org.bukkit.ChatColor
 import org.bukkit.event.inventory.InventoryClickEvent
+import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.*
 
 class GuiCrafting(playerMenuUtility: PlayerMenuUtility) :
@@ -120,4 +115,6 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility) :
 
 
     }
+
+    override fun onInventoryClose(it: InventoryCloseEvent, manager: EventManager) = Unit
 }

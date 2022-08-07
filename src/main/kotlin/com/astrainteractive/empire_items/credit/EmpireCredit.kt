@@ -1,7 +1,7 @@
 package com.astrainteractive.empire_items.credit
 
 import com.astrainteractive.astralibs.FileManager
-import com.astrainteractive.astralibs.catching
+import com.astrainteractive.astralibs.utils.catching
 import com.earth2me.essentials.Essentials
 import com.astrainteractive.empire_items.credit.commands.CommandManager
 import com.astrainteractive.empire_items.credit.data.CreditConfig

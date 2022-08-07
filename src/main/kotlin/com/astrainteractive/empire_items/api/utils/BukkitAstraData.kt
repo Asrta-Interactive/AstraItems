@@ -8,7 +8,7 @@ import org.bukkit.persistence.PersistentDataType
 
 data class BukkitConstant<T, Z>(
     val value: NamespacedKey,
-    val dataType: PersistentDataType<T, Z>
+    val dataType: PersistentDataType<T, Z>,
 ) {
     constructor(key: String, dataType: PersistentDataType<T, Z>) : this(
         NamespacedKey(AstraLibs.instance, key),
@@ -16,6 +16,11 @@ data class BukkitConstant<T, Z>(
     )
 }
 
+//sealed class CustomConstant<T>(key: String, val type: PersistentDataType<T, T>) {
+//    val value = NamespacedKey(AstraLibs.instance, key)
+//
+//    object MOLOTOV : CustomConstant<Int>("MOLOTOV", PersistentDataType.INTEGER)
+//}
 
 object BukkitConstants {
     val ASTRA_ID

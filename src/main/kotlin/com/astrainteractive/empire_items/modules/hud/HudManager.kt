@@ -1,7 +1,7 @@
 package com.astrainteractive.empire_items.modules.hud
 
 import com.astrainteractive.empire_items.api.FontApi
-import com.astrainteractive.empire_items.models.FontImage
+import com.astrainteractive.empire_items.api.models.FontImage
 
 object HudManager {
 

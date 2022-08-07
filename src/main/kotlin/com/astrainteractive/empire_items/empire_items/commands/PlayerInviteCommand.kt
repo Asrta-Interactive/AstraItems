@@ -1,12 +1,12 @@
 package com.astrainteractive.empire_items.empire_items.commands;
 
 import com.astrainteractive.astralibs.AstraLibs
-import com.astrainteractive.astralibs.HEX
 import com.astrainteractive.astralibs.async.AsyncHelper
 import com.astrainteractive.astralibs.menu.AstraPlayerMenuUtility
-import com.astrainteractive.astralibs.registerCommand
+import com.astrainteractive.astralibs.utils.HEX
+import com.astrainteractive.astralibs.utils.registerCommand
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.empireID
-import com.astrainteractive.empire_items.models.CONFIG
+import com.astrainteractive.empire_items.api.models.CONFIG
 import com.astrainteractive.empire_items.modules.boss_fight.PlayersInviteMenu
 import com.astrainteractive.empire_items.modules.boss_fight.PlayersInviteViewModel
 import kotlinx.coroutines.Dispatchers

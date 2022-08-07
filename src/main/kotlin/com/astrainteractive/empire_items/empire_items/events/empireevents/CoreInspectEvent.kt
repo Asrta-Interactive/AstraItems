@@ -1,9 +1,9 @@
 package com.astrainteractive.empire_items.empire_items.events.empireevents
 
 import com.astrainteractive.astralibs.AstraLibs
-import com.astrainteractive.astralibs.HEX
 import com.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.astralibs.events.EventManager
+import com.astrainteractive.astralibs.utils.HEX
 import com.astrainteractive.empire_items.api.utils.BukkitConstants
 import com.astrainteractive.empire_items.api.utils.getPersistentData
 import com.astrainteractive.empire_items.api.utils.setPersistentDataType

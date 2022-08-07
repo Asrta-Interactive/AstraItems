@@ -2,14 +2,14 @@ package com.astrainteractive.empire_items.api.mobs
 
 import com.astrainteractive.astralibs.Logger
 import com.astrainteractive.astralibs.async.AsyncHelper
-import com.astrainteractive.astralibs.convertHex
-import com.astrainteractive.astralibs.valueOfOrNull
+import com.astrainteractive.astralibs.utils.convertHex
+import com.astrainteractive.astralibs.utils.valueOfOrNull
 import com.astrainteractive.empire_items.EmpirePlugin
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.utils.Cooldown
 import com.astrainteractive.empire_items.api.utils.IManager
 import com.astrainteractive.empire_items.empire_items.util.*
-import com.astrainteractive.empire_items.models.mob.YmlMob
+import com.astrainteractive.empire_items.api.models.mob.YmlMob
 import com.destroystokyo.paper.ParticleBuilder
 import com.ticxo.modelengine.api.ModelEngineAPI
 import com.ticxo.modelengine.api.generator.blueprint.BlueprintBone

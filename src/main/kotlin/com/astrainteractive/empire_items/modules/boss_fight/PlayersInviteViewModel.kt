@@ -1,20 +1,20 @@
 package com.astrainteractive.empire_items.modules.boss_fight
 
 import com.astrainteractive.astralibs.AstraLibs
-import com.astrainteractive.astralibs.HEX
 import com.astrainteractive.astralibs.async.AsyncHelper
-import com.astrainteractive.astralibs.catching
 import com.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.astralibs.menu.AstraPlayerMenuUtility
-import com.astrainteractive.astralibs.registerCommand
+import com.astrainteractive.astralibs.utils.HEX
+import com.astrainteractive.astralibs.utils.catching
+import com.astrainteractive.astralibs.utils.registerCommand
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.empireID
 import com.astrainteractive.empire_items.api.items.BlockParser
 import com.astrainteractive.empire_items.api.mobs.CustomEntityInfo
 import com.astrainteractive.empire_items.api.mobs.MobApi
 import com.astrainteractive.empire_items.empire_items.commands.CommandManager
-import com.astrainteractive.empire_items.models.CONFIG
-import com.astrainteractive.empire_items.models.yml_item.Interact
+import com.astrainteractive.empire_items.api.models.CONFIG
+import com.astrainteractive.empire_items.api.models.yml_item.Interact
 import com.google.gson.JsonParser
 import com.mojang.authlib.GameProfile
 import com.mojang.authlib.properties.Property
