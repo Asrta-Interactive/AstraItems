@@ -62,8 +62,8 @@ class BlockHardnessEvent {
         empireBlock.hardness?:return@event
         val digMultiplier = e.player.inventory.itemInMainHand.enchantments[Enchantment.DIG_SPEED] ?: 1
         val time = (System.currentTimeMillis().minus(blockDamageMap[e.player.name]?.time ?: return@event) / 10.0) * digMultiplier
-        player.sendBlockBreakPacket(block, (time / empireBlock.hardness.toDouble() * 9).toInt())
-        if (time > empireBlock.hardness) {
+        player.sendBlockBreakPacket(block, (time / empireBlock.hardness!!.toDouble() * 9).toInt())
+        if (time > empireBlock.hardness!!) {
             player.breakBlock(block)
             player.sendBlockBreakPacket(block, 100)
         }

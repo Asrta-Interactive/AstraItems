@@ -2,12 +2,11 @@ package com.astrainteractive.empire_items.modules.enchants
 
 import com.astrainteractive.astralibs.events.EventListener
 import com.astrainteractive.astralibs.events.EventManager
+import com.astrainteractive.empire_items.api.enchants.AbstractPotionEnchant
+import com.astrainteractive.empire_items.api.enchants.EmpireEnchantApi
+import com.astrainteractive.empire_items.api.enchants.models.EmpireEnchantsConfig
+import com.astrainteractive.empire_items.api.enchants.models._EmpireEnchantsConfig
 import com.astrainteractive.empire_items.api.utils.BukkitConstant
-import com.astrainteractive.empire_items.modules.enchants.api.AbstractPotionEnchant
-import com.astrainteractive.empire_items.modules.enchants.api.EmpireEnchantApi
-import com.astrainteractive.empire_items.modules.enchants.data.EmpireEnchantsConfig
-import com.astrainteractive.empire_items.modules.enchants.data.GenericEnchant
-import com.astrainteractive.empire_items.modules.enchants.data._EmpireEnchantsConfig
 import kotlinx.coroutines.runBlocking
 import org.bukkit.Material
 import org.bukkit.persistence.PersistentDataType
@@ -18,7 +17,6 @@ class EnchantManager : EventManager {
     override val handlers: MutableList<EventListener> = mutableListOf()
 
     init {
-        listOf(1, 2)
         runBlocking { EmpireEnchantApi.onEnable() }
         FrostAspect().onEnable(this)
         Butcher().onEnable(this)

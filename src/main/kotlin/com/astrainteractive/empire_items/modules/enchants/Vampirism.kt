@@ -1,10 +1,10 @@
 package com.astrainteractive.empire_items.modules.enchants
 
+import com.astrainteractive.empire_items.api.enchants.EmpireEnchantEvent
+import com.astrainteractive.empire_items.api.enchants.EmpireEnchants
+import com.astrainteractive.empire_items.api.enchants.models.EmpireEnchantsConfig
+import com.astrainteractive.empire_items.api.enchants.models.GenericValueEnchant
 import com.astrainteractive.empire_items.api.utils.getPersistentData
-import com.astrainteractive.empire_items.modules.enchants.api.EmpireEnchantEvent
-import com.astrainteractive.empire_items.modules.enchants.api.EmpireEnchants
-import com.astrainteractive.empire_items.modules.enchants.data.EmpireEnchantsConfig
-import com.astrainteractive.empire_items.modules.enchants.data.enchants.GenericValueEnchant
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler

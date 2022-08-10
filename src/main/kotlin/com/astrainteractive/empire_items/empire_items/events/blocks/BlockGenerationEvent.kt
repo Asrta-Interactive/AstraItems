@@ -9,9 +9,9 @@ import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.items.BlockParser
 import com.astrainteractive.empire_items.empire_items.events.blocks.BlockGenerationEventUtils.getBlocksLocations
 import com.astrainteractive.empire_items.empire_items.util.Files
-import com.astrainteractive.empire_items.empire_items.util.calcChance
 import com.astrainteractive.empire_items.api.models.CONFIG
 import com.astrainteractive.empire_items.api.models.yml_item.YmlItem
+import com.astrainteractive.empire_items.api.utils.calcChance
 import kotlinx.coroutines.*
 import net.minecraft.core.BlockPosition
 import org.bukkit.Chunk
@@ -138,7 +138,7 @@ class BlockGenerationEvent {
             //Надо ли генерировать блок
             val generate = block.generate ?: return@mapNotNull null
             //Если указан мир и он не равен миру чанка - пропускаем
-            if (block.generate.world != null && block.generate.world != chunk.world.name)
+            if (block.generate!!.world != null && block.generate!!.world != chunk.world.name)
                 return@mapNotNull null
             //Проверяем рандом
             setChunkHasGenerated(chunk, itemInfo.id)

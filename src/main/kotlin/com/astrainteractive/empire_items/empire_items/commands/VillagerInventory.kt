@@ -6,7 +6,7 @@ import com.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.astralibs.menu.AstraMenuSize
 import com.astrainteractive.astralibs.utils.HEX
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
-import com.astrainteractive.empire_items.empire_items.util.emoji
+import com.astrainteractive.empire_items.api.utils.emoji
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryType

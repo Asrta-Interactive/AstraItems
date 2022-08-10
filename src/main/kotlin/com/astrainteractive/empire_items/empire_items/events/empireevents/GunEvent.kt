@@ -155,7 +155,7 @@ class GunEvent {
                 l = l.add(0.0, -0.2, 0.0)
 
             if (gunInfo.recoil != null)
-                awaitSync { setRecoil(player, gunInfo.recoil) }
+                awaitSync { setRecoil(player, gunInfo.recoil!!) }
 
             val r = if (player.isSneaking) (gunInfo.radiusSneak ?: gunInfo.radius * 2) else gunInfo.radius
 
@@ -224,7 +224,7 @@ class GunEvent {
 
             }
             if (gunInfo.explosion != null && KProtectionLib.canExplode(null, l))
-                awaitSync { GrenadeEvent.generateExplosion(l, gunInfo.explosion.toDouble()) }
+                awaitSync { GrenadeEvent.generateExplosion(l, gunInfo.explosion!!.toDouble()) }
         }
 
     }
@@ -232,11 +232,5 @@ class GunEvent {
 
     private fun getEntityByLocation(loc: Location, r: Double): MutableCollection<Entity> {
         return loc.world.getNearbyEntities(loc,r,r,r)
-        val entities: MutableList<Entity> = mutableListOf()
-        loc.world ?: return mutableListOf()
-        for (e in loc.world!!.entities)
-            if (e.location.distanceSquared(loc) <= r)
-                entities.add(e)
-        return entities
     }
 }

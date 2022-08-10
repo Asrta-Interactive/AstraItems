@@ -3,13 +3,16 @@ package com.astrainteractive.empire_items.empire_items.events.resourcepack
 import com.astrainteractive.astralibs.Logger
 import com.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.empire_items.EmpirePlugin
+import com.astrainteractive.empire_items.ResourceProvider
 import com.astrainteractive.empire_items.api.models.CONFIG
+import com.astrainteractive.empire_items.empire_items.util.Translations
 import org.bukkit.Bukkit
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerResourcePackStatusEvent
 
 class ResourcePackEvent {
-
+    private val translations: Translations
+        get() = ResourceProvider.translations
     val TAG = "ResourcePack"
 
     val onJoin = DSLEvent.event(PlayerJoinEvent::class.java)  { e ->
@@ -22,8 +25,8 @@ class ResourcePackEvent {
 
         } else
             p.sendTitle(
-                EmpirePlugin.translations.resourcePackHintTitle,
-                EmpirePlugin.translations.resourcePackHintSubtitle, 5, 20, 5
+                translations.resourcePackHintTitle,
+                translations.resourcePackHintSubtitle, 5, 20, 5
             )
     }
 
@@ -33,24 +36,19 @@ class ResourcePackEvent {
         when (e.status) {
             PlayerResourcePackStatusEvent.Status.DECLINED -> {
                 Logger.log( "Игрок ${e.player.name} отклонил ресурс-пак",TAG)
-                p.sendMessage(EmpirePlugin.translations.resourcePackDeny)
-                p.sendMessage(EmpirePlugin.translations.resourcePackDownloadHint)
+                p.sendMessage(translations.resourcePackDeny)
+                p.sendMessage(translations.resourcePackDownloadHint)
             }
             PlayerResourcePackStatusEvent.Status.FAILED_DOWNLOAD -> {
                 Logger.log("Игроку ${e.player.name} не удалось скачать ресурс-пак",TAG)
-//                p.kickPlayer(
-//                    """
-//                    ${EmpirePlugin.translations.resourcePackDownloadError}
-//                        """.trimIndent()
-//                )
-                p.sendMessage(EmpirePlugin.translations.resourcePackDownloadError)
+                p.sendMessage(translations.resourcePackDownloadError)
             }
             PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED -> {
                 if (System.currentTimeMillis() - p.firstPlayed>1000*60*10)
                     return@event
                 p.sendTitle(
                     ":first_join:",
-                    "", 5, 100, 5
+                    "", 5, 30, 5
                 )
                 Logger.log("Игроку ${e.player.name} успешно загрузил ресурс-пак",TAG)
 

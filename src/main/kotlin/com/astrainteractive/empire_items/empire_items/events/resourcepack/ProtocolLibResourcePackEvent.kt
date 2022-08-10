@@ -3,6 +3,8 @@ package com.astrainteractive.empire_items.empire_items.events.resourcepack
 import com.astrainteractive.astralibs.AstraLibs
 import com.astrainteractive.astralibs.events.EventListener
 import com.astrainteractive.empire_items.EmpirePlugin
+import com.astrainteractive.empire_items.ResourceProvider
+import com.astrainteractive.empire_items.empire_items.util.Translations
 import com.comphenix.protocol.PacketType
 import com.comphenix.protocol.ProtocolLibrary
 import com.comphenix.protocol.ProtocolManager
@@ -13,6 +15,8 @@ import com.comphenix.protocol.events.PacketListener
 import com.comphenix.protocol.wrappers.WrappedChatComponent
 
 class ProtocolLibResourcePackEvent : EventListener {
+    private val translations: Translations
+        get() = ResourceProvider.translations
     private var protocolManager: ProtocolManager = ProtocolLibrary.getProtocolManager()
     private var packetListener: PacketListener = object : PacketAdapter(
         AstraLibs.instance,
@@ -27,7 +31,7 @@ class ProtocolLibResourcePackEvent : EventListener {
         override fun onPacketSending(event: PacketEvent) {
             val packet = event.packet
             for (i in 0 until packet.chatComponents.size()) {
-                val chatComponent = WrappedChatComponent.fromJson(EmpirePlugin.translations.resourcePackMessage)
+                val chatComponent = WrappedChatComponent.fromJson(translations.resourcePackMessage)
                 packet.chatComponents.write(i, chatComponent)
             }
         }

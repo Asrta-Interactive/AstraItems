@@ -4,11 +4,14 @@ import com.astrainteractive.astralibs.AstraLibs
 import com.astrainteractive.astralibs.Logger
 import com.astrainteractive.astralibs.commands.AstraDSLCommand
 import com.astrainteractive.empire_items.EmpirePlugin
+import com.astrainteractive.empire_items.ResourceProvider
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.empireID
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.toAstraItem
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.toAstraItemOrItem
+import com.astrainteractive.empire_items.empire_items.util.Translations
 import org.bukkit.entity.Player
-
+private val translations: Translations
+    get() = ResourceProvider.translations
 fun CommandManager.emReplace() = AstraDSLCommand.command("emreplace") {
     if (sender !is Player) {
         Logger.warn("Player only command", tag = CommandManager.TAG)
@@ -23,5 +26,5 @@ fun CommandManager.emReplace() = AstraDSLCommand.command("emreplace") {
     item = id.toAstraItem(amount) ?: return@command
     item.durability = durability
     (sender as Player).inventory.setItemInMainHand(item)
-    sender.sendMessage(EmpirePlugin.translations.itemReplaced)
+    sender.sendMessage(translations.itemReplaced)
 }

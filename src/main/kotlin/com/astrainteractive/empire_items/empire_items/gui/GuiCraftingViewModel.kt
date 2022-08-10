@@ -3,11 +3,13 @@ package com.astrainteractive.empire_items.empire_items.gui
 import com.astrainteractive.astralibs.utils.HEX
 import com.astrainteractive.astralibs.utils.catching
 import com.astrainteractive.empire_items.EmpirePlugin
+import com.astrainteractive.empire_items.ResourceProvider
 import com.astrainteractive.empire_items.api.CraftingApi
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.toAstraItemOrItem
 import com.astrainteractive.empire_items.api.models.GUI_CONFIG
 import com.astrainteractive.empire_items.api.models.VillagerTradeInfo
+import com.astrainteractive.empire_items.empire_items.util.Translations
 import org.bukkit.ChatColor
 import org.bukkit.inventory.FurnaceRecipe
 import org.bukkit.inventory.ItemStack
@@ -15,6 +17,8 @@ import org.bukkit.inventory.ShapedRecipe
 import org.bukkit.inventory.ShapelessRecipe
 
 class GuiCraftingViewModel(val playerMenuUtility: PlayerMenuUtility, val itemID: String) {
+    private val translations: Translations
+        get() = ResourceProvider.translations
     /**
      * Предметы, которые можно сделать с помощью [itemID]
      */
@@ -38,7 +42,7 @@ class GuiCraftingViewModel(val playerMenuUtility: PlayerMenuUtility, val itemID:
     val dropInfo =
         if (drops.isNullOrEmpty()) null else GUI_CONFIG.settings.buttons.moreButton.toAstraItemOrItem()!!.apply {
             editMeta {
-                it.setDisplayName((EmpirePlugin.translations.guiInfoDropColor + EmpirePlugin.translations.guiInfoDrop).HEX())
+                it.setDisplayName((translations.guiInfoDropColor + translations.guiInfoDrop).HEX())
                 it.lore =
                     drops.map { "${ChatColor.GRAY}${it.dropFrom}: [${it.minAmount};${it.maxAmount}] ${it.chance}%" }
             }
@@ -47,7 +51,7 @@ class GuiCraftingViewModel(val playerMenuUtility: PlayerMenuUtility, val itemID:
     val blockInfo = generatedBlock?.let { b ->
         GUI_CONFIG.settings.buttons.moreButton.toAstraItemOrItem()!!.apply {
             editMeta {
-                it.setDisplayName((EmpirePlugin.translations.guiInfoDropColor + "Генерируется:").HEX())
+                it.setDisplayName((translations.guiInfoDropColor + "Генерируется:").HEX())
                 it.lore = listOf(
                     ("${ChatColor.GRAY}На высоте [${b.minY};${b.maxY}]"),
                     ("${ChatColor.GRAY}Количество в чанке [${b.minPerChunk};${b.maxPerChunk}]"),
@@ -62,7 +66,7 @@ class GuiCraftingViewModel(val playerMenuUtility: PlayerMenuUtility, val itemID:
     val villagersInfo =
         if (villagerTrades.isEmpty()) null else GUI_CONFIG.settings.buttons.moreButton.toAstraItemOrItem()!!.apply {
             editMeta {
-                it.setDisplayName((EmpirePlugin.translations.guiInfoDropColor + "Можно купить у жителя:").HEX())
+                it.setDisplayName((translations.guiInfoDropColor + "Можно купить у жителя:").HEX())
                 it.lore = villagerTrades.map { "${ChatColor.GRAY}${it.profession}" }
             }
         }

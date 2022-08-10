@@ -234,7 +234,7 @@ class ResourcePack {
             val path =
                 if (item.modelPath != null) "${item.namespace}:${item.modelPath}" else "minecraft:auto_generated/${item.id}"
             val multipart = Multipart(
-                BlockParser.getFacingByData(item.block.data),
+                BlockParser.getFacingByData(item.block?.data!!),
                 Apply(path)
             )
             val file = File(getMinecraftAssetsPath() + sep + "blockstates" + sep + materialName + ".json")

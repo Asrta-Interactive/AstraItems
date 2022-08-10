@@ -15,7 +15,7 @@ class TestMushroomEvent {
         return@event
         val debris = EmpireItemsAPI.itemYamlFilesByID["end_debris"]!!
         val faces = BlockParser.getFacingByData(debris.block?.data!!)
-        val type = BlockParser.getMaterialByData(debris.block.data)
+        val type = BlockParser.getMaterialByData(debris.block?.data!!)
         val l = e.clickedBlock?.location ?: return@event
             val blocks = IntRange(l.x.toInt(), l.x.toInt() + 50).flatMap { x ->
                 IntRange(l.y.toInt(), l.y.toInt() + 50).flatMap { y ->

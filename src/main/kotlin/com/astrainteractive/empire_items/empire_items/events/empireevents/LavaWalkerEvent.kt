@@ -3,10 +3,10 @@ package com.astrainteractive.empire_items.empire_items.events.empireevents
 import com.astrainteractive.astralibs.events.EventListener
 import com.astrainteractive.astralibs.async.AsyncHelper
 import com.astrainteractive.astralibs.events.DSLEvent
+import com.astrainteractive.empire_items.api.enchants.EmpireEnchants
 import com.astrainteractive.empire_items.api.items.BlockParser
 import com.astrainteractive.empire_items.api.utils.BukkitConstants
 import com.astrainteractive.empire_items.api.utils.hasPersistentData
-import com.astrainteractive.empire_items.modules.enchants.api.EmpireEnchants
 import kotlinx.coroutines.launch
 import org.bukkit.Material
 import org.bukkit.block.Block

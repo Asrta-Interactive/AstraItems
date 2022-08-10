@@ -5,6 +5,7 @@ import com.astrainteractive.astralibs.utils.registerCommand
 import com.astrainteractive.astralibs.utils.registerTabCompleter
 import com.astrainteractive.astralibs.utils.withEntry
 import com.astrainteractive.empire_items.EmpirePlugin
+import com.astrainteractive.empire_items.ResourceProvider
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.toAstraItemOrItem
 import com.astrainteractive.empire_items.empire_items.util.EmpirePermissions
@@ -16,10 +17,12 @@ import org.bukkit.inventory.ItemStack
 
 class AstraItemCommand {
 
+    val translations: Translations
+        get() = ResourceProvider.translations
+
     fun Array<out Any>.equals(e: Any, position: Int) = this.getOrNull(position)?.equals(e) ?: false
 
     private val commandExecutor = AstraLibs.registerCommand("emp") { sender, args ->
-
 
 
         if (!sender.hasPermission(EmpirePermissions.EMPGIVE)) {
@@ -45,11 +48,11 @@ class AstraItemCommand {
                 return@registerCommand
             }
             sender.sendMessage(
-                EmpirePlugin.translations.itemGave.replace("%player%", player.name)
+                translations.itemGave.replace("%player%", player.name)
                     .replace("%item%", itemStack.itemMeta.displayName)
             )
             player.sendMessage(
-                EmpirePlugin.translations.itemGained.replace("%player%", player.name)
+                translations.itemGained.replace("%player%", player.name)
                     .replace("%item%", itemStack.itemMeta.displayName)
             )
             player.inventory.addItem(itemStack)
@@ -66,7 +69,6 @@ class AstraItemCommand {
     }
 
 }
-
 
 
 sealed class IArgumentCommand<T>(executor: CommandSender, string: String, index: Int, converter: (String) -> T?)

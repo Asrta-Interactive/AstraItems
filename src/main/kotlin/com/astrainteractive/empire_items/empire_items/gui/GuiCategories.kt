@@ -6,8 +6,8 @@ import com.astrainteractive.astralibs.menu.AstraMenuSize
 import com.astrainteractive.astralibs.utils.convertHex
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.toAstraItemOrItem
 import com.astrainteractive.empire_items.api.utils.setDisplayName
-import com.astrainteractive.empire_items.empire_items.util.emoji
 import com.astrainteractive.empire_items.api.models.GUI_CONFIG
+import com.astrainteractive.empire_items.api.utils.emoji
 import kotlinx.coroutines.launch
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent

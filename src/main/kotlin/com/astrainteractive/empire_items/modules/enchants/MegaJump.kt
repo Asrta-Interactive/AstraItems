@@ -1,11 +1,11 @@
 package com.astrainteractive.empire_items.modules.enchants
 
 import com.astrainteractive.astralibs.async.AsyncHelper
-import com.astrainteractive.empire_items.modules.enchants.api.EmpireEnchantApi
-import com.astrainteractive.empire_items.modules.enchants.api.EmpireEnchantEvent
-import com.astrainteractive.empire_items.modules.enchants.api.EmpireEnchants
-import com.astrainteractive.empire_items.modules.enchants.data.EmpireEnchantsConfig
-import com.astrainteractive.empire_items.modules.enchants.data.enchants.GenericValueEnchant
+import com.astrainteractive.empire_items.api.enchants.EmpireEnchantApi
+import com.astrainteractive.empire_items.api.enchants.EmpireEnchantEvent
+import com.astrainteractive.empire_items.api.enchants.EmpireEnchants
+import com.astrainteractive.empire_items.api.enchants.models.EmpireEnchantsConfig
+import com.astrainteractive.empire_items.api.enchants.models.GenericValueEnchant
 import com.destroystokyo.paper.event.player.PlayerJumpEvent
 import kotlinx.coroutines.launch
 import org.bukkit.Material
