@@ -30,7 +30,7 @@ data class YmlMob(
     @Serializable
     data class YmlMobEvent(
         val id: String,
-        val cooldown: Int = 0,
+        val cooldown: Int? = null,
         val eventName: String = id,
         val playSound: Interact.PlaySound? = null,
         val boneParticle: Map<String, BoneParticle> = emptyMap(),

@@ -1,21 +1,20 @@
 package com.astrainteractive.empire_items.empire_items.events.api_events.model_engine
 
 import com.astrainteractive.astralibs.async.AsyncHelper
-import com.astrainteractive.empire_items.api.mobs.CustomEntityInfo
-import com.astrainteractive.empire_items.api.mobs.MobApi
 import com.astrainteractive.empire_items.empire_items.events.api_events.model_engine.ModelEngineApi.playAnimation
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.bukkit.Location
 import org.bukkit.entity.Entity
 import org.bukkit.entity.LivingEntity
+import org.bukkit.entity.Player
 import kotlin.math.max
 
 class AttackApi {
     private val currentAttackingMobs = mutableSetOf<Entity>()
     fun onAttack(e: Entity, target: Entity, damage: Double): Boolean {
         if (currentAttackingMobs.contains(e)) return false
-        val ignoredMobs = MobApi.getCustomEntityInfo(e) ?: return false
+        val ignoredMobs = ModelEngineApi.getCustomEntityInfo(e) ?: return false
         performAttack(ignoredMobs, target, damage)
         return true
     }

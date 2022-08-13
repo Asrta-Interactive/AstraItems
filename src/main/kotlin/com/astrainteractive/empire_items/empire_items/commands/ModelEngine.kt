@@ -5,7 +5,6 @@ import com.astrainteractive.astralibs.utils.registerCommand
 import com.astrainteractive.astralibs.utils.registerTabCompleter
 import com.astrainteractive.astralibs.utils.withEntry
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
-import com.astrainteractive.empire_items.api.mobs.MobApi
 import com.astrainteractive.empire_items.empire_items.events.api_events.model_engine.ModelEngineApi
 import com.astrainteractive.empire_items.empire_items.util.EmpirePermissions
 import com.astrainteractive.empire_items.empire_items.util.Translations

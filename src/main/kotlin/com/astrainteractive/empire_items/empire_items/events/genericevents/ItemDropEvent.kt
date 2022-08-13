@@ -3,8 +3,8 @@ package com.astrainteractive.empire_items.empire_items.events.genericevents
 import com.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.items.BlockParser
-import com.astrainteractive.empire_items.api.mobs.MobApi
 import com.astrainteractive.empire_items.api.models.yml_item.YmlItem
+import com.astrainteractive.empire_items.empire_items.events.api_events.model_engine.ModelEngineApi
 import org.bukkit.Location
 import org.bukkit.block.Block
 import org.bukkit.block.Chest
@@ -67,8 +67,7 @@ class ItemDropEvent {
     }
 
     val onMobDeath = DSLEvent.event(EntityDeathEvent::class.java) { e ->
-        val dropFrom = MobApi.getActiveEntity(e.entity)?.ymlMob?.id ?: e.entity.type.name
-        MobApi.removeActiveEntity(e.entity)
+        val dropFrom = ModelEngineApi.getCustomEntityInfo(e.entity)?.ymlMob?.id ?: e.entity.type.name
         EmpireItemsAPI.dropByDropFrom[dropFrom]?.forEach {
             it.performDrop(e.entity.location)
         }

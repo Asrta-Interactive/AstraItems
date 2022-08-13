@@ -39,6 +39,10 @@ class EmpirePlugin : JavaPlugin {
         lateinit var instance: EmpirePlugin
             private set
     }
+    init {
+        instance = this
+        AstraLibs.rememberPlugin(this)
+    }
 
     /**
      * Command manager for plugin
@@ -64,8 +68,6 @@ class EmpirePlugin : JavaPlugin {
      * This function called when server starts
      */
     override fun onEnable() {
-        instance = this
-        AstraLibs.rememberPlugin(this)
         Logger.prefix = "EmpireItems"
         ResourceProvider.reload()
         commandManager

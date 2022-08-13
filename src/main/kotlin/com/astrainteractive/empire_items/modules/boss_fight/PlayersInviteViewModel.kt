@@ -10,11 +10,11 @@ import com.astrainteractive.astralibs.utils.registerCommand
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.empireID
 import com.astrainteractive.empire_items.api.items.BlockParser
-import com.astrainteractive.empire_items.api.mobs.CustomEntityInfo
-import com.astrainteractive.empire_items.api.mobs.MobApi
 import com.astrainteractive.empire_items.empire_items.commands.CommandManager
 import com.astrainteractive.empire_items.api.models.CONFIG
 import com.astrainteractive.empire_items.api.models.yml_item.Interact
+import com.astrainteractive.empire_items.empire_items.events.api_events.model_engine.CustomEntityInfo
+import com.astrainteractive.empire_items.empire_items.events.api_events.model_engine.ModelEngineApi
 import com.google.gson.JsonParser
 import com.mojang.authlib.GameProfile
 import com.mojang.authlib.properties.Property
@@ -157,7 +157,7 @@ class PlayersInviteViewModel(val playerMenuUtility: AstraPlayerMenuUtility) {
             delay(CONFIG.arenaCommand.bossSpawnDelay)
             val mob = EmpireItemsAPI.ymlMobById[CONFIG.arenaCommand.mobID]!!
             AsyncHelper.callSyncMethod {
-                customEntityInfo = MobApi.spawnMob(mob, CONFIG.arenaCommand.bossLocation.toBukkitLocation())
+                customEntityInfo = ModelEngineApi.spawnMob(mob, CONFIG.arenaCommand.bossLocation.toBukkitLocation())
             }
         }
         AsyncHelper.launch {
