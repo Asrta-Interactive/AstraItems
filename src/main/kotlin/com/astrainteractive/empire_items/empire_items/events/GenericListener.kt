@@ -69,6 +69,10 @@ class GenericListener : EventManager {
         DecorationEvent()
     }
 
+    override fun onDisable() {
+        super.onDisable()
+
+    }
     init {
         blocksEventModule()
         empireEvents()
