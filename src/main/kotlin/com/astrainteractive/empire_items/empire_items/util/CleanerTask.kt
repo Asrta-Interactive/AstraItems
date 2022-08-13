@@ -7,11 +7,13 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 class CleanerTask(val period: Long, val task: () -> Unit) {
-    fun start() = AsyncHelper.launch(Dispatchers.IO) {
-        while (true) {
-            delay(period)
-            task()
-            if (!this.isActive) break
+    init {
+        AsyncHelper.launch(Dispatchers.IO) {
+            while (true) {
+                delay(period)
+                task()
+                if (!this.isActive) break
+            }
         }
     }
 }
