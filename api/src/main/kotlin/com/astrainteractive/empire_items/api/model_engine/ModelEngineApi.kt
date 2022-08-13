@@ -64,6 +64,7 @@ object ModelEngineApi : IManager {
     }
 
     fun requestMobSpawn(location: Location, entity: Entity) = spawnApi.requestMobSpawn(location, entity)?.let {
+        it.ymlMob.bossBar?.let { bar -> bossBarController.create(it.entity, bar) }
         _activeMobs.add(it)
     }
 
