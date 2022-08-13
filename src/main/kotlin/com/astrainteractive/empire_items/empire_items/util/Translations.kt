@@ -3,15 +3,28 @@ package com.astrainteractive.empire_items.empire_items.util
 import com.astrainteractive.astralibs.FileManager
 import com.astrainteractive.astralibs.utils.HEX
 import com.astrainteractive.astralibs.utils.getHEXString
+import org.bukkit.entity.Player
 
 
 class Translations {
     companion object {
         lateinit var instance: Translations
+        fun String.sendTo(player:Player) = player.sendMessage(this)
+        @JvmName("argumentMessageExt")
+        fun String.argumentMessage(vararg args: Pair<String, Any>) = argumentMessage(this, *args)
+        fun argumentMessage(message: String, vararg args: Pair<String, Any>): String {
+            var message = message
+            args.forEach {
+                message = message.replace(it.first, it.second.toString())
+            }
+            return message
+        }
     }
+
     init {
         instance = this
     }
+
     private val _translationFile: FileManager = FileManager("translations.yml")
     private val translation = _translationFile.getConfig()
     private fun getHEXString(path: String, default: String): String {
@@ -23,8 +36,9 @@ class Translations {
     }
 
 
+
     //General
-    val generalPrefix: String =  "#18dbd1[EmpireItems]".HEX()
+    val generalPrefix: String = "#18dbd1[EmpireItems]".HEX()
 
     val reload: String = getHEXString("general.reload", "#dbbb18Перезагрузка плагина")
     val reloadComplete: String =
@@ -38,7 +52,8 @@ class Translations {
     val itemGained: String = getHEXString("general.item_gained", "#18dbd1Вы получили %item%")
     val itemGave: String = getHEXString("general.item_gave", "#18dbd1Вы выдали %item% игроку %player%")
     val itemReplaced: String = getHEXString("general.item_replaced", "#18db52Предмет заменён")
-    val diceThrow: String = getHEXString("general.dice_throw", "#18db52Игрок &6%player% #18db52бросил кубик. Значение &6%value%")
+    val diceThrow: String =
+        getHEXString("general.dice_throw", "#18db52Игрок &6%player% #18db52бросил кубик. Значение &6%value%")
 
     //Zipping
     val zipStarted: String = getHEXString(
@@ -66,11 +81,11 @@ class Translations {
     val guiInfoDropColor: String = getHEXString("gui.info_drop_color", "#47ad5f")
 
 
-
     //Resource Pack
     val resourcePackDeny: String =
         getHEXString("resouce_pack.deny", "#f55442Вы отклонили ресурс-пак")
-    val resourcePackMessage: String = "[\"\",{\"text\":\"-----------------------------------------------------------------------\",\"color\":\"#9C0EDC\"},{\"text\":\"\\n\"},{\"text\":\"Приветствуем на EmpireSMP!\",\"color\":\"#E4CC15\"},{\"text\":\"\\n\"},{\"text\":\"У нас куча новых предметов, мобов, новые меню и эмодзи!\",\"color\":\"#2ACADF\"},{\"text\":\"\\n\"},{\"text\":\"Всё это имеет новые текстурки и модельки!\",\"color\":\"#13C93A\"},{\"text\":\"\\n\"},{\"text\":\"Играя здесь у вас возникнет ощущение игры с модами!\",\"color\":\"#62C21D\"},{\"text\":\"\\n\"},{\"text\":\"Множество новых механик:\",\"color\":\"#AF8F08\"},{\"text\":\"\\n\"},{\"text\":\"Система рангов, апгрейды, оружие, ранги, новая руда, магазины\",\"color\":\"#C7BF1B\"},{\"text\":\"\\n\"},{\"text\":\"Не забудьте зайти в дискорд, если будут какие-то вопросы! /motd\",\"color\":\"#1784D3\"},{\"text\":\"\\n\"},{\"text\":\"EmpireProjekt.ru\",\"color\":\"#CE1881\"},{\"text\":\"\\n\"},{\"text\":\"------------------------------------------------------------------------\",\"color\":\"#7000ED\"}]".HEX()
+    val resourcePackMessage: String =
+        "[\"\",{\"text\":\"-----------------------------------------------------------------------\",\"color\":\"#9C0EDC\"},{\"text\":\"\\n\"},{\"text\":\"Приветствуем на EmpireSMP!\",\"color\":\"#E4CC15\"},{\"text\":\"\\n\"},{\"text\":\"У нас куча новых предметов, мобов, новые меню и эмодзи!\",\"color\":\"#2ACADF\"},{\"text\":\"\\n\"},{\"text\":\"Всё это имеет новые текстурки и модельки!\",\"color\":\"#13C93A\"},{\"text\":\"\\n\"},{\"text\":\"Играя здесь у вас возникнет ощущение игры с модами!\",\"color\":\"#62C21D\"},{\"text\":\"\\n\"},{\"text\":\"Множество новых механик:\",\"color\":\"#AF8F08\"},{\"text\":\"\\n\"},{\"text\":\"Система рангов, апгрейды, оружие, ранги, новая руда, магазины\",\"color\":\"#C7BF1B\"},{\"text\":\"\\n\"},{\"text\":\"Не забудьте зайти в дискорд, если будут какие-то вопросы! /motd\",\"color\":\"#1784D3\"},{\"text\":\"\\n\"},{\"text\":\"EmpireProjekt.ru\",\"color\":\"#CE1881\"},{\"text\":\"\\n\"},{\"text\":\"------------------------------------------------------------------------\",\"color\":\"#7000ED\"}]".HEX()
     val resourcePackDownloadHint: String = getHEXString(
         "resource_pack.hint.download_self",
         "#f54542Попробуйте скачать самостоятельно. #429ef5empireprojekt.ru/files/EmpireProjektPack.zip"
@@ -89,10 +104,10 @@ class Translations {
         #f54542Группа ВК https://vk.com/EmpireProjekt
     """.trimIndent()
     )
+
     //Mobs
     val mobNotExist: String = getHEXString("mobs.not_exist", "#f5a742Такого моба нет")
     val mobFailedToSpawn: String = getHEXString("mobs.failed_to_spawn", "#f5a742Не удалось заспавнить моба")
-
 
 
     //Credits
@@ -102,6 +117,7 @@ class Translations {
     val paidCredit: String = getHEXString("credit.paid", "#f5a742Вы выплатили кредит %amount%$.")
     val noActiveCredit: String = getHEXString("credit.no_active", "#f5a742У вас нет активных кредитов.")
     val notEnoughMoney: String = getHEXString("credit.no_money", "#f5a742У вас недостаточно денег.")
+
     //Bank
     val bankDeposit: String = getHEXString("credit.bank.deposit", "#f5a742Вы внесли в банк %amount%$.")
     val bankWithdraw: String = getHEXString("credit.bank.withdraw", "#f5a742Вы взяли из банка %amount%$.")

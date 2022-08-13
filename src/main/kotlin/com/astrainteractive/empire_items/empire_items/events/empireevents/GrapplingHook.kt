@@ -6,6 +6,7 @@ import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.empireID
 import com.astrainteractive.empire_items.api.utils.BukkitConstants
 import com.astrainteractive.empire_items.api.utils.getPersistentData
+import com.astrainteractive.empire_items.empire_items.util.CleanerTask
 import com.destroystokyo.paper.ParticleBuilder
 import org.bukkit.*
 
@@ -23,6 +24,9 @@ import org.bukkit.potion.PotionEffectType
 
 class GrapplingHook {
     private val activeHooks = mutableMapOf<String, Location>()
+    val cleaner = CleanerTask(50000) {
+        activeHooks.clear()
+    }
     private fun unCastHook(itemStack: ItemStack, player: Player) {
         val state = itemStack.itemMeta.getPersistentData(BukkitConstants.GRAPPLING_HOOK) ?: return
         val defaultcmd = EmpireItemsAPI.itemYamlFilesByID[state.split(";").firstOrNull()]?.customModelData ?: return

@@ -5,6 +5,7 @@ import com.astrainteractive.astralibs.events.EventListener
 import com.astrainteractive.empire_items.EmpirePlugin.Companion.instance
 import com.astrainteractive.empire_items.api.utils.BukkitConstants
 import com.astrainteractive.empire_items.api.utils.hasPersistentData
+import com.astrainteractive.empire_items.empire_items.util.CleanerTask
 import com.sk89q.worldedit.bukkit.BukkitAdapter
 import com.sk89q.worldedit.world.World
 import com.sk89q.worldguard.WorldGuard
@@ -21,8 +22,10 @@ import org.bukkit.event.player.PlayerInteractEvent
 import java.util.*
 
 class HammerEvent{
-    private val blockFace: MutableMap<Player, Int> = mutableMapOf()
-
+    private val blockFace: MutableMap<UUID, Int> = mutableMapOf()
+    val cleaner = CleanerTask(50000) {
+        blockFace.clear()
+    }
     val playerInteractEvent = DSLEvent.event(PlayerInteractEvent::class.java)  { e ->
         val p = e.player
         val bFace = e.blockFace
@@ -33,7 +36,7 @@ class HammerEvent{
                 ignoreCase = true
             )
         ) 0 else if (strside.equals("south", ignoreCase = true) || strside.equals("north", ignoreCase = true)) 1 else 2
-        blockFace[p] = side
+        blockFace[p.uniqueId] = side
     }
 
     val playerBreakEvent = DSLEvent.event(BlockBreakEvent::class.java)  { e ->
@@ -54,8 +57,8 @@ class HammerEvent{
         val itemStack = e.player.inventory.itemInMainHand
         val itemMeta = itemStack.itemMeta ?: return@event
         if (itemMeta.hasPersistentData(BukkitConstants.HAMMER_ENCHANT)!=true) return@event
-        val side = blockFace[e.player]
-        blockFace.remove(e.player)
+        val side = blockFace[e.player.uniqueId]
+        blockFace.remove(e.player.uniqueId)
         if (side != null) {
             val blocks: MutableList<Block> =
                 ArrayList()

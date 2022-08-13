@@ -8,6 +8,7 @@ import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.empireID
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.toAstraItemOrItem
 import com.astrainteractive.empire_items.api.models.yml_item.Interact.PlayCommand
+import com.astrainteractive.empire_items.empire_items.util.CleanerTask
 import com.destroystokyo.paper.ParticleBuilder
 import org.bukkit.Material
 import org.bukkit.Particle
@@ -24,7 +25,9 @@ import java.util.concurrent.Future
 class ItemInteractEvent {
 
     private val cooldown = mutableMapOf<String, Long>()
-
+    val cleaner = CleanerTask(50000) {
+        cooldown.clear()
+    }
     fun hasCooldown(player: Player, event: String, _cooldown: Int): Boolean {
         val lastUse = cooldown[player.name + event] ?: 0L
         if (System.currentTimeMillis() - lastUse < _cooldown)

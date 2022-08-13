@@ -1,4 +1,4 @@
-package com.astrainteractive.empire_items.empire_items.events.blocks
+package com.astrainteractive.empire_items.empire_items.util
 
 import com.astrainteractive.astralibs.Logger
 

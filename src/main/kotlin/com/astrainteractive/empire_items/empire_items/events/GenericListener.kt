@@ -9,6 +9,7 @@ import com.astrainteractive.empire_items.empire_items.events.blocks.*
 import com.astrainteractive.empire_items.empire_items.events.api_events.DecorationEvent
 import com.astrainteractive.empire_items.empire_items.events.api_events.FontProtocolLibEvent
 import com.astrainteractive.empire_items.empire_items.events.api_events.ModelEngineEvent
+import com.astrainteractive.empire_items.empire_items.events.api_events.NewModelEngineEvent
 import com.astrainteractive.empire_items.empire_items.events.empireevents.*
 import com.astrainteractive.empire_items.empire_items.events.resourcepack.ProtocolLibResourcePackEvent
 import com.astrainteractive.empire_items.empire_items.events.resourcepack.ResourcePackEvent
@@ -32,7 +33,6 @@ class GenericListener : EventManager {
 //        TestMushroomEvent()
     }
     val empireEvents = {
-        CatKillEvent()
         LavaWalkerEvent()
         HammerEvent()
         MolotovEvent()
@@ -50,7 +50,6 @@ class GenericListener : EventManager {
     }
     val genericEvents = {
         MenuListener().onEnable(this)
-        DurabilityCraftEvent()
         ExperienceRepairEvent()
         ItemDropEvent()
         ItemInteractEvent()
@@ -66,7 +65,8 @@ class GenericListener : EventManager {
             ProtocolLibResourcePackEvent().onEnable(this)
         }
         getPlugin("ModelEngine")?.let {
-            ModelEngineEvent().onEnable(this)
+//            ModelEngineEvent().onEnable(this)
+            NewModelEngineEvent()
         }
         DecorationEvent()
     }

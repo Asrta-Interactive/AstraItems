@@ -7,6 +7,7 @@ import com.astrainteractive.astralibs.utils.convertHex
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.toAstraItemOrItem
 import com.astrainteractive.empire_items.api.models.GUI_CONFIG
 import com.astrainteractive.empire_items.api.utils.emoji
+import com.astrainteractive.empire_items.empire_items.gui.crafting.GuiCrafting
 import kotlinx.coroutines.launch
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent

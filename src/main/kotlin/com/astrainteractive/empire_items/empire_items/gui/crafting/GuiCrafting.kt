@@ -1,4 +1,4 @@
-package com.astrainteractive.empire_items.empire_items.gui
+package com.astrainteractive.empire_items.empire_items.gui.crafting
 
 import com.astrainteractive.astralibs.async.AsyncHelper
 import com.astrainteractive.astralibs.events.EventManager
@@ -8,6 +8,9 @@ import com.astrainteractive.empire_items.api.EmpireItemsAPI.empireID
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.toAstraItemOrItem
 import com.astrainteractive.empire_items.api.models.GUI_CONFIG
 import com.astrainteractive.empire_items.api.utils.emoji
+import com.astrainteractive.empire_items.empire_items.gui.AstraPaginatedMenu
+import com.astrainteractive.empire_items.empire_items.gui.GuiCategory
+import com.astrainteractive.empire_items.empire_items.gui.PlayerMenuUtility
 import com.astrainteractive.empire_items.empire_items.util.EmpirePermissions
 import kotlinx.coroutines.launch
 import org.bukkit.event.inventory.InventoryClickEvent

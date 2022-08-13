@@ -14,6 +14,7 @@ import org.bukkit.Material
 import org.bukkit.attribute.Attribute
 import org.bukkit.attribute.AttributeModifier
 import org.bukkit.configuration.ConfigurationSection
+import org.bukkit.entity.LivingEntity
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.BookMeta
@@ -119,3 +120,29 @@ fun Location.playSound(name: String?) {
 fun Location.getBiome() = world.getBiome(this)
 
 fun getPlugin(name:String) = Bukkit.getServer().pluginManager.getPlugin(name)
+
+fun Location.explode(power:Int) = explode(power.toDouble())
+fun Location.explode(power: Double) {
+    world?.createExplosion(this, power.toFloat()) ?: return
+}
+fun LivingEntity.addAttribute(
+    attribute: Attribute,
+    amount: Double,
+    operation: AttributeModifier.Operation = AttributeModifier.Operation.ADD_NUMBER,
+) {
+    val attributeInstance = getAttribute(attribute) ?: let {
+        registerAttribute(attribute)
+        getAttribute(attribute)!!
+    }
+    attributeInstance.addModifier(
+        AttributeModifier(
+            UUID.randomUUID(),
+            attribute.name,
+            amount,
+            operation
+        )
+    )
+    if (attribute == Attribute.GENERIC_MAX_HEALTH)
+        this.health = amount
+
+}

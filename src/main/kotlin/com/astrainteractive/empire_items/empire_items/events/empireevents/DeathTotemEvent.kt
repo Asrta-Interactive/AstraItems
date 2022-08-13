@@ -25,20 +25,16 @@ class DeathTotemEvent{
          inv.itemInMainHand.isDeathTotem() || inv.itemInOffHand.isDeathTotem()
 
     val playerInteractEvent = DSLEvent.event(PlayerInteractEvent::class.java)  { e ->
-        if (isHoldTotem(e.player.inventory))
-            killPlayer(e.player)
+        playEvent(e.player)
     }
     val playerItemHeldEvent = DSLEvent.event(PlayerItemHeldEvent::class.java)  { e ->
-        if (isHoldTotem(e.player.inventory))
-            killPlayer(e.player)
+        playEvent(e.player)
     }
 
-    private fun killPlayer(player:Player){
-        player.damage(999999999999.0)
-        Bukkit.getScheduler().runTaskLater(AstraLibs.instance, Runnable {
-            player.damage(999999999999.0)
-
-        },20L*2)
+    private fun playEvent(player:Player){
+        if (!isHoldTotem(player.inventory)) return
+        player.damage(99999.0)
         player.sendMessage("#cf2d04${ChatColor.MAGIC}Голос ${ChatColor.AQUA}-> #cf2d04Ты недостоин".HEX())
+
     }
 }

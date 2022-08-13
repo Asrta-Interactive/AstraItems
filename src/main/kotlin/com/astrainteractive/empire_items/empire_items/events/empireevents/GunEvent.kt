@@ -15,6 +15,7 @@ import com.astrainteractive.empire_items.empire_items.util.protection.KProtectio
 import com.astrainteractive.empire_items.api.models.yml_item.Gun
 import com.astrainteractive.empire_items.api.models.yml_item.Interact
 import com.astrainteractive.empire_items.api.models.yml_item.YmlItem
+import com.astrainteractive.empire_items.api.utils.explode
 import com.comphenix.protocol.PacketType
 import com.comphenix.protocol.ProtocolLibrary
 import com.comphenix.protocol.ProtocolManager
@@ -224,7 +225,7 @@ class GunEvent {
 
             }
             if (gunInfo.explosion != null && KProtectionLib.canExplode(null, l))
-                awaitSync { GrenadeEvent.generateExplosion(l, gunInfo.explosion!!.toDouble()) }
+                awaitSync { l.explode(gunInfo.explosion?:0) }
         }
 
     }

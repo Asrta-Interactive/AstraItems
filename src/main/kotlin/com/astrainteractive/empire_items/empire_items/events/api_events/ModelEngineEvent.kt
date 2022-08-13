@@ -49,26 +49,11 @@ class ModelEngineEvent : EventListener {
     }, 0L, 20L)
 
 
-    val onMobSpawn = DSLEvent.event(EntitySpawnEvent::class.java) { e ->
-        if (MobApi.isSpawnIgnored(e.location))
-            return@event
-        val mobs = MobApi.getByNaturalSpawn(e.entity) ?: return@event
-        MobApi.replaceEntity(mobs.shuffled().first(), e.entity, naturalSpawn = true)
-    }
-
 
     val entityMove = DSLEvent.event(EntityMoveEvent::class.java) { e ->
         val empireMob = MobApi.getCustomEntityInfo(e.entity) ?: return@event
         val event = empireMob.ymlMob.events["onMove"] ?: return@event
         MobApi.executeEvent(empireMob.entity, empireMob.activeModel, event, "onMove")
-    }
-
-    val onEntityTarget = DSLEvent.event(EntityTargetEvent::class.java) { e ->
-        val name = e.target?.type?.name?.uppercase() ?: return@event
-        val entityInfo = MobApi.getCustomEntityInfo(e.entity) ?: return@event
-
-        if (entityInfo.ymlMob.ignoreMobs.filter { it.equals(name, ignoreCase = true) }.isNotEmpty())
-            e.isCancelled = true
     }
 
     val onMobDamage = DSLEvent.event(EntityDamageByEntityEvent::class.java) { e ->
@@ -110,12 +95,7 @@ class ModelEngineEvent : EventListener {
         MobApi.performAttack(entityInfo, listOf(e.entity), e.damage)
     }
 
-    val onDeath = DSLEvent.event(EntityDeathEvent::class.java) { e ->
-        removeEntity(e.entity)
-    }
-    val onRemovedFromWorld = DSLEvent.event(EntityRemoveFromWorldEvent::class.java) { e ->
-        removeEntity(e.entity)
-    }
+
     fun removeEntity(entity:org.bukkit.entity.Entity){
         BossBarManager.deleteEntityBossBar(entity)
         val entityInfo = MobApi.getCustomEntityInfo(entity) ?: return
