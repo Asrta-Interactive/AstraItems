@@ -8,7 +8,7 @@ import com.astrainteractive.empire_items.api.utils.getPlugin
 import com.astrainteractive.empire_items.empire_items.events.blocks.*
 import com.astrainteractive.empire_items.empire_items.events.api_events.DecorationEvent
 import com.astrainteractive.empire_items.empire_items.events.api_events.FontProtocolLibEvent
-import com.astrainteractive.empire_items.empire_items.events.api_events.NewModelEngineEvent
+import com.astrainteractive.empire_items.empire_items.events.api_events.ModelEngineEvent
 import com.astrainteractive.empire_items.empire_items.events.empireevents.*
 import com.astrainteractive.empire_items.empire_items.events.resourcepack.ProtocolLibResourcePackEvent
 import com.astrainteractive.empire_items.empire_items.events.resourcepack.ResourcePackEvent
@@ -16,7 +16,6 @@ import com.astrainteractive.empire_items.empire_items.events.genericevents.Villa
 
 import com.astrainteractive.empire_items.empire_items.events.empireevents.MusicDiscsEvent
 import com.astrainteractive.empire_items.empire_items.events.genericevents.*
-import org.bukkit.Bukkit
 
 
 class GenericListener : EventManager {
@@ -65,7 +64,7 @@ class GenericListener : EventManager {
         }
         getPlugin("ModelEngine")?.let {
 //            ModelEngineEvent().onEnable(this)
-            NewModelEngineEvent()
+            ModelEngineEvent()
         }
         DecorationEvent()
     }

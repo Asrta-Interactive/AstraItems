@@ -1,17 +1,15 @@
 package com.astrainteractive.empire_items.empire_items.events.api_events
 
-import com.astrainteractive.astralibs.async.AsyncHelper
 import com.astrainteractive.astralibs.events.DSLEvent
-import com.astrainteractive.empire_items.empire_items.events.api_events.model_engine.MobEvent
-import com.astrainteractive.empire_items.empire_items.events.api_events.model_engine.ModelEngineApi
+import com.astrainteractive.empire_items.api.model_engine.MobEvent
+import com.astrainteractive.empire_items.api.model_engine.ModelEngineApi
 import com.destroystokyo.paper.event.entity.EntityRemoveFromWorldEvent
-import kotlinx.coroutines.launch
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDeathEvent
 import org.bukkit.event.entity.EntitySpawnEvent
 import org.bukkit.event.entity.EntityTargetEvent
 
-class NewModelEngineEvent {
+class ModelEngineEvent {
     val onMobSpawn = DSLEvent.event(EntitySpawnEvent::class.java) { e ->
         ModelEngineApi.requestMobSpawn(e.location, e.entity)
         ModelEngineApi.triggerEvent(MobEvent.ON_SPAWN, e.entity)

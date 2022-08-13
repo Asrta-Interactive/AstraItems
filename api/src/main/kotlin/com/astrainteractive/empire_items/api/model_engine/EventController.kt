@@ -1,4 +1,4 @@
-package com.astrainteractive.empire_items.empire_items.events.api_events.model_engine
+package com.astrainteractive.empire_items.api.model_engine
 
 import com.astrainteractive.astralibs.Logger
 import com.astrainteractive.astralibs.async.AsyncHelper
@@ -40,7 +40,7 @@ class EventController {
     }
 
     fun triggerEvent(mobEvent: MobEvent, entity: Entity, target: Entity? = null) {
-        val entityInfo = ModelEngineApi.getCustomEntityInfo(entity)?:return
+        val entityInfo = ModelEngineApi.getCustomEntityInfo(entity) ?:return
         val event = entityInfo.ymlMob.events[mobEvent.name.uppercase()] ?: return
         val id = mobEvent.name + event.id + entity.entityId.toString()
         event.cooldown?.let {

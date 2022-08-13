@@ -13,8 +13,8 @@ import com.astrainteractive.empire_items.api.items.BlockParser
 import com.astrainteractive.empire_items.empire_items.commands.CommandManager
 import com.astrainteractive.empire_items.api.models.CONFIG
 import com.astrainteractive.empire_items.api.models.yml_item.Interact
-import com.astrainteractive.empire_items.empire_items.events.api_events.model_engine.CustomEntityInfo
-import com.astrainteractive.empire_items.empire_items.events.api_events.model_engine.ModelEngineApi
+import com.astrainteractive.empire_items.api.model_engine.CustomEntityInfo
+import com.astrainteractive.empire_items.api.model_engine.ModelEngineApi
 import com.google.gson.JsonParser
 import com.mojang.authlib.GameProfile
 import com.mojang.authlib.properties.Property
@@ -178,25 +178,8 @@ class PlayersInviteViewModel(val playerMenuUtility: AstraPlayerMenuUtility) {
         val item = ItemStack(Material.PLAYER_HEAD)
         val meta: SkullMeta = item.itemMeta as SkullMeta
         meta.owningPlayer = Bukkit.getOfflinePlayer(player.uniqueId)
-//        val profile = GameProfile(UUID.randomUUID(), null)
-//        val skin = getSkinByName(player.name)
-//        profile.properties.put("textures", Property("textures", skin?.first, skin?.second))
-//        BlockParser.setDeclaredField(meta::class.java, meta, "profile", profile)
         item.itemMeta = meta
         return item
-    }
-
-    private suspend fun getSkinByName(name: String) = catching {
-        val url = URL("https://api.mojang.com/users/profiles/minecraft/$name")
-        val reader = InputStreamReader(url.openStream())
-        val uuid = JsonParser().parse(reader).asJsonObject.get("id").asString
-        val url2 = URL("https://sessionserver.mojang.com/session/minecraft/profile/$uuid?unsigned=false")
-        val reader2 = InputStreamReader(url2.openStream())
-        val property =
-            JsonParser().parse(reader2).asJsonObject.get("properties").asJsonArray.get(0).asJsonObject
-        val value = property.get("value").asString
-        val signature = property.get("signature").asString
-        value to signature
     }
 }
 

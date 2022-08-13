@@ -1,4 +1,4 @@
-package com.astrainteractive.empire_items.empire_items.events.api_events.model_engine
+package com.astrainteractive.empire_items.api.model_engine
 
 import com.astrainteractive.astralibs.AstraLibs
 import com.astrainteractive.astralibs.utils.convertHex

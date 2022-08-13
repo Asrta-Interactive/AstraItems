@@ -1,4 +1,4 @@
-package com.astrainteractive.empire_items.empire_items.events.api_events.model_engine
+package com.astrainteractive.empire_items.api.model_engine
 
 import com.astrainteractive.astralibs.utils.valueOfOrNull
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
@@ -6,7 +6,7 @@ import com.astrainteractive.empire_items.api.models.mob.YmlMob
 import com.astrainteractive.empire_items.api.utils.addAttribute
 import com.astrainteractive.empire_items.api.utils.calcChance
 import com.astrainteractive.empire_items.api.utils.getBiome
-import com.astrainteractive.empire_items.empire_items.events.api_events.model_engine.ModelEngineApi.activeModel
+import com.astrainteractive.empire_items.api.model_engine.ModelEngineApi.activeModel
 import com.ticxo.modelengine.api.ModelEngineAPI
 import org.bukkit.Location
 import org.bukkit.attribute.Attribute

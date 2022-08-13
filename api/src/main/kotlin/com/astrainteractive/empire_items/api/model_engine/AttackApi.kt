@@ -1,7 +1,7 @@
-package com.astrainteractive.empire_items.empire_items.events.api_events.model_engine
+package com.astrainteractive.empire_items.api.model_engine
 
 import com.astrainteractive.astralibs.async.AsyncHelper
-import com.astrainteractive.empire_items.empire_items.events.api_events.model_engine.ModelEngineApi.playAnimation
+import com.astrainteractive.empire_items.api.model_engine.ModelEngineApi.playAnimation
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.bukkit.Location

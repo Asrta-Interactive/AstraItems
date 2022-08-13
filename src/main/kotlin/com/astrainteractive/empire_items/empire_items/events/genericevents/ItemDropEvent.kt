@@ -4,7 +4,7 @@ import com.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.items.BlockParser
 import com.astrainteractive.empire_items.api.models.yml_item.YmlItem
-import com.astrainteractive.empire_items.empire_items.events.api_events.model_engine.ModelEngineApi
+import com.astrainteractive.empire_items.api.model_engine.ModelEngineApi
 import org.bukkit.Location
 import org.bukkit.block.Block
 import org.bukkit.block.Chest

@@ -8,7 +8,7 @@ import com.astrainteractive.empire_items.api.CraftingApi
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.empire_items.commands.CommandManager
 import com.astrainteractive.empire_items.empire_items.events.GenericListener
-import com.astrainteractive.empire_items.empire_items.events.api_events.model_engine.ModelEngineApi
+import com.astrainteractive.empire_items.api.model_engine.ModelEngineApi
 import com.astrainteractive.empire_items.empire_items.util.protection.KProtectionLib
 import com.astrainteractive.empire_items.modules.ModuleManager
 import kotlinx.coroutines.cancel
