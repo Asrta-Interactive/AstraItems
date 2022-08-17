@@ -6,22 +6,25 @@ import com.astrainteractive.astralibs.events.EventListener
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.empireID
 import com.astrainteractive.empire_items.api.items.BlockParser
+import com.astrainteractive.empire_items.empire_items.util.protection.KProtectionLib
 import kotlinx.coroutines.launch
 
 import org.bukkit.event.EventHandler
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPlaceEvent
 
-class MushroomBlockPlaceEvent{
-    val blockPlace = DSLEvent.event(BlockPlaceEvent::class.java)  { e ->
+class MushroomBlockPlaceEvent {
+    val blockPlace = DSLEvent.event(BlockPlaceEvent::class.java) { e ->
+
+        if (e.isCancelled) return@event
         val player = e.player
         val block = e.block
-        val id = player.inventory.itemInMainHand.empireID?:return@event
-        val empireBlock = EmpireItemsAPI.itemYamlFilesByID[id]?.block?:return@event
+        val id = player.inventory.itemInMainHand.empireID ?: return@event
+        val empireBlock = EmpireItemsAPI.itemYamlFilesByID[id]?.block ?: return@event
         val facing = BlockParser.getFacingByData(empireBlock.data)
         val type = BlockParser.getMaterialByData(empireBlock.data)
         AsyncHelper.launch {
-            BlockParser.setTypeFast(block,type,facing,empireBlock.data)
+            BlockParser.setTypeFast(block, type, facing, empireBlock.data)
         }
     }
 

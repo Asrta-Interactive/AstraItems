@@ -75,13 +75,13 @@ class FontProtocolLibEvent : EventListener {
     private inline fun <reified T : Packet<*>> createPacketListener(noinline block: (player: Player, packet: T) -> Unit) =
         createPacketListener(T::class.java, block)
 
-    val ChatPacketListener = createPacketListener<PacketPlayInChat> { player, packet ->
-        val converted = EmpireUtils.emojiPattern(packet.b())
-        ReflectionUtil.setDeclaredField(PacketPlayInChat::class.java, packet, "b", converted)
-    }
+//    val ChatPacketListener = createPacketListener<PacketPlayInChat> { player, packet ->
+//        val converted = EmpireUtils.emojiPattern(packet.b())
+//        ReflectionUtil.setDeclaredField(PacketPlayInChat::class.java, packet, "b", converted)
+//    }
 
     private fun initPackerListener() {
-        ChatPacketListener.onEnable()
+//        ChatPacketListener.onEnable()
 
         packetListener = object : PacketAdapter(
             EmpirePlugin.instance,
@@ -141,7 +141,7 @@ class FontProtocolLibEvent : EventListener {
     }
 
     override fun onDisable() {
-        catching(true) { ChatPacketListener.onDisable() }
+//        catching(true) { ChatPacketListener.onDisable() }
         protocolManager.removePacketListener(packetListener)
 //        protocolManager.removePacketListener(testPacketListener)
         PlayerJoinEvent.getHandlerList().unregister(this)

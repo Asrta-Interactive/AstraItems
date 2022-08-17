@@ -5,6 +5,7 @@ import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.items.BlockParser
 import com.astrainteractive.empire_items.api.models.yml_item.YmlItem
 import com.astrainteractive.empire_items.api.model_engine.ModelEngineApi
+import com.astrainteractive.empire_items.empire_items.util.protection.KProtectionLib
 import org.bukkit.Location
 import org.bukkit.block.Block
 import org.bukkit.block.Chest
@@ -39,6 +40,11 @@ class ItemDropEvent {
     }
 
     val onBlockBreak = DSLEvent.event(BlockBreakEvent::class.java) { e ->
+
+        if (e.isCancelled) return@event
+//        if (!KProtectionLib.canBuild(e.player, e.block.location)) return@event
+
+//        if (!KProtectionLib.canBreak(e.player, e.block.location)) return@event
         val block: Block = e.block
         val customBlockData = BlockParser.getBlockData(e.block)
         val customBlock = EmpireItemsAPI.itemYamlFilesByID.values.firstOrNull { it.block?.data == customBlockData }
