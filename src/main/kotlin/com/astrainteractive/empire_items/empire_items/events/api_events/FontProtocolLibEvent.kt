@@ -4,6 +4,7 @@ import com.astrainteractive.astralibs.AstraLibs
 import com.astrainteractive.astralibs.events.EventListener
 import com.astrainteractive.astralibs.utils.AstraPacketReader
 import com.astrainteractive.astralibs.utils.ReflectionUtil
+import com.astrainteractive.astralibs.utils.catching
 import com.astrainteractive.astralibs.utils.convertHex
 import com.comphenix.protocol.PacketType
 import com.comphenix.protocol.ProtocolLibrary
@@ -140,7 +141,7 @@ class FontProtocolLibEvent : EventListener {
     }
 
     override fun onDisable() {
-        ChatPacketListener.onDisable()
+        catching(true) { ChatPacketListener.onDisable() }
         protocolManager.removePacketListener(packetListener)
 //        protocolManager.removePacketListener(testPacketListener)
         PlayerJoinEvent.getHandlerList().unregister(this)

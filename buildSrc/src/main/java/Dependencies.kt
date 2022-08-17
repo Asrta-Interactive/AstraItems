@@ -13,7 +13,7 @@ object Dependencies {
     }
 
     object Spigot {
-        const val version = "1.19-R0.1-SNAPSHOT"
+        const val version = "1.19.2-R0.1-SNAPSHOT"
         const val placeholderAPI = "2.11.2"
         const val protocolLib = "4.8.0"
         const val worldGuard = "7.0.7"

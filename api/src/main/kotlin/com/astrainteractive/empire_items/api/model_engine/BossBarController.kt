@@ -60,8 +60,9 @@ class BossBarController : IManager {
                         bar.destroy()
                         return@forEach
                     }
-
-                    if (player.location.distance(entityInfo.entity.location) > 70)
+                    if (player.location.world!=entityInfo.entity.location.world)
+                        bar.removePlayer(player)
+                    else if (player.location.distance(entityInfo.entity.location) > 70)
                         bar.removePlayer(player)
                     else bar.addPlayer(player)
                 }
