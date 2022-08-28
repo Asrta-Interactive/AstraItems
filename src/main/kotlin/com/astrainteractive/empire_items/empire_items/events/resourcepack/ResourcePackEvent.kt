@@ -15,13 +15,14 @@ class ResourcePackEvent {
         get() = ResourceProvider.translations
     val TAG = "ResourcePack"
 
-    val onJoin = DSLEvent.event(PlayerJoinEvent::class.java)  { e ->
+    val onJoin = DSLEvent.event(PlayerJoinEvent::class.java) { e ->
         val p = e.player
-        if (CONFIG.resourcePack.requestOnJoin || !p.hasPlayedBefore()) {
+        val timeSinceFirstPlay = System.currentTimeMillis() - p.firstPlayed < 30 * 60 * 1000
+        if (CONFIG.resourcePack.requestOnJoin && timeSinceFirstPlay) {
             Bukkit.getScheduler().runTaskLater(EmpirePlugin.instance, Runnable {
                 p.performCommand("empack")
-                Logger.log("Игрок ${p.name} присоединился впервые. Запрашиваем ресурс-пак",TAG)
-            },300L)
+                Logger.log("Игрок ${p.name} присоединился впервые. Запрашиваем ресурс-пак", TAG)
+            }, 300L)
 
         } else
             p.sendTitle(
@@ -31,28 +32,31 @@ class ResourcePackEvent {
     }
 
 
-    val onResourcePack = DSLEvent.event(PlayerResourcePackStatusEvent::class.java)  { e ->
+    val onResourcePack = DSLEvent.event(PlayerResourcePackStatusEvent::class.java) { e ->
         val p = e.player
         when (e.status) {
             PlayerResourcePackStatusEvent.Status.DECLINED -> {
-                Logger.log( "Игрок ${e.player.name} отклонил ресурс-пак",TAG)
+                Logger.log("Игрок ${e.player.name} отклонил ресурс-пак", TAG)
                 p.sendMessage(translations.resourcePackDeny)
                 p.sendMessage(translations.resourcePackDownloadHint)
             }
+
             PlayerResourcePackStatusEvent.Status.FAILED_DOWNLOAD -> {
-                Logger.log("Игроку ${e.player.name} не удалось скачать ресурс-пак",TAG)
+                Logger.log("Игроку ${e.player.name} не удалось скачать ресурс-пак", TAG)
                 p.sendMessage(translations.resourcePackDownloadError)
             }
+
             PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED -> {
-                if (System.currentTimeMillis() - p.firstPlayed>1000*60*10)
+                if (System.currentTimeMillis() - p.firstPlayed > 1000 * 60 * 10)
                     return@event
                 p.sendTitle(
                     ":first_join:",
                     "", 5, 30, 5
                 )
-                Logger.log("Игроку ${e.player.name} успешно загрузил ресурс-пак",TAG)
+                Logger.log("Игроку ${e.player.name} успешно загрузил ресурс-пак", TAG)
 
             }
+
             PlayerResourcePackStatusEvent.Status.ACCEPTED -> {
                 Logger.log(this.javaClass.name, "Игроку ${e.player.name} принял ресурс-пак")
             }

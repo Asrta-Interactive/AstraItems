@@ -7,6 +7,7 @@ import com.astrainteractive.astralibs.utils.registerTabCompleter
 import com.astrainteractive.empire_items.api.FontApi
 import com.astrainteractive.empire_items.empire_items.util.Translations
 import com.astrainteractive.empire_items.api.models.CONFIG
+import com.astrainteractive.empire_items.empire_items.gui.ResourcePack
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import kotlin.random.Random
@@ -37,6 +38,11 @@ class General {
         return@registerCommand
     }
     private val empack = AstraLibs.registerCommand("empack") { sender, args ->
+        if (sender is Player)
+            ResourcePack(sender).open()
+        return@registerCommand
+    }
+    private val empack_download = AstraLibs.registerCommand("empack_download") { sender, args ->
         if (sender is Player)
             sender.setResourcePack(CONFIG.resourcePack.link)
         return@registerCommand

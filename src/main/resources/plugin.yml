@@ -52,6 +52,9 @@ commands:
   emojis:
     usage: |
       In progress
+  empack_download:
+    usage: |
+      In progress
   empack:
     usage: |
       In progress
