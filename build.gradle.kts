@@ -1,5 +1,5 @@
 group = "com.astrainteractive"
-version = "4.0.10"
+version = "4.0.11"
 val name = "EmpireItems"
 description = "Custom items plugin for EmpireProjekt"
 
@@ -98,6 +98,7 @@ tasks {
         }
     }
     processResources {
+        filteringCharset = "UTF-8"
         from(sourceSets.main.get().resources.srcDirs) {
             filesMatching("plugin.yml") {
                 expand(

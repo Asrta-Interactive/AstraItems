@@ -25,11 +25,13 @@ class ModelEngineEvent {
         ModelEngineApi.removeEntity(e.entity)
     }
     val entityAttackEvent = DSLEvent.event(EntityDamageByEntityEvent::class.java) { e ->
+        ModelEngineApi.getCustomEntityInfo(e.entity)?:return@event
         e.isCancelled = ModelEngineApi.onAttack(e.damager, e.entity, e.damage)
         if (!e.isCancelled)
             ModelEngineApi.triggerEvent(MobEvent.ON_DAMAGE, e.damager, e.entity)
     }
     val entityDamagedEvent = DSLEvent.event(EntityDamageByEntityEvent::class.java) { e ->
+        ModelEngineApi.getCustomEntityInfo(e.entity)?:return@event
         if (e.isCancelled) return@event
         ModelEngineApi.triggerEvent(MobEvent.ON_DAMAGED, e.entity, e.damager)
         ModelEngineApi.onEntityDamaged(e.entity)
