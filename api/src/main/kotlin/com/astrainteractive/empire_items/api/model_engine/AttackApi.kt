@@ -1,7 +1,9 @@
 package com.astrainteractive.empire_items.api.model_engine
 
 import com.astrainteractive.astralibs.async.AsyncHelper
+import com.astrainteractive.astralibs.async.BukkitMain
 import com.astrainteractive.empire_items.api.model_engine.ModelEngineApi.playAnimation
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.bukkit.Location
@@ -43,7 +45,7 @@ class AttackApi {
             val damage = if (ymlMob.decreaseDamageByRange)
                 damage / max(1.0, distance)
             else damage
-            AsyncHelper.callSyncMethod {
+            AsyncHelper.launch(Dispatchers.BukkitMain)  {
                 if ((e as LivingEntity).health > 0)
                     (target as LivingEntity).damage(damage, e)
                 AsyncHelper.launch {

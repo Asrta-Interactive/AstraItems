@@ -47,10 +47,12 @@ class GuiCategories(player: Player, override val playerMenuUtility: PlayerMenuUt
         }
     }
 
-    override fun onInventoryClose(it: InventoryCloseEvent, manager: EventManager) = Unit
     override fun loadPage(next: Int) {
         super.loadPage(next)
         playerMenuUtility.categoriesPage += next
+    }
+
+    override fun onDestroy(it: InventoryCloseEvent, manager: EventManager) {
     }
 
     override fun setMenuItems() {

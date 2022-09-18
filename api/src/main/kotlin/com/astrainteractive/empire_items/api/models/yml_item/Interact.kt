@@ -2,8 +2,11 @@ package com.astrainteractive.empire_items.api.models.yml_item
 
 import com.astrainteractive.astralibs.AstraLibs
 import com.astrainteractive.astralibs.async.AsyncHelper
+import com.astrainteractive.astralibs.async.BukkitMain
 import com.astrainteractive.astralibs.utils.valueOfOrNull
 import com.destroystokyo.paper.ParticleBuilder
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.bukkit.Color
 import org.bukkit.Location
 import org.bukkit.Particle
@@ -56,7 +59,7 @@ data class Interact(
         val cooldown: Int? = null,
     ) {
         fun play(l: Location) {
-            AsyncHelper.callSyncMethod {
+            AsyncHelper.launch(Dispatchers.BukkitMain)  {
                 l.world.playSound(l, name, volume, pitch)
             }
         }

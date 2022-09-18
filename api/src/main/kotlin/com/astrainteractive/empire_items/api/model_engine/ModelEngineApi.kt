@@ -2,6 +2,7 @@ package com.astrainteractive.empire_items.api.model_engine
 
 import com.astrainteractive.astralibs.AstraLibs
 import com.astrainteractive.astralibs.async.AsyncHelper
+import com.astrainteractive.astralibs.async.BukkitMain
 import com.astrainteractive.astralibs.utils.randomElementOrNull
 import com.astrainteractive.astralibs.utils.valueOfOrNull
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
@@ -11,6 +12,7 @@ import com.astrainteractive.empire_items.api.utils.*
 import com.ticxo.modelengine.api.ModelEngineAPI
 import com.ticxo.modelengine.api.model.ActiveModel
 import com.ticxo.modelengine.api.model.ModeledEntity
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.bukkit.Bukkit
 import org.bukkit.Location
@@ -92,7 +94,7 @@ object ModelEngineApi : IManager {
 
     override suspend fun onEnable() {
         getPlugin("ModelEngine") ?: return
-        AsyncHelper.callSyncMethod {
+        AsyncHelper.launch(Dispatchers.BukkitMain)  {
             _activeMobs.clear()
             val entities = Bukkit.getWorlds().flatMap { world ->
                 world.entities.mapNotNull {

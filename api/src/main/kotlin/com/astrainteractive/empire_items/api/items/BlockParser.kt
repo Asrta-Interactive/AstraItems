@@ -1,11 +1,17 @@
 package com.astrainteractive.empire_items.api.items
 
+import com.astrainteractive.astralibs.AstraLibs
 import com.astrainteractive.astralibs.async.AsyncHelper
+import com.astrainteractive.astralibs.async.BukkitMain
+import com.astrainteractive.astralibs.async.BukkitMainDispatcher
 import com.astrainteractive.astralibs.utils.catching
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import net.minecraft.world.level.GeneratorAccess
 import net.minecraft.world.level.block.state.IBlockData
 import net.minecraft.world.level.block.state.properties.BlockStateBoolean
 import net.minecraft.world.level.block.state.properties.IBlockState
+import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
@@ -89,7 +95,8 @@ object BlockParser {
             }
         }
 
-        AsyncHelper.callSyncMethod {
+
+        AsyncHelper.launch(Dispatchers.BukkitMain) {
             blocks.forEach { block ->
                 val world = ((block as CraftBlock).craftWorld.handle as GeneratorAccess)
                 val position = (block as CraftBlock).position

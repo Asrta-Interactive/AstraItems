@@ -1,11 +1,13 @@
 package com.astrainteractive.empire_items.modules.enchants
 
 import com.astrainteractive.astralibs.async.AsyncHelper
+import com.astrainteractive.astralibs.async.BukkitMain
 import com.astrainteractive.empire_items.api.enchants.EmpireEnchantEvent
 import com.astrainteractive.empire_items.api.enchants.EmpireEnchants
 import com.astrainteractive.empire_items.api.enchants.models.EmpireEnchantsConfig
 import com.astrainteractive.empire_items.api.enchants.models.SpawnMobArenaEnchant
 import com.astrainteractive.empire_items.api.utils.BukkitConstants
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.bukkit.Bukkit
@@ -31,7 +33,7 @@ class MobArenaEnchant : EmpireEnchantEvent() {
         getEnchantLevel(e.player.inventory.itemInMainHand) ?: return
         e.player.inventory.itemInMainHand.amount -= 1
         AsyncHelper.launch {
-            AsyncHelper.callSyncMethod {
+            AsyncHelper.launch(Dispatchers.BukkitMain) {
                 empireEnchant.playCommand.forEach {
                     it.value.play(e.player)
                 }

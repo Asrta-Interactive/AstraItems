@@ -3,11 +3,14 @@ package com.astrainteractive.empire_items.api.utils
 import com.astrainteractive.astralibs.AstraLibs
 import com.astrainteractive.astralibs.FileManager
 import com.astrainteractive.astralibs.async.AsyncHelper
+import com.astrainteractive.astralibs.async.BukkitMain
 import com.astrainteractive.astralibs.utils.HEX
 import com.astrainteractive.astralibs.utils.convertHex
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.FontApi
 import com.google.common.io.Files
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Material
@@ -111,8 +114,8 @@ fun calcChance(chance: Double) = chance >= Random.nextDouble(0.0, 100.0)
 fun calcChance(chance: Float) = calcChance(chance.toDouble())
 
 fun Location.playSound(name: String?) {
-    AsyncHelper.callSyncMethod {
-        this.world.playSound(this, name ?: return@callSyncMethod, 2f, 1f)
+    AsyncHelper.launch(Dispatchers.BukkitMain)  {
+        this@playSound.world.playSound(this@playSound, name ?: return@launch, 2f, 1f)
     }
 
 }

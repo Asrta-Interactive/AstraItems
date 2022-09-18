@@ -76,9 +76,9 @@ class ResourcePack(val player: Player) : Menu() {
         }
     }
 
-    override fun onInventoryClose(it: InventoryCloseEvent, manager: EventManager) {
-
+    override fun onDestroy(it: InventoryCloseEvent, manager: EventManager) {
     }
+
 
     override fun setMenuItems() {
         inventory.setItem(acceptButtonIndex, acceptButton)

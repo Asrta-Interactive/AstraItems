@@ -2,6 +2,7 @@ package com.astrainteractive.empire_items.modules.boss_fight
 
 import com.astrainteractive.astralibs.AstraLibs
 import com.astrainteractive.astralibs.async.AsyncHelper
+import com.astrainteractive.astralibs.async.BukkitMain
 import com.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.astralibs.menu.AstraPlayerMenuUtility
 import com.astrainteractive.astralibs.utils.HEX
@@ -18,12 +19,9 @@ import com.astrainteractive.empire_items.api.model_engine.ModelEngineApi
 import com.google.gson.JsonParser
 import com.mojang.authlib.GameProfile
 import com.mojang.authlib.properties.Property
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.Particle
@@ -147,7 +145,7 @@ class PlayersInviteViewModel(val playerMenuUtility: AstraPlayerMenuUtility) {
         }
         AsyncHelper.launch {
             delay(CONFIG.arenaCommand.playersTeleportDelay)
-            AsyncHelper.callSyncMethod {
+            AsyncHelper.launch(Dispatchers.BukkitMain) {
                 players.forEach {
                     it.teleport(CONFIG.arenaCommand.bossLocation.toBukkitLocation())
                 }
@@ -156,7 +154,7 @@ class PlayersInviteViewModel(val playerMenuUtility: AstraPlayerMenuUtility) {
         AsyncHelper.launch {
             delay(CONFIG.arenaCommand.bossSpawnDelay)
             val mob = EmpireItemsAPI.ymlMobById[CONFIG.arenaCommand.mobID]!!
-            AsyncHelper.callSyncMethod {
+            AsyncHelper.launch(Dispatchers.BukkitMain) {
                 customEntityInfo = ModelEngineApi.spawnMob(mob, CONFIG.arenaCommand.bossLocation.toBukkitLocation())
             }
         }

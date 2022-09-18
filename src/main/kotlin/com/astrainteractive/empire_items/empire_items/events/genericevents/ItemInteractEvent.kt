@@ -1,7 +1,8 @@
 package com.astrainteractive.empire_items.empire_items.events.genericevents
 
 import com.astrainteractive.astralibs.*
-import com.astrainteractive.astralibs.async.AsyncHelper.callSyncMethod
+import com.astrainteractive.astralibs.async.AsyncHelper
+import com.astrainteractive.astralibs.async.BukkitMain
 import com.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.empire_items.api.CraftingApi
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
@@ -10,6 +11,8 @@ import com.astrainteractive.empire_items.api.EmpireItemsAPI.toAstraItemOrItem
 import com.astrainteractive.empire_items.api.models.yml_item.Interact.PlayCommand
 import com.astrainteractive.empire_items.empire_items.util.CleanerTask
 import com.destroystokyo.paper.ParticleBuilder
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.bukkit.Material
 import org.bukkit.Particle
 import org.bukkit.block.Furnace
@@ -59,8 +62,8 @@ class ItemInteractEvent {
         return executed
     }
 
-    private inline fun <T> Iterable<T>.syncForEach(crossinline action: (T) -> Unit): Future<Unit>? =
-        callSyncMethod { this.forEach(action) }
+    private inline fun <T> Iterable<T>.syncForEach(crossinline action: (T) -> Unit) =
+        AsyncHelper.launch(Dispatchers.BukkitMain) { this@syncForEach.forEach(action) }
 
     val onClick = DSLEvent.event(PlayerInteractEvent::class.java) { e ->
         if (e.hand == EquipmentSlot.HAND)

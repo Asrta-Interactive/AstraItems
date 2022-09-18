@@ -36,6 +36,10 @@ class GuiCategory(override val playerMenuUtility: PlayerMenuUtility) :
         super.loadPage(next)
         playerMenuUtility.categoryPage+=next
     }
+
+    override fun onDestroy(it: InventoryCloseEvent, manager: EventManager) {
+    }
+
     override fun handleMenu(e: InventoryClickEvent) {
         super.handleMenu(e)
         when(e.slot){
@@ -65,5 +69,4 @@ class GuiCategory(override val playerMenuUtility: PlayerMenuUtility) :
 
     }
 
-    override fun onInventoryClose(it: InventoryCloseEvent, manager: EventManager) = Unit
 }

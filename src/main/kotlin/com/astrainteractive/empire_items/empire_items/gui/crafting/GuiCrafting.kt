@@ -56,6 +56,9 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility) :
         playerMenuUtility.craftingPage += next
     }
 
+    override fun onDestroy(it: InventoryCloseEvent, manager: EventManager) {
+    }
+
     override fun handleMenu(e: InventoryClickEvent) {
         super.handleMenu(e)
         when (e.slot) {
@@ -119,5 +122,4 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility) :
 
     }
 
-    override fun onInventoryClose(it: InventoryCloseEvent, manager: EventManager) = Unit
 }

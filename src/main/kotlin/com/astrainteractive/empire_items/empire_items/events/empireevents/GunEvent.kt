@@ -2,6 +2,7 @@ package com.astrainteractive.empire_items.empire_items.events.empireevents
 
 import com.astrainteractive.astralibs.AstraLibs
 import com.astrainteractive.astralibs.async.AsyncHelper
+import com.astrainteractive.astralibs.async.BukkitMain
 import com.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.astralibs.utils.catching
 import com.astrainteractive.astralibs.utils.valueOfOrNull
@@ -22,6 +23,7 @@ import com.comphenix.protocol.ProtocolManager
 import com.destroystokyo.paper.ParticleBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.bukkit.*
 import org.bukkit.block.BlockFace
 import org.bukkit.entity.Entity
@@ -114,9 +116,9 @@ class GunEvent {
         player.teleport(loc)
     }
 
-    fun <T> awaitSync(block: () -> T): T? = AsyncHelper.callSyncMethod {
+    suspend fun <T> awaitSync(block: () -> T): T? = withContext(Dispatchers.BukkitMain) {
         block()
-    }?.get()
+    }
 
     //#FFFFFF
     private fun rgbToColor(color: String): Color =
@@ -171,10 +173,10 @@ class GunEvent {
                 if (particle == Particle.REDSTONE)
                     builder = builder.color(rgbToColor(gunInfo.color ?: "#000000"))
                 val clonedLocation1 = l.clone()
-                AsyncHelper.callSyncMethod {
+                AsyncHelper.launch(Dispatchers.BukkitMain) {
                     val l = clonedLocation1
                     builder
-                        .location(l.world ?: return@callSyncMethod, l.x, l.y, l.z)
+                        .location(l.world ?: return@launch, l.x, l.y, l.z)
                         .spawn()
                 }
                 l =
@@ -187,14 +189,14 @@ class GunEvent {
                 if (!l.block.isPassable) {
                     gunInfo.advanced?.onHit?.ignite?.let {
                         val l = l.clone()
-                        AsyncHelper.callSyncMethod {
+                        AsyncHelper.launch(Dispatchers.BukkitMain) {
                             MolotovEvent.Igniter(l.block.getRelative(BlockFace.UP), it, null, particle = false)
                         }
                     }
                     break
                 }
                 val clonedL = l.clone()
-                AsyncHelper.callSyncMethod {
+                AsyncHelper.launch(Dispatchers.BukkitMain) {
                     val l = clonedL
                     for (ent: Entity in getEntityByLocation(l, r)) {
                         if (ent is LivingEntity && ent != player) {

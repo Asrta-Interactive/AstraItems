@@ -2,6 +2,7 @@ package com.astrainteractive.empire_items.modules.boss_fight
 
 import com.astrainteractive.astralibs.AstraLibs
 import com.astrainteractive.astralibs.async.AsyncHelper
+import com.astrainteractive.astralibs.async.BukkitMain
 import com.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.astralibs.events.EventListener
 import com.astrainteractive.astralibs.events.EventManager
@@ -14,6 +15,7 @@ import com.astrainteractive.astralibs.utils.then
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.toAstraItemOrItem
 import com.astrainteractive.empire_items.api.utils.setDisplayName
 import com.astrainteractive.empire_items.api.models.GUI_CONFIG
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -77,6 +79,11 @@ class PlayersInviteMenu(override val playerMenuUtility: AstraPlayerMenuUtility) 
 
     }
 
+    override fun onDestroy(it: InventoryCloseEvent, manager: EventManager) {
+        viewModel.onDestroy()
+        job.cancel()
+    }
+
     override fun setMenuItems() {
         addManageButtons()
         if (viewModel.ready)
@@ -105,14 +112,11 @@ class PlayersInviteMenu(override val playerMenuUtility: AstraPlayerMenuUtility) 
 
     var job: Job = AsyncHelper.launch {
         viewModel.players.collectLatest {
-            AsyncHelper.callSyncMethod {
+            AsyncHelper.launch(Dispatchers.BukkitMain) {
                 setMenuItems()
             }
         }
     }
-    override fun onInventoryClose(it: InventoryCloseEvent, manager: EventManager) {
-        viewModel.onDestroy()
-        job.cancel()
-    }
+
 
 }

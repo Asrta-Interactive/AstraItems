@@ -1,5 +1,5 @@
 group = "com.astrainteractive"
-version = "4.0.11"
+version = "4.1.0"
 val name = "EmpireItems"
 description = "Custom items plugin for EmpireProjekt"
 

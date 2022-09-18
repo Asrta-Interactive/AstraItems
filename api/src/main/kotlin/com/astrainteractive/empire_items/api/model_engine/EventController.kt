@@ -2,11 +2,14 @@ package com.astrainteractive.empire_items.api.model_engine
 
 import com.astrainteractive.astralibs.Logger
 import com.astrainteractive.astralibs.async.AsyncHelper
+import com.astrainteractive.astralibs.async.BukkitMain
 import com.astrainteractive.astralibs.utils.valueOfOrNull
 import com.astrainteractive.empire_items.api.models.mob.YmlMob
 import com.astrainteractive.empire_items.api.utils.Cooldown
 import com.astrainteractive.empire_items.api.utils.addAttribute
 import com.astrainteractive.empire_items.api.utils.calcChance
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.bukkit.attribute.Attribute
 import org.bukkit.entity.Entity
 import org.bukkit.entity.EntityType
@@ -49,12 +52,12 @@ class EventController {
         }
         event.playSound?.play(entity.location)
         event.playPotionEffect.forEach { (_, effect) ->
-            AsyncHelper.callSyncMethod { (target as? LivingEntity)?.let(effect::play) }
+            AsyncHelper.launch(Dispatchers.BukkitMain)  { (target as? LivingEntity)?.let(effect::play) }
         }
         event.actions.forEach { (_, action) ->
             if (action.condition.checkCondition(entityInfo, id, action.id)) return@forEach
             val location = entity.location
-            AsyncHelper.callSyncMethod {
+            AsyncHelper.launch(Dispatchers.BukkitMain)  {
                 ModelEngineApi.blockedMobSpawn(location, true) {
                     action.summonMinions.forEach { (_, minion) ->
                         val entityType = EntityType.fromName(minion.type) ?: kotlin.run {
