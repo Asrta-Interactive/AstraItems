@@ -19,7 +19,7 @@ object Dependencies {
         const val worldGuard = "7.0.7"
         const val vault = "1.7"
         const val coreProtect = "21.2"
-        const val modelEngine = "R2.5.0"
+        const val modelEngine = "R3.0.0"
         const val essentials = "2.19.5-SNAPSHOT"
         const val discordSRV = "1.25.0"
         const val luckPerms = "5.4"

@@ -34,6 +34,8 @@ data class Gun(
         @Serializable
         data class OnHit(
             val fireTicks: Int? = null,
+            val freezeTicks: Int? = null,
+            val ignorePlayer:Boolean = false,
             val ignite: Int? = null,
             val playPotionEffect: Map<String, Interact.PlayPotionEffect> = mapOf(),
         )

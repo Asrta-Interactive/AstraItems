@@ -1,10 +1,16 @@
-package com.astrainteractive.empire_items.api.model_engine
+package com.astrainteractive.empire_items.api.meg_api
 
 import com.astrainteractive.astralibs.AstraLibs
+import com.astrainteractive.astralibs.async.AsyncHelper
+import com.astrainteractive.astralibs.async.BukkitMain
 import com.astrainteractive.astralibs.utils.convertHex
 import com.astrainteractive.astralibs.utils.valueOfOrNull
+import com.astrainteractive.empire_items.api.meg_api.EmpireModelEngineAPI
 import com.astrainteractive.empire_items.api.models.mob.YmlMob
 import com.astrainteractive.empire_items.api.utils.IManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.bukkit.Bukkit
 import org.bukkit.NamespacedKey
 import org.bukkit.attribute.Attribute
@@ -15,20 +21,24 @@ import org.bukkit.boss.KeyedBossBar
 import org.bukkit.entity.Entity
 import org.bukkit.entity.LivingEntity
 import org.bukkit.scheduler.BukkitTask
+import java.util.UUID
 
 private const val customMobBossBarKey = "esmp"
 
-class BossBarController : IManager {
+object BossBarController : IManager {
     private var bossBarScheduler: BukkitTask? = null
     val empireMobsBossBars: Sequence<KeyedBossBar>
         get() = Bukkit.getBossBars().asSequence().filter { it.key.key.contains(customMobBossBarKey) }
 
-    fun createBossBarKey(entity: Entity) = NamespacedKey(AstraLibs.instance, "${entity.entityId}_$customMobBossBarKey")
-    fun entityIdFromBossBar(bar: KeyedBossBar) = bar.key.key.split("_").firstOrNull()?.toIntOrNull()
+    private fun createBossBarKey(entity: Entity) =
+        NamespacedKey(AstraLibs.instance, "${entity.uniqueId.toString()}_$customMobBossBarKey")
+
+    private fun entityUUIDFromBossBar(bar: KeyedBossBar) = bar.key.key.split("_").firstOrNull()?.let(UUID::fromString)
 
 
     fun create(e: Entity, bossBar: YmlMob.YmlMobBossBar): KeyedBossBar {
         val key = createBossBarKey(e)
+        println("Creating bossbar: ${key.key}")
         val barColor = valueOfOrNull<BarColor>(bossBar.color) ?: BarColor.RED
         val barStyle = valueOfOrNull<BarStyle>(bossBar.barStyle) ?: BarStyle.SOLID
         val barFlags = bossBar.flags.mapNotNull { valueOfOrNull<BarFlag>(it) }.toTypedArray()
@@ -52,23 +62,29 @@ class BossBarController : IManager {
     }
 
     override suspend fun onEnable() {
-        bossBarScheduler = bukkitAsyncTimer {
-            Bukkit.getOnlinePlayers().forEach { player ->
-                empireMobsBossBars.forEach { bar ->
-                    val id = entityIdFromBossBar(bar) ?: return@forEach
-                    val entityInfo = ModelEngineApi.mobByEntityID(id) ?: run {
-                        bar.destroy()
-                        return@forEach
+        bossBarScheduler = Bukkit.getScheduler().runTaskTimerAsynchronously(AstraLibs.instance, Runnable {
+            AsyncHelper.launch(Dispatchers.IO) {
+                empireMobsBossBars.toList().forEach { bar ->
+                    Bukkit.getOnlinePlayers().forEach { player ->
+                        val uuid = kotlin.runCatching { entityUUIDFromBossBar(bar) }.getOrNull() ?: return@forEach
+                        val entity = withContext(Dispatchers.BukkitMain) { Bukkit.getEntity(uuid) } ?: return@forEach
+
+                        val entityInfo = EmpireModelEngineAPI.getEmpireEntity(entity) ?: run {
+                            bar.destroy()
+                            return@forEach
+                        }
+                        if (player.location.world != entityInfo.entity.location.world)
+                            bar.removePlayer(player)
+                        else if (player.location.distance(entityInfo.entity.location) > 70)
+                            bar.removePlayer(player)
+                        else bar.addPlayer(player)
                     }
-                    if (player.location.world!=entityInfo.entity.location.world)
-                        bar.removePlayer(player)
-                    else if (player.location.distance(entityInfo.entity.location) > 70)
-                        bar.removePlayer(player)
-                    else bar.addPlayer(player)
                 }
             }
-        }
+
+        }, 0L, 20L)
     }
+
 
     override suspend fun onDisable() {
         bossBarScheduler?.cancel()

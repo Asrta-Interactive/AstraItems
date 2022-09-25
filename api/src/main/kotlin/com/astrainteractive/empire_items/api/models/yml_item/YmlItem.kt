@@ -1,5 +1,6 @@
 package com.astrainteractive.empire_items.api.models.yml_item
 
+import com.astrainteractive.astralibs.utils.HEX
 import com.astrainteractive.astralibs.utils.convertHex
 import com.astrainteractive.astralibs.utils.valueOfOrNull
 import com.astrainteractive.empire_items.api.enchants.EmpireEnchants
@@ -16,6 +17,7 @@ import org.bukkit.attribute.Attribute
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.meta.BookMeta
 import org.bukkit.inventory.meta.LeatherArmorMeta
 import org.bukkit.inventory.meta.PotionMeta
 import org.bukkit.persistence.PersistentDataType
@@ -47,11 +49,20 @@ data class YmlItem(
     val interact: Map<String, Interact> = mapOf(),
     val gun: Gun? = null,
     val decoration: Decoration? = null,
+    val book: Book? = null
 ) {
     val texturePath: String?
         get() = _texturePath?.replace(".png", "")
     val modelPath: String?
         get() = _modelPath?.replace(".json", "")
+
+    @Suppress("PROVIDED_RUNTIME_TOO_LOW")
+    @Serializable
+    data class Book(
+        val title: String,
+        val author: String,
+        val pages: Map<String, List<String>>
+    )
 
     @Suppress("PROVIDED_RUNTIME_TOO_LOW")
     @Serializable
@@ -114,35 +125,43 @@ data class YmlItem(
                     BukkitConstants.MOLOTOV,
                     v.toIntOrNull() ?: 1
                 )
+
                 BukkitConstants.GRAPPLING_HOOK.value.key -> itemMeta.setPersistentDataType(
                     BukkitConstants.GRAPPLING_HOOK,
                     v
                 )
+
                 BukkitConstants.SOUL_BIND.value.key -> itemMeta.setPersistentDataType(
                     BukkitConstants.SOUL_BIND,
                     v.toIntOrNull() ?: 0
                 )
+
                 BukkitConstants.HAMMER_ENCHANT.value.key -> itemMeta.setPersistentDataType(
                     BukkitConstants.HAMMER_ENCHANT,
                     v.toIntOrNull() ?: 0
                 )
+
                 BukkitConstants.GRENADE_EXPLOSION_POWER.value.key -> itemMeta.setPersistentDataType(
                     BukkitConstants.GRENADE_EXPLOSION_POWER,
                     v.toInt() ?: 1
                 )
+
                 BukkitConstants.SLIME_CATCHER.value.key -> itemMeta.setPersistentDataType(
                     BukkitConstants.SLIME_CATCHER,
                     v
                 )
+
                 BukkitConstants.CORE_INSPECT.value.key -> itemMeta.setPersistentDataType(
                     BukkitConstants.CORE_INSPECT,
                     v.toIntOrNull() ?: 5
                 )
+
                 BukkitConstants.VOID_TOTEM.value.key -> itemMeta.setPersistentDataType(BukkitConstants.VOID_TOTEM, v)
                 BukkitConstants.TOTEM_OF_DEATH.value.key -> itemMeta.setPersistentDataType(
                     BukkitConstants.TOTEM_OF_DEATH,
                     v
                 )
+
                 BukkitConstants.CRAFT_DURABILITY.value.key -> {
                     itemMeta.setPersistentDataType(BukkitConstants.CRAFT_DURABILITY, v.toIntOrNull() ?: 1)
                     itemMeta.setPersistentDataType(BukkitConstants.MAX_CUSTOM_DURABILITY, v.toIntOrNull() ?: 1)
@@ -158,6 +177,17 @@ data class YmlItem(
         }
         itemMeta.setDisplayName(ChatColor.WHITE.toString() + convertHex(displayName))
         itemMeta.lore = convertHex(lore)
+        book?.let { book ->
+            (itemMeta as? BookMeta)?.let { bookMeta ->
+                bookMeta.author = book.author
+                bookMeta.title = book.title
+                bookMeta.generation = BookMeta.Generation.ORIGINAL
+                val pages = book.pages.values.map {
+                    it.joinToString("\n").HEX()
+                }
+                bookMeta.pages = pages
+            }
+        }
         itemStack.itemMeta = itemMeta
         return itemStack
 

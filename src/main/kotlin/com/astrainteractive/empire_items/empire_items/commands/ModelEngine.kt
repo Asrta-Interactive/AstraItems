@@ -5,7 +5,7 @@ import com.astrainteractive.astralibs.utils.registerCommand
 import com.astrainteractive.astralibs.utils.registerTabCompleter
 import com.astrainteractive.astralibs.utils.withEntry
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
-import com.astrainteractive.empire_items.api.model_engine.ModelEngineApi
+import com.astrainteractive.empire_items.api.meg_api.EmpireModelEngineAPI
 import com.astrainteractive.empire_items.empire_items.util.EmpirePermissions
 import com.astrainteractive.empire_items.empire_items.util.Translations
 import org.bukkit.Bukkit
@@ -39,7 +39,7 @@ class ModelEngine {
 
             val l = location ?: (sender as? Player)?.getTargetBlock(transparent, 64)?.getRelative(BlockFace.UP)?.location?:return@registerCommand
             println("Call ModelEngineApi.spawnMob")
-            val spawned = ModelEngineApi.spawnMob(empireMob, l)
+            val spawned = EmpireModelEngineAPI.spawnMob(empireMob, l)
             if (spawned == null) {
                 sender.sendMessage(Translations.instance.mobFailedToSpawn)
             }

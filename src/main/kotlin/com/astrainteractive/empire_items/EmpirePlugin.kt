@@ -6,9 +6,10 @@ import com.astrainteractive.astralibs.async.AsyncHelper
 import com.astrainteractive.astralibs.events.GlobalEventManager
 import com.astrainteractive.empire_items.api.CraftingApi
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
+import com.astrainteractive.empire_items.api.meg_api.BossBarController
+import com.astrainteractive.empire_items.api.meg_api.EmpireModelEngineAPI
 import com.astrainteractive.empire_items.empire_items.commands.CommandManager
 import com.astrainteractive.empire_items.empire_items.events.GenericListener
-import com.astrainteractive.empire_items.api.model_engine.ModelEngineApi
 import com.astrainteractive.empire_items.empire_items.util.protection.KProtectionLib
 import com.astrainteractive.empire_items.modules.ModuleManager
 import kotlinx.coroutines.cancel
@@ -59,7 +60,8 @@ class EmpirePlugin : JavaPlugin {
         add(EmpireItemsAPI)
         add(ModuleManager)
         add(CraftingApi)
-        add(ModelEngineApi)
+        add(EmpireModelEngineAPI)
+        add(BossBarController)
     }
 
 

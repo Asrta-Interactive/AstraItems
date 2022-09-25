@@ -1,8 +1,8 @@
 package com.astrainteractive.empire_items.empire_items.events.api_events
 
 import com.astrainteractive.astralibs.events.DSLEvent
-import com.astrainteractive.empire_items.api.model_engine.MobEvent
-import com.astrainteractive.empire_items.api.model_engine.ModelEngineApi
+import com.astrainteractive.empire_items.api.meg_api.BossBarController
+import com.astrainteractive.empire_items.api.meg_api.EmpireModelEngineAPI
 import com.destroystokyo.paper.event.entity.EntityRemoveFromWorldEvent
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDeathEvent
@@ -11,30 +11,25 @@ import org.bukkit.event.entity.EntityTargetEvent
 
 class ModelEngineEvent {
     val onMobSpawn = DSLEvent.event(EntitySpawnEvent::class.java) { e ->
-        ModelEngineApi.requestMobSpawn(e.location, e.entity)
-        ModelEngineApi.triggerEvent(MobEvent.ON_SPAWN, e.entity)
+        EmpireModelEngineAPI.processSpawnedMob(e.location, e.entity)
     }
+
     val onEntityTarget = DSLEvent.event(EntityTargetEvent::class.java) { e ->
-        e.isCancelled = ModelEngineApi.shouldTargetAt(e.entity, e.target) ?: return@event
+        EmpireModelEngineAPI.onEntityTarget(e)
     }
     val onDeath = DSLEvent.event(EntityDeathEvent::class.java) { e ->
-        ModelEngineApi.removeEntity(e.entity)
-        ModelEngineApi.triggerEvent(MobEvent.ON_KILLED, e.entity)
+        val entity = EmpireModelEngineAPI.getEmpireEntity(e.entity) ?: return@event
+        entity.ymlMob.events["onDeath"]?.playSound?.play(e.entity.location)
+        BossBarController.onEntityDead(e.entity)
     }
-    val onRemovedFromWorld = DSLEvent.event(EntityRemoveFromWorldEvent::class.java) { e ->
-        ModelEngineApi.removeEntity(e.entity)
-    }
+
     val entityAttackEvent = DSLEvent.event(EntityDamageByEntityEvent::class.java) { e ->
-        ModelEngineApi.getCustomEntityInfo(e.entity)?:return@event
-        e.isCancelled = ModelEngineApi.onAttack(e.damager, e.entity, e.damage)
-        if (!e.isCancelled)
-            ModelEngineApi.triggerEvent(MobEvent.ON_DAMAGE, e.damager, e.entity)
+        EmpireModelEngineAPI.performAttack(e)
     }
-    val entityDamagedEvent = DSLEvent.event(EntityDamageByEntityEvent::class.java) { e ->
-        ModelEngineApi.getCustomEntityInfo(e.entity)?:return@event
-        if (e.isCancelled) return@event
-        ModelEngineApi.triggerEvent(MobEvent.ON_DAMAGED, e.entity, e.damager)
-        ModelEngineApi.onEntityDamaged(e.entity)
+    val onEmpireEntityDamaged = DSLEvent.event(EntityDamageByEntityEvent::class.java) { e ->
+        val entity = EmpireModelEngineAPI.getEmpireEntity(e.entity) ?: return@event
+        entity.ymlMob.events["onDamaged"]?.playSound?.play(e.entity.location)
+        BossBarController.onEntityDamaged(e.entity)
     }
 
 }

@@ -207,6 +207,7 @@ class GunEvent {
                                         it.value.play(ent)
                                     }
                                     onHit.fireTicks?.let { ent.fireTicks = it }
+                                    onHit.freezeTicks?.let { ent.freezeTicks = it }
                                 }
                                 gunInfo.advanced?.armorPenetration?.let {
 
