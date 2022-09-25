@@ -1,4 +1,4 @@
-package com.astrainteractive.empire_items.api.meg_api
+package com.astrainteractive.empire_items.api.meg_api.api
 
 import com.ticxo.modelengine.api.model.ActiveModel
 

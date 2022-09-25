@@ -8,6 +8,7 @@ import com.astrainteractive.astralibs.utils.valueOfOrNull
 import com.astrainteractive.empire_items.api.meg_api.EmpireModelEngineAPI
 import com.astrainteractive.empire_items.api.models.mob.YmlMob
 import com.astrainteractive.empire_items.api.utils.IManager
+import com.astrainteractive.empire_items.api.utils.destroy
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -23,9 +24,9 @@ import org.bukkit.entity.LivingEntity
 import org.bukkit.scheduler.BukkitTask
 import java.util.UUID
 
-private const val customMobBossBarKey = "esmp"
 
 object BossBarController : IManager {
+    private const val customMobBossBarKey = "esmp"
     private var bossBarScheduler: BukkitTask? = null
     val empireMobsBossBars: Sequence<KeyedBossBar>
         get() = Bukkit.getBossBars().asSequence().filter { it.key.key.contains(customMobBossBarKey) }
@@ -38,7 +39,6 @@ object BossBarController : IManager {
 
     fun create(e: Entity, bossBar: YmlMob.YmlMobBossBar): KeyedBossBar {
         val key = createBossBarKey(e)
-        println("Creating bossbar: ${key.key}")
         val barColor = valueOfOrNull<BarColor>(bossBar.color) ?: BarColor.RED
         val barStyle = valueOfOrNull<BarStyle>(bossBar.barStyle) ?: BarStyle.SOLID
         val barFlags = bossBar.flags.mapNotNull { valueOfOrNull<BarFlag>(it) }.toTypedArray()
@@ -53,7 +53,7 @@ object BossBarController : IManager {
         val bar = Bukkit.getBossBar(createBossBarKey(e)) ?: return
         val livngEntity = (e as? LivingEntity) ?: return
         val maxHealth = livngEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.value ?: livngEntity.maxHealth
-        bar.progress = (livngEntity.health / maxHealth)
+        bar.progress = (livngEntity.health / maxHealth).coerceIn(0.0,1.0)
     }
 
     fun onEntityDead(e: Entity) {
@@ -96,7 +96,3 @@ object BossBarController : IManager {
     }
 }
 
-fun KeyedBossBar.destroy() {
-    Bukkit.getOnlinePlayers().forEach { removePlayer(it) }
-    removeAll()
-}

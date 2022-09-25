@@ -5,6 +5,9 @@ import com.astrainteractive.astralibs.async.BukkitMain
 import com.astrainteractive.astralibs.utils.valueOfOrNull
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.TagHolder
+import com.astrainteractive.empire_items.api.meg_api.api.IEmpireActiveModel
+import com.astrainteractive.empire_items.api.meg_api.api.IEmpireModelEngineAPI
+import com.astrainteractive.empire_items.api.meg_api.api.IEmpireModeledEntity
 import com.astrainteractive.empire_items.api.models.mob.YmlMob
 import com.astrainteractive.empire_items.api.utils.IManager
 import com.astrainteractive.empire_items.api.utils.addAttribute

@@ -1,5 +1,6 @@
-package com.astrainteractive.empire_items.api.meg_api
+package com.astrainteractive.empire_items.api.meg_api.api
 
+import com.astrainteractive.empire_items.api.meg_api.EmpireEntity
 import com.astrainteractive.empire_items.api.models.mob.YmlMob
 import org.bukkit.Location
 import org.bukkit.entity.Entity

@@ -1,5 +1,6 @@
 package com.astrainteractive.empire_items.api.meg_api
 
+import com.astrainteractive.empire_items.api.meg_api.api.IEmpireActiveModel
 import com.ticxo.modelengine.api.model.ActiveModel
 
 class EmpireActiveModel(override val activeModel: ActiveModel) : IEmpireActiveModel {

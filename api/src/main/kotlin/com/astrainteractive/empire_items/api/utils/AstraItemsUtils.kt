@@ -16,6 +16,7 @@ import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.attribute.Attribute
 import org.bukkit.attribute.AttributeModifier
+import org.bukkit.boss.KeyedBossBar
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.entity.LivingEntity
 import org.bukkit.inventory.EquipmentSlot
@@ -148,4 +149,9 @@ fun LivingEntity.addAttribute(
     if (attribute == Attribute.GENERIC_MAX_HEALTH)
         this.health = amount
 
+}
+
+fun KeyedBossBar.destroy() {
+    Bukkit.getOnlinePlayers().forEach { removePlayer(it) }
+    removeAll()
 }
