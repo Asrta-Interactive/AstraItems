@@ -15,9 +15,11 @@ import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.attribute.Attribute
 import org.bukkit.enchantments.Enchantment
+import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.BookMeta
+import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.inventory.meta.LeatherArmorMeta
 import org.bukkit.inventory.meta.PotionMeta
 import org.bukkit.persistence.PersistentDataType
@@ -74,41 +76,81 @@ data class YmlItem(
     )
 
     fun toItemStack(amount: Int = 1): ItemStack? {
-        val itemStack = ItemStack(Material.getMaterial(material) ?: return null, amount)
-        val itemMeta = itemStack.itemMeta!!
-        itemMeta.setCustomModelData(customModelData)
-        itemMeta.setPersistentDataType(BukkitConstants.ASTRA_ID, id)
+        val itemStack = setupItemStack(amount)
+        val itemMeta = itemStack?.itemMeta ?: return null
 
+        setupItemFlags(itemMeta)
+        setupEnchantments(itemMeta)
+        setupAttributes(itemMeta, itemStack.type.equipmentSlot)
+        setupPotion(itemMeta)
+        setupCustomDurability(itemMeta)
+        setupEmpireEnchants(itemMeta)
+        setupLeatherArmor(itemMeta)
+
+        setupGun(itemMeta)
+        itemMeta.setDisplayName(ChatColor.WHITE.toString() + convertHex(displayName))
+        itemMeta.lore = convertHex(lore)
+        setupBook(itemMeta)
+        itemStack.itemMeta = itemMeta
+        return itemStack
+
+    }
+
+    private fun setupItemStack(amount: Int): ItemStack? {
+        val material = Material.getMaterial(material) ?: return null
+        return ItemStack(material, amount).apply {
+            this.editMeta {
+                it.setCustomModelData(customModelData)
+                it.setPersistentDataType(BukkitConstants.ASTRA_ID, id)
+            }
+        }
+    }
+
+    private fun setupItemFlags(itemMeta: ItemMeta) {
         itemFlags.forEach {
             valueOfOrNull<ItemFlag>(it)?.let {
                 itemMeta.addItemFlags(it)
             }
         }
+    }
+
+    private fun setupEnchantments(itemMeta: ItemMeta) {
         enchantments.forEach { (k, v) ->
             Enchantment.getByName(k)?.let {
                 itemMeta.addEnchant(it, v, true)
             }
         }
+    }
+
+    private fun setupAttributes(itemMeta: ItemMeta, slot: EquipmentSlot) {
         attributes.forEach { (k, v) ->
             valueOfOrNull<Attribute>(k)?.let {
-                itemMeta.addAttribute(it, v, itemStack.type.equipmentSlot)//*EquipmentSlot.values())
+                itemMeta.addAttribute(it, v, slot)//*EquipmentSlot.values())
             }
         }
-        if (material == Material.POTION.name) {
-            (itemMeta as PotionMeta).color = Color.WHITE
-        }
-        if (durability != null) {
-            itemMeta.setPersistentDataType(BukkitConstants.EMPIRE_DURABILITY, durability)
-            itemMeta.setPersistentDataType(BukkitConstants.MAX_CUSTOM_DURABILITY, durability)
-        }
-        (itemMeta as? LeatherArmorMeta?)?.let {
-            val color = java.awt.Color.decode(armorColor)
-            val r = color.red
-            val g = color.green
-            val b = color.blue
-            (itemMeta as LeatherArmorMeta).setColor(Color.fromRGB(r, g, b))
-            itemMeta.addItemFlags(ItemFlag.HIDE_DYE)
-        }
+    }
+
+    private fun setupPotion(itemMeta: ItemMeta) {
+        (itemMeta as? PotionMeta)?.color = Color.WHITE
+    }
+
+    private fun setupCustomDurability(itemMeta: ItemMeta) {
+        durability ?: return
+        itemMeta.setPersistentDataType(BukkitConstants.EMPIRE_DURABILITY, durability)
+        itemMeta.setPersistentDataType(BukkitConstants.MAX_CUSTOM_DURABILITY, durability)
+    }
+
+    private fun setupLeatherArmor(itemMeta: ItemMeta) {
+        val leatherArmorMeta = itemMeta as? LeatherArmorMeta ?: return
+        val color = java.awt.Color.decode(armorColor)
+        val r = color.red
+        val g = color.green
+        val b = color.blue
+        leatherArmorMeta.setColor(Color.fromRGB(r, g, b))
+        itemMeta.addItemFlags(ItemFlag.HIDE_DYE)
+    }
+
+    private fun setupEmpireEnchants(itemMeta: ItemMeta) {
         empireEnchants.forEach { (k, v) ->
             EmpireEnchants.byKey[k.uppercase()]?.let {
                 itemMeta.setPersistentDataType(EmpireEnchants.EMPIRE_ENCHANT, 0)
@@ -171,27 +213,23 @@ data class YmlItem(
 
 
         }
-        gun?.let {
-            if (it.clipSize != null)
-                itemMeta.setPersistentDataType(BukkitConstants.CLIP_SIZE, 0)
-        }
-        itemMeta.setDisplayName(ChatColor.WHITE.toString() + convertHex(displayName))
-        itemMeta.lore = convertHex(lore)
-        book?.let { book ->
-            (itemMeta as? BookMeta)?.let { bookMeta ->
-                bookMeta.author = book.author
-                bookMeta.title = book.title
-                bookMeta.generation = BookMeta.Generation.ORIGINAL
-                val pages = book.pages.values.map {
-                    it.joinToString("\n").HEX()
-                }
-                bookMeta.pages = pages
-            }
-        }
-        itemStack.itemMeta = itemMeta
-        return itemStack
+    }
 
+    private fun setupGun(itemMeta: ItemMeta) {
+        if (gun?.clipSize != null)
+            itemMeta.setPersistentDataType(BukkitConstants.CLIP_SIZE, 0)
+    }
 
+    private fun setupBook(itemMeta: ItemMeta) {
+        val bookMeta = itemMeta as? BookMeta ?: return
+        book ?: return
+        bookMeta.author = book.author
+        bookMeta.title = book.title
+        bookMeta.generation = BookMeta.Generation.ORIGINAL
+        val pages = book.pages.values.map {
+            it.joinToString("\n").HEX()
+        }
+        bookMeta.pages = pages
     }
 
 }
