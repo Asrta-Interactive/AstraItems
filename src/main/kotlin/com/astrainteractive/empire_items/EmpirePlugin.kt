@@ -1,11 +1,12 @@
 package com.astrainteractive.empire_items
 
-import com.astrainteractive.astralibs.AstraLibs
-import com.astrainteractive.astralibs.Logger
-import com.astrainteractive.astralibs.async.AsyncHelper
-import com.astrainteractive.astralibs.events.GlobalEventManager
+import ru.astrainteractive.astralibs.AstraLibs
+import ru.astrainteractive.astralibs.Logger
+import ru.astrainteractive.astralibs.async.PluginScope
+import ru.astrainteractive.astralibs.events.GlobalEventManager
 import com.astrainteractive.empire_items.api.CraftingApi
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
+import com.astrainteractive.empire_items.api.hud.HudView
 import com.astrainteractive.empire_items.api.meg_api.BossBarController
 import com.astrainteractive.empire_items.api.meg_api.EmpireModelEngineAPI
 import com.astrainteractive.empire_items.empire_items.commands.CommandManager
@@ -62,6 +63,7 @@ class EmpirePlugin : JavaPlugin {
         add(CraftingApi)
         add(EmpireModelEngineAPI)
         add(BossBarController)
+        add(HudView)
     }
 
 
@@ -73,8 +75,8 @@ class EmpirePlugin : JavaPlugin {
         Logger.prefix = "EmpireItems"
         ResourceProvider.reload()
         commandManager
-        runBlocking { modules.forEach { it.onEnable() } }
         genericListener = GenericListener()
+        runBlocking { modules.forEach { it.onEnable() } }
         server.pluginManager.getPlugin("WorldGuard")?.let {
             KProtectionLib.init(this)
         }
@@ -85,7 +87,7 @@ class EmpirePlugin : JavaPlugin {
      * This function called when server stops
      */
     override fun onDisable() {
-        AsyncHelper.cancel()
+        PluginScope.cancel()
         genericListener.onDisable()
         for (p in server.onlinePlayers)
             p.closeInventory()
@@ -94,6 +96,6 @@ class EmpirePlugin : JavaPlugin {
         HandlerList.unregisterAll(this)
         Bukkit.getScheduler().cancelTasks(this)
         runBlocking { modules.forEach { it.onDisable() } }
-        AsyncHelper.cancel()
+        PluginScope.cancel()
     }
 }

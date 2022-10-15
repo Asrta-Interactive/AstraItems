@@ -1,10 +1,10 @@
 package com.astrainteractive.empire_items.empire_items.commands
 
-import com.astrainteractive.astralibs.async.AsyncHelper
-import com.astrainteractive.astralibs.commands.AstraDSLCommand
-import com.astrainteractive.astralibs.events.DSLEvent
-import com.astrainteractive.astralibs.menu.AstraMenuSize
-import com.astrainteractive.astralibs.utils.HEX
+import ru.astrainteractive.astralibs.async.PluginScope
+import ru.astrainteractive.astralibs.commands.AstraDSLCommand
+import ru.astrainteractive.astralibs.events.DSLEvent
+import ru.astrainteractive.astralibs.menu.AstraMenuSize
+import ru.astrainteractive.astralibs.utils.HEX
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.utils.emoji
 import org.bukkit.Bukkit

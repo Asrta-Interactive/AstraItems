@@ -1,6 +1,6 @@
 package com.astrainteractive.empire_items.empire_items.util
 
-import com.astrainteractive.astralibs.Logger
+import ru.astrainteractive.astralibs.Logger
 
 class MeanTimer(val toPass: Int = 30000, val tag: String = "MeanTime", val clear: Boolean = false) {
     private val lock = Any()

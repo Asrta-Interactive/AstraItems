@@ -1,24 +1,25 @@
 package com.astrainteractive.empire_items.empire_items.gui.crafting
 
-import com.astrainteractive.astralibs.async.AsyncHelper
-import com.astrainteractive.astralibs.events.EventManager
-import com.astrainteractive.astralibs.menu.AstraMenuSize
-import com.astrainteractive.astralibs.utils.convertHex
+import ru.astrainteractive.astralibs.async.PluginScope
+import ru.astrainteractive.astralibs.events.EventManager
+import ru.astrainteractive.astralibs.menu.AstraMenuSize
+import ru.astrainteractive.astralibs.utils.convertHex
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.empireID
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.toAstraItemOrItem
 import com.astrainteractive.empire_items.api.models.GUI_CONFIG
 import com.astrainteractive.empire_items.api.utils.emoji
-import com.astrainteractive.empire_items.empire_items.gui.AstraPaginatedMenu
 import com.astrainteractive.empire_items.empire_items.gui.GuiCategory
 import com.astrainteractive.empire_items.empire_items.gui.PlayerMenuUtility
+import com.astrainteractive.empire_items.empire_items.gui.toInventoryButton
 import com.astrainteractive.empire_items.empire_items.util.EmpirePermissions
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.*
+import ru.astrainteractive.astralibs.menu.PaginatedMenu
 
-class GuiCrafting(playerMenuUtility: PlayerMenuUtility) :
-    AstraPaginatedMenu() {
+class GuiCrafting(playerMenuUtility: PlayerMenuUtility) : PaginatedMenu() {
     val viewModel = GuiCraftingViewModel(playerMenuUtility, playerMenuUtility.prevItems.last())
 
     val giveButtonIndex = 34
@@ -32,11 +33,7 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility) :
             else -> null
         }
 
-    override val prevButtonIndex: Int = 45
-    override val backButtonIndex: Int = 49
-    override val nextButtonIndex: Int = 53
-
-    override var menuName: String = convertHex(
+    override var menuTitle: String = convertHex(
         GUI_CONFIG.settings.titles.workbenchText + (viewModel.itemID.toAstraItemOrItem()?.itemMeta?.displayName
             ?: "Крафтинг")
     ).emoji()
@@ -44,47 +41,52 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility) :
 
     override val menuSize: AstraMenuSize = AstraMenuSize.XL
     override val playerMenuUtility: PlayerMenuUtility = playerMenuUtility
-    override val backPageButton: ItemStack = GUI_CONFIG.settings.buttons.backButton.toAstraItemOrItem()!!
+    override val backPageButton = GUI_CONFIG.settings.buttons.backButton.toAstraItemOrItem()!!.toInventoryButton(49)
     override val maxItemsPerPage = 9
     override val maxItemsAmount: Int = viewModel.usedInCraftItemStacks.size
-    override val nextPageButton: ItemStack = GUI_CONFIG.settings.buttons.nextButton.toAstraItemOrItem()!!
+    override val nextPageButton = GUI_CONFIG.settings.buttons.nextButton.toAstraItemOrItem()!!.toInventoryButton(53)
     override var page: Int = playerMenuUtility.craftingPage
-    override val prevPageButton: ItemStack = GUI_CONFIG.settings.buttons.prevButton.toAstraItemOrItem()!!
+    override val prevPageButton = GUI_CONFIG.settings.buttons.prevButton.toAstraItemOrItem()!!.toInventoryButton(45)
     var currentRecipe = 0
     override fun loadPage(next: Int) {
         super.loadPage(next)
         playerMenuUtility.craftingPage += next
     }
 
-    override fun onDestroy(it: InventoryCloseEvent, manager: EventManager) {
+    override fun onCreated() {
+        setMenuItems()
     }
 
-    override fun handleMenu(e: InventoryClickEvent) {
-        super.handleMenu(e)
+
+    override fun onInventoryClicked(e: InventoryClickEvent) {
+        super.onInventoryClicked(e)
         when (e.slot) {
-            backButtonIndex -> {
-                AsyncHelper.launch {
+            backPageButton.index -> {
+                PluginScope.launch {
                     playerMenuUtility.prevItems.removeLast()
                     if (playerMenuUtility.prevItems.isEmpty())
                         GuiCategory(playerMenuUtility).open()
                     else GuiCrafting(playerMenuUtility).open()
                 }
             }
+
             recipeButtonIndex -> {
                 viewModel.onRecipeIndexChanged()
                 setMenuItems()
             }
+
             11, 12, 13, 20, 21, 22, 29, 30, 31 -> {
                 val itemStack = inventory.getItem(e.slot)
                 playerMenuUtility.prevItems.add(itemStack?.empireID ?: itemStack?.type?.name ?: return)
-                GuiCrafting(playerMenuUtility).open()
+                lifecycleScope.launch(Dispatchers.IO) { GuiCrafting(playerMenuUtility).open() }
             }
 
             36, 37, 38, 39, 40, 41, 42, 43, 44 -> {
                 val itemStack = inventory.getItem(e.slot)
                 playerMenuUtility.prevItems.add(itemStack?.empireID ?: itemStack?.type?.name ?: return)
-                GuiCrafting(playerMenuUtility).open()
+                lifecycleScope.launch(Dispatchers.IO) { GuiCrafting(playerMenuUtility).open() }
             }
+
             giveButtonIndex -> {
                 if (playerMenuUtility.player.hasPermission(EmpirePermissions.EMPGIVE))
                     playerMenuUtility.player.inventory.addItem(viewModel.itemID.toAstraItemOrItem() ?: return)
@@ -92,11 +94,19 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility) :
         }
     }
 
-    override fun setMenuItems() {
-        addManageButtons()
-        inventory.setItem(backButtonIndex - 1, viewModel.dropInfo)
-        inventory.setItem(backButtonIndex + 1, viewModel.blockInfo)
-        inventory.setItem(backButtonIndex - 2, viewModel.villagersInfo)
+    override fun onInventoryClose(it: InventoryCloseEvent) {
+
+    }
+
+    override fun onPageChanged() {
+        setMenuItems()
+    }
+
+    fun setMenuItems() {
+        setManageButtons()
+        inventory.setItem(backPageButton.index - 1, viewModel.dropInfo)
+        inventory.setItem(backPageButton.index + 1, viewModel.blockInfo)
+        inventory.setItem(backPageButton.index - 2, viewModel.villagersInfo)
 
 
         inventory.setItem(25, viewModel.itemID.toAstraItemOrItem())

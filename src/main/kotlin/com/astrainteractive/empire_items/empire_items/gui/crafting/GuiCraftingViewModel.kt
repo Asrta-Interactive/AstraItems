@@ -1,7 +1,7 @@
 package com.astrainteractive.empire_items.empire_items.gui.crafting
 
-import com.astrainteractive.astralibs.utils.HEX
-import com.astrainteractive.astralibs.utils.catching
+import ru.astrainteractive.astralibs.utils.HEX
+import ru.astrainteractive.astralibs.utils.catching
 import com.astrainteractive.empire_items.ResourceProvider
 import com.astrainteractive.empire_items.api.CraftingApi
 import com.astrainteractive.empire_items.api.EmpireItemsAPI

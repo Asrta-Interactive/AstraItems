@@ -1,6 +1,6 @@
 package com.astrainteractive.empire_items.empire_items.events.genericevents
 
-import com.astrainteractive.astralibs.events.DSLEvent
+import ru.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.empireID
 import com.astrainteractive.empire_items.api.utils.BukkitConstants

@@ -1,8 +1,9 @@
 package com.astrainteractive.empire_items.api.models
 
-import com.astrainteractive.astralibs.EmpireSerializer
-import com.astrainteractive.astralibs.FileManager
+import ru.astrainteractive.astralibs.EmpireSerializer
 import kotlinx.serialization.Serializable
+import ru.astrainteractive.astralibs.file_manager.FileManager
+
 val GUI_CONFIG: _GuiConfig
     get() = _GuiConfig.instance
 
@@ -16,8 +17,8 @@ data class _GuiConfig(
         lateinit var instance: _GuiConfig
             private set
 
-        fun create(config:FileManager): _GuiConfig {
-            val _config = EmpireSerializer.toClass<_GuiConfig>(config.getFile())
+        fun create(config: FileManager): _GuiConfig {
+            val _config = EmpireSerializer.toClass<_GuiConfig>(config.configFile)
             instance = _config!!
             return instance
         }

@@ -1,9 +1,9 @@
 package com.astrainteractive.empire_items.empire_items.events.genericevents
 
-import com.astrainteractive.astralibs.*
-import com.astrainteractive.astralibs.async.AsyncHelper
-import com.astrainteractive.astralibs.async.BukkitMain
-import com.astrainteractive.astralibs.events.DSLEvent
+import ru.astrainteractive.astralibs.*
+import ru.astrainteractive.astralibs.async.PluginScope
+import ru.astrainteractive.astralibs.async.BukkitMain
+import ru.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.empire_items.api.CraftingApi
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.empireID
 import kotlinx.coroutines.Dispatchers
@@ -50,12 +50,12 @@ class PlayerShowRecipeKeyEvent {
         itemStack: ItemStack,
         player: Player
     ) {
-        AsyncHelper.launch {
+        PluginScope.launch {
             val mainItemId = itemStack.empireID ?: itemStack.type.name
             val ids = mutableListOf(mainItemId).apply { addAll(CraftingApi.usedInCraft(mainItemId)) }
             val toDiscover =
                 ids.flatMap { CraftingApi.getKeysById(it) ?: listOf() }.filter { !player.hasDiscoveredRecipe(it) }
-            AsyncHelper.launch(Dispatchers.BukkitMain) {
+            PluginScope.launch(Dispatchers.BukkitMain) {
                 toDiscover.forEach {
                     Logger.log("Player ${player.name} discovered recipe ${it}", "Crafting", consolePrint = false)
                     player.discoverRecipe(it)

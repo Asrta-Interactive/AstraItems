@@ -1,7 +1,7 @@
 package com.astrainteractive.empire_items.modules.enchants
 
-import com.astrainteractive.astralibs.events.EventListener
-import com.astrainteractive.astralibs.events.EventManager
+import ru.astrainteractive.astralibs.events.EventListener
+import ru.astrainteractive.astralibs.events.EventManager
 import com.astrainteractive.empire_items.api.enchants.AbstractPotionEnchant
 import com.astrainteractive.empire_items.api.enchants.EmpireEnchantApi
 import com.astrainteractive.empire_items.api.enchants.models.EmpireEnchantsConfig

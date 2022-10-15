@@ -1,9 +1,9 @@
 package com.astrainteractive.empire_items.api.enchants
 
-import com.astrainteractive.astralibs.AstraLibs
-import com.astrainteractive.astralibs.Logger
-import com.astrainteractive.astralibs.async.AsyncHelper
-import com.astrainteractive.astralibs.async.BukkitMain
+import ru.astrainteractive.astralibs.AstraLibs
+import ru.astrainteractive.astralibs.Logger
+import ru.astrainteractive.astralibs.async.PluginScope
+import ru.astrainteractive.astralibs.async.BukkitMain
 import com.astrainteractive.empire_items.api.enchants.models._EmpireEnchantsConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -28,7 +28,7 @@ abstract class AbstractPotionEnchant : EmpireEnchantEvent() {
             listOfNotNull(inv.helmet, inv.chestplate, inv.leggings, inv.boots,inv.itemInMainHand,inv.itemInOffHand).forEach items@{
                 val level = getEnchantLevel(it) ?: return@items
 
-                AsyncHelper.launch(Dispatchers.BukkitMain) {
+                PluginScope.launch(Dispatchers.BukkitMain) {
                     player.addPotionEffect(
                         PotionEffect(
                             potionEffectType,

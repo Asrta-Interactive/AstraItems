@@ -1,7 +1,7 @@
 package com.astrainteractive.empire_items.modules.enchants
 
-import com.astrainteractive.astralibs.async.AsyncHelper
-import com.astrainteractive.astralibs.async.BukkitMain
+import ru.astrainteractive.astralibs.async.PluginScope
+import ru.astrainteractive.astralibs.async.BukkitMain
 import com.astrainteractive.empire_items.api.enchants.EmpireEnchantEvent
 import com.astrainteractive.empire_items.api.enchants.EmpireEnchants
 import com.astrainteractive.empire_items.api.enchants.models.EmpireEnchantsConfig
@@ -32,8 +32,8 @@ class MobArenaEnchant : EmpireEnchantEvent() {
     private fun interactEvent(e: PlayerInteractEvent) {
         getEnchantLevel(e.player.inventory.itemInMainHand) ?: return
         e.player.inventory.itemInMainHand.amount -= 1
-        AsyncHelper.launch {
-            AsyncHelper.launch(Dispatchers.BukkitMain) {
+        PluginScope.launch {
+            PluginScope.launch(Dispatchers.BukkitMain) {
                 empireEnchant.playCommand.forEach {
                     it.value.play(e.player)
                 }

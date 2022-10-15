@@ -1,8 +1,8 @@
 package com.astrainteractive.empire_items.empire_items.events.blocks
 
-import com.astrainteractive.astralibs.async.AsyncHelper
-import com.astrainteractive.astralibs.events.DSLEvent
-import com.astrainteractive.astralibs.events.EventListener
+import ru.astrainteractive.astralibs.async.PluginScope
+import ru.astrainteractive.astralibs.events.DSLEvent
+import ru.astrainteractive.astralibs.events.EventListener
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.empireID
 import com.astrainteractive.empire_items.api.items.BlockParser
@@ -23,7 +23,7 @@ class MushroomBlockPlaceEvent {
         val empireBlock = EmpireItemsAPI.itemYamlFilesByID[id]?.block ?: return@event
         val facing = BlockParser.getFacingByData(empireBlock.data)
         val type = BlockParser.getMaterialByData(empireBlock.data)
-        AsyncHelper.launch {
+        PluginScope.launch {
             BlockParser.setTypeFast(block, type, facing, empireBlock.data)
         }
     }

@@ -1,11 +1,10 @@
 package com.astrainteractive.empire_items.api.utils
 
-import com.astrainteractive.astralibs.AstraLibs
-import com.astrainteractive.astralibs.FileManager
-import com.astrainteractive.astralibs.async.AsyncHelper
-import com.astrainteractive.astralibs.async.BukkitMain
-import com.astrainteractive.astralibs.utils.HEX
-import com.astrainteractive.astralibs.utils.convertHex
+import ru.astrainteractive.astralibs.AstraLibs
+import ru.astrainteractive.astralibs.async.PluginScope
+import ru.astrainteractive.astralibs.async.BukkitMain
+import ru.astrainteractive.astralibs.utils.HEX
+import ru.astrainteractive.astralibs.utils.convertHex
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.FontApi
 import com.google.common.io.Files
@@ -23,6 +22,7 @@ import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.BookMeta
 import org.bukkit.inventory.meta.ItemMeta
+import ru.astrainteractive.astralibs.file_manager.FileManager
 import java.io.File
 import java.util.*
 import java.util.regex.Matcher
@@ -62,7 +62,7 @@ fun getCustomItemsFiles() = getFilesList()?.filter { it.isYml() }?.map {
 }
 
 fun getCustomItemsSections(section: String) = getFilesList()?.filter { it.isYml() }?.mapNotNull {
-    FileManager("items" + File.separator + it.name).getConfig().getConfigurationSection(section)
+    FileManager("items" + File.separator + it.name).fileConfiguration.getConfigurationSection(section)
 }
 
 object EmpireUtils {
@@ -115,7 +115,7 @@ fun calcChance(chance: Double) = chance >= Random.nextDouble(0.0, 100.0)
 fun calcChance(chance: Float) = calcChance(chance.toDouble())
 
 fun Location.playSound(name: String?) {
-    AsyncHelper.launch(Dispatchers.BukkitMain)  {
+    PluginScope.launch(Dispatchers.BukkitMain)  {
         this@playSound.world.playSound(this@playSound, name ?: return@launch, 2f, 1f)
     }
 
@@ -155,3 +155,6 @@ fun KeyedBossBar.destroy() {
     Bukkit.getOnlinePlayers().forEach { removePlayer(it) }
     removeAll()
 }
+
+fun bukkitAsyncTaskTimer(delay: Long = 0L, period: Long = 20L, runnable: Runnable) =
+    Bukkit.getScheduler().runTaskTimerAsynchronously(AstraLibs.instance, runnable, delay, period)

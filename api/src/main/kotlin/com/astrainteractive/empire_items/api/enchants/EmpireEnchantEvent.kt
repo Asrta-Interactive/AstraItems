@@ -1,6 +1,6 @@
 package com.astrainteractive.empire_items.api.enchants
 
-import com.astrainteractive.astralibs.events.EventListener
+import ru.astrainteractive.astralibs.events.EventListener
 import com.astrainteractive.empire_items.api.enchants.models.GenericEnchant
 import com.astrainteractive.empire_items.api.utils.BukkitConstant
 import com.astrainteractive.empire_items.api.utils.calcChance

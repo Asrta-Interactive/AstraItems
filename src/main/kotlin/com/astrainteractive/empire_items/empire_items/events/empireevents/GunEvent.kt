@@ -1,11 +1,11 @@
 package com.astrainteractive.empire_items.empire_items.events.empireevents
 
-import com.astrainteractive.astralibs.AstraLibs
-import com.astrainteractive.astralibs.async.AsyncHelper
-import com.astrainteractive.astralibs.async.BukkitMain
-import com.astrainteractive.astralibs.events.DSLEvent
-import com.astrainteractive.astralibs.utils.catching
-import com.astrainteractive.astralibs.utils.valueOfOrNull
+import ru.astrainteractive.astralibs.AstraLibs
+import ru.astrainteractive.astralibs.async.PluginScope
+import ru.astrainteractive.astralibs.async.BukkitMain
+import ru.astrainteractive.astralibs.events.DSLEvent
+import ru.astrainteractive.astralibs.utils.catching
+import ru.astrainteractive.astralibs.utils.valueOfOrNull
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.empireID
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.toAstraItemOrItem
@@ -125,7 +125,7 @@ class GunEvent {
         catching { Color.fromRGB(Integer.decode(color.replace("#", "0x"))) } ?: Color.BLACK
 
     val playerInteractEvent = DSLEvent.event(PlayerInteractEvent::class.java) { e ->
-        AsyncHelper.launch(Dispatchers.IO) event@{
+        PluginScope.launch(Dispatchers.IO) event@{
             val itemStack = e.item ?: return@event
             val id = itemStack.empireID
             val gunInfo = EmpireItemsAPI.itemYamlFilesByID[id]?.gun ?: return@event
@@ -173,7 +173,7 @@ class GunEvent {
                 if (particle == Particle.REDSTONE)
                     builder = builder.color(rgbToColor(gunInfo.color ?: "#000000"))
                 val clonedLocation1 = l.clone()
-                AsyncHelper.launch(Dispatchers.BukkitMain) {
+                PluginScope.launch(Dispatchers.BukkitMain) {
                     val l = clonedLocation1
                     builder
                         .location(l.world ?: return@launch, l.x, l.y, l.z)
@@ -189,14 +189,14 @@ class GunEvent {
                 if (!l.block.isPassable) {
                     gunInfo.advanced?.onHit?.ignite?.let {
                         val l = l.clone()
-                        AsyncHelper.launch(Dispatchers.BukkitMain) {
+                        PluginScope.launch(Dispatchers.BukkitMain) {
                             MolotovEvent.Igniter(l.block.getRelative(BlockFace.UP), it, null, particle = false)
                         }
                     }
                     break
                 }
                 val clonedL = l.clone()
-                AsyncHelper.launch(Dispatchers.BukkitMain) {
+                PluginScope.launch(Dispatchers.BukkitMain) {
                     val l = clonedL
                     for (ent: Entity in getEntityByLocation(l, r)) {
                         if (ent is LivingEntity && ent != player) {

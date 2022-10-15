@@ -1,8 +1,8 @@
 package com.astrainteractive.empire_items.empire_items.events.empireevents
 
-import com.astrainteractive.astralibs.events.EventListener
-import com.astrainteractive.astralibs.async.AsyncHelper
-import com.astrainteractive.astralibs.events.DSLEvent
+import ru.astrainteractive.astralibs.events.EventListener
+import ru.astrainteractive.astralibs.async.PluginScope
+import ru.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.empire_items.api.enchants.EmpireEnchants
 import com.astrainteractive.empire_items.api.items.BlockParser
 import com.astrainteractive.empire_items.api.utils.BukkitConstants
@@ -22,7 +22,7 @@ import org.bukkit.inventory.meta.ItemMeta
 class LavaWalkerEvent{
 
     fun Block.setTypeFast(type: Material) =
-        AsyncHelper.launch { BlockParser.setTypeFast(this@setTypeFast, type) }
+        PluginScope.launch { BlockParser.setTypeFast(this@setTypeFast, type) }
 
 
     private fun Block.lavaOrNull() = if (this.type == Material.LAVA) this else null
@@ -72,7 +72,7 @@ class LavaWalkerEvent{
     val playerMoveEvent = DSLEvent.event(PlayerMoveEvent::class.java)  { e ->
         val itemStack = e.player.inventory.boots ?: return@event
         val itemMeta = itemStack.itemMeta ?: return@event
-        AsyncHelper.launch {
+        PluginScope.launch {
 
             if (!hasLaveWalker(itemMeta)) return@launch
             val onToBlock = e.to.block.getRelative(BlockFace.DOWN)

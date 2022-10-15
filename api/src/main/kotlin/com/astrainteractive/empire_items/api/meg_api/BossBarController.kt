@@ -1,10 +1,10 @@
 package com.astrainteractive.empire_items.api.meg_api
 
-import com.astrainteractive.astralibs.AstraLibs
-import com.astrainteractive.astralibs.async.AsyncHelper
-import com.astrainteractive.astralibs.async.BukkitMain
-import com.astrainteractive.astralibs.utils.convertHex
-import com.astrainteractive.astralibs.utils.valueOfOrNull
+import ru.astrainteractive.astralibs.AstraLibs
+import ru.astrainteractive.astralibs.async.PluginScope
+import ru.astrainteractive.astralibs.async.BukkitMain
+import ru.astrainteractive.astralibs.utils.convertHex
+import ru.astrainteractive.astralibs.utils.valueOfOrNull
 import com.astrainteractive.empire_items.api.meg_api.EmpireModelEngineAPI
 import com.astrainteractive.empire_items.api.models.mob.YmlMob
 import com.astrainteractive.empire_items.api.utils.IManager
@@ -63,7 +63,7 @@ object BossBarController : IManager {
 
     override suspend fun onEnable() {
         bossBarScheduler = Bukkit.getScheduler().runTaskTimerAsynchronously(AstraLibs.instance, Runnable {
-            AsyncHelper.launch(Dispatchers.IO) {
+            PluginScope.launch(Dispatchers.IO) {
                 empireMobsBossBars.toList().forEach { bar ->
                     Bukkit.getOnlinePlayers().forEach { player ->
                         val uuid = kotlin.runCatching { entityUUIDFromBossBar(bar) }.getOrNull() ?: return@forEach

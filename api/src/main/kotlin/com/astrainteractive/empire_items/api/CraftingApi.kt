@@ -1,7 +1,7 @@
 package com.astrainteractive.empire_items.api
 
-import com.astrainteractive.astralibs.AstraLibs
-import com.astrainteractive.astralibs.Logger
+import ru.astrainteractive.astralibs.AstraLibs
+import ru.astrainteractive.astralibs.Logger
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.empireID
 import com.astrainteractive.empire_items.api.utils.BukkitConstants
 import com.astrainteractive.empire_items.api.utils.IManager

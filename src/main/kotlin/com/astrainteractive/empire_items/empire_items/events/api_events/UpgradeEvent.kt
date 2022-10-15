@@ -1,7 +1,7 @@
 //package com.astrainteractive.empire_items.empire_items.events.upgrade
 //
-//import com.astrainteractive.astralibs.events.DSLEvent
-//import com.astrainteractive.astralibs.events.EventListener
+//import ru.astrainteractive.astralibs.events.DSLEvent
+//import ru.astrainteractive.astralibs.events.EventListener
 //import com.astrainteractive.empire_items.api.UpgradeApi
 //import org.bukkit.event.EventHandler
 //import org.bukkit.event.entity.EntityDeathEvent

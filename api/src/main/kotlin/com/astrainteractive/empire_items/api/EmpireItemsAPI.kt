@@ -1,6 +1,6 @@
 package com.astrainteractive.empire_items.api
 
-import com.astrainteractive.astralibs.EmpireSerializer
+import ru.astrainteractive.astralibs.EmpireSerializer
 import com.astrainteractive.empire_items.api.models.FontImage
 import com.astrainteractive.empire_items.api.models.ItemYamlFile
 import com.astrainteractive.empire_items.api.models.Loot
@@ -45,8 +45,8 @@ object EmpireItemsAPI : IManager {
 
     override suspend fun onEnable() {
         itemYamlFiles = getCustomItemsFiles()?.mapNotNull {
-            println("File ${it.getFile().name}")
-            EmpireSerializer.toClass<ItemYamlFile>(it.getFile())
+            println("File ${it.configFile.name}")
+            EmpireSerializer.toClass<ItemYamlFile>(it.configFile)
         } ?: listOf()
         itemYamlFilesByID =
             itemYamlFiles.mapNotNull { it.yml_items?.values?.map { it } }.flatten().associateBy { it.id }

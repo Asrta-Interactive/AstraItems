@@ -1,9 +1,8 @@
 package com.astrainteractive.empire_items.empire_items.events
 
 
-import com.astrainteractive.astralibs.events.EventListener
-import com.astrainteractive.astralibs.events.EventManager
-import com.astrainteractive.astralibs.menu.MenuListener
+import ru.astrainteractive.astralibs.events.EventListener
+import ru.astrainteractive.astralibs.events.EventManager
 import com.astrainteractive.empire_items.api.utils.getPlugin
 import com.astrainteractive.empire_items.empire_items.events.blocks.*
 import com.astrainteractive.empire_items.empire_items.events.api_events.DecorationEvent
@@ -47,7 +46,6 @@ class GenericListener : EventManager {
         }
     }
     val genericEvents = {
-        MenuListener().onEnable(this)
         ExperienceRepairEvent()
         ItemDropEvent()
         ItemInteractEvent()

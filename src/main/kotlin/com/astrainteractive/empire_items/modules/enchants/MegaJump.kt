@@ -1,6 +1,6 @@
 package com.astrainteractive.empire_items.modules.enchants
 
-import com.astrainteractive.astralibs.async.AsyncHelper
+import ru.astrainteractive.astralibs.async.PluginScope
 import com.astrainteractive.empire_items.api.enchants.EmpireEnchantApi
 import com.astrainteractive.empire_items.api.enchants.EmpireEnchantEvent
 import com.astrainteractive.empire_items.api.enchants.EmpireEnchants
@@ -26,7 +26,7 @@ class MegaJump : EmpireEnchantEvent() {
         val sum = e.player.inventory.armorContents?.mapNotNull {
             it?.let { getEnchantLevel(it) }?.times(empireEnchant.value)
         }?.sum()?:return
-        AsyncHelper.launch {
+        PluginScope.launch {
             val total = empireEnchant.value
             if (e.player.isSneaking)
                 e.player.velocity = e.to.subtract(e.from).toVector().multiply(sum)

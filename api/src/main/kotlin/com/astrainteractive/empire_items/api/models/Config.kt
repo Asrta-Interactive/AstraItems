@@ -1,10 +1,11 @@
 package com.astrainteractive.empire_items.api.models
 
-import com.astrainteractive.astralibs.EmpireSerializer
-import com.astrainteractive.astralibs.FileManager
+import ru.astrainteractive.astralibs.EmpireSerializer
 import kotlinx.serialization.SerialName
 import org.bukkit.Bukkit
 import kotlinx.serialization.Serializable
+import ru.astrainteractive.astralibs.file_manager.FileManager
+
 val CONFIG: _Config
     get() = _Config.instance
 
@@ -22,8 +23,8 @@ data class _Config(
         lateinit var instance: _Config
             private set
 
-        fun create(config:FileManager): _Config {
-            val _config = EmpireSerializer.toClass<_Config>(config.getFile())
+        fun create(config: FileManager): _Config {
+            val _config = EmpireSerializer.toClass<_Config>(config.configFile)
             instance = _config!!
             return instance
         }

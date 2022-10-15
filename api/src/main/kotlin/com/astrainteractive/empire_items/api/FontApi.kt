@@ -13,7 +13,7 @@ object FontApi : IManager {
 
     fun playerFonts() = EmpireItemsAPI.fontByID.filter { !it.value.blockSend }
 
-    enum class HudOffsets(val offset: Int, val char: String) {
+    enum class HudOffset(val offset: Int, val char: String) {
         LEFT_1(-1, "\uF801"),
         LEFT_2(-2, "\uF802"),
         LEFT_3(-3, "\uF803"),
@@ -45,24 +45,7 @@ object FontApi : IManager {
 
 
         companion object {
-            private fun nearestAndSmaller(value: Int): HudOffsets? {
-                val sign = value.sign
-                return values().filter { it.offset.sign == sign }.filter { abs(it.offset) <= abs(value) }
-                    .maxByOrNull { abs(it.offset) }
-            }
 
-            fun getOffsets(_offset: Int): String {
-                val isEven = _offset % 2
-                var offset = _offset - isEven
-                var stringOffset = nearestAndSmaller(isEven)?.char ?: ""
-                var nearest = nearestAndSmaller(offset)
-                while (nearest != null) {
-                    stringOffset += nearest.char
-                    offset -= nearest.offset
-                    nearest = nearestAndSmaller(offset)
-                }
-                return stringOffset
-            }
         }
 
 

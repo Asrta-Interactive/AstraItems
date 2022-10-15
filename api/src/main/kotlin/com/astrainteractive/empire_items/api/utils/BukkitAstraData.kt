@@ -1,6 +1,6 @@
 package com.astrainteractive.empire_items.api.utils
 
-import com.astrainteractive.astralibs.AstraLibs
+import ru.astrainteractive.astralibs.AstraLibs
 import org.bukkit.NamespacedKey
 import org.bukkit.attribute.Attribute
 import org.bukkit.persistence.PersistentDataType

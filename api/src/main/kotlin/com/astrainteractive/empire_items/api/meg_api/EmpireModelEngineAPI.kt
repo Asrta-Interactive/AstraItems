@@ -1,8 +1,8 @@
 package com.astrainteractive.empire_items.api.meg_api
 
-import com.astrainteractive.astralibs.async.AsyncHelper
-import com.astrainteractive.astralibs.async.BukkitMain
-import com.astrainteractive.astralibs.utils.valueOfOrNull
+import ru.astrainteractive.astralibs.async.PluginScope
+import ru.astrainteractive.astralibs.async.BukkitMain
+import ru.astrainteractive.astralibs.utils.valueOfOrNull
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.TagHolder
 import com.astrainteractive.empire_items.api.meg_api.api.IEmpireActiveModel
@@ -136,14 +136,14 @@ object EmpireModelEngineAPI : IEmpireModelEngineAPI, IManager {
 
         val distance = damager.location.distance(entity.location)
 
-        AsyncHelper.launch(Dispatchers.IO) {
+        PluginScope.launch(Dispatchers.IO) {
             delay(empireEntity.ymlMob.hitDelay.toLong())
 
             val calculatedDamage = if (empireEntity.ymlMob.decreaseDamageByRange)
                 damage / max(1.0, distance)
             else damage
 
-            AsyncHelper.launch(Dispatchers.BukkitMain) {
+            PluginScope.launch(Dispatchers.BukkitMain) {
                 if ((damager as LivingEntity).health > 0)
                     (entity as LivingEntity).damage(calculatedDamage, damager)
                 empireEntity.ymlMob.events["onDamage"]?.playSound?.play(damager.location)

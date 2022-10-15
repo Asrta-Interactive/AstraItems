@@ -1,7 +1,7 @@
 package com.astrainteractive.empire_items.empire_items.events.resourcepack
 
-import com.astrainteractive.astralibs.Logger
-import com.astrainteractive.astralibs.events.DSLEvent
+import ru.astrainteractive.astralibs.Logger
+import ru.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.empire_items.EmpirePlugin
 import com.astrainteractive.empire_items.ResourceProvider
 import com.astrainteractive.empire_items.api.models.CONFIG

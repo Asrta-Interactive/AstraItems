@@ -1,11 +1,11 @@
 package com.astrainteractive.empire_items.empire_items.events.api_events
 
-import com.astrainteractive.astralibs.AstraLibs
-import com.astrainteractive.astralibs.events.EventListener
-import com.astrainteractive.astralibs.utils.AstraPacketReader
-import com.astrainteractive.astralibs.utils.ReflectionUtil
-import com.astrainteractive.astralibs.utils.catching
-import com.astrainteractive.astralibs.utils.convertHex
+import ru.astrainteractive.astralibs.AstraLibs
+import ru.astrainteractive.astralibs.events.EventListener
+import ru.astrainteractive.astralibs.utils.AstraPacketReader
+import ru.astrainteractive.astralibs.utils.ReflectionUtil
+import ru.astrainteractive.astralibs.utils.catching
+import ru.astrainteractive.astralibs.utils.convertHex
 import com.comphenix.protocol.PacketType
 import com.comphenix.protocol.ProtocolLibrary
 import com.comphenix.protocol.ProtocolManager

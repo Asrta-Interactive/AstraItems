@@ -1,8 +1,8 @@
 package com.astrainteractive.empire_items.empire_items.commands
 
-import com.astrainteractive.astralibs.AstraLibs
-import com.astrainteractive.astralibs.async.AsyncHelper
-import com.astrainteractive.astralibs.utils.registerCommand
+import ru.astrainteractive.astralibs.AstraLibs
+import ru.astrainteractive.astralibs.async.PluginScope
+import ru.astrainteractive.astralibs.utils.registerCommand
 import com.astrainteractive.empire_items.EmpirePlugin
 import com.astrainteractive.empire_items.ResourceProvider
 import com.astrainteractive.empire_items.empire_items.util.EmpirePermissions
@@ -15,7 +15,7 @@ private val translations: Translations
     get() = ResourceProvider.translations
 class Ezip {
     val ezip = AstraLibs.registerCommand("ezip", permission = EmpirePermissions.EZIP) { sender, args ->
-        AsyncHelper.launch {
+        PluginScope.launch {
             sender.sendMessage(translations.zipStarted)
             ResourcePack.generate()
             if (Zipper.zipAll(

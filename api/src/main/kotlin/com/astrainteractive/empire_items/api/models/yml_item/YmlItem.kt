@@ -1,8 +1,8 @@
 package com.astrainteractive.empire_items.api.models.yml_item
 
-import com.astrainteractive.astralibs.utils.HEX
-import com.astrainteractive.astralibs.utils.convertHex
-import com.astrainteractive.astralibs.utils.valueOfOrNull
+import ru.astrainteractive.astralibs.utils.HEX
+import ru.astrainteractive.astralibs.utils.convertHex
+import ru.astrainteractive.astralibs.utils.valueOfOrNull
 import com.astrainteractive.empire_items.api.enchants.EmpireEnchants
 import com.astrainteractive.empire_items.api.utils.BukkitConstant
 import com.astrainteractive.empire_items.api.utils.BukkitConstants

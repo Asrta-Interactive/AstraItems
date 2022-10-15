@@ -1,7 +1,7 @@
 package com.astrainteractive.empire_items.empire_items.events.empireevents
 
-import com.astrainteractive.astralibs.Logger
-import com.astrainteractive.astralibs.events.DSLEvent
+import ru.astrainteractive.astralibs.Logger
+import ru.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.empire_items.api.utils.BukkitConstants
 import com.astrainteractive.empire_items.empire_items.util.protection.KProtectionLib
 import org.bukkit.Location

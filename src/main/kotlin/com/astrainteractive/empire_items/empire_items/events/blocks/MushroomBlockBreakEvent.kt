@@ -1,7 +1,7 @@
 package com.astrainteractive.empire_items.empire_items.events.blocks
 
-import com.astrainteractive.astralibs.events.DSLEvent
-import com.astrainteractive.astralibs.events.EventListener
+import ru.astrainteractive.astralibs.events.DSLEvent
+import ru.astrainteractive.astralibs.events.EventListener
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.items.BlockParser
 import com.astrainteractive.empire_items.empire_items.util.protection.KProtectionLib

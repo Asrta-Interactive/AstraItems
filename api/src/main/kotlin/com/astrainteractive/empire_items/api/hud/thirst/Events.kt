@@ -1,7 +1,11 @@
 package com.astrainteractive.empire_items.api.hud.thirst
 
-import com.astrainteractive.astralibs.async.AsyncHelper
-import com.astrainteractive.astralibs.events.EventListener
+import ru.astrainteractive.astralibs.async.PluginScope
+import ru.astrainteractive.astralibs.events.DSLEvent
+import ru.astrainteractive.astralibs.events.EventListener
+import com.astrainteractive.empire_items.api.EmpireItemsAPI
+import com.astrainteractive.empire_items.api.hud.IHudValueProvider
+import com.astrainteractive.empire_items.api.hud.PlayerHud
 import kotlinx.coroutines.launch
 import org.bukkit.Material
 import org.bukkit.World
@@ -12,65 +16,39 @@ import org.bukkit.event.player.PlayerItemConsumeEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.player.PlayerQuitEvent
+import java.util.UUID
 import kotlin.math.abs
 
-class Events : EventListener {
-    operator fun Boolean.times(value: Float): Float {
-        return if (this) value else 1f
+class ThirstEvent {
+    private val amountMap = mutableMapOf<UUID, Float>()
+
+    val provider = ThirstProvider {
+        amountMap[it] ?: 1f
     }
 
-    operator fun Boolean.div(value: Float): Float {
-        return if (this) 1 / value else 1f
-    }
 
-    private val amountMap = mutableMapOf<String, Float>()
-
-    private fun valueByFactors(value: Double, player: Player): Float = valueByFactors(value.toFloat(), player)
-    private fun valueByFactors(value: Float, player: Player): Float {
-        val rain = player.location.world.isClearWeather / 2f
-        val sprint = player.isSprinting * 2f
-        val shift = player.isSneaking / 4f
-        return value * rain * sprint * shift
-
-    }
-
-    @EventHandler
-    fun onDrink(e: PlayerItemConsumeEvent) {
+    val onDrink = DSLEvent.event(PlayerItemConsumeEvent::class.java) { e ->
         when (e.item.type) {
-            Material.POTION, Material.LINGERING_POTION, Material.SPLASH_POTION -> ThirstService.update(e.player, 5)
-            else->return
-        }
-    }
-
-
-    @EventHandler
-    fun PlayerMoveEvent(e: PlayerMoveEvent) {
-        AsyncHelper.launch {
-            val distance = valueByFactors(abs(e.to.distance(e.from)), e.player)
-            var amount = amountMap[e.player.name] ?: 0f
-            amount += distance.toFloat()
-            if (amount > 10) {
-                amount = 0f
-                ThirstService.update(e.player, -1)
+            Material.POTION, Material.LINGERING_POTION, Material.SPLASH_POTION -> {
+                amountMap[e.player.uniqueId] = 1f
             }
-            amountMap[e.player.name] = amount
+
+            else -> return@event
+        }
+    }
+    val onMove = DSLEvent.event(PlayerMoveEvent::class.java) { e ->
+        PluginScope.launch {
+            var amount = amountMap[e.player.uniqueId] ?: 0f
+            amount -= 0.000005f
+            amount = amount.coerceIn(0f, 1f)
+            amountMap[e.player.uniqueId] = amount
         }
     }
 
-    @EventHandler
-    fun playerJoin(e: PlayerJoinEvent) {
-        ThirstService.addPlayer(e.player)
-        amountMap.remove(e.player.name)
+    val playerJoin = DSLEvent.event(PlayerJoinEvent::class.java) { e ->
+        amountMap.remove(e.player.uniqueId)
     }
-
-    @EventHandler
-    fun playerJoin(e: PlayerQuitEvent) {
-        ThirstService.removePlayer(e.player)
-        amountMap[e.player.name] = 0f
-
-    }
-
-    override fun onDisable() {
-
+    val playerLeave = DSLEvent.event(PlayerQuitEvent::class.java) { e ->
+        amountMap[e.player.uniqueId] = 0f
     }
 }

@@ -1,8 +1,11 @@
 import org.gradle.api.Action
+import org.gradle.api.Project
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.kotlin.dsl.PluginDependenciesSpecScope
 import org.gradle.kotlin.dsl.java
+import java.io.InputStream
 import java.net.URI
+import java.util.*
 
 object Dependencies {
     object Kotlin {
@@ -10,6 +13,7 @@ object Dependencies {
         const val coroutines = "1.6.3"
         const val json = "1.3.3"
         const val kaml = "0.46.0"
+        const val astraLibs = "2.0.0"
     }
 
     object Spigot {
@@ -66,4 +70,25 @@ object Dependencies {
         const val coreprotect = "net.coreprotect:coreprotect:${Dependencies.Spigot.coreProtect}"
         const val modelengine = "com.ticxo.modelengine:api:${Dependencies.Spigot.modelEngine}"
     }
+}
+fun Project.getPluginProperties(path: String): Properties {
+    val properties: Properties = Properties()
+    val inputStream: InputStream = rootProject.file(path).inputStream()
+    properties.load(inputStream)
+    return properties
+}
+
+data class Config(
+    val username: String,
+    val password: String,
+    val token:String
+)
+
+fun Project.getConfig(): Config {
+    val properties = this.getPluginProperties("astra.properties")
+    return Config(
+        properties.getProperty("username") ?: "",
+        properties.getProperty("password") ?: "",
+        properties.getProperty("token") ?: "",
+    )
 }

@@ -1,10 +1,10 @@
 package com.astrainteractive.empire_items.api.enchants.models
 
-import com.astrainteractive.astralibs.EmpireSerializer
-import com.astrainteractive.astralibs.FileManager
+import ru.astrainteractive.astralibs.EmpireSerializer
 import com.astrainteractive.empire_items.api.enchants.EmpireEnchantApi
 import kotlinx.serialization.SerialName
 import org.bukkit.Material
+import ru.astrainteractive.astralibs.file_manager.FileManager
 
 val EmpireEnchantsConfig: _EmpireEnchantsConfig
     get() = _EmpireEnchantsConfig.instance
@@ -66,7 +66,7 @@ data class _EmpireEnchantsConfig(
             private set
 
         fun create(file: FileManager): _EmpireEnchantsConfig {
-            val _config = EmpireSerializer.toClass<_EmpireEnchantsConfig>(file.getFile())
+            val _config = EmpireSerializer.toClass<_EmpireEnchantsConfig>(file.configFile)
             instance = _config!!
             return instance
         }

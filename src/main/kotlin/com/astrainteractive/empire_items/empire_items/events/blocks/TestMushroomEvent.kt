@@ -1,8 +1,8 @@
 package com.astrainteractive.empire_items.empire_items.events.blocks
 
-import com.astrainteractive.astralibs.async.AsyncHelper
-import com.astrainteractive.astralibs.async.AsyncTask
-import com.astrainteractive.astralibs.events.DSLEvent
+import ru.astrainteractive.astralibs.async.PluginScope
+import ru.astrainteractive.astralibs.async.AsyncTask
+import ru.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.items.BlockParser
 import kotlinx.coroutines.*
@@ -23,7 +23,7 @@ class TestMushroomEvent {
         val faces = BlockParser.getFacingByData(debris.block?.data!!)
         val type = BlockParser.getMaterialByData(debris.block?.data!!)
         val l = e.clickedBlock?.location ?: return@event
-        AsyncHelper.launch(Dispatchers.IO) {
+        PluginScope.launch(Dispatchers.IO) {
             val blocks = IntRange(l.x.toInt(), l.x.toInt() + 50).flatMap { x ->
                 IntRange(l.y.toInt(), l.y.toInt() + 50).flatMap { y ->
                     IntRange(l.z.toInt(), l.z.toInt() + 50).map { z ->

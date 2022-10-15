@@ -1,15 +1,18 @@
 package com.astrainteractive.empire_items.empire_items.commands
 
-import com.astrainteractive.astralibs.AstraLibs
-import com.astrainteractive.astralibs.utils.HEX
-import com.astrainteractive.astralibs.utils.registerCommand
-import com.astrainteractive.astralibs.utils.registerTabCompleter
+import ru.astrainteractive.astralibs.AstraLibs
+import ru.astrainteractive.astralibs.utils.HEX
+import ru.astrainteractive.astralibs.utils.registerCommand
+import ru.astrainteractive.astralibs.utils.registerTabCompleter
 import com.astrainteractive.empire_items.api.FontApi
 import com.astrainteractive.empire_items.empire_items.util.Translations
 import com.astrainteractive.empire_items.api.models.CONFIG
 import com.astrainteractive.empire_items.empire_items.gui.ResourcePack
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
+import ru.astrainteractive.astralibs.async.PluginScope
 import kotlin.random.Random
 
 class General {
@@ -39,7 +42,7 @@ class General {
     }
     private val empack = AstraLibs.registerCommand("empack") { sender, args ->
         if (sender is Player)
-            ResourcePack(sender).open()
+            PluginScope.launch(Dispatchers.IO) { ResourcePack(sender).open() }
         return@registerCommand
     }
     private val empack_download = AstraLibs.registerCommand("empack_download") { sender, args ->

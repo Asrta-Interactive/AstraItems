@@ -39,7 +39,14 @@ repositories {
             artifact()
         }
     }
-    flatDir { dirs("libs") }
+    maven {
+        url = uri("https://maven.pkg.github.com/Astra-Interactive/AstraLibs")
+        val config = project.getConfig()
+        credentials {
+            username = config.username
+            password = config.token
+        }
+    }
 }
 
 dependencies {
@@ -51,14 +58,11 @@ dependencies {
     implementation(Dependencies.Implementation.kotlinxSerializationJson)
     implementation(Dependencies.Implementation.kotlinxSerializationYaml)
     // AstraLibs
-    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
+    implementation("ru.astrainteractive.astralibs:ktx-core:${Dependencies.Kotlin.astraLibs}")
+    implementation("ru.astrainteractive.astralibs:spigot-core:${Dependencies.Kotlin.astraLibs}")
     // Test
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.5.20")
-    testImplementation("junit:junit:4.13.2")
-    testImplementation("com.github.seeseemelk:MockBukkit-v1.18:2.26.0")
-    testImplementation("io.kotest:kotest-runner-junit5:5.3.1")
-    testImplementation("io.kotest:kotest-assertions-core:5.3.1")
     testImplementation(kotlin("test"))
+    testImplementation("org.testng:testng:7.1.0")
     // Spigot dependencies
     compileOnly(Dependencies.CompileOnly.protocolLib)
     compileOnly(Dependencies.CompileOnly.essentialsX)

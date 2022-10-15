@@ -1,6 +1,6 @@
 package com.astrainteractive.empire_items.empire_items.util
 
-import com.astrainteractive.astralibs.FileManager
+import ru.astrainteractive.astralibs.file_manager.FileManager
 import java.io.File
 
 val Files: _Files

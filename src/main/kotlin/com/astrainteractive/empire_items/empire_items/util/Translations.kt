@@ -1,9 +1,9 @@
 package com.astrainteractive.empire_items.empire_items.util
 
-import com.astrainteractive.astralibs.FileManager
-import com.astrainteractive.astralibs.utils.HEX
-import com.astrainteractive.astralibs.utils.getHEXString
+import ru.astrainteractive.astralibs.utils.HEX
+import ru.astrainteractive.astralibs.utils.getHEXString
 import org.bukkit.entity.Player
+import ru.astrainteractive.astralibs.file_manager.FileManager
 
 
 class Translations {
@@ -26,11 +26,11 @@ class Translations {
     }
 
     private val _translationFile: FileManager = FileManager("translations.yml")
-    private val translation = _translationFile.getConfig()
+    private val translation = _translationFile.fileConfiguration
     private fun getHEXString(path: String, default: String): String {
         if (!translation.contains(path)) {
             translation.set(path, default)
-            _translationFile.saveConfig()
+            _translationFile.save()
         }
         return translation.getHEXString(path) ?: default.HEX()
     }

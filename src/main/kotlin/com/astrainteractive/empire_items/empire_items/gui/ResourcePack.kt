@@ -1,26 +1,24 @@
 package com.astrainteractive.empire_items.empire_items.gui
 
-import com.astrainteractive.astralibs.Logger
-import com.astrainteractive.astralibs.events.EventManager
-import com.astrainteractive.astralibs.menu.AstraMenuSize
-import com.astrainteractive.astralibs.menu.AstraPlayerMenuUtility
-import com.astrainteractive.astralibs.menu.Menu
-import com.astrainteractive.astralibs.utils.HEX
+import ru.astrainteractive.astralibs.Logger
+import ru.astrainteractive.astralibs.events.EventManager
+import ru.astrainteractive.astralibs.menu.AstraMenuSize
+import ru.astrainteractive.astralibs.menu.Menu
+import ru.astrainteractive.astralibs.utils.HEX
 import com.astrainteractive.empire_items.api.models.CONFIG
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.ItemStack
+import ru.astrainteractive.astralibs.menu.DefaultPlayerHolder
+import ru.astrainteractive.astralibs.menu.IPlayerHolder
 
 class ResourcePack(val player: Player) : Menu() {
-    override var menuName: String
-        get() = "Принять ресурс-пак?"
-        set(value) {}
+    override var menuTitle: String = "Принять ресурс-пак?"
     override val menuSize: AstraMenuSize
         get() = AstraMenuSize.XXS
-    override val playerMenuUtility: AstraPlayerMenuUtility
-        get() = PlayerMenuUtility(player)
+    override val playerMenuUtility: IPlayerHolder = DefaultPlayerHolder(player)
     private val backButtonIndex: Int = 8
     private val backButton = ItemStack(Material.COMPASS).apply {
         editMeta {
@@ -62,7 +60,7 @@ class ResourcePack(val player: Player) : Menu() {
         }
     }
 
-    override fun handleMenu(e: InventoryClickEvent) {
+    override fun onInventoryClicked(e: InventoryClickEvent) {
         when (e.slot) {
             acceptButtonIndex -> {
                 player.setResourcePack(CONFIG.resourcePack.link)
@@ -76,11 +74,10 @@ class ResourcePack(val player: Player) : Menu() {
         }
     }
 
-    override fun onDestroy(it: InventoryCloseEvent, manager: EventManager) {
+    override fun onInventoryClose(it: InventoryCloseEvent) {
     }
 
-
-    override fun setMenuItems() {
+    override fun onCreated() {
         inventory.setItem(acceptButtonIndex, acceptButton)
         inventory.setItem(denyButtonIndex, denyButton)
         inventory.setItem(backButtonIndex, backButton)

@@ -1,10 +1,9 @@
 package com.astrainteractive.empire_items.empire_items.events.blocks
 
 
-import com.astrainteractive.astralibs.AstraEstimator
-import com.astrainteractive.astralibs.Logger
-import com.astrainteractive.astralibs.async.AsyncHelper
-import com.astrainteractive.astralibs.events.DSLEvent
+import ru.astrainteractive.astralibs.Logger
+import ru.astrainteractive.astralibs.async.PluginScope
+import ru.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.items.BlockParser
 import com.astrainteractive.empire_items.empire_items.events.blocks.BlockGenerationEventUtils.getBlocksLocations
@@ -22,6 +21,7 @@ import org.bukkit.block.BlockFace
 import org.bukkit.craftbukkit.v1_19_R1.CraftChunk
 import org.bukkit.craftbukkit.v1_19_R1.block.CraftBlock
 import org.bukkit.event.world.ChunkLoadEvent
+import ru.astrainteractive.astralibs.utils.AstraEstimator
 import kotlin.math.ceil
 import kotlin.math.pow
 import kotlin.random.Random
@@ -72,16 +72,16 @@ class BlockGenerationEvent {
      */
     private suspend fun setChunkHasGenerated(chunk: Chunk, id: String): Boolean = withContext(scope.coroutineContext) {
         val tempChunks = Files.tempChunks
-        if (!tempChunks.getConfig().contains("${chunk}.$id")) {
-            tempChunks.getConfig().set("${chunk}.$id", true)
-            tempChunks.saveConfig()
+        if (!tempChunks.fileConfiguration.contains("${chunk}.$id")) {
+            tempChunks.fileConfiguration.set("${chunk}.$id", true)
+            tempChunks.save()
         }
         true
     }
 
     private suspend fun isBlockGeneratedInChunk(chunk: Chunk, id: String): Boolean =
         withContext(scope.coroutineContext) {
-            Files.tempChunks.getConfig().contains("${chunk}.$id")
+            Files.tempChunks.fileConfiguration.contains("${chunk}.$id")
         }
 
     /**
@@ -203,7 +203,7 @@ class BlockGenerationEvent {
                 Logger.log("${map}")
         }
         map.forEach {
-            AsyncHelper.launch(blockGenerationPool) {
+            PluginScope.launch(blockGenerationPool) {
                 val blocks = it.value.map { it.block }
 
                 it.value.firstOrNull()?.let {
@@ -226,7 +226,7 @@ class BlockGenerationEvent {
             if (CONFIG.generation.generateChunksAtOnce > 0)
                 return@event
         currentChunkProcessing++
-        AsyncHelper.launch(blockParsingPool) {
+        PluginScope.launch(blockParsingPool) {
             generateChunk(chunk)
             currentChunkProcessing--
         }

@@ -1,6 +1,6 @@
 package com.astrainteractive.empire_items.api.models
 
-import com.astrainteractive.astralibs.Logger
+import ru.astrainteractive.astralibs.Logger
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.toAstraItemOrItem
 import com.astrainteractive.empire_items.api.utils.calcChance
 import kotlinx.serialization.Serializable

@@ -1,6 +1,6 @@
 package com.astrainteractive.empire_items.empire_items.events.api_events
 
-import com.astrainteractive.astralibs.events.DSLEvent
+import ru.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.empireID
 import com.astrainteractive.empire_items.api.items.DecorationBlockAPI
 import org.bukkit.Material

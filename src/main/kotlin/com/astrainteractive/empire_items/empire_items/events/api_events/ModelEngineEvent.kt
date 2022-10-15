@@ -1,6 +1,6 @@
 package com.astrainteractive.empire_items.empire_items.events.api_events
 
-import com.astrainteractive.astralibs.events.DSLEvent
+import ru.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.empire_items.api.meg_api.BossBarController
 import com.astrainteractive.empire_items.api.meg_api.EmpireModelEngineAPI
 import com.destroystokyo.paper.event.entity.EntityRemoveFromWorldEvent

@@ -1,10 +1,10 @@
 package com.astrainteractive.empire_items.api.items
 
-import com.astrainteractive.astralibs.AstraLibs
-import com.astrainteractive.astralibs.async.AsyncHelper
-import com.astrainteractive.astralibs.async.BukkitMain
-import com.astrainteractive.astralibs.async.BukkitMainDispatcher
-import com.astrainteractive.astralibs.utils.catching
+import ru.astrainteractive.astralibs.AstraLibs
+import ru.astrainteractive.astralibs.async.PluginScope
+import ru.astrainteractive.astralibs.async.BukkitMain
+import ru.astrainteractive.astralibs.async.BukkitMainDispatcher
+import ru.astrainteractive.astralibs.utils.catching
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import net.minecraft.world.level.GeneratorAccess
@@ -96,7 +96,7 @@ object BlockParser {
         }
 
 
-        AsyncHelper.launch(Dispatchers.BukkitMain) {
+        PluginScope.launch(Dispatchers.BukkitMain) {
             blocks.forEach { block ->
                 val world = ((block as CraftBlock).craftWorld.handle as GeneratorAccess)
                 val position = (block as CraftBlock).position

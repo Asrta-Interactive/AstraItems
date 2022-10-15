@@ -1,9 +1,9 @@
 package com.astrainteractive.empire_items.empire_items.events.genericevents
 
-import com.astrainteractive.astralibs.*
-import com.astrainteractive.astralibs.async.AsyncHelper
-import com.astrainteractive.astralibs.async.BukkitMain
-import com.astrainteractive.astralibs.events.DSLEvent
+import ru.astrainteractive.astralibs.*
+import ru.astrainteractive.astralibs.async.PluginScope
+import ru.astrainteractive.astralibs.async.BukkitMain
+import ru.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.empire_items.api.CraftingApi
 import com.astrainteractive.empire_items.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.empireID
@@ -63,7 +63,7 @@ class ItemInteractEvent {
     }
 
     private inline fun <T> Iterable<T>.syncForEach(crossinline action: (T) -> Unit) =
-        AsyncHelper.launch(Dispatchers.BukkitMain) { this@syncForEach.forEach(action) }
+        PluginScope.launch(Dispatchers.BukkitMain) { this@syncForEach.forEach(action) }
 
     val onClick = DSLEvent.event(PlayerInteractEvent::class.java) { e ->
         if (e.hand == EquipmentSlot.HAND)

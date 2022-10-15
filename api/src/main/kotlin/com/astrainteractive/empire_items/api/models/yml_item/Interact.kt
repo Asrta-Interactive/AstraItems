@@ -1,9 +1,9 @@
 package com.astrainteractive.empire_items.api.models.yml_item
 
-import com.astrainteractive.astralibs.AstraLibs
-import com.astrainteractive.astralibs.async.AsyncHelper
-import com.astrainteractive.astralibs.async.BukkitMain
-import com.astrainteractive.astralibs.utils.valueOfOrNull
+import ru.astrainteractive.astralibs.AstraLibs
+import ru.astrainteractive.astralibs.async.PluginScope
+import ru.astrainteractive.astralibs.async.BukkitMain
+import ru.astrainteractive.astralibs.utils.valueOfOrNull
 import com.destroystokyo.paper.ParticleBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -59,7 +59,7 @@ data class Interact(
         val cooldown: Int? = null,
     ) {
         fun play(l: Location) {
-            AsyncHelper.launch(Dispatchers.BukkitMain)  {
+            PluginScope.launch(Dispatchers.BukkitMain)  {
                 l.world.playSound(l, name, volume, pitch)
             }
         }

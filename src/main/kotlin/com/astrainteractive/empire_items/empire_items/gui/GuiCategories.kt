@@ -1,9 +1,9 @@
 package com.astrainteractive.empire_items.empire_items.gui
 
-import com.astrainteractive.astralibs.async.AsyncHelper
-import com.astrainteractive.astralibs.events.EventManager
-import com.astrainteractive.astralibs.menu.AstraMenuSize
-import com.astrainteractive.astralibs.utils.convertHex
+import ru.astrainteractive.astralibs.async.PluginScope
+import ru.astrainteractive.astralibs.events.EventManager
+import ru.astrainteractive.astralibs.menu.AstraMenuSize
+import ru.astrainteractive.astralibs.utils.convertHex
 import com.astrainteractive.empire_items.api.EmpireItemsAPI.toAstraItemOrItem
 import com.astrainteractive.empire_items.api.utils.setDisplayName
 import com.astrainteractive.empire_items.api.models.GUI_CONFIG
@@ -13,30 +13,31 @@ import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.ItemStack
+import ru.astrainteractive.astralibs.menu.IInventoryButton
+import ru.astrainteractive.astralibs.menu.PaginatedMenu
+
 
 class GuiCategories(player: Player, override val playerMenuUtility: PlayerMenuUtility = PlayerMenuUtility(player)) :
-    AstraPaginatedMenu() {
+    PaginatedMenu() {
 
-    override var menuName: String = convertHex(GUI_CONFIG.settings.titles.categoriesText).emoji()
+    override var menuTitle: String = convertHex(GUI_CONFIG.settings.titles.categoriesText).emoji()
 
     override val menuSize: AstraMenuSize = AstraMenuSize.XL
-    override val backPageButton: ItemStack = GUI_CONFIG.settings.buttons.backButton.toAstraItemOrItem()!!
+    override val backPageButton = GUI_CONFIG.settings.buttons.backButton.toAstraItemOrItem()!!.toInventoryButton(49)
     override val maxItemsAmount: Int = GUI_CONFIG.categories.size ?: 0
-    override val nextPageButton: ItemStack = GUI_CONFIG.settings.buttons.nextButton.toAstraItemOrItem()!!
+    override val nextPageButton = GUI_CONFIG.settings.buttons.nextButton.toAstraItemOrItem()!!.toInventoryButton(53)
     override var page: Int = 0
-    override val prevPageButton: ItemStack = GUI_CONFIG.settings.buttons.prevButton.toAstraItemOrItem()!!
-    override val prevButtonIndex: Int = 45
-    override val backButtonIndex: Int = 49
-    override val nextButtonIndex: Int = 53
+    override val prevPageButton = GUI_CONFIG.settings.buttons.prevButton.toAstraItemOrItem()!!.toInventoryButton(45)
 
-    override fun handleMenu(e: InventoryClickEvent) {
-        super.handleMenu(e)
+    override fun onInventoryClicked(e: InventoryClickEvent) {
+        super.onInventoryClicked(e)
         when (e.slot) {
-            backButtonIndex -> {
+            backPageButton.index -> {
                 playerMenuUtility.player.closeInventory()
             }
+
             else -> {
-                AsyncHelper.launch {
+                PluginScope.launch {
                     playerMenuUtility.categoriesPage = page
                     playerMenuUtility.categoryPage = 0
                     playerMenuUtility.categoryId =
@@ -52,19 +53,25 @@ class GuiCategories(player: Player, override val playerMenuUtility: PlayerMenuUt
         playerMenuUtility.categoriesPage += next
     }
 
-    override fun onDestroy(it: InventoryCloseEvent, manager: EventManager) {
+    override fun onInventoryClose(it: InventoryCloseEvent) {}
+    override fun onPageChanged() {
+        setMenuItems()
     }
 
-    override fun setMenuItems() {
-        addManageButtons()
+    override fun onCreated() {
+        setMenuItems()
+    }
+
+    fun setMenuItems() {
+        setManageButtons()
         val items = GUI_CONFIG.categories.values ?: return
         for (i in 0 until maxItemsPerPage) {
             val index = getIndex(i)
-            val category = items.elementAtOrNull(index)?:continue
+            val category = items.elementAtOrNull(index) ?: continue
             val item = category.icon.toAstraItemOrItem()?.apply {
                 this.setDisplayName(convertHex(category.name))
                 this.lore = category.lore
-            }?:continue
+            } ?: continue
             inventory.setItem(i, item ?: continue)
         }
 
