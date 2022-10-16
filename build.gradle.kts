@@ -1,5 +1,5 @@
-group = "com.astrainteractive"
-version = "4.2.0"
+group = Dependencies.group
+version = Dependencies.version
 val name = "EmpireItems"
 description = "Custom items plugin for EmpireProjekt"
 
@@ -7,9 +7,9 @@ plugins {
     java
     `maven-publish`
     `java-library`
-    kotlin("jvm") version "1.7.0"
-    kotlin("plugin.serialization") version "1.7.0"
-    id("com.github.johnrengelman.shadow") version "7.1.2"
+    kotlin("jvm") version Dependencies.Kotlin.version
+    kotlin("plugin.serialization") version Dependencies.Kotlin.version
+    id("com.github.johnrengelman.shadow") version Dependencies.Kotlin.shadow
 }
 java {
     withSourcesJar()
@@ -20,61 +20,54 @@ java {
 repositories {
     mavenLocal()
     mavenCentral()
-    maven(Dependencies.Repositories.clojars)
-    maven(Dependencies.Repositories.playpro)
-    maven(Dependencies.Repositories.dv8tion)
-    maven(Dependencies.Repositories.maven2)
-    maven(Dependencies.Repositories.enginehub)
-    maven(Dependencies.Repositories.maven2Apache)
-    maven(Dependencies.Repositories.dmulloy2)
-    maven(Dependencies.Repositories.essentialsx)
-    maven(Dependencies.Repositories.scarsz)
-    maven(Dependencies.Repositories.papermc)
-    maven(Dependencies.Repositories.spigotmc)
     maven(Dependencies.Repositories.extendedclip)
+    maven(Dependencies.Repositories.maven2Apache)
+    maven(Dependencies.Repositories.essentialsx)
+    maven(Dependencies.Repositories.enginehub)
+    maven(Dependencies.Repositories.spigotmc)
+    maven(Dependencies.Repositories.dmulloy2)
+    maven(Dependencies.Repositories.papermc)
+    maven(Dependencies.Repositories.dv8tion)
+    maven(Dependencies.Repositories.playpro)
     maven(Dependencies.Repositories.jitpack)
-    maven {
-        url = uri(Dependencies.Repositories.lumine)
-        metadataSources {
-            artifact()
-        }
-    }
-    maven {
-        url = uri("https://maven.pkg.github.com/Astra-Interactive/AstraLibs")
-        val config = project.getConfig()
-        credentials {
-            username = config.username
-            password = config.token
-        }
-    }
+    maven(Dependencies.Repositories.scarsz)
+    maven(Dependencies.Repositories.maven2)
+    modelEngige(project)
+    astraLibs(project)
+    paperMC(project)
 }
 
 dependencies {
+    // Local
     implementation(project(":api"))
-    implementation(Dependencies.Implementation.kotlinGradlePlugin)
-    implementation(Dependencies.Implementation.kotlinxCoroutines)
-    implementation(Dependencies.Implementation.kotlinxCoroutinesCore)
-    implementation(Dependencies.Implementation.kotlinxSerialization)
-    implementation(Dependencies.Implementation.kotlinxSerializationJson)
-    implementation(Dependencies.Implementation.kotlinxSerializationYaml)
+    // Kotlin
+    implementation(Dependencies.Libraries.kotlinGradlePlugin)
+    // Coroutines
+    implementation(Dependencies.Libraries.kotlinxCoroutinesCoreJVM)
+    implementation(Dependencies.Libraries.kotlinxCoroutinesCore)
+    // Serialization
+    implementation(Dependencies.Libraries.kotlinxSerialization)
+    implementation(Dependencies.Libraries.kotlinxSerializationJson)
+    implementation(Dependencies.Libraries.kotlinxSerializationYaml)
     // AstraLibs
-    implementation("ru.astrainteractive.astralibs:ktx-core:${Dependencies.Kotlin.astraLibs}")
-    implementation("ru.astrainteractive.astralibs:spigot-core:${Dependencies.Kotlin.astraLibs}")
+    implementation(Dependencies.Libraries.astraLibsKtxCore)
+    implementation(Dependencies.Libraries.astraLibsSpigotCore)
     // Test
     testImplementation(kotlin("test"))
-    testImplementation("org.testng:testng:7.1.0")
+    testImplementation(Dependencies.Libraries.orgTeting)
+
     // Spigot dependencies
-    compileOnly(Dependencies.CompileOnly.protocolLib)
-    compileOnly(Dependencies.CompileOnly.essentialsX)
-    compileOnly(Dependencies.CompileOnly.paperMC)
-    compileOnly(Dependencies.CompileOnly.spigotApi)
-    compileOnly(Dependencies.CompileOnly.spigot)
-    compileOnly(Dependencies.CompileOnly.placeholderapi)
-    compileOnly(Dependencies.CompileOnly.worldguard)
-    compileOnly(Dependencies.CompileOnly.discordsrv)
-    compileOnly(Dependencies.CompileOnly.vaultAPI)
-    compileOnly(Dependencies.CompileOnly.coreprotect)
-    compileOnly(Dependencies.CompileOnly.modelengine)
+    compileOnly(Dependencies.Libraries.essentialsX)
+    compileOnly(Dependencies.Libraries.paperMC)
+    compileOnly(Dependencies.Libraries.spigot)
+    compileOnly(Dependencies.Libraries.spigotApi)
+    compileOnly(Dependencies.Libraries.protocolLib)
+    compileOnly(Dependencies.Libraries.placeholderapi)
+    compileOnly(Dependencies.Libraries.worldguard)
+    compileOnly(Dependencies.Libraries.discordsrv)
+    compileOnly(Dependencies.Libraries.vaultAPI)
+    compileOnly(Dependencies.Libraries.coreprotect)
+    compileOnly(Dependencies.Libraries.modelengine)
     implementation(kotlin("script-runtime"))
 }
 
@@ -118,12 +111,15 @@ tasks {
 tasks.shadowJar {
     dependencies {
         include(dependency(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar", ".aar")))))
-        include(dependency("org.jetbrains.kotlin:kotlin-gradle-plugin:${Dependencies.Kotlin.version}"))
-        include(dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Dependencies.Kotlin.coroutines}"))
-        include(dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:${Dependencies.Kotlin.coroutines}"))
-        include(dependency("org.jetbrains.kotlin:kotlin-serialization:${Dependencies.Kotlin.version}"))
-        include(dependency("org.jetbrains.kotlinx:kotlinx-serialization-json:${Dependencies.Kotlin.json}"))
-        include(dependency("com.charleskorn.kaml:kaml:${Dependencies.Kotlin.kaml}"))
+        // Kotlin
+        include(dependency(Dependencies.Libraries.kotlinGradlePlugin))
+        // Coroutines
+        include(dependency(Dependencies.Libraries.kotlinxCoroutinesCoreJVM))
+        include(dependency(Dependencies.Libraries.kotlinxCoroutinesCore))
+        // Serialization
+        include(dependency(Dependencies.Libraries.kotlinxSerialization))
+        include(dependency(Dependencies.Libraries.kotlinxSerializationJson))
+        include(dependency(Dependencies.Libraries.kotlinxSerializationYaml))
     }
     isReproducibleFileOrder = true
     mergeServiceFiles()
@@ -132,5 +128,5 @@ tasks.shadowJar {
     from(sourceSets.main.get().output)
     from(project.configurations.runtimeClasspath)
     minimize()
-    destinationDirectory.set(File("D:\\Minecraft Servers\\TEST_SERVER\\plugins"))
+    destinationDirectory.set(File(Dependencies.destinationDirectoryPath))
 }
