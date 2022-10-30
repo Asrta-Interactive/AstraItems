@@ -1,3 +1,6 @@
 rootProject.name = "EmpireItems"
-include("core")
 include("api")
+include("plugin")
+include("enchantements")
+include("modelengine")
+include("models")

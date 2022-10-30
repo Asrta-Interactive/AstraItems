@@ -1,0 +1,68 @@
+main: com.astrainteractive.empire_items.EmpirePlugin
+name: EmpireItems
+version: "${version}"
+description: "${description}"
+author: MakeevRoman
+prefix: EmpireItems
+authors: [ MakeevRoman ]
+website: AstraInteractive.ru
+api-version: 1.17
+softdepend: [PlaceholderAPI,ProtocolLib,WorldGuard,ModelEngine]
+depend: []
+commands:
+  villager_inventory:
+    usage: |
+      In progress
+  player_invite:
+    usage: |
+      In progress
+  emaccept:
+    usage: |
+      In progress
+  ereload:
+    usage: |
+      In progress
+  edice:
+    usage: |
+      In progress
+  emreplace:
+    usage: |
+      In progress
+  emoji:
+    usage: |
+      In progress
+  emcredit:
+    usage: |
+      In progress
+  embank:
+    usage: |
+      In progress
+  emp:
+    usage: |
+      In progress
+  emgui:
+    usage: |
+      In progress
+  espeed:
+    usage: |
+      In progress
+  ezip:
+    usage: |
+      In progress
+  emojis:
+    usage: |
+      In progress
+  empack_download:
+    usage: |
+      In progress
+  empack:
+    usage: |
+      In progress
+  spawnmodel:
+    usage: |
+      In progress
+  empireitems:
+    usage: |
+      /ereload - Перезагружает плагин
+      /emp give - дает предмет
+      /ezip - создает архив

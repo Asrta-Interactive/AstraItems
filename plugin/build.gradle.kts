@@ -1,13 +1,16 @@
 plugins {
-    java
-    `maven-publish`
-    `java-library`
-    kotlin("jvm") version Dependencies.Kotlin.version
-    kotlin("plugin.serialization") version Dependencies.Kotlin.version
+    kotlin("plugin.serialization")
+    kotlin("jvm")
+    id("com.github.johnrengelman.shadow")
 }
 
-group = "com.astrainteractive.empire_items.api"
+group = Dependencies.group
+version = Dependencies.version
+val mName = "EmpireItems"
+description = "Custom items plugin for EmpireProjekt"
 java {
+    withSourcesJar()
+    withJavadocJar()
     java.sourceCompatibility = JavaVersion.VERSION_1_8
     java.targetCompatibility = JavaVersion.VERSION_17
 }
@@ -47,7 +50,7 @@ dependencies {
     // Test
     testImplementation(kotlin("test"))
     testImplementation(Dependencies.Libraries.orgTeting)
-    // Spigot dependencies
+
     // Spigot dependencies
     compileOnly(Dependencies.Libraries.essentialsX)
     compileOnly(Dependencies.Libraries.paperMC)
@@ -61,15 +64,70 @@ dependencies {
     compileOnly(Dependencies.Libraries.coreprotect)
     compileOnly(Dependencies.Libraries.modelengine)
     implementation(kotlin("script-runtime"))
-    implementation(project(":models"))
+    // Local
     implementation(project(":enchantements"))
-
+    implementation(project(":modelengine"))
+    implementation(project(":api"))
+    implementation(project(":models"))
 }
+
 tasks {
+    withType<JavaCompile>() {
+        options.encoding = "UTF-8"
+    }
+    withType<Test>().configureEach {
+        useJUnitPlatform()
+    }
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         kotlinOptions.jvmTarget = "17"
     }
+    withType<Jar> {
+        archiveClassifier.set("min")
+    }
+    compileJava {
+        options.encoding = "UTF-8"
+    }
+    test {
+        useJUnit()
+        testLogging {
+            events("passed", "skipped", "failed")
+            this.showStandardStreams = true
+        }
+    }
+    processResources {
+        filteringCharset = "UTF-8"
+        from(sourceSets.main.get().resources.srcDirs) {
+            filesMatching("plugin.yml") {
+                expand(
+                    "name" to "EmpireItems",
+                    "version" to project.version,
+                    "description" to project.description
+                )
+            }
+            duplicatesStrategy = DuplicatesStrategy.INCLUDE
+        }
+    }
 }
-tasks.test {
-    useJUnitPlatform()
+tasks.shadowJar {
+    dependencies {
+        include(dependency(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar", ".aar")))))
+        // Kotlin
+        include(dependency(Dependencies.Libraries.kotlinGradlePlugin))
+        // Coroutines
+        include(dependency(Dependencies.Libraries.kotlinxCoroutinesCoreJVM))
+        include(dependency(Dependencies.Libraries.kotlinxCoroutinesCore))
+        // Serialization
+        include(dependency(Dependencies.Libraries.kotlinxSerialization))
+        include(dependency(Dependencies.Libraries.kotlinxSerializationJson))
+        include(dependency(Dependencies.Libraries.kotlinxSerializationYaml))
+    }
+    isReproducibleFileOrder = true
+    mergeServiceFiles()
+    dependsOn(configurations)
+    archiveClassifier.set(null as String?)
+    from(sourceSets.main.get().output)
+    from(project.configurations.runtimeClasspath)
+    minimize()
+    archiveBaseName.set("EmpireItems")
+    destinationDirectory.set(File(Dependencies.destinationDirectoryPath))
 }

@@ -1,7 +1,0 @@
-loot:
-  bottle_for_slime:
-    id: bottle_for_slime
-    dropFrom: ZOMBIE
-    minAmount: 1
-    maxAmount: 2
-    chance: 0.2

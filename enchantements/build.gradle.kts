@@ -1,13 +1,15 @@
 plugins {
-    java
-    `maven-publish`
-    `java-library`
-    kotlin("jvm") version Dependencies.Kotlin.version
-    kotlin("plugin.serialization") version Dependencies.Kotlin.version
+    kotlin("jvm")
+    kotlin("plugin.serialization")
 }
 
-group = "com.astrainteractive.empire_items.api"
+group = "com.astrainteractive.empire_items"
+version = "4.2.0"
+
+
 java {
+    withSourcesJar()
+    withJavadocJar()
     java.sourceCompatibility = JavaVersion.VERSION_1_8
     java.targetCompatibility = JavaVersion.VERSION_17
 }
@@ -32,6 +34,9 @@ repositories {
 }
 
 dependencies {
+    // Local
+//    implementation(project(":api"))
+    implementation(project(":models"))
     // Kotlin
     implementation(Dependencies.Libraries.kotlinGradlePlugin)
     // Coroutines
@@ -47,7 +52,7 @@ dependencies {
     // Test
     testImplementation(kotlin("test"))
     testImplementation(Dependencies.Libraries.orgTeting)
-    // Spigot dependencies
+
     // Spigot dependencies
     compileOnly(Dependencies.Libraries.essentialsX)
     compileOnly(Dependencies.Libraries.paperMC)
@@ -61,15 +66,4 @@ dependencies {
     compileOnly(Dependencies.Libraries.coreprotect)
     compileOnly(Dependencies.Libraries.modelengine)
     implementation(kotlin("script-runtime"))
-    implementation(project(":models"))
-    implementation(project(":enchantements"))
-
-}
-tasks {
-    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions.jvmTarget = "17"
-    }
-}
-tasks.test {
-    useJUnitPlatform()
 }
