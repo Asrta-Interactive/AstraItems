@@ -61,7 +61,7 @@ dependencies {
     compileOnly(Dependencies.Libraries.discordsrv)
     compileOnly(Dependencies.Libraries.vaultAPI)
     compileOnly(Dependencies.Libraries.coreprotect)
-    compileOnly(Dependencies.Libraries.modelengine)
+//    compileOnly(Dependencies.Libraries.modelengine)
     // Local
     implementation(project(":models"))
 }

@@ -59,7 +59,7 @@ dependencies {
     compileOnly(Dependencies.Libraries.discordsrv)
     compileOnly(Dependencies.Libraries.vaultAPI)
     compileOnly(Dependencies.Libraries.coreprotect)
-    compileOnly(Dependencies.Libraries.modelengine)
+//    compileOnly(Dependencies.Libraries.modelengine)
     implementation(kotlin("script-runtime"))
     implementation(project(":models"))
     implementation(project(":enchantements"))
