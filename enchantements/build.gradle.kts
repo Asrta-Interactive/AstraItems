@@ -34,9 +34,6 @@ repositories {
 }
 
 dependencies {
-    // Local
-//    implementation(project(":api"))
-    implementation(project(":models"))
     // Kotlin
     implementation(Dependencies.Libraries.kotlinGradlePlugin)
     // Coroutines
@@ -65,5 +62,6 @@ dependencies {
     compileOnly(Dependencies.Libraries.vaultAPI)
     compileOnly(Dependencies.Libraries.coreprotect)
     compileOnly(Dependencies.Libraries.modelengine)
-    implementation(kotlin("script-runtime"))
+    // Local
+    implementation(project(":models"))
 }
