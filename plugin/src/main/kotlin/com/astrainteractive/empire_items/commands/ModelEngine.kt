@@ -40,7 +40,6 @@ class ModelEngine {
 
 
             val l = location ?: (sender as? Player)?.getTargetBlock(transparent, 64)?.getRelative(BlockFace.UP)?.location?:return@registerCommand
-            println("Call ModelEngineApi.spawnMob")
             val spawned = EmpireModelEngineAPI.spawnMob(empireMob, l)
             if (spawned == null) {
                 sender.sendMessage(translations.mobFailedToSpawn)

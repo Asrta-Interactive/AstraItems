@@ -29,7 +29,6 @@ repositories {
     maven(Dependencies.Repositories.scarsz)
     maven(Dependencies.Repositories.maven2)
     modelEngige(project)
-    astraLibs(project)
     paperMC(project)
 }
 

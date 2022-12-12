@@ -6,14 +6,14 @@ import java.io.InputStream
 import java.util.*
 
 fun RepositoryHandler.astraLibs(project: Project) {
-    maven {
-        url = project.uri("https://maven.pkg.github.com/Astra-Interactive/AstraLibs")
-        val config = project.getConfig()
-        credentials {
-            username = config.username
-            password = config.token
-        }
-    }
+//    maven {
+//        url = project.uri("https://maven.pkg.github.com/Astra-Interactive/AstraLibs")
+//        val config = project.getConfig()
+//        credentials {
+//            username = config.username
+//            password = config.token
+//        }
+//    }
 }
 fun RepositoryHandler.modelEngige(project: Project) {
     maven {

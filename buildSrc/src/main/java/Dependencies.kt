@@ -8,7 +8,7 @@ import java.util.*
 object Dependencies {
     const val version = "4.2.0"
     const val group = "com.astrainteractive"
-    const val destinationDirectoryPath = "D:\\Minecraft Servers\\TEST_SERVER\\plugins"
+    const val destinationDirectoryPath = "D:\\Minecraft Servers\\EmpireProjekt_remake\\smp\\plugins"
 
     object Kotlin {
         const val version = "1.7.0"
@@ -17,7 +17,7 @@ object Dependencies {
         const val kaml = "0.46.0"
         const val exposed = "0.38.1"
         const val jdbc = "3.36.0.3"
-        const val astraLibs = "2.0.1"
+        const val astraLibs = "2.0.12"
         const val shadow = "7.1.2"
         const val mysqlDriver = "8.0.20"
         const val orgTesting = "7.1.0"
@@ -77,6 +77,8 @@ object Dependencies {
         const val kotlinxSerializationYaml = "com.charleskorn.kaml:kaml:${Dependencies.Kotlin.kaml}"
 
         // AstraLibs
+//        const val astraLibsKtxCore = "ru.astrainteractive.astralibs:ktx-core:${Dependencies.Kotlin.astraLibs}"
+//        const val astraLibsSpigotCore = "ru.astrainteractive.astralibs:spigot-core:${Dependencies.Kotlin.astraLibs}"
         const val astraLibsKtxCore = "ru.astrainteractive.astralibs:ktx-core:${Dependencies.Kotlin.astraLibs}"
         const val astraLibsSpigotCore = "ru.astrainteractive.astralibs:spigot-core:${Dependencies.Kotlin.astraLibs}"
 

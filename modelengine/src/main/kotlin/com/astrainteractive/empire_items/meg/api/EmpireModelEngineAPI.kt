@@ -39,10 +39,9 @@ object EmpireModelEngineAPI : IEmpireModelEngineAPI, IManager {
         val mobs = EmpireItemsAPI.ymlMobById.values.filter { ymlMob ->
             !ymlMob.spawn?.values?.filter { cond ->
                 val chance = cond.replace[e.type.name]
-                val c1 = calcChance(chance?.toFloat() ?: -1f)
-                val c2 = e.location.y > cond.minY && e.location.y < cond.maxY
-                val c3 = if (cond.biomes.isEmpty()) true else cond.biomes.contains(e.location.getBiome().name)
-                c1 && c2 && c3
+                calcChance(chance?.toFloat() ?: -1f) &&
+                (e.location.y > cond.minY && e.location.y < cond.maxY) &&
+                (cond.biomes.isEmpty() || cond.biomes.contains(e.location.getBiome().name))
             }.isNullOrEmpty()
         }
         if (mobs.isEmpty()) return null
@@ -111,6 +110,7 @@ object EmpireModelEngineAPI : IEmpireModelEngineAPI, IManager {
     override fun spawnMob(ymlMob: YmlMob, location: Location): EmpireEntity {
         ignoredLocations.add(location)
         val entityType = EntityType.fromName(ymlMob.entity) ?: throw Exception("Unknown entity type: ${ymlMob.entity}")
+        println("EntityType: $entityType")
         val entity =
             location.world.spawnEntity(location, entityType).run { configureEntity(this, ymlMob) }
         val replaced = replaceEntity(entity, ymlMob)
@@ -161,11 +161,11 @@ object EmpireModelEngineAPI : IEmpireModelEngineAPI, IManager {
 
     }
 
-    override fun getEmpireEntity(entity: Entity): EmpireEntity? {
+    override fun getEmpireEntity(entity: Entity): EmpireEntity? = kotlin.runCatching {
         val entityInfo = entityTagHolder.get(entity) ?: return null
         val ymlMob = EmpireItemsAPI.ymlMobById[entityInfo.empireID] ?: return null
-        val modeledEntity = ModelEngineAPI.getModeledEntity(entity.uniqueId)
-        val activeModel = modeledEntity.getModel(entityInfo.modelID)
+        val modeledEntity = ModelEngineAPI.getModeledEntity(entity.uniqueId) ?: return null
+        val activeModel = modeledEntity?.getModel(entityInfo.modelID ?: return null) ?: return null
         val empireModeledEntity = EmpireModeledEntity(modeledEntity)
         val empireActiveModel = EmpireActiveModel(activeModel)
         return EmpireEntity(
@@ -174,7 +174,7 @@ object EmpireModelEngineAPI : IEmpireModelEngineAPI, IManager {
             modeledEntity = empireModeledEntity,
             activeModel = empireActiveModel
         )
-    }
+    }.getOrNull()
 
     fun onEntityDied(entity: Entity) {
         entityTagHolder.remove(entity)
@@ -192,10 +192,13 @@ object EmpireModelEngineAPI : IEmpireModelEngineAPI, IManager {
     }
 
     override suspend fun onDisable() {
-        entityTagHolder.map.forEach { entity, entityInfo ->
+        val players = Bukkit.getOnlinePlayers()
+        entityTagHolder.map.forEach { (entity, entityInfo) ->
             getEmpireEntity(entity)?.let { empireEntity ->
-                Bukkit.getOnlinePlayers().forEach(empireEntity.activeModel.activeModel::hideFromPlayer)
-                Bukkit.getOnlinePlayers().forEach(empireEntity.modeledEntity.modeledEntity::hideFromPlayer)
+                players.forEach {
+                    empireEntity.activeModel.activeModel.hideFromPlayer(it)
+                    empireEntity.modeledEntity.modeledEntity.hideFromPlayer(it)
+                }
                 empireEntity.modeledEntity.modeledEntity.removeModel(entityInfo.modelID)
                 empireEntity.modeledEntity.modeledEntity.destroy()
                 empireEntity.activeModel.activeModel.destroy()

@@ -2,7 +2,6 @@ package com.astrainteractive.empire_items.commands
 
 import ru.astrainteractive.astralibs.Logger
 import ru.astrainteractive.astralibs.async.PluginScope
-import ru.astrainteractive.astralibs.commands.AstraDSLCommand
 import ru.astrainteractive.astralibs.utils.convertHex
 import ru.astrainteractive.astralibs.utils.then
 import com.astrainteractive.empire_itemss.api.FontApi
@@ -11,6 +10,8 @@ import com.astrainteractive.empire_items.gui.GuiCategories
 import com.astrainteractive.empire_items.modules.GuiConfigModule
 import kotlinx.coroutines.launch
 import org.bukkit.entity.Player
+import ru.astrainteractive.astralibs.AstraLibs
+import ru.astrainteractive.astralibs.utils.registerCommand
 
 class CommandManager {
     companion object {
@@ -32,20 +33,20 @@ class CommandManager {
     }
 }
 
-fun CommandManager.emgui() = AstraDSLCommand.command("emgui") {
+fun CommandManager.emgui() = AstraLibs.registerCommand("emgui") {sender,args->
     if (sender !is Player) {
         Logger.warn("Player only command", tag = CommandManager.TAG)
-        return@command
+        return@registerCommand
     }
     PluginScope.launch {
-        GuiCategories(sender as Player, guiConfig = GuiConfigModule.value).open()
+        GuiCategories(sender, guiConfig = GuiConfigModule.value).open()
     }
 }
 
-fun CommandManager.emojiBook() = AstraDSLCommand.command("emojis") {
+fun CommandManager.emojiBook() = AstraLibs.registerCommand("emojis") {sender,args->
     if (sender !is Player) {
         Logger.warn("Player only command", tag = CommandManager.TAG)
-        return@command
+        return@registerCommand
     }
     val list = FontApi.playerFonts().mapNotNull { (id, font) ->
         font.blockSend.then(null as String?) ?: convertHex("&r${font.id}\n&r&f${font.char}&r\n")
