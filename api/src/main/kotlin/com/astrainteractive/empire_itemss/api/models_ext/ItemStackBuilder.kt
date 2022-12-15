@@ -3,6 +3,7 @@ package com.astrainteractive.empire_itemss.api.models_ext
 import com.astrainteractive.empire_items.enchants.core.EmpireEnchants
 import com.astrainteractive.empire_itemss.api.utils.BukkitConstants
 import com.astrainteractive.empire_itemss.api.utils.addAttribute
+import com.astrainteractive.empire_itemss.api.utils.emoji
 import com.atrainteractive.empire_items.models.yml_item.YmlItem
 import org.bukkit.ChatColor
 import org.bukkit.Color
@@ -47,8 +48,8 @@ class ItemStackBuilder(
         setupLeatherArmor(itemMeta)
 
         setupGun(itemMeta)
-        itemMeta.setDisplayName(ChatColor.WHITE.toString() + convertHex(item.displayName))
-        itemMeta.lore = convertHex(item.lore)
+        itemMeta.setDisplayName(ChatColor.WHITE.toString() + convertHex(item.displayName).emoji())
+        itemMeta.lore = convertHex(item.lore).map { it.emoji() }
         setupBook(itemMeta)
         itemStack.itemMeta = itemMeta
         return itemStack

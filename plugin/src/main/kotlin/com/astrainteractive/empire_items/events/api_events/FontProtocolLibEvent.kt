@@ -25,6 +25,10 @@ import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerJoinEvent
+import org.bukkit.plugin.Plugin
+
+
+
 
 /**
  * todo переделать в PlaceholderAPI
