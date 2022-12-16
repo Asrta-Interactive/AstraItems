@@ -4,7 +4,6 @@ import ru.astrainteractive.astralibs.Logger
 import ru.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.empire_itemss.api.utils.BukkitConstants
 import com.astrainteractive.empire_itemss.api.utils.explode
-import com.astrainteractive.empire_items.util.protection.KProtectionLib
 import org.bukkit.Location
 import org.bukkit.Particle
 import org.bukkit.entity.Player
@@ -20,8 +19,7 @@ class GrenadeEvent{
 
         val itemStack = player.inventory.itemInMainHand
         val meta = itemStack.itemMeta ?: return@event
-        if (!KProtectionLib.canExplode(null,e.hitBlock?.location?:return@event))
-            return@event
+
 
         val explosionPower = meta.getPersistentData(BukkitConstants.GRENADE_EXPLOSION_POWER) ?: return@event
         Logger.log("Player ${player.name} threw grenade at blockLocation=${e.hitBlock?.location} playerLocation=${player.location}","Grenade")

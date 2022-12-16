@@ -22,6 +22,8 @@ import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.BookMeta
 import org.bukkit.inventory.meta.ItemMeta
+import ru.astrainteractive.astralibs.di.IDependency
+import ru.astrainteractive.astralibs.di.getValue
 import ru.astrainteractive.astralibs.file_manager.FileManager
 import java.io.File
 import java.util.*
@@ -66,6 +68,8 @@ fun getCustomItemsSections(section: String) = getFilesList()?.filter { it.isYml(
 }
 
 object EmpireUtils {
+    private val empireItemsAPi: EmpireItemsAPI by IDependency
+    private val fontAPI: FontApi by IDependency
     private val emojiPattern = Pattern.compile(":([a-zA-Z0-9_]*):")
 
     fun getBook(author: String, title: String, lines: List<String>, useHex: Boolean = true): ItemStack {
@@ -91,8 +95,8 @@ object EmpireUtils {
     fun emojiPattern(lines: List<String>): List<String> = lines.map { emojiPattern(it) }
 
     fun emojiPattern(_line: String): String {
-        val map = EmpireItemsAPI.fontByID.entries.associate { ":${it.key}:" to it.value.char }.toMutableMap()
-        FontApi.getOffsets().forEach { (k, v) -> map[":$k:"] = v }
+        val map = empireItemsAPi.fontByID.entries.associate { ":${it.key}:" to it.value.char }.toMutableMap()
+        fontAPI.getOffsets().forEach { (k, v) -> map[":$k:"] = v }
         var matcher: Matcher = emojiPattern.matcher(_line)
         var line = _line
         while (matcher.find()) {

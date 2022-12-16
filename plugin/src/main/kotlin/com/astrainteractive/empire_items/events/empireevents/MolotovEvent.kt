@@ -3,7 +3,6 @@ package com.astrainteractive.empire_items.events.empireevents
 import ru.astrainteractive.astralibs.Logger
 import ru.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.empire_itemss.api.utils.BukkitConstants
-import com.astrainteractive.empire_items.util.protection.KProtectionLib
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.Particle
@@ -20,8 +19,6 @@ class MolotovEvent{
         val player = e.entity.shooter as Player
         val itemStack = player.inventory.itemInMainHand
         val meta = itemStack.itemMeta ?: return@event
-        if (!KProtectionLib.canIgnite(null, e.hitBlock?.location ?: return@event))
-            return@event
         val molotovPower =
             meta.persistentDataContainer.get(BukkitConstants.MOLOTOV.value, BukkitConstants.MOLOTOV.dataType)
                 ?: return@event
@@ -73,8 +70,6 @@ class MolotovEvent{
         }
 
         private fun setFire(block: Block, radius: Int, player: Player?) {
-            if (block?.location?.let { KProtectionLib.canIgnite(null, it) } != true)
-                return
             if (radius == 0)
                 return
             if (checkOnlyAir(block))

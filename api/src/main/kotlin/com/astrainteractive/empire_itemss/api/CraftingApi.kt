@@ -2,15 +2,19 @@ package com.astrainteractive.empire_itemss.api
 
 import ru.astrainteractive.astralibs.AstraLibs
 import ru.astrainteractive.astralibs.Logger
-import com.astrainteractive.empire_itemss.api.EmpireItemsAPI.empireID
 import com.astrainteractive.empire_itemss.api.models_ext.createRecipe
 import com.astrainteractive.empire_itemss.api.utils.BukkitConstants
 import com.astrainteractive.empire_itemss.api.utils.IManager
 import org.bukkit.Bukkit
 import org.bukkit.NamespacedKey
 import org.bukkit.inventory.*
+import ru.astrainteractive.astralibs.di.IReloadable
+import ru.astrainteractive.astralibs.di.getValue
 
-object CraftingApi : IManager {
+class CraftingApi(
+    empireItemsApi: IReloadable<EmpireItemsAPI>
+) : IManager {
+    protected val empireItemsApi by empireItemsApi
     private object CraftingManager {
         private fun isCustomRecipe(key: NamespacedKey): Boolean =
             key.key.contains(BukkitConstants.ASTRA_CRAFTING)
@@ -52,22 +56,22 @@ object CraftingApi : IManager {
         keyMap[id] = list
     }
 
-    fun getFurnaceByInputId(id: String) = EmpireItemsAPI.furnaceRecipeByID.values.firstOrNull { it.input == id }
+    fun getFurnaceByInputId(id: String) = empireItemsApi.furnaceRecipeByID.values.firstOrNull { it.input == id }
     fun getKeysById(id: String) = keyMap[id]
 
-    override suspend fun onEnable() {
-        EmpireItemsAPI.craftingTableRecipeByID.values.forEach {
+    override fun onEnable() {
+        empireItemsApi.craftingTableRecipeByID.values.forEach {
             it.createRecipe()
         }
-        EmpireItemsAPI.furnaceRecipeByID.values.forEach {
+        empireItemsApi.furnaceRecipeByID.values.forEach {
             it.createRecipe()
         }
-        EmpireItemsAPI.shapelessRecipeByID.values.forEach {
+        empireItemsApi.shapelessRecipeByID.values.forEach {
             it.createRecipe()
         }
     }
 
-    override suspend fun onDisable() {
+    override fun onDisable() {
         CraftingManager.clear()
     }
 
@@ -95,13 +99,13 @@ object CraftingApi : IManager {
     }
 
     fun usedInCraft(id: String): MutableSet<String> {
-        val craftingTable = EmpireItemsAPI.craftingTableRecipeByID.values.filter {
+        val craftingTable = empireItemsApi.craftingTableRecipeByID.values.filter {
             it.ingredients.values.contains(id)
         }.map { it.result }
-        val furnace = EmpireItemsAPI.furnaceRecipeByID.values.filter {
+        val furnace = empireItemsApi.furnaceRecipeByID.values.filter {
             it.input == id
         }.map { it.result }
-        val shapeless = EmpireItemsAPI.shapelessRecipeByID.values.filter {
+        val shapeless = empireItemsApi.shapelessRecipeByID.values.filter {
             it.input == id || it.inputs.contains(id)
         }.map { it.result }
         return mutableSetOf<String>().apply {

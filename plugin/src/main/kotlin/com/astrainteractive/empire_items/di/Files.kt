@@ -1,4 +1,4 @@
-package com.astrainteractive.empire_items.util
+package com.astrainteractive.empire_items.di
 
 import ru.astrainteractive.astralibs.file_manager.FileManager
 import java.io.File

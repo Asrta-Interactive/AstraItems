@@ -1,40 +1,39 @@
 package com.astrainteractive.empire_items.gui.crafting
 
-import ru.astrainteractive.astralibs.utils.HEX
-import ru.astrainteractive.astralibs.utils.catching
-import com.astrainteractive.empire_itemss.api.CraftingApi
-import com.astrainteractive.empire_itemss.api.EmpireItemsAPI
-import com.astrainteractive.empire_itemss.api.EmpireItemsAPI.toAstraItemOrItem
+import com.astrainteractive.empire_items.di.GuiConfigModule
+import com.astrainteractive.empire_items.di.TranslationModule
+import com.astrainteractive.empire_items.di.craftingApiModule
+import com.astrainteractive.empire_items.di.empireItemsApiModule
 import com.astrainteractive.empire_items.gui.PlayerMenuUtility
-import com.astrainteractive.empire_items.modules.GuiConfigModule
-import com.astrainteractive.empire_items.modules.TranslationModule
-import com.astrainteractive.empire_items.util.Translations
+import com.astrainteractive.empire_items.util.EmpireItemsAPIExt.toAstraItemOrItem
 import com.atrainteractive.empire_items.models.VillagerTradeInfo
-import com.atrainteractive.empire_items.models.config.GuiConfig
 import org.bukkit.ChatColor
 import org.bukkit.inventory.FurnaceRecipe
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.ShapedRecipe
 import org.bukkit.inventory.ShapelessRecipe
+import ru.astrainteractive.astralibs.di.getValue
+import ru.astrainteractive.astralibs.utils.HEX
+import ru.astrainteractive.astralibs.utils.catching
 
 class GuiCraftingViewModel(val playerMenuUtility: PlayerMenuUtility, val itemID: String) {
-    private val translations: Translations
-        get() = TranslationModule.value
-    private val guiConfig: GuiConfig
-        get() = GuiConfigModule.value
+    private val translations by TranslationModule
+    private val guiConfig by GuiConfigModule
+    private val craftingApi by craftingApiModule
+    private val empireItemsAPI by empireItemsApiModule
     /**
      * Предметы, которые можно сделать с помощью [itemID]
      */
-    val recipes = listOf(CraftingApi.recipesMap[itemID])
+    val recipes = listOf(craftingApi.recipesMap[itemID])
 
     /**
      * Крафты, в которых [itemID] используется
      */
-    val usedInCraftIDS = CraftingApi.usedInCraft(itemID)
+    val usedInCraftIDS = craftingApi.usedInCraft(itemID)
     val usedInCraftItemStacks = usedInCraftIDS.map { it.toAstraItemOrItem() }
-    private val drops = EmpireItemsAPI.dropsByID[itemID]
-    private val generatedBlock = EmpireItemsAPI.itemYamlFilesByID[itemID]?.block?.generate
-    private val villagerTrades = EmpireItemsAPI.villagerTradeInfoByID.values.mapNotNull {
+    private val drops = empireItemsAPI.dropsByID[itemID]
+    private val generatedBlock = empireItemsAPI.itemYamlFilesByID[itemID]?.block?.generate
+    private val villagerTrades = empireItemsAPI.villagerTradeInfoByID.values.mapNotNull {
         val filtered = it.trades.filter { it.value.id == itemID }.ifEmpty {
             return@mapNotNull null
         }

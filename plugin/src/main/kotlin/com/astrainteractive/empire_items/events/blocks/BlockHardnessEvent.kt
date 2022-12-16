@@ -1,5 +1,6 @@
 package com.astrainteractive.empire_items.events.blocks
 
+import com.astrainteractive.empire_items.di.empireItemsApiModule
 import ru.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.empire_itemss.api.EmpireItemsAPI
 import com.astrainteractive.empire_itemss.api.items.BlockParser
@@ -16,10 +17,12 @@ import org.bukkit.event.player.PlayerAnimationEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
+import ru.astrainteractive.astralibs.di.getValue
 import kotlin.random.Random
 
 
 class BlockHardnessEvent {
+    private val empireItemsAPI by empireItemsApiModule
     data class BreakTimeID(
         val time: Long = System.currentTimeMillis(),
         val id: Int = Random.nextInt(Int.MAX_VALUE),
@@ -60,7 +63,7 @@ class BlockHardnessEvent {
         val block = e.player.getTargetBlock(null, 10)
         val player = e.player
         val data = BlockParser.getBlockData(block) ?: return@event
-        val itemInfo = EmpireItemsAPI.itemYamlFilesByID.values.firstOrNull { it.block?.data == data } ?: return@event
+        val itemInfo = empireItemsAPI.itemYamlFilesByID.values.firstOrNull { it.block?.data == data } ?: return@event
         val empireBlock = itemInfo.block ?: return@event
         empireBlock.hardness ?: return@event
         val digMultiplier = e.player.inventory.itemInMainHand.enchantments[Enchantment.DIG_SPEED] ?: 1

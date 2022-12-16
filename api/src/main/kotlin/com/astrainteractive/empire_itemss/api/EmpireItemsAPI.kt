@@ -18,7 +18,7 @@ import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import ru.astrainteractive.astralibs.utils.AstraLibsExtensions.getPersistentData
 
-object EmpireItemsAPI : IManager {
+class EmpireItemsAPI : IManager {
     var itemYamlFiles: List<ItemYamlFile> = listOf()
         private set
     var itemYamlFilesByID: Map<String, YmlItem> = mapOf()
@@ -44,7 +44,7 @@ object EmpireItemsAPI : IManager {
     var ymlMobById: Map<String, YmlMob> = mapOf()
         private set
 
-    override suspend fun onEnable() {
+    override fun onEnable() {
         itemYamlFiles = getCustomItemsFiles()?.mapNotNull {
             println("File ${it.configFile.name}")
             EmpireSerializer.toClass<ItemYamlFile>(it.configFile)
@@ -68,7 +68,7 @@ object EmpireItemsAPI : IManager {
         ymlMobById = itemYamlFiles.flatMap { it.ymlMob.values }.associateBy { it.id }
     }
 
-    override suspend fun onDisable() {
+    override fun onDisable() {
     }
 
 
@@ -78,7 +78,9 @@ object EmpireItemsAPI : IManager {
 
     fun String?.toAstraItemOrItem(amount: Int = 1): ItemStack? = toAstraItemOrItemByID(this, amount)
     fun String?.toAstraItem(amount: Int = 1): ItemStack? = itemYamlFilesByID[this]?.toItemStack()
-    val ItemStack.empireID: String?
-        get() = this.itemMeta?.getPersistentData(BukkitConstants.ASTRA_ID)
+
 
 }
+
+val ItemStack.empireID: String?
+    get() = this.itemMeta?.getPersistentData(BukkitConstants.ASTRA_ID)

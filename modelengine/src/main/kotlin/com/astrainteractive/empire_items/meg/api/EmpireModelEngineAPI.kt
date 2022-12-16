@@ -10,16 +10,14 @@ import ru.astrainteractive.astralibs.async.PluginScope
 import ru.astrainteractive.astralibs.async.BukkitMain
 import ru.astrainteractive.astralibs.utils.valueOfOrNull
 import com.astrainteractive.empire_itemss.api.EmpireItemsAPI
-import com.astrainteractive.empire_itemss.api.play
-import com.astrainteractive.empire_itemss.api.utils.IManager
-import com.astrainteractive.empire_itemss.api.utils.addAttribute
-import com.astrainteractive.empire_itemss.api.utils.calcChance
-import com.astrainteractive.empire_itemss.api.utils.getBiome
+import com.astrainteractive.empire_itemss.api.models_ext.play
+import com.astrainteractive.empire_itemss.api.utils.*
 import com.atrainteractive.empire_items.models.mob.YmlMob
 import com.ticxo.modelengine.api.ModelEngineAPI
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.attribute.Attribute
@@ -28,15 +26,25 @@ import org.bukkit.entity.EntityType
 import org.bukkit.entity.LivingEntity
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityTargetEvent
+import org.bukkit.scheduler.BukkitTask
+import ru.astrainteractive.astralibs.AstraLibs
+import ru.astrainteractive.astralibs.di.IReloadable
+import ru.astrainteractive.astralibs.di.getValue
 import kotlin.math.max
 
 
-object EmpireModelEngineAPI : IEmpireModelEngineAPI, IManager {
+class EmpireModelEngineAPI(
+    empireItemsApi:IReloadable<EmpireItemsAPI>,
+    bossBarController:IReloadable<BossBarController>
+) : IEmpireModelEngineAPI, IManager {
+    private val empireItemsApi by empireItemsApi
+    private val bossBarController by bossBarController
     val entityTagHolder = TagHolder<Entity, EntityInfo>()
     private val ignoredLocations = HashSet<Location>()
+    private var bossBarScheduler: BukkitTask? = null
 
     private fun getMobSpawnList(e: Entity): List<YmlMob>? {
-        val mobs = EmpireItemsAPI.ymlMobById.values.filter { ymlMob ->
+        val mobs = empireItemsApi.ymlMobById.values.filter { ymlMob ->
             !ymlMob.spawn?.values?.filter { cond ->
                 val chance = cond.replace[e.type.name]
                 calcChance(chance?.toFloat() ?: -1f) &&
@@ -96,7 +104,7 @@ object EmpireModelEngineAPI : IEmpireModelEngineAPI, IManager {
             addModel(model)
             isBaseEntityVisible = false
         }
-        ymlMob.bossBar?.let { BossBarController.create(entity, it) }
+        ymlMob.bossBar?.let { bossBarController.create(entity, it) }
         return EmpireEntity(entity, ymlMob, modeledEntity, model)
     }
 
@@ -163,7 +171,7 @@ object EmpireModelEngineAPI : IEmpireModelEngineAPI, IManager {
 
     override fun getEmpireEntity(entity: Entity): EmpireEntity? = kotlin.runCatching {
         val entityInfo = entityTagHolder.get(entity) ?: return null
-        val ymlMob = EmpireItemsAPI.ymlMobById[entityInfo.empireID] ?: return null
+        val ymlMob = empireItemsApi.ymlMobById[entityInfo.empireID] ?: return null
         val modeledEntity = ModelEngineAPI.getModeledEntity(entity.uniqueId) ?: return null
         val activeModel = modeledEntity?.getModel(entityInfo.modelID ?: return null) ?: return null
         val empireModeledEntity = EmpireModeledEntity(modeledEntity)
@@ -188,11 +196,34 @@ object EmpireModelEngineAPI : IEmpireModelEngineAPI, IManager {
 
     }
 
-    override suspend fun onEnable() {
+    override fun onEnable() {
+
+        bossBarScheduler = Bukkit.getScheduler().runTaskTimerAsynchronously(AstraLibs.instance, Runnable {
+            PluginScope.launch(Dispatchers.IO) {
+                bossBarController.empireMobsBossBars.toList().forEach { bar ->
+                    Bukkit.getOnlinePlayers().forEach { player ->
+                        val uuid = kotlin.runCatching { bossBarController.entityUUIDFromBossBar(bar) }.getOrNull() ?: return@forEach
+                        val entity = withContext(Dispatchers.BukkitMain) { Bukkit.getEntity(uuid) } ?: return@forEach
+
+                        val entityInfo = getEmpireEntity(entity) ?: run {
+                            bar.destroy()
+                            return@forEach
+                        }
+                        if (player.location.world != entityInfo.entity.location.world)
+                            bar.removePlayer(player)
+                        else if (player.location.distance(entityInfo.entity.location) > 70)
+                            bar.removePlayer(player)
+                        else bar.addPlayer(player)
+                    }
+                }
+            }
+
+        }, 0L, 20L)
     }
 
-    override suspend fun onDisable() {
+    override fun onDisable() {
         val players = Bukkit.getOnlinePlayers()
+        bossBarScheduler?.cancel()
         entityTagHolder.map.forEach { (entity, entityInfo) ->
             getEmpireEntity(entity)?.let { empireEntity ->
                 players.forEach {

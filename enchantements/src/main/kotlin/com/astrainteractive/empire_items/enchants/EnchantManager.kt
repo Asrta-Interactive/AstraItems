@@ -9,6 +9,8 @@ import com.atrainteractive.empire_items.models.enchants.EmpireEnchantsConfig
 import org.bukkit.Material
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.potion.PotionEffectType
+import ru.astrainteractive.astralibs.di.IReloadable
+import ru.astrainteractive.astralibs.di.getValue
 import ru.astrainteractive.astralibs.utils.BukkitConstant
 import kotlin.random.Random
 
@@ -16,8 +18,9 @@ fun calcChance(chance: Int) = calcChance(chance.toDouble())
 fun calcChance(chance: Double) = chance >= Random.nextDouble(0.0, 100.0)
 fun calcChance(chance: Float) = calcChance(chance.toDouble())
 class EnchantManager(
-    private val config: EmpireEnchantsConfig
+    private val configModule: IReloadable<EmpireEnchantsConfig>
 ) : EventManager {
+    val config by configModule
     override val handlers: MutableList<EventListener> = mutableListOf()
     val EmpireEnchantsConfig.PotionEnchant.EnchantItemType.getList: List<Material>
         get() {

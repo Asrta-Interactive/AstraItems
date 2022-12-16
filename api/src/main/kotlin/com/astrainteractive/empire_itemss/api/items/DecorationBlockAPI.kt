@@ -1,8 +1,7 @@
 package com.astrainteractive.empire_itemss.api.items
 
 import com.astrainteractive.empire_itemss.api.EmpireItemsAPI
-import com.astrainteractive.empire_itemss.api.EmpireItemsAPI.empireID
-import com.astrainteractive.empire_itemss.api.EmpireItemsAPI.toAstraItemOrItem
+import com.astrainteractive.empire_itemss.api.empireID
 import com.astrainteractive.empire_itemss.api.utils.playSound
 import com.atrainteractive.empire_items.models.yml_item.YmlItem
 import org.bukkit.Location
@@ -11,10 +10,16 @@ import org.bukkit.Rotation
 import org.bukkit.block.BlockFace
 import org.bukkit.entity.Entity
 import org.bukkit.entity.ItemFrame
+import ru.astrainteractive.astralibs.di.IDependency
+import ru.astrainteractive.astralibs.di.IReloadable
+import ru.astrainteractive.astralibs.di.getValue
 import kotlin.math.floor
 import kotlin.math.sign
 
-object DecorationBlockAPI {
+class DecorationBlockAPI(
+    empireItemsApi: IDependency<EmpireItemsAPI>
+) {
+    private val empireItemsApi by empireItemsApi
 
     private fun Location.floor() = Location(
         world,
@@ -55,8 +60,8 @@ object DecorationBlockAPI {
 
         val itemFrame = decor as ItemFrame
         val item = itemFrame.item.empireID
-        val itemStack = item.toAstraItemOrItem()?.clone() ?: return
-        val decoration = EmpireItemsAPI.itemYamlFilesByID[item] ?: return
+        val itemStack = empireItemsApi.toAstraItemOrItemByID(item)?.clone() ?: return
+        val decoration = empireItemsApi.itemYamlFilesByID[item] ?: return
         location.playSound(decoration.decoration?.breakSound)
         location.world?.dropItem(location, itemStack)
         itemFrame.setItem(null)
@@ -66,9 +71,9 @@ object DecorationBlockAPI {
 
 
     fun placeBlock(id: String, itemFrame: ItemFrame, playerLoc: Location, blockFace: BlockFace): Boolean {
-        val decoration = EmpireItemsAPI.itemYamlFilesByID[id]?.decoration ?: return false
+        val decoration = empireItemsApi.itemYamlFilesByID[id]?.decoration ?: return false
         itemFrame.location.playSound(decoration.placeSound)
-        val itemStack = id.toAstraItemOrItem()?.clone() ?: return false
+        val itemStack = empireItemsApi.toAstraItemOrItemByID(id)?.clone() ?: return false
 
         itemFrame.isFixed = true
         itemFrame.isVisible = false

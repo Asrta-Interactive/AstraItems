@@ -1,23 +1,25 @@
 package com.astrainteractive.empire_items.commands
 
-import com.astrainteractive.empire_items.modules.TranslationModule
+import com.astrainteractive.empire_items.di.TranslationModule
+import com.astrainteractive.empire_items.di.empireItemsApiModule
+import com.astrainteractive.empire_items.util.EmpireItemsAPIExt.toAstraItemOrItem
 import ru.astrainteractive.astralibs.AstraLibs
 import ru.astrainteractive.astralibs.utils.registerCommand
 import ru.astrainteractive.astralibs.utils.registerTabCompleter
 import ru.astrainteractive.astralibs.utils.withEntry
 import com.astrainteractive.empire_itemss.api.EmpireItemsAPI
-import com.astrainteractive.empire_itemss.api.EmpireItemsAPI.toAstraItemOrItem
 import com.astrainteractive.empire_items.util.EmpirePermissions
 import com.astrainteractive.empire_items.util.Translations
 import com.astrainteractive.empire_items.util.Translations.Companion.argumentMessage
 import com.astrainteractive.empire_items.util.Translations.Companion.sendTo
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
+import ru.astrainteractive.astralibs.di.getValue
 
 class AstraItemCommand {
 
-    val translations: Translations
-        get() = TranslationModule.value
+    private val translations by TranslationModule
+    private val empireItemsAPI by empireItemsApiModule
 
     private val commandExecutor = AstraLibs.registerCommand("emp") { sender, args ->
 
@@ -58,7 +60,7 @@ class AstraItemCommand {
         when (args.size) {
             1 -> return@registerTabCompleter listOf("give").withEntry(args[0])
             2 -> return@registerTabCompleter Bukkit.getOnlinePlayers().map { it.name }.withEntry(args[1])
-            3 -> return@registerTabCompleter EmpireItemsAPI.itemYamlFilesByID.keys.toList().withEntry(args[2])
+            3 -> return@registerTabCompleter empireItemsAPI.itemYamlFilesByID.keys.toList().withEntry(args[2])
         }
         return@registerTabCompleter listOf()
 

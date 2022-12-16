@@ -1,25 +1,28 @@
 package com.astrainteractive.empire_items.commands
 
+import com.astrainteractive.empire_items.di.TranslationModule
+import com.astrainteractive.empire_items.di.configModule
+import com.astrainteractive.empire_items.di.fontApiModule
 import ru.astrainteractive.astralibs.AstraLibs
 import ru.astrainteractive.astralibs.utils.HEX
 import ru.astrainteractive.astralibs.utils.registerCommand
 import ru.astrainteractive.astralibs.utils.registerTabCompleter
 import com.astrainteractive.empire_itemss.api.FontApi
-import com.astrainteractive.empire_items.util.Translations
 import com.astrainteractive.empire_items.gui.ResourcePack
-import com.astrainteractive.empire_items.modules.ConfigModule
-import com.astrainteractive.empire_items.modules.GuiConfigModule
-import com.astrainteractive.empire_items.modules.TranslationModule
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import ru.astrainteractive.astralibs.async.PluginScope
+import ru.astrainteractive.astralibs.di.getValue
 import kotlin.random.Random
 
 class General {
+    val fontApi by fontApiModule
+    val translation by TranslationModule
+    val config by configModule
     val emojiCompleter = AstraLibs.registerTabCompleter("emoji") { sender, args ->
-        return@registerTabCompleter FontApi.playerFonts().map { it.value.char }
+        return@registerTabCompleter fontApi.playerFonts().map { it.value.char }
     }
 
     private val edice = AstraLibs.registerCommand("edice") { sender, args ->
@@ -30,7 +33,7 @@ class General {
         val result = Random(System.currentTimeMillis()).nextInt(1, 6 + 1)
         nearestP.forEach {
             it.sendMessage(
-                TranslationModule.value.diceThrow.replace("%player%", p.name).replace("%value%", result.toString())
+                translation.diceThrow.replace("%player%", p.name).replace("%value%", result.toString())
             )
         }
     }
@@ -44,12 +47,12 @@ class General {
     }
     private val empack = AstraLibs.registerCommand("empack") { sender, args ->
         if (sender is Player)
-            PluginScope.launch(Dispatchers.IO) { ResourcePack(sender, ConfigModule.value).open() }
+            PluginScope.launch(Dispatchers.IO) { ResourcePack(sender, config).open() }
         return@registerCommand
     }
     private val empack_download = AstraLibs.registerCommand("empack_download") { sender, args ->
         if (sender is Player)
-            sender.setResourcePack(ConfigModule.value.resourcePack.link)
+            sender.setResourcePack(config.resourcePack.link)
         return@registerCommand
     }
 

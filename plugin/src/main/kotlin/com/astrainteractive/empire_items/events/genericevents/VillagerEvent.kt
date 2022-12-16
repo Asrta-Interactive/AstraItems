@@ -1,18 +1,22 @@
 package com.astrainteractive.empire_items.events.genericevents
 
+import com.astrainteractive.empire_items.di.empireItemsApiModule
+import com.astrainteractive.empire_items.util.EmpireItemsAPIExt.toAstraItemOrItem
 import ru.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.empire_itemss.api.EmpireItemsAPI
-import com.astrainteractive.empire_itemss.api.EmpireItemsAPI.empireID
-import com.astrainteractive.empire_itemss.api.EmpireItemsAPI.toAstraItemOrItem
+import com.astrainteractive.empire_itemss.api.empireID
 import com.atrainteractive.empire_items.models.VillagerTradeInfo
 import org.bukkit.entity.Villager
 import org.bukkit.event.entity.VillagerAcquireTradeEvent
 import org.bukkit.event.player.PlayerInteractEntityEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.MerchantRecipe
+import ru.astrainteractive.astralibs.di.IDependency
+import ru.astrainteractive.astralibs.di.getValue
 import kotlin.random.Random
 
-class VillagerEvent {
+class VillagerEvent() {
+    private val empireItemsAPI by empireItemsApiModule
 
 
     /**
@@ -22,7 +26,7 @@ class VillagerEvent {
         if (e.entity !is Villager)
             return@event
         val villager = e.entity as Villager
-        val trades = EmpireItemsAPI.villagerTradeInfoByProfession[villager.profession.name] ?: return@event
+        val trades = empireItemsAPI.villagerTradeInfoByProfession[villager.profession.name] ?: return@event
         if (e.isCancelled)
             return@event
         for (trade in trades.flatMap { it.trades.values })
@@ -49,7 +53,7 @@ class VillagerEvent {
             return@event
 
         val villager = e.rightClicked as Villager
-        val trades = EmpireItemsAPI.villagerTradeInfoByProfession[villager.profession.name] ?: return@event
+        val trades = empireItemsAPI.villagerTradeInfoByProfession[villager.profession.name] ?: return@event
 
         val recipes = villager.recipes.toMutableList()
         villager.recipes = mutableListOf()

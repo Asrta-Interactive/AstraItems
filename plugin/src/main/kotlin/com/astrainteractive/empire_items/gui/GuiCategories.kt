@@ -1,9 +1,9 @@
 package com.astrainteractive.empire_items.gui
 
+import com.astrainteractive.empire_items.util.EmpireItemsAPIExt.toAstraItemOrItem
 import ru.astrainteractive.astralibs.async.PluginScope
 import ru.astrainteractive.astralibs.menu.AstraMenuSize
 import ru.astrainteractive.astralibs.utils.convertHex
-import com.astrainteractive.empire_itemss.api.EmpireItemsAPI.toAstraItemOrItem
 import com.astrainteractive.empire_itemss.api.utils.setDisplayName
 import com.astrainteractive.empire_itemss.api.utils.emoji
 import com.atrainteractive.empire_items.models.config.GuiConfig

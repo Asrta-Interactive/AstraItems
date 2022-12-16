@@ -1,10 +1,11 @@
 package com.astrainteractive.empire_items.events.empireevents
 
+import com.astrainteractive.empire_items.di.empireItemsApiModule
 import ru.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.empire_itemss.api.EmpireItemsAPI
-import com.astrainteractive.empire_itemss.api.EmpireItemsAPI.empireID
 import com.astrainteractive.empire_itemss.api.utils.BukkitConstants
 import com.astrainteractive.empire_items.util.CleanerTask
+import com.astrainteractive.empire_itemss.api.empireID
 import com.destroystokyo.paper.ParticleBuilder
 import org.bukkit.*
 
@@ -17,17 +18,19 @@ import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
+import ru.astrainteractive.astralibs.di.getValue
 import ru.astrainteractive.astralibs.utils.AstraLibsExtensions.getPersistentData
 
 class GrapplingHook {
+    private val empireItemsAPI by empireItemsApiModule
     private val activeHooks = mutableMapOf<String, Location>()
     val cleaner = CleanerTask(50000) {
         activeHooks.clear()
     }
     private fun unCastHook(itemStack: ItemStack, player: Player) {
         val state = itemStack.itemMeta.getPersistentData(BukkitConstants.GRAPPLING_HOOK) ?: return
-        val defaultcmd = EmpireItemsAPI.itemYamlFilesByID[state.split(";").firstOrNull()]?.customModelData ?: return
-        val castedcmd = EmpireItemsAPI.itemYamlFilesByID[state.split(";").lastOrNull()]?.customModelData ?: return
+        val defaultcmd = empireItemsAPI.itemYamlFilesByID[state.split(";").firstOrNull()]?.customModelData ?: return
+        val castedcmd = empireItemsAPI.itemYamlFilesByID[state.split(";").lastOrNull()]?.customModelData ?: return
 
         if (activeHooks.contains(player.name)) {
             player.playSound(Sound.BLOCK_CHAIN_BREAK)
@@ -41,8 +44,8 @@ class GrapplingHook {
 
     private fun castHook(itemStack: ItemStack, player: Player, location: Location?) {
         val state = itemStack.itemMeta.getPersistentData(BukkitConstants.GRAPPLING_HOOK) ?: return
-        val defaultcmd = EmpireItemsAPI.itemYamlFilesByID[state.split(";").firstOrNull()]?.customModelData ?: return
-        val castedcmd = EmpireItemsAPI.itemYamlFilesByID[state.split(";").lastOrNull()]?.customModelData ?: return
+        val defaultcmd = empireItemsAPI.itemYamlFilesByID[state.split(";").firstOrNull()]?.customModelData ?: return
+        val castedcmd = empireItemsAPI.itemYamlFilesByID[state.split(";").lastOrNull()]?.customModelData ?: return
 
         itemStack.setCustomModelDate(castedcmd)
         player.playSound(Sound.BLOCK_CHAIN_PLACE)

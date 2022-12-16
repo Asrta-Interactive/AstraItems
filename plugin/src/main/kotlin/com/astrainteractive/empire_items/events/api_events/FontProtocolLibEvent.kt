@@ -8,7 +8,7 @@ import com.comphenix.protocol.ProtocolLibrary
 import com.comphenix.protocol.ProtocolManager
 import com.comphenix.protocol.events.*
 import com.astrainteractive.empire_items.EmpirePlugin
-import com.astrainteractive.empire_items.modules.ConfigModule
+import com.astrainteractive.empire_items.di.configModule
 import com.astrainteractive.empire_itemss.api.utils.EmpireUtils
 import com.atrainteractive.empire_items.models.config.Config
 import io.netty.channel.Channel
@@ -26,8 +26,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.plugin.Plugin
-
-
+import ru.astrainteractive.astralibs.di.getValue
 
 
 /**
@@ -36,8 +35,7 @@ import org.bukkit.plugin.Plugin
 class FontProtocolLibEvent() : EventListener {
     private var protocolManager: ProtocolManager = ProtocolLibrary.getProtocolManager()
     private lateinit var packetListener: PacketListener
-    private val config: Config
-        get() = ConfigModule.value
+    private val config by configModule
 
     companion object {
         private var instance: FontProtocolLibEvent? = null

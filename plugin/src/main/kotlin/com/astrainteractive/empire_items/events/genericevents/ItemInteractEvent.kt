@@ -1,14 +1,16 @@
 package com.astrainteractive.empire_items.events.genericevents
 
+import com.astrainteractive.empire_items.di.craftingApiModule
+import com.astrainteractive.empire_items.di.empireItemsApiModule
 import ru.astrainteractive.astralibs.async.PluginScope
 import ru.astrainteractive.astralibs.async.BukkitMain
 import ru.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.empire_itemss.api.CraftingApi
 import com.astrainteractive.empire_itemss.api.EmpireItemsAPI
-import com.astrainteractive.empire_itemss.api.EmpireItemsAPI.empireID
-import com.astrainteractive.empire_itemss.api.EmpireItemsAPI.toAstraItemOrItem
 import com.astrainteractive.empire_items.util.CleanerTask
-import com.astrainteractive.empire_itemss.api.play
+import com.astrainteractive.empire_items.util.EmpireItemsAPIExt.toAstraItemOrItem
+import com.astrainteractive.empire_itemss.api.empireID
+import com.astrainteractive.empire_itemss.api.models_ext.play
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.bukkit.Material
@@ -20,8 +22,11 @@ import org.bukkit.event.player.*
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.potion.PotionEffectType
+import ru.astrainteractive.astralibs.di.getValue
 
 class ItemInteractEvent {
+    private val empireItemsAPI by empireItemsApiModule
+    private val craftingApi by craftingApiModule
 
     private val cooldown = mutableMapOf<String, Long>()
     val cleaner = CleanerTask(50000) {
@@ -37,7 +42,7 @@ class ItemInteractEvent {
 
     private fun executeEvents(item: ItemStack, player: Player, event: String): Boolean {
         var executed = false
-        EmpireItemsAPI.itemYamlFilesByID[item.empireID]?.interact?.forEach { (_, it) ->
+        empireItemsAPI.itemYamlFilesByID[item.empireID]?.interact?.forEach { (_, it) ->
             if (!it.eventList.contains(event)) return@forEach
             if (hasCooldown(player, event, it.cooldown ?: 0)) return@forEach
             it.playCommand.values.syncForEach { it.play(player) }
@@ -76,7 +81,7 @@ class ItemInteractEvent {
 
     val onFurnaceEnded = DSLEvent.event(FurnaceSmeltEvent::class.java) { e ->
         val id = e.source.empireID ?: return@event
-        val returnId = CraftingApi.getFurnaceByInputId(id)?.returns?.toAstraItemOrItem() ?: return@event
+        val returnId = craftingApi.getFurnaceByInputId(id)?.returns?.toAstraItemOrItem() ?: return@event
         if (e.block.state !is Furnace)
             return@event
         val furnace = e.block.state as Furnace

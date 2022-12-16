@@ -1,4 +1,5 @@
 package com.astrainteractive.empire_items.util.resource_pack
+import com.astrainteractive.empire_items.di.empireItemsApiModule
 import ru.astrainteractive.astralibs.AstraLibs
 import ru.astrainteractive.astralibs.Logger
 import com.astrainteractive.empire_itemss.api.EmpireItemsAPI
@@ -12,12 +13,14 @@ import com.google.gson.GsonBuilder
 import com.google.gson.JsonParser
 import kotlinx.coroutines.runBlocking
 import org.bukkit.Material
+import ru.astrainteractive.astralibs.di.getValue
 import java.io.File
 import java.io.InputStreamReader
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 
 class ResourcePack {
+    private val empireItemsAPI by empireItemsApiModule
 
 
     private fun generateFont() {
@@ -28,7 +31,7 @@ class ResourcePack {
         val defaultFileText = InputStreamReader(AstraLibs.instance.getResource("pack/default.json")!!).readText()
         //saveFileFromResources("pack/negative_spaces.ttf", getFontPath() + File.separator + "negative_spaces.ttf")
         val providers = Gson().fromJson(defaultFileText, Providers::class.java)
-        EmpireItemsAPI.fontByID.values.forEach {
+        empireItemsAPI.fontByID.values.forEach {
             val p = Providers.Provider.fromAstraFont(it)
             providers.providers.add(p)
         }
@@ -41,7 +44,7 @@ class ResourcePack {
     }
 
     private fun generateSounds() {
-        val sounds = EmpireItemsAPI.itemYamlFiles.flatMap { it.ymlSounds.values }
+        val sounds = empireItemsAPI.itemYamlFiles.flatMap { it.ymlSounds.values }
         if (sounds.isEmpty()) return
         val file = File(getAssetsFolder() + sep + sounds.first().namespace + sep + "sounds.json")
         val map = sounds.associate { it.id to Sound(it) }
@@ -180,7 +183,7 @@ class ResourcePack {
 
     private fun generateItems() {
         File(getMinecraftItemsModelsPath()).delete()
-        val simpleItems = EmpireItemsAPI.itemYamlFilesByID.values
+        val simpleItems = empireItemsAPI.itemYamlFilesByID.values
         val materials = simpleItems.forEach { item ->
 
             if (item.texturePath != null)
@@ -201,7 +204,7 @@ class ResourcePack {
     }
 
     fun generateBlocks() {
-        val blocks = EmpireItemsAPI.itemYamlFilesByID.values.filter { it.block!=null }
+        val blocks = empireItemsAPI.itemYamlFilesByID.values.filter { it.block!=null }
         val existedData = blocks.map { it.block!!.data }
         for (i in 0..64 * 3 - 1) {
             if (existedData.contains(i))

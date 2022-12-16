@@ -3,13 +3,13 @@ package com.astrainteractive.empire_items.gui.crafting
 import ru.astrainteractive.astralibs.async.PluginScope
 import ru.astrainteractive.astralibs.menu.AstraMenuSize
 import ru.astrainteractive.astralibs.utils.convertHex
-import com.astrainteractive.empire_itemss.api.EmpireItemsAPI.empireID
-import com.astrainteractive.empire_itemss.api.EmpireItemsAPI.toAstraItemOrItem
 import com.astrainteractive.empire_itemss.api.utils.emoji
 import com.astrainteractive.empire_items.gui.GuiCategory
 import com.astrainteractive.empire_items.gui.PlayerMenuUtility
 import com.astrainteractive.empire_items.gui.toInventoryButton
+import com.astrainteractive.empire_items.util.EmpireItemsAPIExt.toAstraItemOrItem
 import com.astrainteractive.empire_items.util.EmpirePermissions
+import com.astrainteractive.empire_itemss.api.empireID
 import com.atrainteractive.empire_items.models.config.GuiConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

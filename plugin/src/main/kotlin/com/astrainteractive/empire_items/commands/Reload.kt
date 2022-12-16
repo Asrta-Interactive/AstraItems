@@ -3,12 +3,12 @@ package com.astrainteractive.empire_items.commands
 import ru.astrainteractive.astralibs.AstraLibs
 import ru.astrainteractive.astralibs.utils.registerCommand
 import com.astrainteractive.empire_items.EmpirePlugin
-import com.astrainteractive.empire_items.modules.TranslationModule
+import com.astrainteractive.empire_items.di.TranslationModule
 import com.astrainteractive.empire_items.util.EmpirePermissions
 import com.astrainteractive.empire_items.util.Translations
+import ru.astrainteractive.astralibs.di.getValue
 
-private val translations: Translations
-    get() = TranslationModule.value
+private val translations by TranslationModule
 /**
  * Reload command handler
  */

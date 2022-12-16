@@ -1,5 +1,7 @@
 package com.astrainteractive.empire_items.events.empireevents
 
+import com.astrainteractive.empire_items.di.empireItemsApiModule
+import com.astrainteractive.empire_items.util.EmpireItemsAPIExt.toAstraItemOrItem
 import ru.astrainteractive.astralibs.AstraLibs
 import ru.astrainteractive.astralibs.async.PluginScope
 import ru.astrainteractive.astralibs.async.BukkitMain
@@ -7,11 +9,9 @@ import ru.astrainteractive.astralibs.events.DSLEvent
 import ru.astrainteractive.astralibs.utils.catching
 import ru.astrainteractive.astralibs.utils.valueOfOrNull
 import com.astrainteractive.empire_itemss.api.EmpireItemsAPI
-import com.astrainteractive.empire_itemss.api.EmpireItemsAPI.empireID
-import com.astrainteractive.empire_itemss.api.EmpireItemsAPI.toAstraItemOrItem
+import com.astrainteractive.empire_itemss.api.empireID
 import com.astrainteractive.empire_itemss.api.utils.BukkitConstants
-import com.astrainteractive.empire_items.util.protection.KProtectionLib
-import com.astrainteractive.empire_itemss.api.play
+import com.astrainteractive.empire_itemss.api.models_ext.play
 import com.astrainteractive.empire_itemss.api.utils.explode
 import com.atrainteractive.empire_items.models.yml_item.Gun
 import com.atrainteractive.empire_items.models.yml_item.Interact
@@ -31,10 +31,12 @@ import org.bukkit.event.block.Action
 import org.bukkit.event.player.*
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.Damageable
+import ru.astrainteractive.astralibs.di.getValue
 import ru.astrainteractive.astralibs.utils.AstraLibsExtensions.getPersistentData
 import ru.astrainteractive.astralibs.utils.AstraLibsExtensions.setPersistentDataType
 
 class GunEvent {
+    private val empireItemsAPI by empireItemsApiModule
 
     private var protocolManager: ProtocolManager? = null
 
@@ -128,7 +130,7 @@ class GunEvent {
         PluginScope.launch(Dispatchers.IO) event@{
             val itemStack = e.item ?: return@event
             val id = itemStack.empireID
-            val gunInfo = EmpireItemsAPI.itemYamlFilesByID[id]?.gun ?: return@event
+            val gunInfo = empireItemsAPI.itemYamlFilesByID[id]?.gun ?: return@event
             val player = e.player
             val action = e.action
             if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
@@ -227,8 +229,7 @@ class GunEvent {
                 }
 
             }
-            if (gunInfo.explosion != null && KProtectionLib.canExplode(null, l))
-                awaitSync { l.explode(gunInfo.explosion?:0) }
+            awaitSync { l.explode(gunInfo.explosion?:0) }
         }
 
     }

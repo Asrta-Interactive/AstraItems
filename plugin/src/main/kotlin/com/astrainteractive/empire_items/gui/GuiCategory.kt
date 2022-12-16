@@ -1,20 +1,20 @@
 package com.astrainteractive.empire_items.gui
 
+import com.astrainteractive.empire_items.di.GuiConfigModule
 import ru.astrainteractive.astralibs.async.PluginScope
 import ru.astrainteractive.astralibs.menu.AstraMenuSize
 import ru.astrainteractive.astralibs.utils.convertHex
-import com.astrainteractive.empire_itemss.api.EmpireItemsAPI.toAstraItemOrItem
 import com.astrainteractive.empire_itemss.api.utils.emoji
 import com.astrainteractive.empire_items.gui.crafting.GuiCrafting
-import com.astrainteractive.empire_items.modules.GuiConfigModule
+import com.astrainteractive.empire_items.util.EmpireItemsAPIExt.toAstraItemOrItem
 import com.atrainteractive.empire_items.models.config.GuiConfig
 import kotlinx.coroutines.launch
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
+import ru.astrainteractive.astralibs.di.getValue
 import ru.astrainteractive.astralibs.menu.PaginatedMenu
 
-class GuiCategory(override val playerMenuUtility: PlayerMenuUtility, private val guiConfig: GuiConfig) :
-    PaginatedMenu() {
+class GuiCategory(override val playerMenuUtility: PlayerMenuUtility, private val guiConfig: GuiConfig) : PaginatedMenu() {
 
     val category = guiConfig.categories[playerMenuUtility.categoryId]!!
 

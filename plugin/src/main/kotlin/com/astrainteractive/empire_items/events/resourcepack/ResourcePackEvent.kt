@@ -3,19 +3,18 @@ package com.astrainteractive.empire_items.events.resourcepack
 import ru.astrainteractive.astralibs.Logger
 import ru.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.empire_items.EmpirePlugin
-import com.astrainteractive.empire_items.modules.ConfigModule
-import com.astrainteractive.empire_items.modules.TranslationModule
+import com.astrainteractive.empire_items.di.TranslationModule
+import com.astrainteractive.empire_items.di.configModule
 import com.astrainteractive.empire_items.util.Translations
 import com.atrainteractive.empire_items.models.config.Config
 import org.bukkit.Bukkit
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerResourcePackStatusEvent
+import ru.astrainteractive.astralibs.di.getValue
 
 class ResourcePackEvent {
-    private val translations: Translations
-        get() = TranslationModule.value
-    private val config: Config
-        get() = ConfigModule.value
+    private val translations by TranslationModule
+    private val config by configModule
     val TAG = "ResourcePack"
 
     val onJoin = DSLEvent.event(PlayerJoinEvent::class.java) { e ->

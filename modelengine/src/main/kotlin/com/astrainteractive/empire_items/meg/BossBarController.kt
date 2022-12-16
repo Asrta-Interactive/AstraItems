@@ -22,19 +22,20 @@ import org.bukkit.boss.KeyedBossBar
 import org.bukkit.entity.Entity
 import org.bukkit.entity.LivingEntity
 import org.bukkit.scheduler.BukkitTask
+import ru.astrainteractive.astralibs.di.IReloadable
+import ru.astrainteractive.astralibs.di.getValue
 import java.util.UUID
 
 
-object BossBarController : IManager {
-    private const val customMobBossBarKey = "esmp"
-    private var bossBarScheduler: BukkitTask? = null
+class BossBarController() : IManager {
+    private val customMobBossBarKey = "esmp"
     val empireMobsBossBars: Sequence<KeyedBossBar>
         get() = Bukkit.getBossBars().asSequence().filter { it.key.key.contains(customMobBossBarKey) }
 
     private fun createBossBarKey(entity: Entity) =
         NamespacedKey(AstraLibs.instance, "${entity.uniqueId.toString()}_$customMobBossBarKey")
 
-    private fun entityUUIDFromBossBar(bar: KeyedBossBar) = bar.key.key.split("_").firstOrNull()?.let(UUID::fromString)
+    fun entityUUIDFromBossBar(bar: KeyedBossBar) = bar.key.key.split("_").firstOrNull()?.let(UUID::fromString)
 
 
     fun create(e: Entity, bossBar: YmlMob.YmlMobBossBar): KeyedBossBar {
@@ -61,33 +62,11 @@ object BossBarController : IManager {
         Bukkit.removeBossBar(createBossBarKey(e))
     }
 
-    override suspend fun onEnable() {
-        bossBarScheduler = Bukkit.getScheduler().runTaskTimerAsynchronously(AstraLibs.instance, Runnable {
-            PluginScope.launch(Dispatchers.IO) {
-                empireMobsBossBars.toList().forEach { bar ->
-                    Bukkit.getOnlinePlayers().forEach { player ->
-                        val uuid = kotlin.runCatching { entityUUIDFromBossBar(bar) }.getOrNull() ?: return@forEach
-                        val entity = withContext(Dispatchers.BukkitMain) { Bukkit.getEntity(uuid) } ?: return@forEach
-
-                        val entityInfo = EmpireModelEngineAPI.getEmpireEntity(entity) ?: run {
-                            bar.destroy()
-                            return@forEach
-                        }
-                        if (player.location.world != entityInfo.entity.location.world)
-                            bar.removePlayer(player)
-                        else if (player.location.distance(entityInfo.entity.location) > 70)
-                            bar.removePlayer(player)
-                        else bar.addPlayer(player)
-                    }
-                }
-            }
-
-        }, 0L, 20L)
+    override fun onEnable() {
     }
 
 
-    override suspend fun onDisable() {
-        bossBarScheduler?.cancel()
+    override fun onDisable() {
         empireMobsBossBars.forEach {
             it.isVisible = false
             it.destroy()

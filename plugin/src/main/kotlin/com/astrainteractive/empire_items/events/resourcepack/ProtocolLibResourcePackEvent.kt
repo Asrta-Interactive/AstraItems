@@ -1,6 +1,6 @@
 package com.astrainteractive.empire_items.events.resourcepack
 
-import com.astrainteractive.empire_items.modules.TranslationModule
+import com.astrainteractive.empire_items.di.TranslationModule
 import ru.astrainteractive.astralibs.AstraLibs
 import ru.astrainteractive.astralibs.events.EventListener
 import com.astrainteractive.empire_items.util.Translations
@@ -12,10 +12,10 @@ import com.comphenix.protocol.events.PacketAdapter
 import com.comphenix.protocol.events.PacketEvent
 import com.comphenix.protocol.events.PacketListener
 import com.comphenix.protocol.wrappers.WrappedChatComponent
+import ru.astrainteractive.astralibs.di.getValue
 
 class ProtocolLibResourcePackEvent : EventListener {
-    private val translations: Translations
-        get() = TranslationModule.value
+    private val translations by TranslationModule
     private var protocolManager: ProtocolManager = ProtocolLibrary.getProtocolManager()
     private var packetListener: PacketListener = object : PacketAdapter(
         AstraLibs.instance,

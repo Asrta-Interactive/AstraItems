@@ -1,11 +1,10 @@
-package com.astrainteractive.empire_itemss.api
+package com.astrainteractive.empire_itemss.api.models_ext
 
-import com.astrainteractive.empire_itemss.api.EmpireItemsAPI.toAstraItemOrItem
+import com.astrainteractive.empire_itemss.api.EmpireItemsAPI
 import com.astrainteractive.empire_itemss.api.utils.calcChance
 import com.atrainteractive.empire_items.models.Loot
 import com.atrainteractive.empire_items.models.VillagerTradeInfo
 import com.atrainteractive.empire_items.models.config.Config
-import com.atrainteractive.empire_items.models.enchants.EmpireEnchantsConfig
 import com.atrainteractive.empire_items.models.yml_item.Interact
 import com.destroystokyo.paper.ParticleBuilder
 import kotlinx.coroutines.Dispatchers
@@ -21,15 +20,17 @@ import ru.astrainteractive.astralibs.AstraLibs
 import ru.astrainteractive.astralibs.Logger
 import ru.astrainteractive.astralibs.async.BukkitMain
 import ru.astrainteractive.astralibs.async.PluginScope
+import ru.astrainteractive.astralibs.di.IDependency
 import ru.astrainteractive.astralibs.utils.valueOfOrNull
 import kotlin.random.Random
 
 fun Config.ArenaCommand.Location.toBukkitLocation() = org.bukkit.Location(Bukkit.getWorld(world), x, y, z)
 
 fun VillagerTradeInfo.VillagerTrade.toMerchantRecipe(): MerchantRecipe? {
-    val result = id.toAstraItemOrItem(amount) ?: return null
-    val left = leftItem.id.toAstraItemOrItem(leftItem.amount) ?: return null
-    val right = middleItem?.id?.toAstraItemOrItem(middleItem?.amount?:1)
+    val empireItemsAPI: EmpireItemsAPI by IDependency
+    val result = empireItemsAPI.toAstraItemOrItemByID(id, amount) ?: return null
+    val left = empireItemsAPI.toAstraItemOrItemByID(leftItem.id, leftItem.amount) ?: return null
+    val right = empireItemsAPI.toAstraItemOrItemByID(middleItem?.id, middleItem?.amount ?: 1)
     return MerchantRecipe(result, 0, Int.MAX_VALUE, false).apply {
         addIngredient(left)
         right?.let { addIngredient(it) }
@@ -39,6 +40,7 @@ fun VillagerTradeInfo.VillagerTrade.toMerchantRecipe(): MerchantRecipe? {
 
 
 fun Loot.generateItem(): ItemStack? {
+    val empireItemsAPI: EmpireItemsAPI by IDependency
     if (!calcChance(chance)) return null
     if (minAmount > maxAmount) {
         Logger.warn(
@@ -48,7 +50,7 @@ fun Loot.generateItem(): ItemStack? {
         return null
     }
     val amount = if (minAmount == maxAmount) minAmount else Random.nextInt(minAmount, maxAmount + 1)
-    return id.toAstraItemOrItem(amount)
+    return empireItemsAPI.toAstraItemOrItemByID(id,amount)
 }
 
 fun Loot.performDrop(location: Location) {
@@ -71,15 +73,17 @@ fun Interact.PlayParticle.play(location: Location) {
 }
 
 fun Interact.PlaySound.play(l: Location) {
-    PluginScope.launch(Dispatchers.BukkitMain)  {
+    PluginScope.launch(Dispatchers.BukkitMain) {
         l.world.playSound(l, name, volume, pitch)
     }
 }
+
 fun Interact.PlayCommand.play(player: Player?) {
     if (asConsole)
         AstraLibs.instance.server.dispatchCommand(AstraLibs.instance.server.consoleSender, command)
     else player?.performCommand(command)
 }
+
 fun Interact.PlayPotionEffect.play(e: LivingEntity?) {
     e ?: return
     val effect = PotionEffectType.getByName(name) ?: return

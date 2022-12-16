@@ -1,11 +1,12 @@
 package com.astrainteractive.empire_items.events.empireevents
 
+import com.astrainteractive.empire_items.di.empireItemsApiModule
+import com.astrainteractive.empire_items.util.EmpireItemsAPIExt.toAstraItemOrItem
 import ru.astrainteractive.astralibs.events.DSLEvent
 import ru.astrainteractive.astralibs.events.EventListener
 import ru.astrainteractive.astralibs.utils.HEX
 import com.astrainteractive.empire_itemss.api.EmpireItemsAPI
-import com.astrainteractive.empire_itemss.api.EmpireItemsAPI.empireID
-import com.astrainteractive.empire_itemss.api.EmpireItemsAPI.toAstraItemOrItem
+import com.astrainteractive.empire_itemss.api.empireID
 import com.atrainteractive.empire_items.models.yml_item.YmlItem
 import net.md_5.bungee.api.ChatMessageType
 import net.md_5.bungee.api.chat.TextComponent
@@ -18,12 +19,13 @@ import org.bukkit.event.block.Action
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockExplodeEvent
 import org.bukkit.event.player.PlayerInteractEvent
+import ru.astrainteractive.astralibs.di.getValue
 
 /**
  * Эвент кастомных музыкальных дисков
  */
 class MusicDiscsEvent:EventListener{
-
+    private val empireItemsAPI by empireItemsApiModule
     /**
      * Список активных jukebox'ов с включенной музыкой
      */
@@ -58,7 +60,7 @@ class MusicDiscsEvent:EventListener{
             e.isCancelled = true
 
         } else {
-            val musicDisc = EmpireItemsAPI.itemYamlFilesByID[e.item?.empireID]?: return@event
+            val musicDisc = empireItemsAPI.itemYamlFilesByID[e.item?.empireID]?: return@event
             musicDisc.musicDisc?:return@event
             e.item!!.amount -= 1
             playMusic(musicDisc, jukebox.location)

@@ -1,5 +1,6 @@
 package com.astrainteractive.empire_itemss.api.hud.thirst
 
+import com.astrainteractive.empire_itemss.api.EmpireItemsAPI
 import ru.astrainteractive.astralibs.async.PluginScope
 import ru.astrainteractive.astralibs.events.DSLEvent
 import kotlinx.coroutines.launch
@@ -8,12 +9,16 @@ import org.bukkit.event.player.PlayerItemConsumeEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.player.PlayerQuitEvent
+import ru.astrainteractive.astralibs.di.IDependency
+import ru.astrainteractive.astralibs.di.getValue
 import java.util.UUID
 
-class ThirstEvent {
+class ThirstEvent(
+    private val empireItemsAPI: IDependency<EmpireItemsAPI>
+) {
     private val amountMap = mutableMapOf<UUID, Float>()
 
-    val provider = ThirstProvider {
+    val provider = ThirstProvider(empireItemsAPI) {
         amountMap[it] ?: 1f
     }
 

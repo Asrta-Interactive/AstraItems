@@ -1,15 +1,20 @@
 package com.astrainteractive.empire_itemss.api
 
 import com.astrainteractive.empire_itemss.api.utils.IManager
+import ru.astrainteractive.astralibs.di.IReloadable
+import ru.astrainteractive.astralibs.di.getValue
 
-object FontApi : IManager {
-    override suspend fun onDisable() {
+class FontApi(
+    empireItemsApi: IReloadable<EmpireItemsAPI>
+) : IManager {
+    private val empireItemsApi by empireItemsApi
+    override fun onDisable() {
     }
 
-    override suspend fun onEnable() {
+    override fun onEnable() {
     }
 
-    fun playerFonts() = EmpireItemsAPI.fontByID.filter { !it.value.blockSend }
+    fun playerFonts() = empireItemsApi.fontByID.filter { !it.value.blockSend }
 
     enum class HudOffset(val offset: Int, val char: String) {
         LEFT_1(-1, "\uF801"),

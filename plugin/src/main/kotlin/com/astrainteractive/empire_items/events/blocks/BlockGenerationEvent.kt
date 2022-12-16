@@ -7,8 +7,9 @@ import ru.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.empire_itemss.api.EmpireItemsAPI
 import com.astrainteractive.empire_itemss.api.items.BlockParser
 import com.astrainteractive.empire_items.events.blocks.BlockGenerationEventUtils.getBlocksLocations
-import com.astrainteractive.empire_items.modules.ConfigModule
-import com.astrainteractive.empire_items.util.Files
+import com.astrainteractive.empire_items.di.Files
+import com.astrainteractive.empire_items.di.configModule
+import com.astrainteractive.empire_items.di.empireItemsApiModule
 import com.astrainteractive.empire_itemss.api.utils.calcChance
 import com.atrainteractive.empire_items.models.config.Config
 import com.atrainteractive.empire_items.models.yml_item.YmlItem
@@ -22,6 +23,7 @@ import org.bukkit.block.BlockFace
 import org.bukkit.craftbukkit.v1_19_R1.CraftChunk
 import org.bukkit.craftbukkit.v1_19_R1.block.CraftBlock
 import org.bukkit.event.world.ChunkLoadEvent
+import ru.astrainteractive.astralibs.di.getValue
 import ru.astrainteractive.astralibs.utils.AstraEstimator
 import kotlin.math.pow
 import kotlin.random.Random
@@ -61,9 +63,8 @@ class BlockGenerationEvent {
         get() = "BlockGenerationEvent"
     private var currentChunkProcessing = 0L
 
-    private val config: Config
-        get() = ConfigModule.value
-
+    private val config by configModule
+    private val empireItemsAPI by empireItemsApiModule
     private val scope = CoroutineScope(Dispatchers.IO.limitedParallelism(1))
 
     private val blockGenerationPool = newFixedThreadPoolContext(4, "blockGenerationPool")
@@ -95,7 +96,7 @@ class BlockGenerationEvent {
     }
 
     private val blocksToGenerate: List<YmlItem>
-        get() = EmpireItemsAPI.itemYamlFilesByID.values.filter { it.block?.generate != null }
+        get() = empireItemsAPI.itemYamlFilesByID.values.filter { it.block?.generate != null }
 
     class MeanTimeCalculator(private val tag: String, private val onEvery: Int = 50) {
         private var amount: Int = 0

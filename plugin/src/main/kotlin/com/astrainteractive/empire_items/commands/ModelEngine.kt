@@ -1,7 +1,9 @@
 package com.astrainteractive.empire_items.commands
 
+import com.astrainteractive.empire_items.di.TranslationModule
+import com.astrainteractive.empire_items.di.empireItemsApiModule
+import com.astrainteractive.empire_items.di.empireModelEngineApiModule
 import com.astrainteractive.empire_items.meg.api.EmpireModelEngineAPI
-import com.astrainteractive.empire_items.modules.TranslationModule
 import ru.astrainteractive.astralibs.AstraLibs
 import ru.astrainteractive.astralibs.utils.registerCommand
 import ru.astrainteractive.astralibs.utils.registerTabCompleter
@@ -14,11 +16,13 @@ import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.BlockFace
 import org.bukkit.entity.Player
+import ru.astrainteractive.astralibs.di.getValue
 
 class ModelEngine {
     private val transparent: Set<Material> = setOf(Material.AIR, Material.CAVE_AIR, Material.TALL_GRASS)
-    private val translations:Translations
-        get() = TranslationModule.value
+    private val translations by TranslationModule
+    private val empireItemsAPI by empireItemsApiModule
+    private val empireModelEngineAPI by empireModelEngineApiModule
 
     val spawnmodel =
         AstraLibs.registerCommand("spawnmodel", permission = EmpirePermissions.spawnModel) { sender, args ->
@@ -27,7 +31,7 @@ class ModelEngine {
                 sender.sendMessage(translations.wrongArgs)
                 return@registerCommand
             }
-            val empireMob = EmpireItemsAPI.ymlMobById[id] ?: run {
+            val empireMob = empireItemsAPI.ymlMobById[id] ?: run {
                 sender.sendMessage(translations.mobNotExist)
                 return@registerCommand
             }
@@ -40,14 +44,14 @@ class ModelEngine {
 
 
             val l = location ?: (sender as? Player)?.getTargetBlock(transparent, 64)?.getRelative(BlockFace.UP)?.location?:return@registerCommand
-            val spawned = EmpireModelEngineAPI.spawnMob(empireMob, l)
+            val spawned = empireModelEngineAPI.spawnMob(empireMob, l)
             if (spawned == null) {
                 sender.sendMessage(translations.mobFailedToSpawn)
             }
 
         }
     val tabCompleter = AstraLibs.registerTabCompleter("spawnmodel") { sender, args ->
-        val models = EmpireItemsAPI.ymlMobById.keys
+        val models = empireItemsAPI.ymlMobById.keys
         return@registerTabCompleter models.toList().withEntry(args.firstOrNull() ?: "")
     }
 }
