@@ -19,7 +19,7 @@ import java.util.*
 class BossBarController {
     private val customMobBossBarKey = "esmp"
     val empireMobsBossBars: Sequence<KeyedBossBar>
-        get() = Bukkit.getBossBars().asSequence().filter { it.key.key.contains(customMobBossBarKey) }
+        get() = Bukkit.getBossBars().asSequence().filter { it.key.key.contains(customMobBossBarKey, true) }
 
     private fun createBossBarKey(entity: Entity) =
         NamespacedKey(AstraLibs.instance, "${entity.uniqueId.toString()}_$customMobBossBarKey")

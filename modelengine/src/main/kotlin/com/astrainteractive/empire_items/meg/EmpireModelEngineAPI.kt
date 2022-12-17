@@ -205,9 +205,11 @@ class EmpireModelEngineAPI(
                         val uuid = kotlin.runCatching { bossBarController.entityUUIDFromBossBar(bar) }.getOrNull()
                             ?: return@forEach
                         val entity = withContext(Dispatchers.BukkitMain) { Bukkit.getEntity(uuid) } ?: return@forEach
-
+                        if (!entity.isValid) return@forEach
+                        val health = (entity as? LivingEntity)?.health ?: 0.0
+                        val isAlive = health >= 0.0
                         val entityInfo = getEmpireEntity(entity) ?: return@forEach
-                        if (player.location.world != entityInfo.entity.location.world)
+                        if (player.location.world != entityInfo.entity.location.world || !isAlive)
                             bar.removePlayer(player)
                         else if (player.location.distance(entityInfo.entity.location) > 70)
                             bar.removePlayer(player)

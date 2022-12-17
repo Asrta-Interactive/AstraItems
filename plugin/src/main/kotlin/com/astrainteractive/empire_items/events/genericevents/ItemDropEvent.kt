@@ -51,10 +51,13 @@ class ItemDropEvent() {
 //        if (!KProtectionLib.canBreak(e.player, e.block.location)) return@event
         val block: Block = e.block
         val customBlockData = BlockParser.getBlockData(e.block)
-        val customBlock = empireItemsAPI.itemYamlFilesByID.values.firstOrNull { it.block?.data == customBlockData }
+        val customBlock = empireItemsAPI.itemYamlFilesByID.values.firstOrNull { it.block?.data!=null && it.block?.data == customBlockData }
         val customBlockId = customBlock?.id
         if (isDropHereAbused(customBlock, block)) return@event
         val dropFrom = customBlockId ?: block.blockData.material.name
+        println("customBlockId: $customBlockId")
+        println("block.blockData.material.name: ${block.blockData.material.name}")
+        println("empireItemsAPI.dropByDropFrom[dropFrom]: ${empireItemsAPI.dropByDropFrom[dropFrom]}")
         empireItemsAPI.dropByDropFrom[dropFrom]?.forEach {
             it.performDrop(block.location)
         } ?: return@event

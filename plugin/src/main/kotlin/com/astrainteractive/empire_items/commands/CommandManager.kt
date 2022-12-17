@@ -1,5 +1,6 @@
 package com.astrainteractive.empire_items.commands
 
+import com.astrainteractive.empire_items.EmpirePlugin
 import com.astrainteractive.empire_items.di.GuiConfigModule
 import com.astrainteractive.empire_items.di.empireUtilsModule
 import com.astrainteractive.empire_items.di.fontApiModule
@@ -33,6 +34,13 @@ class CommandManager {
         ModelEngine()
         villagerInventory()
         villagerInventoryAutoComplete()
+        AstraLibs.registerCommand("edisable") { sender, args ->
+            EmpirePlugin.instance.apply {
+                onDisable()
+            }
+
+        }
+
     }
 }
 
