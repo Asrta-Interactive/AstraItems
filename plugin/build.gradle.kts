@@ -2,67 +2,38 @@ plugins {
     kotlin("plugin.serialization")
     kotlin("jvm")
     id("com.github.johnrengelman.shadow")
-}
-
-group = Dependencies.group
-version = Dependencies.version
-val mName = "EmpireItems"
-description = "Custom items plugin for EmpireProjekt"
-java {
-    withSourcesJar()
-    withJavadocJar()
-    java.sourceCompatibility = JavaVersion.VERSION_1_8
-    java.targetCompatibility = JavaVersion.VERSION_17
-}
-repositories {
-    mavenLocal()
-    mavenCentral()
-    maven(Dependencies.Repositories.extendedclip)
-    maven(Dependencies.Repositories.maven2Apache)
-    maven(Dependencies.Repositories.essentialsx)
-    maven(Dependencies.Repositories.enginehub)
-    maven(Dependencies.Repositories.spigotmc)
-    maven(Dependencies.Repositories.dmulloy2)
-    maven(Dependencies.Repositories.papermc)
-    maven(Dependencies.Repositories.dv8tion)
-    maven(Dependencies.Repositories.playpro)
-    maven(Dependencies.Repositories.jitpack)
-    maven(Dependencies.Repositories.scarsz)
-    maven(Dependencies.Repositories.maven2)
-    modelEngige(project)
-    paperMC(project)
+    id("basic-plugin")
+    id("basic-shadow")
+    id("basic-resource-processor")
 }
 
 dependencies {
     // Kotlin
-    implementation(Dependencies.Libraries.kotlinGradlePlugin)
+    implementation(libs.kotlinGradlePlugin)
     // Coroutines
-    implementation(Dependencies.Libraries.kotlinxCoroutinesCoreJVM)
-    implementation(Dependencies.Libraries.kotlinxCoroutinesCore)
+    implementation(libs.coroutines.coreJvm)
+    implementation(libs.coroutines.core)
     // Serialization
-    implementation(Dependencies.Libraries.kotlinxSerialization)
-    implementation(Dependencies.Libraries.kotlinxSerializationJson)
-    implementation(Dependencies.Libraries.kotlinxSerializationYaml)
+    implementation(libs.kotlin.serialization)
+    implementation(libs.kotlin.serializationJson)
+    implementation(libs.kotlin.serializationKaml)
     // AstraLibs
-    implementation(Dependencies.Libraries.astraLibsKtxCore)
-    implementation(Dependencies.Libraries.astraLibsSpigotCore)
+    implementation(libs.astralibs.ktxCore)
+    implementation(libs.astralibs.spigotCore)
     // Test
     testImplementation(kotlin("test"))
-    testImplementation(Dependencies.Libraries.orgTeting)
-
+    implementation(libs.orgTesting)
     // Spigot dependencies
-    compileOnly(Dependencies.Libraries.essentialsX)
-    compileOnly(Dependencies.Libraries.paperMC)
-    compileOnly(Dependencies.Libraries.spigot)
-    compileOnly(Dependencies.Libraries.spigotApi)
-    compileOnly(Dependencies.Libraries.protocolLib)
-    compileOnly(Dependencies.Libraries.placeholderapi)
-    compileOnly(Dependencies.Libraries.worldguard)
-    compileOnly(Dependencies.Libraries.discordsrv)
-    compileOnly(Dependencies.Libraries.vaultAPI)
-    compileOnly(Dependencies.Libraries.coreprotect)
-//    compileOnly(Dependencies.Libraries.modelengine)
-    implementation(kotlin("script-runtime"))
+    implementation(libs.essentialsx)
+    implementation(libs.paperApi)
+    implementation(libs.spigotApi)
+    implementation(libs.spigot)
+    implementation(libs.protocollib)
+    implementation(libs.placeholderapi)
+    implementation(libs.worldguard.bukkit)
+    implementation(libs.discordsrv)
+    implementation(libs.vaultapi)
+    implementation(libs.coreprotect)
     // Local
     implementation(project(":enchantements"))
     implementation(project(":modelengine"))
@@ -70,63 +41,3 @@ dependencies {
     implementation(project(":models"))
 }
 
-tasks {
-    withType<JavaCompile>() {
-        options.encoding = "UTF-8"
-    }
-    withType<Test>().configureEach {
-        useJUnitPlatform()
-    }
-    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions.jvmTarget = "17"
-    }
-    withType<Jar> {
-        archiveClassifier.set("min")
-    }
-    compileJava {
-        options.encoding = "UTF-8"
-    }
-    test {
-        useJUnit()
-        testLogging {
-            events("passed", "skipped", "failed")
-            this.showStandardStreams = true
-        }
-    }
-    processResources {
-        filteringCharset = "UTF-8"
-        from(sourceSets.main.get().resources.srcDirs) {
-            filesMatching("plugin.yml") {
-                expand(
-                    "name" to "EmpireItems",
-                    "version" to project.version,
-                    "description" to project.description
-                )
-            }
-            duplicatesStrategy = DuplicatesStrategy.INCLUDE
-        }
-    }
-}
-tasks.shadowJar {
-    dependencies {
-        include(dependency(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar", ".aar")))))
-        // Kotlin
-        include(dependency(Dependencies.Libraries.kotlinGradlePlugin))
-        // Coroutines
-        include(dependency(Dependencies.Libraries.kotlinxCoroutinesCoreJVM))
-        include(dependency(Dependencies.Libraries.kotlinxCoroutinesCore))
-        // Serialization
-        include(dependency(Dependencies.Libraries.kotlinxSerialization))
-        include(dependency(Dependencies.Libraries.kotlinxSerializationJson))
-        include(dependency(Dependencies.Libraries.kotlinxSerializationYaml))
-    }
-    isReproducibleFileOrder = true
-    mergeServiceFiles()
-    dependsOn(configurations)
-    archiveClassifier.set(null as String?)
-    from(sourceSets.main.get().output)
-    from(project.configurations.runtimeClasspath)
-    minimize()
-    archiveBaseName.set("EmpireItems")
-    destinationDirectory.set(File(Dependencies.destinationDirectoryPath))
-}

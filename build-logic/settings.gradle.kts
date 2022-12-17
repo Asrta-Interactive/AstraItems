@@ -1,9 +1,8 @@
-pluginManagement {
-    includeBuild("build-logic")
+enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
+enableFeaturePreview("VERSION_CATALOGS")
 
+pluginManagement {
     repositories {
-        mavenLocal()
-        mavenCentral()
         google()
         gradlePluginPortal()
         maven("https://jitpack.io")
@@ -12,6 +11,7 @@ pluginManagement {
 
 dependencyResolutionManagement {
     repositories {
+        gradlePluginPortal()
         mavenLocal()
         mavenCentral()
         maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
@@ -36,13 +36,15 @@ dependencyResolutionManagement {
             url = uri("https://repo.papermc.io/repository/maven-public/")
         }
     }
-}
+    versionCatalogs {
+        create("libs") {
+            from(files("../gradle/libs.versions.toml"))
+        }
+    }
 
-rootProject.name = "EmpireItems"
+}
+rootProject.name = "build-logic"
+
 include(
-    "api",
-    "plugin",
-    "enchantements",
-    "modelengine",
-    "models"
+    ":plugins:convention"
 )

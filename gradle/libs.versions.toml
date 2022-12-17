@@ -1,0 +1,73 @@
+[versions]
+plugin = "4.2.0"
+name = "EmpireItems"
+group = "com.astrainteractive"
+description = "Custom items plugin for EmpireProjekt"
+wear-gms = "18.0.0"
+destinationDirectoryPath = "D:\\Minecraft Servers\\EmpireProjekt_remake\\smp\\plugins"
+# Kotlin
+kotlin = "1.7.0"
+coroutines = "1.6.3"
+json = "1.3.3"
+kaml = "0.46.0"
+exposed = "0.38.1"
+jdbc = "3.36.0.3"
+astraLibs = "2.0.12-local2"
+shadow = "7.1.2"
+mysqlDriver = "8.0.20"
+orgTesting = "7.1.0"
+# Spigot
+velocity = "3.1.1"
+spigot = "1.19-R0.1-SNAPSHOT"
+placeholderAPI = "2.11.2"
+protocolLib = "4.8.0"
+worldGuard = "7.0.7"
+vault = "1.7"
+coreProtect = "21.2"
+modelEngine = "R3.0.0"
+essentials = "2.19.5-SNAPSHOT"
+discordSRV = "1.25.0"
+luckPerms = "5.4"
+bstats = "3.0.0"
+# Testing
+junit = "4.12"
+mockito = "4.0.0"
+roboelectric = "4.9"
+mockk = "1.13.2"
+
+[libraries]
+# Gradle - Core
+coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+coroutines-coreJvm = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm", version.ref = "coroutines" }
+kotlin-serialization = { module = "org.jetbrains.kotlin:kotlin-serialization", version.ref = "kotlin" }
+kotlin-serializationJson = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "json" }
+kotlin-serializationKaml = { module = "com.charleskorn.kaml:kaml", version.ref = "kaml" }
+astralibs-ktxCore = { module = "ru.astrainteractive.astralibs:ktx-core", version.ref = "astraLibs" }
+astralibs-spigotCore = { module = "ru.astrainteractive.astralibs:spigot-core", version.ref = "astraLibs" }
+xerial-sqlite-jdbc = { module = "org.xerial:sqlite-jdbc", version.ref = "jdbc" }
+exposed-java-time = { module = "org.jetbrains.exposed:exposed-java-time", version.ref = "exposed" }
+exposed-jdbc = { module = "org.jetbrains.exposed:exposed-jdbc", version.ref = "exposed" }
+exposed-dao = { module = "org.jetbrains.exposed:exposed-dao", version.ref = "exposed" }
+exposed-core = { module = "org.jetbrains.exposed:exposed-core", version.ref = "exposed" }
+mysql-connector-java = { module = "mysql:mysql-connector-java", version.ref = "mysqlDriver" }
+orgTesting = { module = "org.testng:testng", version.ref = "orgTesting" }
+essentialsx = { module = "net.essentialsx:EssentialsX", version.ref = "essentials" }
+paperApi = { module = "io.papermc.paper:paper-api", version.ref = "spigot" }
+spigotApi = { module = "org.spigotmc:spigot-api", version.ref = "spigot" }
+spigot = { module = "org.spigotmc:spigot", version.ref = "spigot" }
+velocity-api = { module = "com.velocitypowered:velocity-api", version.ref = "velocity" }
+protocollib = { module = "com.comphenix.protocol:ProtocolLib", version.ref = "protocolLib" }
+placeholderapi = { module = "me.clip:placeholderapi", version.ref = "placeholderAPI" }
+worldguard-bukkit = { module = "com.sk89q.worldguard:worldguard-bukkit", version.ref = "worldGuard" }
+discordsrv = { module = "com.discordsrv:discordsrv", version.ref = "discordSRV" }
+vaultapi = { module = "com.github.MilkBowl:VaultAPI", version.ref = "vault" }
+coreprotect = { module = "net.coreprotect:coreprotect", version.ref = "coreProtect" }
+modelengine = { module = "com.ticxo.modelengine:api", version.ref = "modelEngine" }
+bstats-bukkit = { module = "org.bstats:bstats-bukkit", version.ref = "bstats" }
+kotlinGradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-gradle = { id = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }

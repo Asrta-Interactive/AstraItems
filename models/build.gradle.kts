@@ -1,21 +1,13 @@
 plugins {
     kotlin("plugin.serialization")
     kotlin("jvm")
+    id("basic-plugin")
 }
-
-group = "com.astrainteractive.empire_items.models"
-version = Dependencies.version
-
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
-
 dependencies {
     // Kotlin
-    implementation(Dependencies.Libraries.kotlinGradlePlugin)
+    implementation(libs.kotlinGradlePlugin)
     // Serialization
-    implementation(Dependencies.Libraries.kotlinxSerialization)
-    implementation(Dependencies.Libraries.kotlinxSerializationJson)
-    implementation(Dependencies.Libraries.kotlinxSerializationYaml)
+    implementation(libs.kotlin.serialization)
+    implementation(libs.kotlin.serializationJson)
+    implementation(libs.kotlin.serializationKaml)
 }
