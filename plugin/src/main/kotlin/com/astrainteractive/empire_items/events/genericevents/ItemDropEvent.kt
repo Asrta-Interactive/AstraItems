@@ -2,9 +2,7 @@ package com.astrainteractive.empire_items.events.genericevents
 
 import com.astrainteractive.empire_items.di.empireItemsApiModule
 import com.astrainteractive.empire_items.di.empireModelEngineApiModule
-import com.astrainteractive.empire_items.meg.api.EmpireModelEngineAPI
 import ru.astrainteractive.astralibs.events.DSLEvent
-import com.astrainteractive.empire_itemss.api.EmpireItemsAPI
 import com.astrainteractive.empire_itemss.api.models_ext.generateItem
 import com.astrainteractive.empire_itemss.api.items.BlockParser
 import com.astrainteractive.empire_itemss.api.models_ext.performDrop
@@ -18,7 +16,6 @@ import org.bukkit.event.entity.EntityDeathEvent
 import org.bukkit.event.player.PlayerFishEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.loot.Lootable
-import ru.astrainteractive.astralibs.di.IDependency
 import ru.astrainteractive.astralibs.di.getValue
 
 class ItemDropEvent() {

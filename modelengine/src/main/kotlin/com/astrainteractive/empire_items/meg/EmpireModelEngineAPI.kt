@@ -1,17 +1,16 @@
-package com.astrainteractive.empire_items.meg.api
+package com.astrainteractive.empire_items.meg
 
-import com.astrainteractive.empire_items.meg.BossBarController
-import com.astrainteractive.empire_items.meg.EmpireEntity
-import com.astrainteractive.empire_items.meg.EntityInfo
-import com.astrainteractive.empire_items.meg.api.core.IEmpireActiveModel
-import com.astrainteractive.empire_items.meg.api.core.IEmpireModelEngineAPI
-import com.astrainteractive.empire_items.meg.api.core.IEmpireModeledEntity
-import ru.astrainteractive.astralibs.async.PluginScope
-import ru.astrainteractive.astralibs.async.BukkitMain
-import ru.astrainteractive.astralibs.utils.valueOfOrNull
+import com.astrainteractive.empire_items.meg.wrapper.EmpireActiveModel
+import com.astrainteractive.empire_items.meg.wrapper.EmpireModeledEntity
+import com.astrainteractive.empire_items.meg.wrapper.core.IEmpireActiveModel
+import com.astrainteractive.empire_items.meg.wrapper.core.IEmpireModeledEntity
+import com.astrainteractive.empire_items.meg.wrapper.data.EmpireEntity
+import com.astrainteractive.empire_items.meg.wrapper.data.EntityInfo
 import com.astrainteractive.empire_itemss.api.EmpireItemsAPI
+import com.astrainteractive.empire_itemss.api.addAttribute
+import com.astrainteractive.empire_itemss.api.calcChance
+import com.astrainteractive.empire_itemss.api.getBiome
 import com.astrainteractive.empire_itemss.api.models_ext.play
-import com.astrainteractive.empire_itemss.api.utils.*
 import com.atrainteractive.empire_items.models.mob.YmlMob
 import com.ticxo.modelengine.api.ModelEngineAPI
 import kotlinx.coroutines.Dispatchers
@@ -28,28 +27,30 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityTargetEvent
 import org.bukkit.scheduler.BukkitTask
 import ru.astrainteractive.astralibs.AstraLibs
-import ru.astrainteractive.astralibs.di.IReloadable
+import ru.astrainteractive.astralibs.async.BukkitMain
+import ru.astrainteractive.astralibs.async.PluginScope
+import ru.astrainteractive.astralibs.di.IDependency
 import ru.astrainteractive.astralibs.di.getValue
+import ru.astrainteractive.astralibs.utils.valueOfOrNull
 import kotlin.math.max
 
 
 class EmpireModelEngineAPI(
-    empireItemsApi:IReloadable<EmpireItemsAPI>,
-    bossBarController:IReloadable<BossBarController>
-) : IEmpireModelEngineAPI, IManager {
-    private val empireItemsApi by empireItemsApi
-    private val bossBarController by bossBarController
+    _empireItemsApi: IDependency<EmpireItemsAPI>,
+    _bossBarController: IDependency<BossBarController>
+) {
+    private val empireItemsApi by _empireItemsApi
+    private val bossBarController by _bossBarController
     val entityTagHolder = TagHolder<Entity, EntityInfo>()
     private val ignoredLocations = HashSet<Location>()
-    private var bossBarScheduler: BukkitTask? = null
 
     private fun getMobSpawnList(e: Entity): List<YmlMob>? {
         val mobs = empireItemsApi.ymlMobById.values.filter { ymlMob ->
             !ymlMob.spawn?.values?.filter { cond ->
                 val chance = cond.replace[e.type.name]
                 calcChance(chance?.toFloat() ?: -1f) &&
-                (e.location.y > cond.minY && e.location.y < cond.maxY) &&
-                (cond.biomes.isEmpty() || cond.biomes.contains(e.location.getBiome().name))
+                        (e.location.y > cond.minY && e.location.y < cond.maxY) &&
+                        (cond.biomes.isEmpty() || cond.biomes.contains(e.location.getBiome().name))
             }.isNullOrEmpty()
         }
         if (mobs.isEmpty()) return null
@@ -81,17 +82,17 @@ class EmpireModelEngineAPI(
         isSilent = true
     }
 
-    override fun createActiveModel(id: String): IEmpireActiveModel {
+    fun createActiveModel(id: String): IEmpireActiveModel {
         val activeModel = ModelEngineAPI.createActiveModel(id)
         return EmpireActiveModel(activeModel)
     }
 
-    override fun createModeledEntity(entity: Entity): IEmpireModeledEntity {
+    fun createModeledEntity(entity: Entity): IEmpireModeledEntity {
         val modeledEntity = ModelEngineAPI.createModeledEntity(entity)
         return EmpireModeledEntity(modeledEntity)
     }
 
-    override fun replaceEntity(entity: Entity, vararg ymlMobs: YmlMob): EmpireEntity {
+    fun replaceEntity(entity: Entity, vararg ymlMobs: YmlMob): EmpireEntity {
         val ymlMob = ymlMobs.randomOrNull() ?: throw Exception("Replace entity list must not be empty")
         val entityInfo = EntityInfo(
             modelID = ymlMob.modelID,
@@ -115,7 +116,7 @@ class EmpireModelEngineAPI(
         spawnMob(ymlMon, location)
     }
 
-    override fun spawnMob(ymlMob: YmlMob, location: Location): EmpireEntity {
+    fun spawnMob(ymlMob: YmlMob, location: Location): EmpireEntity {
         ignoredLocations.add(location)
         val entityType = EntityType.fromName(ymlMob.entity) ?: throw Exception("Unknown entity type: ${ymlMob.entity}")
         println("EntityType: $entityType")
@@ -126,7 +127,7 @@ class EmpireModelEngineAPI(
         return replaced
     }
 
-    override fun performAttack(event: EntityDamageByEntityEvent) {
+    fun performAttack(event: EntityDamageByEntityEvent) {
         val damager = event.damager
         val entity = event.entity
         val damage = event.damage
@@ -169,7 +170,7 @@ class EmpireModelEngineAPI(
 
     }
 
-    override fun getEmpireEntity(entity: Entity): EmpireEntity? = kotlin.runCatching {
+    fun getEmpireEntity(entity: Entity): EmpireEntity? = kotlin.runCatching {
         val entityInfo = entityTagHolder.get(entity) ?: return null
         val ymlMob = empireItemsApi.ymlMobById[entityInfo.empireID] ?: return null
         val modeledEntity = ModelEngineAPI.getModeledEntity(entity.uniqueId) ?: return null
@@ -196,19 +197,16 @@ class EmpireModelEngineAPI(
 
     }
 
-    override fun onEnable() {
-
-        bossBarScheduler = Bukkit.getScheduler().runTaskTimerAsynchronously(AstraLibs.instance, Runnable {
+    private var bossBarScheduler: BukkitTask? =
+        Bukkit.getScheduler().runTaskTimerAsynchronously(AstraLibs.instance, Runnable {
             PluginScope.launch(Dispatchers.IO) {
                 bossBarController.empireMobsBossBars.toList().forEach { bar ->
                     Bukkit.getOnlinePlayers().forEach { player ->
-                        val uuid = kotlin.runCatching { bossBarController.entityUUIDFromBossBar(bar) }.getOrNull() ?: return@forEach
+                        val uuid = kotlin.runCatching { bossBarController.entityUUIDFromBossBar(bar) }.getOrNull()
+                            ?: return@forEach
                         val entity = withContext(Dispatchers.BukkitMain) { Bukkit.getEntity(uuid) } ?: return@forEach
 
-                        val entityInfo = getEmpireEntity(entity) ?: run {
-                            bar.destroy()
-                            return@forEach
-                        }
+                        val entityInfo = getEmpireEntity(entity) ?: return@forEach
                         if (player.location.world != entityInfo.entity.location.world)
                             bar.removePlayer(player)
                         else if (player.location.distance(entityInfo.entity.location) > 70)
@@ -219,9 +217,8 @@ class EmpireModelEngineAPI(
             }
 
         }, 0L, 20L)
-    }
 
-    override fun onDisable() {
+    fun clear() {
         val players = Bukkit.getOnlinePlayers()
         bossBarScheduler?.cancel()
         entityTagHolder.map.forEach { (entity, entityInfo) ->

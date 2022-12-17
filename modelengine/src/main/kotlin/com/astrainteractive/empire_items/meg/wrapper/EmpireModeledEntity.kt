@@ -1,7 +1,7 @@
-package com.astrainteractive.empire_items.meg.api
+package com.astrainteractive.empire_items.meg.wrapper
 
-import com.astrainteractive.empire_items.meg.api.core.IEmpireActiveModel
-import com.astrainteractive.empire_items.meg.api.core.IEmpireModeledEntity
+import com.astrainteractive.empire_items.meg.wrapper.core.IEmpireActiveModel
+import com.astrainteractive.empire_items.meg.wrapper.core.IEmpireModeledEntity
 import com.ticxo.modelengine.api.model.ModeledEntity
 import org.bukkit.Bukkit
 

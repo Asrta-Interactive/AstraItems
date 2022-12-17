@@ -3,14 +3,11 @@ package com.astrainteractive.empire_items.commands
 import com.astrainteractive.empire_items.di.TranslationModule
 import com.astrainteractive.empire_items.di.empireItemsApiModule
 import com.astrainteractive.empire_items.di.empireModelEngineApiModule
-import com.astrainteractive.empire_items.meg.api.EmpireModelEngineAPI
 import ru.astrainteractive.astralibs.AstraLibs
 import ru.astrainteractive.astralibs.utils.registerCommand
 import ru.astrainteractive.astralibs.utils.registerTabCompleter
 import ru.astrainteractive.astralibs.utils.withEntry
-import com.astrainteractive.empire_itemss.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.util.EmpirePermissions
-import com.astrainteractive.empire_items.util.Translations
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Material

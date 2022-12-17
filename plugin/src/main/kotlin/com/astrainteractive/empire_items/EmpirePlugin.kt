@@ -5,10 +5,7 @@ import ru.astrainteractive.astralibs.Logger
 import ru.astrainteractive.astralibs.async.PluginScope
 import ru.astrainteractive.astralibs.events.GlobalEventManager
 import com.astrainteractive.empire_items.commands.CommandManager
-import com.astrainteractive.empire_items.di.craftingControllerModule
-import com.astrainteractive.empire_items.di.empireItemsApiModule
-import com.astrainteractive.empire_items.di.enchantMangerModule
-import com.astrainteractive.empire_items.di.genericListenerModule
+import com.astrainteractive.empire_items.di.*
 import kotlinx.coroutines.cancel
 import org.bukkit.Bukkit
 import org.bukkit.event.HandlerList
@@ -45,6 +42,9 @@ class EmpirePlugin : JavaPlugin() {
     override fun onDisable() {
         craftingControllerModule.value.clear()
 
+        bossBarControllerModule.value.reset()
+        empireModelEngineApiModule.value.clear()
+
         for (p in server.onlinePlayers)
             p.closeInventory()
         genericListenerModule.value.onDisable()
@@ -64,6 +64,12 @@ class EmpirePlugin : JavaPlugin() {
         craftingControllerModule.value.apply {
             clear()
             create()
+        }
+
+        bossBarControllerModule.value.reset()
+        empireModelEngineApiModule.apply {
+            value.clear()
+            reload()
         }
 
 

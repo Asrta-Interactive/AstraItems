@@ -108,10 +108,7 @@ fun LivingEntity.addAttribute(
 
 }
 
-fun KeyedBossBar.destroy() {
-    Bukkit.getOnlinePlayers().forEach { removePlayer(it) }
-    removeAll()
-}
+
 
 fun bukkitAsyncTaskTimer(delay: Long = 0L, period: Long = 20L, runnable: Runnable) =
     Bukkit.getScheduler().runTaskTimerAsynchronously(AstraLibs.instance, runnable, delay, period)

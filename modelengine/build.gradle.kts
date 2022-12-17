@@ -30,6 +30,7 @@ dependencies {
     implementation(libs.discordsrv)
     implementation(libs.vaultapi)
     implementation(libs.coreprotect)
+    implementation(libs.modelengine)
     // Local
     implementation(project(":api"))
     implementation(project(":models"))

@@ -1,4 +1,4 @@
-package com.astrainteractive.empire_items.meg
+package com.astrainteractive.empire_items.meg.wrapper.data
 
 import java.util.*
 

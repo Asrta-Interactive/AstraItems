@@ -4,7 +4,7 @@ import com.astrainteractive.empire_items.commands.CommandManager
 import com.astrainteractive.empire_items.enchants.EnchantManager
 import com.astrainteractive.empire_items.events.GenericListener
 import com.astrainteractive.empire_items.meg.BossBarController
-import com.astrainteractive.empire_items.meg.api.EmpireModelEngineAPI
+import com.astrainteractive.empire_items.meg.EmpireModelEngineAPI
 import com.astrainteractive.empire_items.util.Translations
 import com.astrainteractive.empire_itemss.api.crafting.CraftingApi
 import com.astrainteractive.empire_itemss.api.EmpireItemsAPI
@@ -74,7 +74,7 @@ val empireModelEngineApiModule = reloadable {
     EmpireModelEngineAPI(empireItemsApiModule, bossBarControllerModule)
 }.alsoRemember()
 
-val bossBarControllerModule = reloadable {
+val bossBarControllerModule = module {
     BossBarController()
 }.alsoRemember()
 

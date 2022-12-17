@@ -1,4 +1,4 @@
-package com.astrainteractive.empire_items.meg.api.core
+package com.astrainteractive.empire_items.meg.wrapper.core
 
 import com.ticxo.modelengine.api.model.ModeledEntity
 

@@ -1,6 +1,5 @@
 package com.astrainteractive.empire_items.meg
 
-import com.astrainteractive.empire_itemss.api.utils.IManager
 import com.atrainteractive.empire_items.models.mob.YmlMob
 import org.bukkit.Bukkit
 import org.bukkit.NamespacedKey
@@ -17,7 +16,7 @@ import ru.astrainteractive.astralibs.utils.valueOfOrNull
 import java.util.*
 
 
-class BossBarController() : IManager {
+class BossBarController {
     private val customMobBossBarKey = "esmp"
     val empireMobsBossBars: Sequence<KeyedBossBar>
         get() = Bukkit.getBossBars().asSequence().filter { it.key.key.contains(customMobBossBarKey) }
@@ -44,7 +43,7 @@ class BossBarController() : IManager {
         val bar = Bukkit.getBossBar(createBossBarKey(e)) ?: return
         val livngEntity = (e as? LivingEntity) ?: return
         val maxHealth = livngEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.value ?: livngEntity.maxHealth
-        bar.progress = (livngEntity.health / maxHealth).coerceIn(0.0,1.0)
+        bar.progress = (livngEntity.health / maxHealth).coerceIn(0.0, 1.0)
     }
 
     fun onEntityDead(e: Entity) {
@@ -52,16 +51,16 @@ class BossBarController() : IManager {
         Bukkit.removeBossBar(createBossBarKey(e))
     }
 
-    override fun onEnable() {
-    }
-
-
-    override fun onDisable() {
+    fun reset() {
         empireMobsBossBars.forEach {
             it.isVisible = false
             it.destroy()
-
         }
+    }
+
+    private fun KeyedBossBar.destroy() {
+        Bukkit.getOnlinePlayers().forEach { removePlayer(it) }
+        removeAll()
     }
 }
 

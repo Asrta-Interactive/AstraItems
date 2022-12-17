@@ -1,4 +1,4 @@
-package com.astrainteractive.empire_items.meg.api
+package com.astrainteractive.empire_items.meg
 
 class TagHolder<T, K> {
     private val _map = HashMap<T, K>()
