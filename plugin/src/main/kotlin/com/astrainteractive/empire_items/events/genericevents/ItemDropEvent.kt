@@ -55,9 +55,6 @@ class ItemDropEvent() {
         val customBlockId = customBlock?.id
         if (isDropHereAbused(customBlock, block)) return@event
         val dropFrom = customBlockId ?: block.blockData.material.name
-        println("customBlockId: $customBlockId")
-        println("block.blockData.material.name: ${block.blockData.material.name}")
-        println("empireItemsAPI.dropByDropFrom[dropFrom]: ${empireItemsAPI.dropByDropFrom[dropFrom]}")
         empireItemsAPI.dropByDropFrom[dropFrom]?.forEach {
             it.performDrop(block.location)
         } ?: return@event

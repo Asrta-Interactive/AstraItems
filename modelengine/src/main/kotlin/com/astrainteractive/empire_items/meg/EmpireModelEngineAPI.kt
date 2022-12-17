@@ -119,7 +119,6 @@ class EmpireModelEngineAPI(
     fun spawnMob(ymlMob: YmlMob, location: Location): EmpireEntity {
         ignoredLocations.add(location)
         val entityType = EntityType.fromName(ymlMob.entity) ?: throw Exception("Unknown entity type: ${ymlMob.entity}")
-        println("EntityType: $entityType")
         val entity =
             location.world.spawnEntity(location, entityType).run { configureEntity(this, ymlMob) }
         val replaced = replaceEntity(entity, ymlMob)

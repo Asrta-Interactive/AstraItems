@@ -1,5 +1,5 @@
 [versions]
-plugin = "4.2.0"
+plugin = "4.3.0"
 name = "EmpireItems"
 group = "com.astrainteractive"
 description = "Custom items plugin for EmpireProjekt"

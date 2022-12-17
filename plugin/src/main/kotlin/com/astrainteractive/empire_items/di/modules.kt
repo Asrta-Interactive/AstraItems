@@ -22,37 +22,30 @@ import ru.astrainteractive.astralibs.EmpireSerializer
 import ru.astrainteractive.astralibs.di.*
 
 val TranslationModule = reloadable {
-    println("Modules: Translation created")
     Translations()
 }
 
 val enchantsConfigModule = reloadable {
-    println("Modules: EmpireEnchantsConfig created")
     EmpireSerializer.toClass<EmpireEnchantsConfig>(Files.enchantsModule)!!
 }
 
 val GuiConfigModule = reloadable {
-    println("Modules: GuiConfig created")
     EmpireSerializer.toClass<GuiConfig>(Files.guiConfig)!!
 }
 
 val configModule = reloadable {
-    println("Modules: Config created")
     EmpireSerializer.toClass<Config>(Files.configFile)!!
 }
 
 val enchantMangerModule = reloadable {
-    println("Modules: EnchantManager created")
     EnchantManager(enchantsConfigModule)
 }
 
 val genericListenerModule = reloadable {
-    println("Modules: GenericListener created")
     GenericListener()
 }
 
 val empireItemsApiModule = reloadable {
-    println("Modules: EmpireItemsAPI created")
     EmpireItemsAPI().also {
         Injector.forget(it)
         Injector.remember(it)
@@ -60,24 +53,19 @@ val empireItemsApiModule = reloadable {
 }
 
 val craftingApiModule = module {
-    println("Modules: CraftingApi created")
     CraftingApi(empireItemsApiModule)
 }
 
 private val craftingTableRecipeCreatorModule = module {
-    println("Modules: CraftingTableRecipeCreator created")
     CraftingTableRecipeCreator(craftingApiModule, empireItemsApiModule)
 }
 private val furnaceRecipeCreatorModule = module {
-    println("Modules: FurnaceRecipeCreator created")
     FurnaceRecipeCreator(craftingApiModule, empireItemsApiModule)
 }
 private val shapelessRecipeCreatorModule = module {
-    println("Modules: ShapelessRecipeCreator created")
     ShapelessRecipeCreator(craftingApiModule, empireItemsApiModule)
 }
 val craftingControllerModule = module {
-    println("Modules: CraftingController created")
     CraftingController(
         empireItemsApiModule,
         craftingTableRecipeCreatorModule,
@@ -87,26 +75,21 @@ val craftingControllerModule = module {
 }
 
 val bossBarControllerModule = module {
-    println("Modules: BossBarController created")
     BossBarController()
 }
 
 val empireModelEngineApiModule = reloadable {
-    println("Modules: EmpireModelEngineAPI created")
     EmpireModelEngineAPI(empireItemsApiModule, bossBarControllerModule)
 }
 
 val commandManagerModule = module {
-    println("Modules: CommandManager created")
     CommandManager()
 }
 
 val fontApiModule = module {
-    println("Modules: FontApi created")
     FontApi(empireItemsApiModule)
 }
 val empireUtilsModule = module {
-    println("Modules: EmpireUtils created")
     EmpireUtils(
         empireItemsApiModule,
         fontApiModule

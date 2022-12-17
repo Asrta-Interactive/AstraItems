@@ -29,11 +29,9 @@ object PlibFontListener : ProtocolLibListener(
     ) {
     val empireUtils by empireUtilsModule
     override fun onPacketReceiving(event: PacketEvent) {
-        println("onPacketReceiving: ${event.packetType}")
         val packet = event.packet
 
         for (i in 0 until packet.chatComponents.size()) {
-            println("Component: ${packet.chatComponents.read(i)}")
             chatCompToEmoji(packet, i)
             for (j in 0 until packet.modifier.size()) {
                 val obj = packet.modifier.read(j) ?: continue
@@ -68,13 +66,10 @@ object PlibFontListener : ProtocolLibListener(
     }
 
     override fun onPacketSending(event: PacketEvent) {
-        println("onPacketSending: ${event.packetType}")
         val packet = event.packet
 
 
-        println(packet.strings.values)
         for (i in 0 until packet.chatComponents.size()) {
-            println("Component: ${packet.chatComponents.read(i)}")
             chatCompToEmoji(packet, i)
             for (j in 0 until packet.modifier.size()) {
                 val obj = packet.modifier.read(j) ?: continue

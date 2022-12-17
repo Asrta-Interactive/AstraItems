@@ -59,7 +59,6 @@ class PlayerShowRecipeKeyEvent {
                 ids.flatMap { craftingApi.getKeysById(it) ?: listOf() }.filter { !player.hasDiscoveredRecipe(it) }
             PluginScope.launch(Dispatchers.BukkitMain) {
                 toDiscover.forEach {
-                    Logger.log("Player ${player.name} discovered recipe ${it}", "Crafting", consolePrint = false)
                     player.discoverRecipe(it)
                 }
             }
