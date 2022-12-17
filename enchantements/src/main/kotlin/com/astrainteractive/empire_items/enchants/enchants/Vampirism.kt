@@ -8,14 +8,15 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.EntityDamageByEntityEvent
+import ru.astrainteractive.astralibs.di.IDependency
+import ru.astrainteractive.astralibs.di.getValue
 import ru.astrainteractive.astralibs.utils.AstraLibsExtensions.getPersistentData
 
 
-class Vampirism(
-    private val config: EmpireEnchantsConfig
-) : EmpireEnchantEvent() {
+class Vampirism(configModule: IDependency<EmpireEnchantsConfig>): EmpireEnchantEvent() {
     override val enchant = EmpireEnchants.VAMPIRISM
     override val enchantKey = "Вампиризм"
+    private val config: EmpireEnchantsConfig by configModule
     override val materialWhitelist: List<Material>
         get() = listOf(
             Material.NETHERITE_SWORD,

@@ -11,13 +11,14 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
+import ru.astrainteractive.astralibs.di.IDependency
+import ru.astrainteractive.astralibs.di.getValue
 
 
-class AquaLight(
-    private val config: EmpireEnchantsConfig
-) : EmpireEnchantEvent() {
+class AquaLight(configModule: IDependency<EmpireEnchantsConfig>): EmpireEnchantEvent() {
     override val enchant = EmpireEnchants.AQUALIGHT
     override val enchantKey = "Свет Воды"
+    private val config: EmpireEnchantsConfig by configModule
     override val materialWhitelist: List<Material>
         get() = listOf(
             Material.NETHERITE_SWORD,

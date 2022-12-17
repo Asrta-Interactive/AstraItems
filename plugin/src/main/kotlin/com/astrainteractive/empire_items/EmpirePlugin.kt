@@ -7,6 +7,7 @@ import ru.astrainteractive.astralibs.events.GlobalEventManager
 import com.astrainteractive.empire_itemss.api.CraftingApi
 import com.astrainteractive.empire_itemss.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.commands.CommandManager
+import com.astrainteractive.empire_items.di.enchantMangerModule
 import com.astrainteractive.empire_items.di.genericListenerModule
 import com.astrainteractive.empire_items.events.GenericListener
 import com.astrainteractive.empire_items.meg.BossBarController
@@ -45,6 +46,8 @@ class EmpirePlugin : JavaPlugin() {
      * This function called when server stops
      */
     override fun onDisable() {
+
+
         for (p in server.onlinePlayers)
             p.closeInventory()
         genericListenerModule.value.onDisable()
@@ -52,5 +55,16 @@ class EmpirePlugin : JavaPlugin() {
         HandlerList.unregisterAll(this)
         Bukkit.getScheduler().cancelTasks(this)
         PluginScope.cancel()
+
+    }
+
+    fun reload(){
+        enchantMangerModule.apply {
+            value.onDisable()
+            reload()
+        }
+
+
+
     }
 }

@@ -22,12 +22,12 @@ val TranslationModule = reloadable {
     Translations()
 }.alsoRemember()
 
-val enchantsModule = reloadable {
+val enchantsConfigModule = reloadable {
     EmpireSerializer.toClass<EmpireEnchantsConfig>(Files.enchantsModule)!!
 }.alsoRemember()
 
-val enchantMangerModule = module {
-    EnchantManager(enchantsModule)
+val enchantMangerModule = reloadable {
+    EnchantManager(enchantsConfigModule)
 }.alsoRemember()
 
 val GuiConfigModule = reloadable {

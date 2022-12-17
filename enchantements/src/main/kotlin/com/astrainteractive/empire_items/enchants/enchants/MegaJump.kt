@@ -11,13 +11,14 @@ import kotlinx.coroutines.launch
 import org.bukkit.Material
 import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.EntityDamageByEntityEvent
+import ru.astrainteractive.astralibs.di.IDependency
+import ru.astrainteractive.astralibs.di.getValue
 
 
-class MegaJump(
-    private val config: EmpireEnchantsConfig
-) : EmpireEnchantEvent() {
+class MegaJump(configModule: IDependency<EmpireEnchantsConfig>): EmpireEnchantEvent() {
     override val enchant = EmpireEnchants.MEGA_JUMP
     override val enchantKey = "Прыжок"
+    private val config: EmpireEnchantsConfig by configModule
     override val materialWhitelist: List<Material>
         get() = EmpireEnchantApi.armorItems
     override val empireEnchant: GenericValueEnchant = config.enchants.MEGA_JUMP

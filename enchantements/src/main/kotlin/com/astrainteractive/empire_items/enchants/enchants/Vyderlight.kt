@@ -10,13 +10,14 @@ import org.bukkit.entity.Monster
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.EntityDamageByEntityEvent
+import ru.astrainteractive.astralibs.di.IDependency
+import ru.astrainteractive.astralibs.di.getValue
 
 
-class Vyderlight(
-    private val config: EmpireEnchantsConfig
-) : EmpireEnchantEvent() {
+class Vyderlight(configModule: IDependency<EmpireEnchantsConfig>): EmpireEnchantEvent() {
     override val enchant = EmpireEnchants.VYDERLIGHT
     override val enchantKey = "Свет Богатсва"
+    private val config: EmpireEnchantsConfig by configModule
     override val materialWhitelist: List<Material>
         get() = listOf(
             Material.NETHERITE_SWORD,

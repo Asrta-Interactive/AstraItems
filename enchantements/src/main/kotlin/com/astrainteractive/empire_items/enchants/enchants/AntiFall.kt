@@ -10,13 +10,14 @@ import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDamageEvent
+import ru.astrainteractive.astralibs.di.IDependency
+import ru.astrainteractive.astralibs.di.getValue
 
 
-class AntiFall(
-    private val config: EmpireEnchantsConfig
-) : EmpireEnchantEvent() {
+class AntiFall(configModule: IDependency<EmpireEnchantsConfig>): EmpireEnchantEvent() {
     override val enchant = EmpireEnchants.ANTI_FALL
     override val enchantKey = "Гравитин"
+    private val config: EmpireEnchantsConfig by configModule
     override val materialWhitelist: List<Material>
         get() = EmpireEnchantApi.armorItems
     override val empireEnchant: GenericValueEnchant = config.enchants.ANTI_FALL

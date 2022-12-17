@@ -8,13 +8,15 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.EntityDamageByEntityEvent
+import ru.astrainteractive.astralibs.di.IDependency
+import ru.astrainteractive.astralibs.di.getValue
 
 
-class FrostAspect(
-    private val config: EmpireEnchantsConfig
-) : EmpireEnchantEvent() {
+class FrostAspect(configModule: IDependency<EmpireEnchantsConfig>) : EmpireEnchantEvent() {
     override val enchant = EmpireEnchants.FROST_ASPECT
     override val enchantKey = "Заговор льда"
+    private val config: EmpireEnchantsConfig by configModule
+
     override val materialWhitelist: List<Material>
         get() = listOf(
             Material.NETHERITE_SWORD,
@@ -24,7 +26,8 @@ class FrostAspect(
             Material.IRON_SWORD,
             Material.WOODEN_SWORD
         )
-    override val empireEnchant: GenericValueEnchant = config.enchants.FROST_ASPECT
+    override val empireEnchant: GenericValueEnchant
+      get() = config.enchants.FROST_ASPECT
 
 
     @EventHandler

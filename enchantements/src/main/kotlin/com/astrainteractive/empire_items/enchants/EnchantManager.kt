@@ -9,7 +9,7 @@ import com.atrainteractive.empire_items.models.enchants.EmpireEnchantsConfig
 import org.bukkit.Material
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.potion.PotionEffectType
-import ru.astrainteractive.astralibs.di.IReloadable
+import ru.astrainteractive.astralibs.di.IDependency
 import ru.astrainteractive.astralibs.di.getValue
 import ru.astrainteractive.astralibs.utils.BukkitConstant
 import kotlin.random.Random
@@ -18,7 +18,7 @@ fun calcChance(chance: Int) = calcChance(chance.toDouble())
 fun calcChance(chance: Double) = chance >= Random.nextDouble(0.0, 100.0)
 fun calcChance(chance: Float) = calcChance(chance.toDouble())
 class EnchantManager(
-    private val configModule: IReloadable<EmpireEnchantsConfig>
+    configModule: IDependency<EmpireEnchantsConfig>
 ) : EventManager {
     val config by configModule
     override val handlers: MutableList<EventListener> = mutableListOf()
@@ -33,13 +33,13 @@ class EnchantManager(
         }
 
     init {
-        FrostAspect(config).onEnable(this)
-        Butcher(config).onEnable(this)
-        Vampirism(config).onEnable(this)
-        Vyderlight(config).onEnable(this)
-        AquaLight(config).onEnable(this)
-        AntiFall(config).onEnable(this)
-        MegaJump(config).onEnable(this)
+        FrostAspect(configModule).onEnable(this)
+        Butcher(configModule).onEnable(this)
+        Vampirism(configModule).onEnable(this)
+        Vyderlight(configModule).onEnable(this)
+        AquaLight(configModule).onEnable(this)
+        AntiFall(configModule).onEnable(this)
+        MegaJump(configModule).onEnable(this)
         config.potionEnchants.forEach { (key, it) ->
             val potionEffectType = PotionEffectType.getByName(it.effect) ?: return@forEach
             val enchant = BukkitConstant(it.id, PersistentDataType.INTEGER)
