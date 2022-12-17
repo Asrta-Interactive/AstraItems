@@ -1,5 +1,6 @@
 package com.astrainteractive.empire_items.events.api_events
 
+import com.astrainteractive.empire_items.di.empireUtilsModule
 import com.astrainteractive.empire_itemss.api.utils.EmpireUtils
 import com.comphenix.protocol.PacketType
 import com.comphenix.protocol.events.ListenerPriority
@@ -9,6 +10,7 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
 import net.kyori.adventure.text.TranslatableComponent
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
+import ru.astrainteractive.astralibs.di.getValue
 
 object PlibFontListener : ProtocolLibListener(
     ListenerPriority.HIGHEST,
@@ -25,6 +27,7 @@ object PlibFontListener : ProtocolLibListener(
     PacketType.Play.Client.CHAT,
 
     ) {
+    val empireUtils by empireUtilsModule
     override fun onPacketReceiving(event: PacketEvent) {
         println("onPacketReceiving: ${event.packetType}")
         val packet = event.packet
@@ -46,12 +49,12 @@ object PlibFontListener : ProtocolLibListener(
 
     private fun chatCompToEmoji(packet: PacketContainer, i: Int) {
         val chatComponent = packet.chatComponents.read(i) ?: return
-        chatComponent.json = EmpireUtils.emojiPattern(chatComponent.json)
+        chatComponent.json = empireUtils.emojiPattern(chatComponent.json)
         packet.chatComponents.write(i, chatComponent)
     }
 
     private fun convertTextComponent(textComponent: TextComponent): Component {
-        val line = EmpireUtils.emojiPattern(GsonComponentSerializer.gson().serialize(textComponent))
+        val line = empireUtils.emojiPattern(GsonComponentSerializer.gson().serialize(textComponent))
         return GsonComponentSerializer.gson().deserialize(line)
     }
 

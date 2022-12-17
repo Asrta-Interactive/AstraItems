@@ -62,7 +62,7 @@ class GenericListener : EventManager {
 //            ModelEngineEvent().onEnable(this)
             ModelEngineEvent()
         }
-        DecorationEvent()
+//        DecorationEvent()
     }
 
     override fun onDisable() {

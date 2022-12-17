@@ -1,6 +1,7 @@
 package com.astrainteractive.empire_items.commands
 
 import com.astrainteractive.empire_items.di.GuiConfigModule
+import com.astrainteractive.empire_items.di.empireUtilsModule
 import com.astrainteractive.empire_items.di.fontApiModule
 import ru.astrainteractive.astralibs.Logger
 import ru.astrainteractive.astralibs.async.PluginScope
@@ -48,6 +49,7 @@ fun CommandManager.emgui() = AstraLibs.registerCommand("emgui") {sender,args->
 
 fun CommandManager.emojiBook() = AstraLibs.registerCommand("emojis") {sender,args->
     val fontApi by fontApiModule
+    val empireUtils by empireUtilsModule
     if (sender !is Player) {
         Logger.warn("Player only command", tag = CommandManager.TAG)
         return@registerCommand
@@ -55,7 +57,7 @@ fun CommandManager.emojiBook() = AstraLibs.registerCommand("emojis") {sender,arg
     val list = fontApi.playerFonts().mapNotNull { (id, font) ->
         font.blockSend.then(null as String?) ?: convertHex("&r${font.id}\n&r&f${font.char}&r\n")
     }
-    val book = EmpireUtils.getBook("RomaRoman", convertHex("&fЭмодзи"), listOf(list.joinToString(" ")), false)
+    val book = empireUtils.getBook("RomaRoman", convertHex("&fЭмодзи"), listOf(list.joinToString(" ")), false)
     (sender as Player).openBook(book)
 
 }

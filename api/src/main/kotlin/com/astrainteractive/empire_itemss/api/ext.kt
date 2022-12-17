@@ -18,6 +18,8 @@ import org.bukkit.inventory.meta.ItemMeta
 import ru.astrainteractive.astralibs.AstraLibs
 import ru.astrainteractive.astralibs.async.BukkitMain
 import ru.astrainteractive.astralibs.async.PluginScope
+import ru.astrainteractive.astralibs.di.IDependency
+import ru.astrainteractive.astralibs.di.Injector
 import ru.astrainteractive.astralibs.file_manager.FileManager
 import ru.astrainteractive.astralibs.utils.AstraLibsExtensions.getPersistentData
 import ru.astrainteractive.astralibs.utils.HEX
@@ -61,10 +63,10 @@ fun getCustomItemsFiles() = getFilesList()?.filter { it.isYml() }?.map {
 fun getCustomItemsSections(section: String) = getFilesList()?.filter { it.isYml() }?.mapNotNull {
     FileManager("items" + File.separator + it.name).fileConfiguration.getConfigurationSection(section)
 }
-
-
-fun String.emoji() = EmpireUtils.emojiPattern(this)
-fun List<String>.emoji() = EmpireUtils.emojiPattern(this)
+val empireUtils:EmpireUtils
+    get() = Injector.inject()
+fun String.emoji() = empireUtils.emojiPattern(this)
+fun List<String>.emoji() = empireUtils.emojiPattern(this)
 
 fun calcChance(chance: Int) = calcChance(chance.toDouble())
 fun calcChance(chance: Double) = chance >= Random.nextDouble(0.0, 100.0)

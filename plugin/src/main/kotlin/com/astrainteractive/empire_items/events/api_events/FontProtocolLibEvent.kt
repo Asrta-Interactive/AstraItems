@@ -9,6 +9,7 @@ import com.comphenix.protocol.ProtocolManager
 import com.comphenix.protocol.events.*
 import com.astrainteractive.empire_items.EmpirePlugin
 import com.astrainteractive.empire_items.di.configModule
+import com.astrainteractive.empire_items.di.empireUtilsModule
 import com.astrainteractive.empire_itemss.api.utils.EmpireUtils
 import com.atrainteractive.empire_items.models.config.Config
 import io.netty.channel.Channel
@@ -33,6 +34,7 @@ import ru.astrainteractive.astralibs.di.getValue
  * todo переделать в PlaceholderAPI
  */
 class FontProtocolLibEvent() : EventListener {
+    val empireUtils by empireUtilsModule
     private var protocolManager: ProtocolManager = ProtocolLibrary.getProtocolManager()
     private lateinit var packetListener: PacketListener
     private val config by configModule
@@ -48,7 +50,7 @@ class FontProtocolLibEvent() : EventListener {
             format = PlaceholderAPI.setPlaceholders(player, format)
 
         format = convertHex(format)
-        format = EmpireUtils.emojiPattern(format)
+        format = empireUtils.emojiPattern(format)
         player.setPlayerListName(format)
     }
 
@@ -103,12 +105,12 @@ class FontProtocolLibEvent() : EventListener {
             override fun onPacketSending(event: PacketEvent) {
                 fun chatCompToEmoji(packet: PacketContainer, i: Int) {
                     val chatComponent = packet.chatComponents.read(i) ?: return
-                    chatComponent.json = EmpireUtils.emojiPattern(chatComponent.json)
+                    chatComponent.json = empireUtils.emojiPattern(chatComponent.json)
                     packet.chatComponents.write(i, chatComponent)
                 }
 
                 fun convertTextComponent(textComponent: TextComponent): Component {
-                    val line = EmpireUtils.emojiPattern(GsonComponentSerializer.gson().serialize(textComponent))
+                    val line = empireUtils.emojiPattern(GsonComponentSerializer.gson().serialize(textComponent))
                     return GsonComponentSerializer.gson().deserialize(line)
                 }
 

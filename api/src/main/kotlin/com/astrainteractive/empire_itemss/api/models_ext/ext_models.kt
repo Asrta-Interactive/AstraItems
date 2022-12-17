@@ -20,11 +20,12 @@ import ru.astrainteractive.astralibs.Logger
 import ru.astrainteractive.astralibs.async.BukkitMain
 import ru.astrainteractive.astralibs.async.PluginScope
 import ru.astrainteractive.astralibs.di.IDependency
+import ru.astrainteractive.astralibs.di.Injector
 import ru.astrainteractive.astralibs.utils.valueOfOrNull
 import kotlin.random.Random
 
 fun VillagerTradeInfo.VillagerTrade.toMerchantRecipe(): MerchantRecipe? {
-    val empireItemsAPI: EmpireItemsAPI by IDependency
+    val empireItemsAPI: EmpireItemsAPI by Injector.lazyInject()
     val result = empireItemsAPI.toAstraItemOrItemByID(id, amount) ?: return null
     val left = empireItemsAPI.toAstraItemOrItemByID(leftItem.id, leftItem.amount) ?: return null
     val right = empireItemsAPI.toAstraItemOrItemByID(middleItem?.id, middleItem?.amount ?: 1)
@@ -37,7 +38,7 @@ fun VillagerTradeInfo.VillagerTrade.toMerchantRecipe(): MerchantRecipe? {
 
 
 fun Loot.generateItem(): ItemStack? {
-    val empireItemsAPI: EmpireItemsAPI by IDependency
+    val empireItemsAPI: EmpireItemsAPI by Injector.lazyInject()
     if (!calcChance(chance)) return null
     if (minAmount > maxAmount) {
         Logger.warn(

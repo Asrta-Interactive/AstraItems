@@ -1,6 +1,5 @@
 package com.astrainteractive.empire_items.events.api_events
 
-import com.astrainteractive.empire_items.di.decorationBlockApiModule
 import com.astrainteractive.empire_itemss.api.empireID
 import ru.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.empire_itemss.api.items.DecorationBlockAPI
@@ -12,8 +11,10 @@ import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
 import ru.astrainteractive.astralibs.di.getValue
 
-class DecorationEvent {
-    private val decorationBlockAPI by decorationBlockApiModule
+class DecorationEvent(
+    private val decorationBlockAPI: DecorationBlockAPI
+) {
+
     val playerInteractEntityEvent = DSLEvent.event(HangingPlaceEvent::class.java) { e ->
         if (e.entity !is ItemFrame)
             return@event

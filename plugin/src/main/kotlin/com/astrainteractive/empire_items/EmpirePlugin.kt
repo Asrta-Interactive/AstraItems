@@ -25,37 +25,39 @@ class EmpirePlugin : JavaPlugin() {
         AstraLibs.rememberPlugin(this)
     }
 
+    fun reload(){
+        TranslationModule.reload()
+        enchantsConfigModule.reload()
+        GuiConfigModule.reload()
+        configModule.reload()
+        empireItemsApiModule.reload()
+        empireModelEngineApiModule.reload()
+        enchantMangerModule.reload()
+        genericListenerModule.reload()
+
+    }
+
     /**
      * This function called when server starts
      */
     override fun onEnable() {
         Logger.prefix = "EmpireItems"
-        TranslationModule.reload()
-        enchantsConfigModule.reload()
-        GuiConfigModule.reload()
-        configModule.reload()
-        enchantMangerModule.apply {
-            value.onDisable()
-            reload()
-        }
-        genericListenerModule.apply {
-            value.onDisable()
-            reload()
-        }
-        empireItemsApiModule.reload()
-        craftingControllerModule.apply {
-            value.clear()
-            value.create()
-        }
-        empireModelEngineApiModule.apply {
-            value.clear()
-            reload()
-        }
-        bossBarControllerModule.apply {
-            value.reset()
-        }
-        commandManagerModule.value
+        TranslationModule.value
+        enchantsConfigModule.value
+        GuiConfigModule.value
+        configModule.value
+        empireItemsApiModule.value
         fontApiModule.value
+        empireUtilsModule.value
+        craftingControllerModule.apply {
+            value.create()
+            value
+        }
+        bossBarControllerModule.value
+        empireModelEngineApiModule.value
+        commandManagerModule.value
+        enchantMangerModule.value
+        genericListenerModule.value
     }
 
 

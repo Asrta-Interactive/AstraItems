@@ -14,6 +14,7 @@ import com.astrainteractive.empire_itemss.api.crafting.creators.CraftingTableRec
 import com.astrainteractive.empire_itemss.api.crafting.creators.FurnaceRecipeCreator
 import com.astrainteractive.empire_itemss.api.crafting.creators.ShapelessRecipeCreator
 import com.astrainteractive.empire_itemss.api.items.DecorationBlockAPI
+import com.astrainteractive.empire_itemss.api.utils.EmpireUtils
 import com.atrainteractive.empire_items.models.config.Config
 import com.atrainteractive.empire_items.models.config.GuiConfig
 import com.atrainteractive.empire_items.models.enchants.EmpireEnchantsConfig
@@ -21,44 +22,62 @@ import ru.astrainteractive.astralibs.EmpireSerializer
 import ru.astrainteractive.astralibs.di.*
 
 val TranslationModule = reloadable {
+    println("Modules: Translation created")
     Translations()
-}.alsoRemember()
+}
 
 val enchantsConfigModule = reloadable {
+    println("Modules: EmpireEnchantsConfig created")
     EmpireSerializer.toClass<EmpireEnchantsConfig>(Files.enchantsModule)!!
-}.alsoRemember()
+}
 
 val GuiConfigModule = reloadable {
+    println("Modules: GuiConfig created")
     EmpireSerializer.toClass<GuiConfig>(Files.guiConfig)!!
-}.alsoRemember()
+}
 
 val configModule = reloadable {
+    println("Modules: Config created")
     EmpireSerializer.toClass<Config>(Files.configFile)!!
-}.alsoRemember()
+}
 
 val enchantMangerModule = reloadable {
+    println("Modules: EnchantManager created")
     EnchantManager(enchantsConfigModule)
-}.alsoRemember()
+}
 
 val genericListenerModule = reloadable {
+    println("Modules: GenericListener created")
     GenericListener()
-}.alsoRemember()
+}
 
 val empireItemsApiModule = reloadable {
-    EmpireItemsAPI()
-}.alsoRemember()
+    println("Modules: EmpireItemsAPI created")
+    EmpireItemsAPI().also {
+        Injector.forget(it)
+        Injector.remember(it)
+    }
+}
 
+val craftingApiModule = module {
+    println("Modules: CraftingApi created")
+    CraftingApi(empireItemsApiModule)
+}
 
 private val craftingTableRecipeCreatorModule = module {
+    println("Modules: CraftingTableRecipeCreator created")
     CraftingTableRecipeCreator(craftingApiModule, empireItemsApiModule)
 }
 private val furnaceRecipeCreatorModule = module {
+    println("Modules: FurnaceRecipeCreator created")
     FurnaceRecipeCreator(craftingApiModule, empireItemsApiModule)
 }
 private val shapelessRecipeCreatorModule = module {
+    println("Modules: ShapelessRecipeCreator created")
     ShapelessRecipeCreator(craftingApiModule, empireItemsApiModule)
 }
 val craftingControllerModule = module {
+    println("Modules: CraftingController created")
     CraftingController(
         empireItemsApiModule,
         craftingTableRecipeCreatorModule,
@@ -66,26 +85,36 @@ val craftingControllerModule = module {
         shapelessRecipeCreatorModule
     )
 }
-val craftingApiModule = module {
-    CraftingApi(empireItemsApiModule)
-}.alsoRemember()
-
-val empireModelEngineApiModule = reloadable {
-    EmpireModelEngineAPI(empireItemsApiModule, bossBarControllerModule)
-}.alsoRemember()
 
 val bossBarControllerModule = module {
+    println("Modules: BossBarController created")
     BossBarController()
-}.alsoRemember()
+}
+
+val empireModelEngineApiModule = reloadable {
+    println("Modules: EmpireModelEngineAPI created")
+    EmpireModelEngineAPI(empireItemsApiModule, bossBarControllerModule)
+}
 
 val commandManagerModule = module {
+    println("Modules: CommandManager created")
     CommandManager()
-}.alsoRemember()
+}
 
 val fontApiModule = module {
+    println("Modules: FontApi created")
     FontApi(empireItemsApiModule)
-}.alsoRemember()
-
-val decorationBlockApiModule = module {
-    DecorationBlockAPI(empireItemsApiModule)
-}.alsoRemember()
+}
+val empireUtilsModule = module {
+    println("Modules: EmpireUtils created")
+    EmpireUtils(
+        empireItemsApiModule,
+        fontApiModule
+    ).also {
+        Injector.forget(it)
+        Injector.remember(it)
+    }
+}
+//val decorationBlockApiModule = module {
+//    DecorationBlockAPI(empireItemsApiModule)
+//}.alsoRemember()

@@ -19,6 +19,7 @@ import org.bukkit.entity.LivingEntity
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.BookMeta
 import ru.astrainteractive.astralibs.di.IDependency
+import ru.astrainteractive.astralibs.di.getValue
 import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -29,9 +30,12 @@ import kotlin.random.Random
 
 
 
-object EmpireUtils {
-    private val empireItemsAPi: EmpireItemsAPI by IDependency
-    private val fontAPI: FontApi by IDependency
+class EmpireUtils(
+    empireItemsAPi: IDependency<EmpireItemsAPI>,
+    fontAPI: IDependency<FontApi>
+) {
+    private val empireItemsAPi by empireItemsAPi
+    private val fontAPI by fontAPI
     private val emojiPattern = Pattern.compile(":([a-zA-Z0-9_]*):")
 
     fun getBook(author: String, title: String, lines: List<String>, useHex: Boolean = true): ItemStack {
@@ -41,7 +45,7 @@ object EmpireUtils {
         meta.title = title
         val pages = mutableListOf<String>()
         for (line in lines) {
-            var hexLine = if (useHex) EmpireUtils.emojiPattern(convertHex(line)) else line
+            var hexLine = if (useHex) emojiPattern(convertHex(line)) else line
             while (hexLine.length > 19 * 14) {
                 pages.add(hexLine.substring(0, 19 * 14))
                 hexLine = hexLine.substring(19 * 14)
