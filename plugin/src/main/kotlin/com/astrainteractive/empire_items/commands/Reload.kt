@@ -18,8 +18,8 @@ fun CommandManager.reload() = AstraLibs.registerCommand("ereload") { sender, arg
         return@registerCommand
     }
     sender.sendMessage(translations.reload)
-    EmpirePlugin.instance.onDisable()
     EmpirePlugin.instance.onEnable()
+    EmpirePlugin.instance.onDisable()
     sender.sendMessage(translations.reloadComplete)
 }
 

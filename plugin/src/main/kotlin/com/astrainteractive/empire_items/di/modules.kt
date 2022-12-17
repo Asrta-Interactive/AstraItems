@@ -28,10 +28,6 @@ val enchantsConfigModule = reloadable {
     EmpireSerializer.toClass<EmpireEnchantsConfig>(Files.enchantsModule)!!
 }.alsoRemember()
 
-val enchantMangerModule = reloadable {
-    EnchantManager(enchantsConfigModule)
-}.alsoRemember()
-
 val GuiConfigModule = reloadable {
     EmpireSerializer.toClass<GuiConfig>(Files.guiConfig)!!
 }.alsoRemember()
@@ -40,7 +36,11 @@ val configModule = reloadable {
     EmpireSerializer.toClass<Config>(Files.configFile)!!
 }.alsoRemember()
 
-val genericListenerModule = module {
+val enchantMangerModule = reloadable {
+    EnchantManager(enchantsConfigModule)
+}.alsoRemember()
+
+val genericListenerModule = reloadable {
     GenericListener()
 }.alsoRemember()
 
@@ -49,13 +49,13 @@ val empireItemsApiModule = reloadable {
 }.alsoRemember()
 
 
-val craftingTableRecipeCreatorModule = module {
+private val craftingTableRecipeCreatorModule = module {
     CraftingTableRecipeCreator(craftingApiModule, empireItemsApiModule)
 }
-val furnaceRecipeCreatorModule = module {
+private val furnaceRecipeCreatorModule = module {
     FurnaceRecipeCreator(craftingApiModule, empireItemsApiModule)
 }
-val shapelessRecipeCreatorModule = module {
+private val shapelessRecipeCreatorModule = module {
     ShapelessRecipeCreator(craftingApiModule, empireItemsApiModule)
 }
 val craftingControllerModule = module {
@@ -66,7 +66,7 @@ val craftingControllerModule = module {
         shapelessRecipeCreatorModule
     )
 }
-val craftingApiModule = reloadable {
+val craftingApiModule = module {
     CraftingApi(empireItemsApiModule)
 }.alsoRemember()
 

@@ -3,8 +3,8 @@ package com.astrainteractive.empire_items.commands
 import com.astrainteractive.empire_items.di.empireItemsApiModule
 import ru.astrainteractive.astralibs.utils.HEX
 import com.astrainteractive.empire_itemss.api.EmpireItemsAPI
+import com.astrainteractive.empire_itemss.api.emoji
 import com.astrainteractive.empire_itemss.api.models_ext.toMerchantRecipe
-import com.astrainteractive.empire_itemss.api.utils.emoji
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import ru.astrainteractive.astralibs.AstraLibs

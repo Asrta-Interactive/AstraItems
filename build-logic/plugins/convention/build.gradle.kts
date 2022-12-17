@@ -8,8 +8,8 @@ plugins {
     alias(libs.plugins.shadow) apply false
 }
 dependencies {
-    implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
+    compileOnly(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
     implementation(libs.kotlinGradlePlugin)
     implementation(libs.kotlin.serialization)
-    implementation("gradle.plugin.com.github.johnrengelman", "shadow", "7.1.2")
+    implementation(libs.shadow)
 }

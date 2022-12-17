@@ -1,4 +1,3 @@
-
 import org.gradle.ide.visualstudio.tasks.internal.RelativeFileNameTransformer
 import org.gradle.kotlin.dsl.dependencies
 
@@ -11,6 +10,9 @@ plugins {
 tasks.shadowJar {
     isReproducibleFileOrder = true
     mergeServiceFiles()
+//    dependencies {
+//        exclude(dependency(libs.shadow))
+//    }
     dependsOn(configurations)
     archiveClassifier.set(null as String?)
     from(sourceSets.main.get().output)

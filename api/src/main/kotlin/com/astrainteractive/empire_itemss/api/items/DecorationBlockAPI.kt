@@ -2,7 +2,7 @@ package com.astrainteractive.empire_itemss.api.items
 
 import com.astrainteractive.empire_itemss.api.EmpireItemsAPI
 import com.astrainteractive.empire_itemss.api.empireID
-import com.astrainteractive.empire_itemss.api.utils.playSound
+import com.astrainteractive.empire_itemss.api.playSound
 import com.atrainteractive.empire_items.models.yml_item.YmlItem
 import org.bukkit.Location
 import org.bukkit.Material
@@ -11,7 +11,6 @@ import org.bukkit.block.BlockFace
 import org.bukkit.entity.Entity
 import org.bukkit.entity.ItemFrame
 import ru.astrainteractive.astralibs.di.IDependency
-import ru.astrainteractive.astralibs.di.IReloadable
 import ru.astrainteractive.astralibs.di.getValue
 import kotlin.math.floor
 import kotlin.math.sign

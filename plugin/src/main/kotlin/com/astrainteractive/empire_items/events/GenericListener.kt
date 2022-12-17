@@ -5,13 +5,13 @@ import com.astrainteractive.empire_items.events.api_events.*
 import com.astrainteractive.empire_items.events.empireevents.*
 import ru.astrainteractive.astralibs.events.EventListener
 import ru.astrainteractive.astralibs.events.EventManager
-import com.astrainteractive.empire_itemss.api.utils.getPlugin
 import com.astrainteractive.empire_items.events.blocks.*
 import com.astrainteractive.empire_items.events.resourcepack.ProtocolLibResourcePackEvent
 import com.astrainteractive.empire_items.events.resourcepack.ResourcePackEvent
 
 import com.astrainteractive.empire_items.events.empireevents.MusicDiscsEvent
 import com.astrainteractive.empire_items.events.genericevents.*
+import com.astrainteractive.empire_itemss.api.getPlugin
 
 
 class GenericListener : EventManager {

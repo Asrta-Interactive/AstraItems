@@ -10,9 +10,9 @@ import ru.astrainteractive.astralibs.utils.catching
 import ru.astrainteractive.astralibs.utils.valueOfOrNull
 import com.astrainteractive.empire_itemss.api.EmpireItemsAPI
 import com.astrainteractive.empire_itemss.api.empireID
+import com.astrainteractive.empire_itemss.api.explode
 import com.astrainteractive.empire_itemss.api.utils.BukkitConstants
 import com.astrainteractive.empire_itemss.api.models_ext.play
-import com.astrainteractive.empire_itemss.api.utils.explode
 import com.atrainteractive.empire_items.models.yml_item.Gun
 import com.atrainteractive.empire_items.models.yml_item.Interact
 import com.comphenix.protocol.PacketType

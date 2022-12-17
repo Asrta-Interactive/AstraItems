@@ -4,9 +4,9 @@ import com.astrainteractive.empire_items.di.GuiConfigModule
 import ru.astrainteractive.astralibs.async.PluginScope
 import ru.astrainteractive.astralibs.menu.AstraMenuSize
 import ru.astrainteractive.astralibs.utils.convertHex
-import com.astrainteractive.empire_itemss.api.utils.emoji
 import com.astrainteractive.empire_items.gui.crafting.GuiCrafting
 import com.astrainteractive.empire_items.util.EmpireItemsAPIExt.toAstraItemOrItem
+import com.astrainteractive.empire_itemss.api.emoji
 import com.atrainteractive.empire_items.models.config.GuiConfig
 import kotlinx.coroutines.launch
 import org.bukkit.event.inventory.InventoryClickEvent

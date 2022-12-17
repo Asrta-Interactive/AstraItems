@@ -10,7 +10,7 @@ import com.astrainteractive.empire_items.events.blocks.BlockGenerationEventUtils
 import com.astrainteractive.empire_items.di.Files
 import com.astrainteractive.empire_items.di.configModule
 import com.astrainteractive.empire_items.di.empireItemsApiModule
-import com.astrainteractive.empire_itemss.api.utils.calcChance
+import com.astrainteractive.empire_itemss.api.calcChance
 import com.atrainteractive.empire_items.models.config.Config
 import com.atrainteractive.empire_items.models.yml_item.YmlItem
 import kotlinx.coroutines.*

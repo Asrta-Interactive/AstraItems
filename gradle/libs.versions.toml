@@ -37,6 +37,7 @@ mockk = "1.13.2"
 
 [libraries]
 # Gradle - Core
+shadow = { module = "gradle.plugin.com.github.johnrengelman:shadow", version.ref = "shadow" }
 coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 coroutines-coreJvm = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm", version.ref = "coroutines" }
 kotlin-serialization = { module = "org.jetbrains.kotlin:kotlin-serialization", version.ref = "kotlin" }

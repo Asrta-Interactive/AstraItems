@@ -30,9 +30,32 @@ class EmpirePlugin : JavaPlugin() {
      */
     override fun onEnable() {
         Logger.prefix = "EmpireItems"
-        CommandManager()
-        genericListenerModule.value
-        craftingControllerModule.value.create()
+        TranslationModule.reload()
+        enchantsConfigModule.reload()
+        GuiConfigModule.reload()
+        configModule.reload()
+        enchantMangerModule.apply {
+            value.onDisable()
+            reload()
+        }
+        genericListenerModule.apply {
+            value.onDisable()
+            reload()
+        }
+        empireItemsApiModule.reload()
+        craftingControllerModule.apply {
+            value.clear()
+            value.create()
+        }
+        empireModelEngineApiModule.apply {
+            value.clear()
+            reload()
+        }
+        bossBarControllerModule.apply {
+            value.reset()
+        }
+        commandManagerModule.value
+        fontApiModule.value
     }
 
 
@@ -40,39 +63,17 @@ class EmpirePlugin : JavaPlugin() {
      * This function called when server stops
      */
     override fun onDisable() {
+        enchantMangerModule.value.onDisable()
+        genericListenerModule.value.onDisable()
         craftingControllerModule.value.clear()
-
-        bossBarControllerModule.value.reset()
         empireModelEngineApiModule.value.clear()
+        bossBarControllerModule.value.reset()
 
         for (p in server.onlinePlayers)
             p.closeInventory()
-        genericListenerModule.value.onDisable()
         GlobalEventManager.onDisable()
         HandlerList.unregisterAll(this)
         Bukkit.getScheduler().cancelTasks(this)
         PluginScope.cancel()
-
-    }
-
-    fun reload(){
-        empireItemsApiModule.reload()
-        enchantMangerModule.apply {
-            value.onDisable()
-            reload()
-        }
-        craftingControllerModule.value.apply {
-            clear()
-            create()
-        }
-
-        bossBarControllerModule.value.reset()
-        empireModelEngineApiModule.apply {
-            value.clear()
-            reload()
-        }
-
-
-
     }
 }
