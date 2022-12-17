@@ -1,49 +1,24 @@
-package com.astrainteractive.empire_itemss.api
+package com.astrainteractive.empire_itemss.api.crafting
 
-import ru.astrainteractive.astralibs.AstraLibs
-import ru.astrainteractive.astralibs.Logger
-import com.astrainteractive.empire_itemss.api.models_ext.createRecipe
+import com.astrainteractive.empire_itemss.api.EmpireItemsAPI
+import com.astrainteractive.empire_itemss.api.empireID
 import com.astrainteractive.empire_itemss.api.utils.BukkitConstants
-import com.astrainteractive.empire_itemss.api.utils.IManager
 import org.bukkit.Bukkit
 import org.bukkit.NamespacedKey
-import org.bukkit.inventory.*
-import ru.astrainteractive.astralibs.di.IReloadable
+import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.Recipe
+import org.bukkit.inventory.RecipeChoice
+import ru.astrainteractive.astralibs.AstraLibs
+import ru.astrainteractive.astralibs.Logger
+import ru.astrainteractive.astralibs.di.IDependency
 import ru.astrainteractive.astralibs.di.getValue
 
+
 class CraftingApi(
-    empireItemsApi: IReloadable<EmpireItemsAPI>
-) : IManager {
-    protected val empireItemsApi by empireItemsApi
-    private object CraftingManager {
-        private fun isCustomRecipe(key: NamespacedKey): Boolean =
-            key.key.contains(BukkitConstants.ASTRA_CRAFTING)
+    empireItemsApi: IDependency<EmpireItemsAPI>,
+) {
+    private val empireItemsApi by empireItemsApi
 
-        private fun isCustomRecipe(recipe: FurnaceRecipe) = CraftingManager.isCustomRecipe(recipe.key)
-        private fun isCustomRecipe(recipe: ShapedRecipe) = CraftingManager.isCustomRecipe(recipe.key)
-        private fun isCustomRecipe(recipe: ShapelessRecipe) = CraftingManager.isCustomRecipe(recipe.key)
-
-        private fun isCustomRecipe(recipe: Recipe): Boolean {
-            return when (recipe) {
-                is FurnaceRecipe -> isCustomRecipe(recipe)
-                is ShapedRecipe -> isCustomRecipe(recipe)
-                is ShapelessRecipe -> isCustomRecipe(recipe)
-                else -> false
-            }
-        }
-
-        fun clear() {
-            val ite = AstraLibs.instance.server.recipeIterator()
-            var recipe: Recipe?
-            while (ite.hasNext()) {
-                recipe = ite.next()
-                if (isCustomRecipe(recipe)) {
-                    ite.remove()
-                    continue
-                }
-            }
-        }
-    }
 
     private val keyMap = mutableMapOf<String, MutableList<NamespacedKey>>()
     val recipesMap: MutableMap<String, List<Recipe>> = mutableMapOf()
@@ -59,22 +34,6 @@ class CraftingApi(
     fun getFurnaceByInputId(id: String) = empireItemsApi.furnaceRecipeByID.values.firstOrNull { it.input == id }
     fun getKeysById(id: String) = keyMap[id]
 
-    override fun onEnable() {
-        empireItemsApi.craftingTableRecipeByID.values.forEach {
-            it.createRecipe()
-        }
-        empireItemsApi.furnaceRecipeByID.values.forEach {
-            it.createRecipe()
-        }
-        empireItemsApi.shapelessRecipeByID.values.forEach {
-            it.createRecipe()
-        }
-    }
-
-    override fun onDisable() {
-        CraftingManager.clear()
-    }
-
     fun createKey(id: String): NamespacedKey {
         val key = NamespacedKey(AstraLibs.instance, BukkitConstants.ASTRA_CRAFTING + id)
         addToMap(id, key)
@@ -88,7 +47,7 @@ class CraftingApi(
     fun addRecipe(id: String, result: String, recipe: Recipe) = try {
         Bukkit.addRecipe(recipe)
         recipesMap[result] = mutableListOf<Recipe>().apply {
-            addAll(recipesMap[result]?: listOf())
+            addAll(recipesMap[result] ?: listOf())
             add(recipe)
         }
     } catch (e: IllegalStateException) {

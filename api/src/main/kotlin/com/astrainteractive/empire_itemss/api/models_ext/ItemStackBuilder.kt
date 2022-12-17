@@ -1,9 +1,9 @@
 package com.astrainteractive.empire_itemss.api.models_ext
 
 import com.astrainteractive.empire_items.enchants.core.EmpireEnchants
+import com.astrainteractive.empire_itemss.api.addAttribute
+import com.astrainteractive.empire_itemss.api.emoji
 import com.astrainteractive.empire_itemss.api.utils.BukkitConstants
-import com.astrainteractive.empire_itemss.api.utils.addAttribute
-import com.astrainteractive.empire_itemss.api.utils.emoji
 import com.atrainteractive.empire_items.models.yml_item.YmlItem
 import org.bukkit.ChatColor
 import org.bukkit.Color

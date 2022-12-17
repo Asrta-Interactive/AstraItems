@@ -1,10 +1,9 @@
 package com.astrainteractive.empire_itemss.api.models_ext
 
 import com.astrainteractive.empire_itemss.api.EmpireItemsAPI
-import com.astrainteractive.empire_itemss.api.utils.calcChance
+import com.astrainteractive.empire_itemss.api.calcChance
 import com.atrainteractive.empire_items.models.Loot
 import com.atrainteractive.empire_items.models.VillagerTradeInfo
-import com.atrainteractive.empire_items.models.config.Config
 import com.atrainteractive.empire_items.models.yml_item.Interact
 import com.destroystokyo.paper.ParticleBuilder
 import kotlinx.coroutines.Dispatchers
@@ -23,8 +22,6 @@ import ru.astrainteractive.astralibs.async.PluginScope
 import ru.astrainteractive.astralibs.di.IDependency
 import ru.astrainteractive.astralibs.utils.valueOfOrNull
 import kotlin.random.Random
-
-fun Config.ArenaCommand.Location.toBukkitLocation() = org.bukkit.Location(Bukkit.getWorld(world), x, y, z)
 
 fun VillagerTradeInfo.VillagerTrade.toMerchantRecipe(): MerchantRecipe? {
     val empireItemsAPI: EmpireItemsAPI by IDependency

@@ -5,7 +5,6 @@ import ru.astrainteractive.astralibs.*
 import ru.astrainteractive.astralibs.async.PluginScope
 import ru.astrainteractive.astralibs.async.BukkitMain
 import ru.astrainteractive.astralibs.events.DSLEvent
-import com.astrainteractive.empire_itemss.api.CraftingApi
 import com.astrainteractive.empire_itemss.api.empireID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

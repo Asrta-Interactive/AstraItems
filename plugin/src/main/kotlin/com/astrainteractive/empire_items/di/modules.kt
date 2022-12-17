@@ -6,17 +6,19 @@ import com.astrainteractive.empire_items.events.GenericListener
 import com.astrainteractive.empire_items.meg.BossBarController
 import com.astrainteractive.empire_items.meg.api.EmpireModelEngineAPI
 import com.astrainteractive.empire_items.util.Translations
-import com.astrainteractive.empire_itemss.api.CraftingApi
+import com.astrainteractive.empire_itemss.api.crafting.CraftingApi
 import com.astrainteractive.empire_itemss.api.EmpireItemsAPI
 import com.astrainteractive.empire_itemss.api.FontApi
+import com.astrainteractive.empire_itemss.api.crafting.CraftingController
+import com.astrainteractive.empire_itemss.api.crafting.creators.CraftingTableRecipeCreator
+import com.astrainteractive.empire_itemss.api.crafting.creators.FurnaceRecipeCreator
+import com.astrainteractive.empire_itemss.api.crafting.creators.ShapelessRecipeCreator
 import com.astrainteractive.empire_itemss.api.items.DecorationBlockAPI
 import com.atrainteractive.empire_items.models.config.Config
 import com.atrainteractive.empire_items.models.config.GuiConfig
 import com.atrainteractive.empire_items.models.enchants.EmpireEnchantsConfig
 import ru.astrainteractive.astralibs.EmpireSerializer
-import ru.astrainteractive.astralibs.di.alsoRemember
-import ru.astrainteractive.astralibs.di.module
-import ru.astrainteractive.astralibs.di.reloadable
+import ru.astrainteractive.astralibs.di.*
 
 val TranslationModule = reloadable {
     Translations()
@@ -46,6 +48,24 @@ val empireItemsApiModule = reloadable {
     EmpireItemsAPI()
 }.alsoRemember()
 
+
+val craftingTableRecipeCreatorModule = module {
+    CraftingTableRecipeCreator(craftingApiModule, empireItemsApiModule)
+}
+val furnaceRecipeCreatorModule = module {
+    FurnaceRecipeCreator(craftingApiModule, empireItemsApiModule)
+}
+val shapelessRecipeCreatorModule = module {
+    ShapelessRecipeCreator(craftingApiModule, empireItemsApiModule)
+}
+val craftingControllerModule = module {
+    CraftingController(
+        empireItemsApiModule,
+        craftingTableRecipeCreatorModule,
+        furnaceRecipeCreatorModule,
+        shapelessRecipeCreatorModule
+    )
+}
 val craftingApiModule = reloadable {
     CraftingApi(empireItemsApiModule)
 }.alsoRemember()
@@ -62,10 +82,10 @@ val commandManagerModule = module {
     CommandManager()
 }.alsoRemember()
 
-val fontApiModule = reloadable {
+val fontApiModule = module {
     FontApi(empireItemsApiModule)
 }.alsoRemember()
 
-val decorationBlockApiModule = reloadable {
+val decorationBlockApiModule = module {
     DecorationBlockAPI(empireItemsApiModule)
 }.alsoRemember()

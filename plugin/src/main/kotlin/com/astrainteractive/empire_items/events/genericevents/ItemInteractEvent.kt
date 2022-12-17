@@ -5,8 +5,6 @@ import com.astrainteractive.empire_items.di.empireItemsApiModule
 import ru.astrainteractive.astralibs.async.PluginScope
 import ru.astrainteractive.astralibs.async.BukkitMain
 import ru.astrainteractive.astralibs.events.DSLEvent
-import com.astrainteractive.empire_itemss.api.CraftingApi
-import com.astrainteractive.empire_itemss.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.util.CleanerTask
 import com.astrainteractive.empire_items.util.EmpireItemsAPIExt.toAstraItemOrItem
 import com.astrainteractive.empire_itemss.api.empireID

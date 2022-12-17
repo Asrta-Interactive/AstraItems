@@ -1,0 +1,32 @@
+package com.astrainteractive.empire_itemss.api
+
+enum class HudOffset(val id: String, val offset: Int, val char: String) {
+    LEFT_1("l_1",-1, "\uF801"),
+    LEFT_2("l_2",-2, "\uF802"),
+    LEFT_3("l_3",-3, "\uF803"),
+    LEFT_4("l_4",-4, "\uF804"),
+    LEFT_5("l_5",-5, "\uF805"),
+    LEFT_6("l_6",-6, "\uF806"),
+    LEFT_7("l_7",-7, "\uF807"),
+    LEFT_8("l_8",-8, "\uF808"),
+    LEFT_16("l_16",-16, "\uF809"),
+    LEFT_32("l_32",-32, "\uF80A"),
+    LEFT_64("l_64",-64, "\uF80B"),
+    LEFT_128("l_128",-128, "\uF80C"),
+    LEFT_512("l_512",-512, "\uF80D"),
+    LEFT_1024("l_1024",-1024, "\uF80E"),
+    RIGHT_1("r_1",1, "\uF821"),
+    RIGHT_2("r_2",2, "\uF822"),
+    RIGHT_3("r_3",3, "\uF823"),
+    RIGHT_4("r_4",4, "\uF824"),
+    RIGHT_5("r_5",5, "\uF825"),
+    RIGHT_6("r_6",6, "\uF826"),
+    RIGHT_7("r_7",7, "\uF827"),
+    RIGHT_8("r_8",8, "\uF828"),
+    RIGHT_16("r_16",16, "\uF829"),
+    RIGHT_32("r_32",32, "\uF82A"),
+    RIGHT_64("r_64",64, "\uF82B"),
+    RIGHT_128("r_128",128, "\uF82C"),
+    RIGHT_512("r_512",512, "\uF82D"),
+    RIGHT_1024("r_1024",1024, "\uF82E");
+}
