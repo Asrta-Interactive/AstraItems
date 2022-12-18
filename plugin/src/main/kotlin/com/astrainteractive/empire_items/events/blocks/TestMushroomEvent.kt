@@ -1,5 +1,7 @@
 package com.astrainteractive.empire_items.events.blocks
 
+import com.astrainteractive.empire_items.di.blockGenerationApiModule
+import com.astrainteractive.empire_items.di.blockPlacerModule
 import com.astrainteractive.empire_items.di.empireItemsApiModule
 import ru.astrainteractive.astralibs.async.PluginScope
 import ru.astrainteractive.astralibs.events.DSLEvent
@@ -14,11 +16,16 @@ import ru.astrainteractive.astralibs.di.getValue
 
 class TestMushroomEvent {
     private val empireItemsAPI by empireItemsApiModule
+    private val blockPlacer by blockPlacerModule
+    private val blockGenerationModule by blockGenerationApiModule
     val blockPhysicEvent = DSLEvent.event(PlayerInteractEvent::class.java) { e ->
 //        return@event
         if (e.action != Action.LEFT_CLICK_BLOCK) {
             return@event
         }
+
+//        blockGenerationModule.validateChunk(e.player.location.chunk, true)
+        return@event
         if (e.hand != EquipmentSlot.HAND) return@event
         val debris = empireItemsAPI.itemYamlFilesByID["end_debris"]!!
         val faces = BlockParser.getFacingByData(debris.block?.data!!)
@@ -33,7 +40,7 @@ class TestMushroomEvent {
                     }
                 }
             }
-            BlockParser.setTypeFast(blocks, type, faces, debris.block?.data)
+            blockPlacer.setTypeFast(type, faces, debris.block?.data, *blocks.toTypedArray())
         }
 
     }

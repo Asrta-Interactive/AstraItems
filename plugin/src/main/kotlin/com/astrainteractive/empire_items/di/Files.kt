@@ -9,8 +9,6 @@ object Files {
         FileManager("config.yml")
     val guiConfig: FileManager =
         FileManager("gui.yml")
-    val tempChunks: FileManager =
-        FileManager("temp" + File.separator + "generated_chunks.yml")
 
     val enchantsModule: FileManager =
         FileManager("modules" + File.separator + "empire_enchants.yml")

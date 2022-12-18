@@ -46,3 +46,8 @@ include(
     "modelengine",
     "models"
 )
+
+include(
+    "block-generation:1-19-2",
+    "block-generation:core"
+)

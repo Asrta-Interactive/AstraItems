@@ -1,10 +1,6 @@
 plugins {
-    kotlin("plugin.serialization")
     kotlin("jvm")
-    id("com.github.johnrengelman.shadow")
     id("basic-plugin")
-    id("basic-shadow")
-    id("basic-resource-processor")
 }
 
 dependencies {
@@ -23,23 +19,12 @@ dependencies {
     // Test
     testImplementation(kotlin("test"))
     testImplementation(libs.orgTesting)
-    // Spigot dependencies
-    compileOnly(libs.essentialsx)
+    // Spigot
     compileOnly(libs.paperApi)
     compileOnly(libs.spigotApi)
     compileOnly(libs.spigot)
-    compileOnly(libs.protocollib)
-    compileOnly(libs.placeholderapi)
-    compileOnly(libs.worldguard.bukkit)
-    compileOnly(libs.discordsrv)
-    compileOnly(libs.vaultapi)
-    compileOnly(libs.coreprotect)
     // Local
-    implementation(project(":enchantements"))
-    implementation(project(":modelengine"))
     implementation(project(":api"))
     implementation(project(":models"))
-    implementation(project(":block-generation:1-19-2"))
-    implementation(project(":block-generation:core"))
 }
 

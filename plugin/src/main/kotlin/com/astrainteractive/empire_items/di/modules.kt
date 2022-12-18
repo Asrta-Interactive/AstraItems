@@ -1,5 +1,8 @@
 package com.astrainteractive.empire_items.di
 
+import com.astrainteractive.empire_items.BlockGeneratorAPI
+import com.astrainteractive.empire_items.IFastBlockPlacer
+import com.astrainteractive.empire_items.V1_19_2_FastBlockPlacer
 import com.astrainteractive.empire_items.commands.CommandManager
 import com.astrainteractive.empire_items.enchants.EnchantManager
 import com.astrainteractive.empire_items.events.GenericListener
@@ -13,7 +16,6 @@ import com.astrainteractive.empire_itemss.api.crafting.CraftingController
 import com.astrainteractive.empire_itemss.api.crafting.creators.CraftingTableRecipeCreator
 import com.astrainteractive.empire_itemss.api.crafting.creators.FurnaceRecipeCreator
 import com.astrainteractive.empire_itemss.api.crafting.creators.ShapelessRecipeCreator
-import com.astrainteractive.empire_itemss.api.items.DecorationBlockAPI
 import com.astrainteractive.empire_itemss.api.utils.EmpireUtils
 import com.atrainteractive.empire_items.models.config.Config
 import com.atrainteractive.empire_items.models.config.GuiConfig
@@ -97,6 +99,12 @@ val empireUtilsModule = module {
         Injector.forget(it)
         Injector.remember(it)
     }
+}
+val blockPlacerModule = module {
+    V1_19_2_FastBlockPlacer as IFastBlockPlacer
+}
+val blockGenerationApiModule = module {
+    BlockGeneratorAPI(empireItemsApiModule, configModule,blockPlacerModule.value)
 }
 //val decorationBlockApiModule = module {
 //    DecorationBlockAPI(empireItemsApiModule)

@@ -1,9 +1,11 @@
 package com.astrainteractive.empire_items.events.empireevents
 
+import com.astrainteractive.empire_items.di.blockPlacerModule
 import com.astrainteractive.empire_items.enchants.core.EmpireEnchants
 import ru.astrainteractive.astralibs.async.PluginScope
 import ru.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.empire_itemss.api.items.BlockParser
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.bukkit.Material
 import org.bukkit.block.Block
@@ -13,14 +15,16 @@ import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
+import ru.astrainteractive.astralibs.di.getValue
 import ru.astrainteractive.astralibs.utils.AstraLibsExtensions.hasPersistentData
 
 class LavaWalkerEvent{
+    private val blockPlacer by blockPlacerModule
 
     fun Block.setTypeFast(type: Material) =
-        PluginScope.launch { BlockParser.setTypeFast(this@setTypeFast, type) }
+        PluginScope.launch(Dispatchers.IO) { blockPlacer.setTypeFast(type, emptyMap(),null,this@setTypeFast) }
 
-
+    private val limitedIO = Dispatchers.IO.limitedParallelism(1)
     private fun Block.lavaOrNull() = if (this.type == Material.LAVA) this else null
 
     private fun createBlocks(block: Block) {
@@ -68,7 +72,7 @@ class LavaWalkerEvent{
     val playerMoveEvent = DSLEvent.event(PlayerMoveEvent::class.java)  { e ->
         val itemStack = e.player.inventory.boots ?: return@event
         val itemMeta = itemStack.itemMeta ?: return@event
-        PluginScope.launch {
+        PluginScope.launch(limitedIO) {
 
             if (!hasLaveWalker(itemMeta)) return@launch
             val onToBlock = e.to.block.getRelative(BlockFace.DOWN)

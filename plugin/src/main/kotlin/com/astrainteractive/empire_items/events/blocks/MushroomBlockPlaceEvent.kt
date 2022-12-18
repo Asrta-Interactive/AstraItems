@@ -1,11 +1,13 @@
 package com.astrainteractive.empire_items.events.blocks
 
+import com.astrainteractive.empire_items.di.blockPlacerModule
 import com.astrainteractive.empire_items.di.empireItemsApiModule
 import ru.astrainteractive.astralibs.async.PluginScope
 import ru.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.empire_itemss.api.EmpireItemsAPI
 import com.astrainteractive.empire_itemss.api.empireID
 import com.astrainteractive.empire_itemss.api.items.BlockParser
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 import org.bukkit.event.block.BlockPlaceEvent
@@ -13,6 +15,7 @@ import ru.astrainteractive.astralibs.di.getValue
 
 class MushroomBlockPlaceEvent {
     private val empireItemsAPI by empireItemsApiModule
+    private val blockPlacer by blockPlacerModule
     val blockPlace = DSLEvent.event(BlockPlaceEvent::class.java) { e ->
 
         if (e.isCancelled) return@event
@@ -22,8 +25,8 @@ class MushroomBlockPlaceEvent {
         val empireBlock = empireItemsAPI.itemYamlFilesByID[id]?.block ?: return@event
         val facing = BlockParser.getFacingByData(empireBlock.data)
         val type = BlockParser.getMaterialByData(empireBlock.data)
-        PluginScope.launch {
-            BlockParser.setTypeFast(block, type, facing, empireBlock.data)
+        PluginScope.launch(Dispatchers.IO) {
+            blockPlacer.setTypeFast(type, facing, empireBlock.data, block)
         }
     }
 
