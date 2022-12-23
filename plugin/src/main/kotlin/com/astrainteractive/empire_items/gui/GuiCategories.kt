@@ -61,6 +61,7 @@ class GuiCategories(player: Player, override val playerMenuUtility: PlayerMenuUt
     }
 
     fun setMenuItems() {
+        inventory.clear()
         setManageButtons()
         val items = guiConfig.categories.values ?: return
         for (i in 0 until maxItemsPerPage) {

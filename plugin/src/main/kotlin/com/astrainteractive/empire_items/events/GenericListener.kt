@@ -27,7 +27,7 @@ class GenericListener : EventManager {
 //        TestMushroomEvent()
     }
     val empireEvents = {
-        LavaWalkerEvent()
+//        LavaWalkerEvent()
         HammerEvent()
         MolotovEvent()
         MusicDiscsEvent().onEnable(this)

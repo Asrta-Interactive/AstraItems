@@ -103,6 +103,7 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility,private val guiConfig: Gu
     }
 
     fun setMenuItems() {
+        inventory.clear()
         setManageButtons()
         inventory.setItem(backPageButton.index - 1, viewModel.dropInfo)
         inventory.setItem(backPageButton.index + 1, viewModel.blockInfo)
