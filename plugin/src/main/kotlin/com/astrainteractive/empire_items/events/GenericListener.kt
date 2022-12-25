@@ -10,6 +10,7 @@ import com.astrainteractive.empire_items.events.resourcepack.ProtocolLibResource
 import com.astrainteractive.empire_items.events.resourcepack.ResourcePackEvent
 
 import com.astrainteractive.empire_items.events.empireevents.MusicDiscsEvent
+import com.astrainteractive.empire_items.events.empireevents.hammer.HammerEvent
 import com.astrainteractive.empire_items.events.genericevents.*
 import com.astrainteractive.empire_itemss.api.getPlugin
 
