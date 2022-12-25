@@ -1,14 +1,12 @@
 package com.astrainteractive.empire_items.events.blocks
 
 import com.astrainteractive.empire_items.di.empireItemsApiModule
-import ru.astrainteractive.astralibs.events.DSLEvent
-import com.astrainteractive.empire_itemss.api.EmpireItemsAPI
-import com.astrainteractive.empire_itemss.api.items.BlockParser
 import com.astrainteractive.empire_items.util.CleanerTask
+import com.astrainteractive.empire_itemss.api.items.BlockParser
 import net.minecraft.core.BlockPosition
 import net.minecraft.network.protocol.game.PacketPlayOutBlockBreakAnimation
 import org.bukkit.block.Block
-import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer
+import org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.event.block.BlockBreakEvent
@@ -18,6 +16,7 @@ import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import ru.astrainteractive.astralibs.di.getValue
+import ru.astrainteractive.astralibs.events.DSLEvent
 import kotlin.random.Random
 
 

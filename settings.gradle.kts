@@ -46,6 +46,7 @@ include(
 
 include(
     "block-generation:1-19-2",
+    "block-generation:1-19-3",
     "block-generation:core"
 )
 include("desktop")

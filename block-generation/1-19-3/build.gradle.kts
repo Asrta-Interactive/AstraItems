@@ -22,7 +22,7 @@ dependencies {
     // Spigot
     compileOnly(libs.paperApi)
     compileOnly(libs.spigotApi)
-    compileOnly("org.spigotmc:spigot:1.19-R0.1-SNAPSHOT")
+    compileOnly("org.spigotmc:spigot:1.19.3-R0.1-SNAPSHOT")
     // Local
 //    implementation(project(":api"))
     implementation(project(":models"))

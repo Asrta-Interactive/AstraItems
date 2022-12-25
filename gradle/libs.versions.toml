@@ -19,7 +19,7 @@ mysqlDriver = "8.0.20"
 orgTesting = "7.1.0"
 # Spigot
 velocity = "3.1.1"
-spigot = "1.19-R0.1-SNAPSHOT"
+spigot = "1.19.3-R0.1-SNAPSHOT"
 placeholderAPI = "2.11.2"
 protocolLib = "4.8.0"
 worldGuard = "7.0.7"

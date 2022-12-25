@@ -17,7 +17,7 @@ class YmlEditViewModel(val file: File) : CoreViewModel<YmlEditState, YmlEditSide
     override fun onIntent(intent: YmlEditIntent) {
         reduceState { it: YmlEditState.Parsed ->
             when (intent) {
-                is YmlEditIntent.NamespaceChanged -> it.copy(itemYamlFile = it.itemYamlFile.copy(namespace = intent.namespace))
+                is YmlEditIntent.NamespaceChanged -> it.copy(itemYamlFile = it.itemYamlFile.copy(namespace = intent.namespace.replace(" ","")))
             }
         }
     }
