@@ -1,7 +1,6 @@
 package com.astrainteractive.empire_items.events.blocks
 
 import com.astrainteractive.empire_items.di.empireItemsApiModule
-import com.astrainteractive.empire_items.util.CleanerTask
 import com.astrainteractive.empire_itemss.api.items.BlockParser
 import net.minecraft.core.BlockPosition
 import net.minecraft.network.protocol.game.PacketPlayOutBlockBreakAnimation
@@ -26,10 +25,6 @@ class BlockHardnessEvent {
         val time: Long = System.currentTimeMillis(),
         val id: Int = Random.nextInt(Int.MAX_VALUE),
     )
-
-    val cleaner = CleanerTask(50000) {
-        blockDamageMap.clear()
-    }
 
     private val blockDamageMap = mutableMapOf<String, BreakTimeID>()
 

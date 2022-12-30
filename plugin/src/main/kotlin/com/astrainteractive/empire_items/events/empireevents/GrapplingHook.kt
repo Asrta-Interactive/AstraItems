@@ -2,9 +2,7 @@ package com.astrainteractive.empire_items.events.empireevents
 
 import com.astrainteractive.empire_items.di.empireItemsApiModule
 import ru.astrainteractive.astralibs.events.DSLEvent
-import com.astrainteractive.empire_itemss.api.EmpireItemsAPI
 import com.astrainteractive.empire_itemss.api.utils.BukkitConstants
-import com.astrainteractive.empire_items.util.CleanerTask
 import com.astrainteractive.empire_itemss.api.empireID
 import com.destroystokyo.paper.ParticleBuilder
 import org.bukkit.*
@@ -24,8 +22,8 @@ import ru.astrainteractive.astralibs.utils.AstraLibsExtensions.getPersistentData
 class GrapplingHook {
     private val empireItemsAPI by empireItemsApiModule
     private val activeHooks = mutableMapOf<String, Location>()
-    val cleaner = CleanerTask(50000) {
-        activeHooks.clear()
+    val playerQuitEvent = DSLEvent.event(PlayerQuitEvent::class.java) { e ->
+        activeHooks.remove(e.player.name)
     }
     private fun unCastHook(itemStack: ItemStack, player: Player) {
         val state = itemStack.itemMeta.getPersistentData(BukkitConstants.GRAPPLING_HOOK) ?: return

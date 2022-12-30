@@ -2,10 +2,6 @@ package com.astrainteractive.empire_items.events.genericevents
 
 import com.astrainteractive.empire_items.di.craftingApiModule
 import com.astrainteractive.empire_items.di.empireItemsApiModule
-import ru.astrainteractive.astralibs.async.PluginScope
-import ru.astrainteractive.astralibs.async.BukkitMain
-import ru.astrainteractive.astralibs.events.DSLEvent
-import com.astrainteractive.empire_items.util.CleanerTask
 import com.astrainteractive.empire_items.util.EmpireItemsAPIExt.toAstraItemOrItem
 import com.astrainteractive.empire_itemss.api.empireID
 import com.astrainteractive.empire_itemss.api.models_ext.play
@@ -16,20 +12,31 @@ import org.bukkit.block.Furnace
 import org.bukkit.entity.Player
 import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.inventory.FurnaceSmeltEvent
-import org.bukkit.event.player.*
+import org.bukkit.event.player.PlayerInteractEvent
+import org.bukkit.event.player.PlayerItemConsumeEvent
+import org.bukkit.event.player.PlayerJoinEvent
+import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.potion.PotionEffectType
+import ru.astrainteractive.astralibs.async.BukkitMain
+import ru.astrainteractive.astralibs.async.PluginScope
 import ru.astrainteractive.astralibs.di.getValue
+import ru.astrainteractive.astralibs.events.DSLEvent
 
 class ItemInteractEvent {
     private val empireItemsAPI by empireItemsApiModule
     private val craftingApi by craftingApiModule
 
     private val cooldown = mutableMapOf<String, Long>()
-    val cleaner = CleanerTask(50000) {
-        cooldown.clear()
+
+
+    val quitEvent = DSLEvent.event(PlayerQuitEvent::class.java) { e ->
+        cooldown.keys.filter { it.contains(e.player.name) }.forEach {
+            cooldown.remove(it)
+        }
     }
+
     fun hasCooldown(player: Player, event: String, _cooldown: Int): Boolean {
         val lastUse = cooldown[player.name + event] ?: 0L
         if (System.currentTimeMillis() - lastUse < _cooldown)
@@ -43,26 +50,28 @@ class ItemInteractEvent {
         empireItemsAPI.itemYamlFilesByID[item.empireID]?.interact?.forEach { (_, it) ->
             if (!it.eventList.contains(event)) return@forEach
             if (hasCooldown(player, event, it.cooldown ?: 0)) return@forEach
-            it.playCommand.values.syncForEach { it.play(player) }
-            it.playParticle.values.syncForEach playParticle@{ particle ->
-                particle.play(player.location.add(0.0, 1.5, 0.0))
+            PluginScope.launch(Dispatchers.BukkitMain) {
+
+                it.playCommand.values.forEach { it.play(player) }
+                it.playParticle.values.forEach playParticle@{ particle ->
+                    particle.play(player.location.add(0.0, 1.5, 0.0))
+                }
+                it.playPotionEffect.values.forEach playPotion@{ effect ->
+                    effect.play(player)
+                }
+                it.removePotionEffect.forEach removeEffect@{ effect ->
+                    PotionEffectType.getByName(effect)?.let { player.removePotionEffect(it) }
+                }
+                it.playSound.values.forEach { sound ->
+                    sound.play(player.location)
+                }
             }
-            it.playPotionEffect.values.syncForEach playPotion@{ effect ->
-                effect.play(player)
-            }
-            it.removePotionEffect.syncForEach removeEffect@{ effect ->
-                PotionEffectType.getByName(effect)?.let { player.removePotionEffect(it) }
-            }
-            it.playSound.values.syncForEach { sound ->
-                sound.play(player.location)
-            }
+
             executed = true
         }
         return executed
     }
 
-    private inline fun <T> Iterable<T>.syncForEach(crossinline action: (T) -> Unit) =
-        PluginScope.launch(Dispatchers.BukkitMain) { this@syncForEach.forEach(action) }
 
     val onClick = DSLEvent.event(PlayerInteractEvent::class.java) { e ->
         if (e.hand == EquipmentSlot.HAND)

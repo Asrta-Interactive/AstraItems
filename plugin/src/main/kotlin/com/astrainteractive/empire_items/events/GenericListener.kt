@@ -1,18 +1,18 @@
 package com.astrainteractive.empire_items.events
 
 
-import com.astrainteractive.empire_items.events.api_events.*
+import com.astrainteractive.empire_items.events.blocks.BlockGenerationEvent
+import com.astrainteractive.empire_items.events.blocks.MushroomBlockBreakEvent
+import com.astrainteractive.empire_items.events.blocks.MushroomBlockPlaceEvent
+import com.astrainteractive.empire_items.events.blocks.MushroomCancelEvent
 import com.astrainteractive.empire_items.events.empireevents.*
-import ru.astrainteractive.astralibs.events.EventListener
-import ru.astrainteractive.astralibs.events.EventManager
-import com.astrainteractive.empire_items.events.blocks.*
-import com.astrainteractive.empire_items.events.resourcepack.ProtocolLibResourcePackEvent
-import com.astrainteractive.empire_items.events.resourcepack.ResourcePackEvent
-
-import com.astrainteractive.empire_items.events.empireevents.MusicDiscsEvent
 import com.astrainteractive.empire_items.events.empireevents.hammer.HammerEvent
 import com.astrainteractive.empire_items.events.genericevents.*
+import com.astrainteractive.empire_items.events.resourcepack.ProtocolLibResourcePackEvent
+import com.astrainteractive.empire_items.events.resourcepack.ResourcePackEvent
 import com.astrainteractive.empire_itemss.api.getPlugin
+import ru.astrainteractive.astralibs.events.EventListener
+import ru.astrainteractive.astralibs.events.EventManager
 
 
 class GenericListener : EventManager {
@@ -21,7 +21,7 @@ class GenericListener : EventManager {
 
     val blocksEventModule = {
         BlockGenerationEvent()
-        BlockHardnessEvent()
+//        BlockHardnessEvent()
         MushroomBlockBreakEvent()
         MushroomBlockPlaceEvent()
         MushroomCancelEvent()
@@ -61,7 +61,7 @@ class GenericListener : EventManager {
         }
         getPlugin("ModelEngine")?.let {
 //            ModelEngineEvent().onEnable(this)
-            ModelEngineEvent()
+//            ModelEngineEvent()
         }
 //        DecorationEvent()
     }
