@@ -3,15 +3,15 @@ package com.astrainteractive.empire_items.gui
 import com.astrainteractive.empire_items.util.EmpireItemsAPIExt.toAstraItemOrItem
 import com.astrainteractive.empire_itemss.api.emoji
 import com.astrainteractive.empire_itemss.api.setDisplayName
-import ru.astrainteractive.astralibs.async.PluginScope
-import ru.astrainteractive.astralibs.menu.AstraMenuSize
-import ru.astrainteractive.astralibs.utils.convertHex
 import com.atrainteractive.empire_items.models.config.GuiConfig
 import kotlinx.coroutines.launch
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
+import ru.astrainteractive.astralibs.async.PluginScope
+import ru.astrainteractive.astralibs.menu.AstraMenuSize
 import ru.astrainteractive.astralibs.menu.PaginatedMenu
+import ru.astrainteractive.astralibs.utils.convertHex
 
 
 class GuiCategories(player: Player, override val playerMenuUtility: PlayerMenuUtility = PlayerMenuUtility(player),private val guiConfig: GuiConfig) :
@@ -27,8 +27,8 @@ class GuiCategories(player: Player, override val playerMenuUtility: PlayerMenuUt
     override val prevPageButton = guiConfig.settings.buttons.prevButton.toAstraItemOrItem()!!.toInventoryButton(45)
 
     override fun onInventoryClicked(e: InventoryClickEvent) {
-        super.onInventoryClicked(e)
         e.isCancelled = true
+        handleChangePageClick(e.slot)
         when (e.slot) {
             backPageButton.index -> {
                 playerMenuUtility.player.closeInventory()
@@ -39,7 +39,7 @@ class GuiCategories(player: Player, override val playerMenuUtility: PlayerMenuUt
                     playerMenuUtility.categoriesPage = page
                     playerMenuUtility.categoryPage = 0
                     playerMenuUtility.categoryId =
-                        guiConfig.categories.values.elementAt(getIndex(e.slot)).id ?: return@launch
+                        guiConfig.categories.values.elementAtOrNull(getIndex(e.slot))?.id ?: return@launch
                     GuiCategory(playerMenuUtility,guiConfig).open()
                 }
             }

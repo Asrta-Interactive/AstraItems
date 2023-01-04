@@ -1,12 +1,10 @@
 package com.astrainteractive.empire_items.events.empireevents
 
 import com.astrainteractive.empire_items.di.empireItemsApiModule
-import ru.astrainteractive.astralibs.events.DSLEvent
-import com.astrainteractive.empire_itemss.api.utils.BukkitConstants
 import com.astrainteractive.empire_itemss.api.empireID
+import com.astrainteractive.empire_itemss.api.utils.BukkitConstants
 import com.destroystokyo.paper.ParticleBuilder
 import org.bukkit.*
-
 import org.bukkit.entity.HumanEntity
 import org.bukkit.entity.Player
 import org.bukkit.event.block.Action
@@ -17,14 +15,16 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import ru.astrainteractive.astralibs.di.getValue
+import ru.astrainteractive.astralibs.events.DSLEvent
 import ru.astrainteractive.astralibs.utils.AstraLibsExtensions.getPersistentData
 
 class GrapplingHook {
     private val empireItemsAPI by empireItemsApiModule
     private val activeHooks = mutableMapOf<String, Location>()
-    val playerQuitEvent = DSLEvent.event(PlayerQuitEvent::class.java) { e ->
+    val playerQuitEvent = DSLEvent.event<PlayerQuitEvent> { e ->
         activeHooks.remove(e.player.name)
     }
+
     private fun unCastHook(itemStack: ItemStack, player: Player) {
         val state = itemStack.itemMeta.getPersistentData(BukkitConstants.GRAPPLING_HOOK) ?: return
         val defaultcmd = empireItemsAPI.itemYamlFilesByID[state.split(";").firstOrNull()]?.customModelData ?: return
@@ -79,7 +79,7 @@ class GrapplingHook {
         .data(null)
         .location(l.world, l.x, l.y, l.z)
 
-    val playerHookShootEvent = DSLEvent.event(PlayerInteractEvent::class.java)  { e ->
+    val playerHookShootEvent = DSLEvent.event<PlayerInteractEvent>  { e ->
         val item = e.player.inventory.itemInMainHand
         item.empireID ?: return@event
         val state = item.itemMeta.getPersistentData(BukkitConstants.GRAPPLING_HOOK) ?: return@event
@@ -123,14 +123,14 @@ class GrapplingHook {
         castHook(item,player,null)
     }
 
-    val itemHeldEvent = DSLEvent.event(PlayerItemHeldEvent::class.java)  { e ->
+    val itemHeldEvent = DSLEvent.event<PlayerItemHeldEvent>  { e ->
         activeHooks[e.player.name] ?: return@event
         val hook = e.player.inventory.getItem(e.previousSlot) ?: return@event
         hook.itemMeta.getPersistentData(BukkitConstants.GRAPPLING_HOOK) ?: return@event
         unCastHook(hook, e.player)
     }
 
-    val playerLeaveEvent = DSLEvent.event(PlayerQuitEvent::class.java)  { e ->
+    val playerLeaveEvent = DSLEvent.event<PlayerQuitEvent>  { e ->
         activeHooks.remove(e.player.name)
     }
 }

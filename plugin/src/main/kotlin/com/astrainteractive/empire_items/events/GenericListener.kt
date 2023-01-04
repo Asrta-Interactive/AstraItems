@@ -40,7 +40,7 @@ class GenericListener : EventManager {
         VoidTotemEvent()
         GunEvent()
         getPlugin("CoreProtect")?.let {
-            CoreInspectEvent()
+//            CoreInspectEvent()
         }
     }
     val genericEvents = {

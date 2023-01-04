@@ -1,8 +1,5 @@
 package com.astrainteractive.empire_items.gui.crafting
 
-import ru.astrainteractive.astralibs.async.PluginScope
-import ru.astrainteractive.astralibs.menu.AstraMenuSize
-import ru.astrainteractive.astralibs.utils.convertHex
 import com.astrainteractive.empire_items.gui.GuiCategory
 import com.astrainteractive.empire_items.gui.PlayerMenuUtility
 import com.astrainteractive.empire_items.gui.toInventoryButton
@@ -15,8 +12,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
-import org.bukkit.inventory.*
+import org.bukkit.inventory.ItemStack
+import ru.astrainteractive.astralibs.async.PluginScope
+import ru.astrainteractive.astralibs.menu.AstraMenuSize
 import ru.astrainteractive.astralibs.menu.PaginatedMenu
+import ru.astrainteractive.astralibs.utils.convertHex
 
 class GuiCrafting(playerMenuUtility: PlayerMenuUtility,private val guiConfig: GuiConfig) : PaginatedMenu() {
     val viewModel = GuiCraftingViewModel(playerMenuUtility, playerMenuUtility.prevItems.last())
@@ -58,8 +58,8 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility,private val guiConfig: Gu
 
 
     override fun onInventoryClicked(e: InventoryClickEvent) {
-        super.onInventoryClicked(e)
         e.isCancelled = true
+        handleChangePageClick(e.slot)
         when (e.slot) {
             backPageButton.index -> {
                 PluginScope.launch {

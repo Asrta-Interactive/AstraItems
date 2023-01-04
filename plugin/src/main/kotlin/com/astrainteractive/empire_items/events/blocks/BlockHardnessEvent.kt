@@ -28,17 +28,17 @@ class BlockHardnessEvent {
 
     private val blockDamageMap = mutableMapOf<String, BreakTimeID>()
 
-    val playerQuitEvent = DSLEvent.event(PlayerQuitEvent::class.java) { e ->
+    val playerQuitEvent = DSLEvent.event<PlayerQuitEvent> { e ->
         blockDamageMap.remove(e.player.name)
     }
 
-    val blockDamageEvent = DSLEvent.event(BlockDamageEvent::class.java) { e ->
+    val blockDamageEvent = DSLEvent.event<BlockDamageEvent> { e ->
         BlockParser.getBlockData(e.block) ?: return@event
         blockDamageMap[e.player.name] = BreakTimeID()
         e.player.sendBlockBreakPacket(e.block, 100)
     }
 
-    val blockBreakEvent = DSLEvent.event(BlockBreakEvent::class.java) { e ->
+    val blockBreakEvent = DSLEvent.event<BlockBreakEvent> { e ->
         e.player.sendBlockBreakPacket(e.block, 100)
         blockDamageMap.remove(e.player.name)
     }
@@ -53,7 +53,7 @@ class BlockHardnessEvent {
     }
 
 
-    val playerBreakingEvent = DSLEvent.event(PlayerAnimationEvent::class.java) { e ->
+    val playerBreakingEvent = DSLEvent.event<PlayerAnimationEvent> { e ->
         val block = e.player.getTargetBlock(null, 10)
         val player = e.player
         val data = BlockParser.getBlockData(block) ?: return@event

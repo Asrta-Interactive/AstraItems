@@ -1,12 +1,12 @@
 package com.astrainteractive.empire_items.commands
 
 import com.astrainteractive.empire_items.di.TranslationModule
-import ru.astrainteractive.astralibs.AstraLibs
-import ru.astrainteractive.astralibs.Logger
-import ru.astrainteractive.astralibs.utils.registerCommand
 import com.astrainteractive.empire_items.util.EmpirePermissions
 import org.bukkit.entity.Player
+import ru.astrainteractive.astralibs.AstraLibs
+import ru.astrainteractive.astralibs.Logger
 import ru.astrainteractive.astralibs.di.getValue
+import ru.astrainteractive.astralibs.utils.registerCommand
 
 /**
  * Reload command handler
@@ -18,7 +18,7 @@ fun CommandManager.espeed() = AstraLibs.registerCommand("espeed") { sender, args
         return@registerCommand
     }
     if (sender!is Player) {
-        Logger.warn("Player only command", tag = CommandManager.TAG)
+        Logger.warn(message="Player only command", tag = CommandManager.TAG)
         return@registerCommand
     }
     val p = sender as Player

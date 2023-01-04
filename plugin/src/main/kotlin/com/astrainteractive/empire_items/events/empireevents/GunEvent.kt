@@ -2,17 +2,10 @@ package com.astrainteractive.empire_items.events.empireevents
 
 import com.astrainteractive.empire_items.di.empireItemsApiModule
 import com.astrainteractive.empire_items.util.EmpireItemsAPIExt.toAstraItemOrItem
-import ru.astrainteractive.astralibs.AstraLibs
-import ru.astrainteractive.astralibs.async.PluginScope
-import ru.astrainteractive.astralibs.async.BukkitMain
-import ru.astrainteractive.astralibs.events.DSLEvent
-import ru.astrainteractive.astralibs.utils.catching
-import ru.astrainteractive.astralibs.utils.valueOfOrNull
-import com.astrainteractive.empire_itemss.api.EmpireItemsAPI
 import com.astrainteractive.empire_itemss.api.empireID
 import com.astrainteractive.empire_itemss.api.explode
-import com.astrainteractive.empire_itemss.api.utils.BukkitConstants
 import com.astrainteractive.empire_itemss.api.models_ext.play
+import com.astrainteractive.empire_itemss.api.utils.BukkitConstants
 import com.atrainteractive.empire_items.models.yml_item.Gun
 import com.atrainteractive.empire_items.models.yml_item.Interact
 import com.comphenix.protocol.PacketType
@@ -22,18 +15,27 @@ import com.destroystokyo.paper.ParticleBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.bukkit.*
+import org.bukkit.Color
+import org.bukkit.Location
+import org.bukkit.Material
+import org.bukkit.Particle
 import org.bukkit.block.BlockFace
 import org.bukkit.entity.Entity
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.event.block.Action
-import org.bukkit.event.player.*
+import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.Damageable
+import ru.astrainteractive.astralibs.AstraLibs
+import ru.astrainteractive.astralibs.async.BukkitMain
+import ru.astrainteractive.astralibs.async.PluginScope
 import ru.astrainteractive.astralibs.di.getValue
+import ru.astrainteractive.astralibs.events.DSLEvent
 import ru.astrainteractive.astralibs.utils.AstraLibsExtensions.getPersistentData
 import ru.astrainteractive.astralibs.utils.AstraLibsExtensions.setPersistentDataType
+import ru.astrainteractive.astralibs.utils.catching
+import ru.astrainteractive.astralibs.utils.valueOfOrNull
 
 class GunEvent {
     private val empireItemsAPI by empireItemsApiModule
@@ -126,7 +128,7 @@ class GunEvent {
     private fun rgbToColor(color: String): Color =
         catching { Color.fromRGB(Integer.decode(color.replace("#", "0x"))) } ?: Color.BLACK
 
-    val playerInteractEvent = DSLEvent.event(PlayerInteractEvent::class.java) { e ->
+    val playerInteractEvent = DSLEvent.event<PlayerInteractEvent> { e ->
         PluginScope.launch(Dispatchers.IO) event@{
             val itemStack = e.item ?: return@event
             val id = itemStack.empireID

@@ -24,6 +24,7 @@ import ru.astrainteractive.astralibs.EmpireSerializer
 import ru.astrainteractive.astralibs.di.Injector
 import ru.astrainteractive.astralibs.di.module
 import ru.astrainteractive.astralibs.di.reloadable
+import ru.astrainteractive.astralibs.utils.toClass
 
 val TranslationModule = reloadable {
     Translations()

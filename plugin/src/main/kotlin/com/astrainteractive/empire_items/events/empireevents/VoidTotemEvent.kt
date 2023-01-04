@@ -1,10 +1,10 @@
 package com.astrainteractive.empire_items.events.empireevents
 
-import ru.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.empire_itemss.api.utils.BukkitConstants
 import org.bukkit.entity.Player
 import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.inventory.ItemStack
+import ru.astrainteractive.astralibs.events.DSLEvent
 import ru.astrainteractive.astralibs.utils.AstraLibsExtensions.hasPersistentData
 
 class VoidTotemEvent {
@@ -12,7 +12,7 @@ class VoidTotemEvent {
     fun ItemStack.isDeathTotem() =
         itemMeta.hasPersistentData(BukkitConstants.VOID_TOTEM) == true
 
-    val entityResurrectEvent = DSLEvent.event(EntityDamageEvent::class.java)  { e ->
+    val entityResurrectEvent = DSLEvent.event<EntityDamageEvent>  { e ->
         if (e.entity !is Player)
             return@event
         if (e.cause != EntityDamageEvent.DamageCause.VOID)

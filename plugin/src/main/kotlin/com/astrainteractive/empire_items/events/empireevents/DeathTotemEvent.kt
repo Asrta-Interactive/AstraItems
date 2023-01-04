@@ -1,7 +1,5 @@
 package com.astrainteractive.empire_items.events.empireevents
 
-import ru.astrainteractive.astralibs.events.DSLEvent
-import ru.astrainteractive.astralibs.utils.HEX
 import com.astrainteractive.empire_itemss.api.utils.BukkitConstants
 import org.bukkit.ChatColor
 import org.bukkit.entity.Player
@@ -9,7 +7,9 @@ import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerItemHeldEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.PlayerInventory
+import ru.astrainteractive.astralibs.events.DSLEvent
 import ru.astrainteractive.astralibs.utils.AstraLibsExtensions.hasPersistentData
+import ru.astrainteractive.astralibs.utils.HEX
 
 class DeathTotemEvent{
 
@@ -19,10 +19,10 @@ class DeathTotemEvent{
     private fun isHoldTotem(inv:PlayerInventory): Boolean =
          inv.itemInMainHand.isDeathTotem() || inv.itemInOffHand.isDeathTotem()
 
-    val playerInteractEvent = DSLEvent.event(PlayerInteractEvent::class.java)  { e ->
+    val playerInteractEvent = DSLEvent.event<PlayerInteractEvent>  { e ->
         playEvent(e.player)
     }
-    val playerItemHeldEvent = DSLEvent.event(PlayerItemHeldEvent::class.java)  { e ->
+    val playerItemHeldEvent = DSLEvent.event<PlayerItemHeldEvent>  { e ->
         playEvent(e.player)
     }
 

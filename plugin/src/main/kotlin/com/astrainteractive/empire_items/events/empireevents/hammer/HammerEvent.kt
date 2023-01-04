@@ -13,11 +13,11 @@ import java.util.*
 class HammerEvent {
     private val blockFace: MutableMap<UUID, Int> = HashMap()
 
-    val playerQuitEvent = DSLEvent.event(PlayerQuitEvent::class.java) { e ->
+    val playerQuitEvent = DSLEvent.event<PlayerQuitEvent> { e ->
         blockFace.remove(e.player.uniqueId)
     }
 
-    val playerInteractEvent = DSLEvent.event(PlayerInteractEvent::class.java) { e ->
+    val playerInteractEvent = DSLEvent.event<PlayerInteractEvent> { e ->
         val side = when (e.blockFace) {
             BlockFace.UP, BlockFace.DOWN -> 0
             BlockFace.SOUTH, BlockFace.NORTH -> 1
@@ -26,7 +26,7 @@ class HammerEvent {
         blockFace[e.player.uniqueId] = side
     }
 
-    val playerBreakEvent = DSLEvent.event(BlockBreakEvent::class.java) { e ->
+    val playerBreakEvent = DSLEvent.event<BlockBreakEvent> { e ->
         val p = e.player
         val b = e.block
         if (e.isCancelled) return@event

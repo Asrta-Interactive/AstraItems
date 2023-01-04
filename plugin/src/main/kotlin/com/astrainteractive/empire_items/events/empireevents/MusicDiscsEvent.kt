@@ -2,10 +2,6 @@ package com.astrainteractive.empire_items.events.empireevents
 
 import com.astrainteractive.empire_items.di.empireItemsApiModule
 import com.astrainteractive.empire_items.util.EmpireItemsAPIExt.toAstraItemOrItem
-import ru.astrainteractive.astralibs.events.DSLEvent
-import ru.astrainteractive.astralibs.events.EventListener
-import ru.astrainteractive.astralibs.utils.HEX
-import com.astrainteractive.empire_itemss.api.EmpireItemsAPI
 import com.astrainteractive.empire_itemss.api.empireID
 import com.atrainteractive.empire_items.models.yml_item.YmlItem
 import net.md_5.bungee.api.ChatMessageType
@@ -20,6 +16,9 @@ import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockExplodeEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import ru.astrainteractive.astralibs.di.getValue
+import ru.astrainteractive.astralibs.events.DSLEvent
+import ru.astrainteractive.astralibs.events.EventListener
+import ru.astrainteractive.astralibs.utils.HEX
 
 /**
  * Эвент кастомных музыкальных дисков
@@ -52,7 +51,7 @@ class MusicDiscsEvent:EventListener{
     /**
      * Срабатывает когда игрок пытается всунуть музкыальный диск.
      */
-    val onJukeboxInteract = DSLEvent.event(PlayerInteractEvent::class.java)  { e ->
+    val onJukeboxInteract = DSLEvent.event<PlayerInteractEvent>  { e ->
         val jukebox = isJukebox(e) ?: return@event
 
         if (activeJukeboxes.contains(jukebox.location)) {

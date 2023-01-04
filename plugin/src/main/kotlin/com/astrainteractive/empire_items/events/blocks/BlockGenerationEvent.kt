@@ -11,10 +11,10 @@ import ru.astrainteractive.astralibs.events.DSLEvent
 class BlockGenerationEvent {
     private val blockGenerationModule by blockGenerationApiModule
 
-    val chunkLoadEvent = DSLEvent.event(ChunkLoadEvent::class.java) { e ->
+    val chunkLoadEvent = DSLEvent.event<ChunkLoadEvent> { e ->
         blockGenerationModule.validateChunk(e.chunk, e.isNewChunk)
     }
-    val playerChunkLoadEvent = DSLEvent.event(PlayerChunkLoadEvent::class.java) { e ->
+    val playerChunkLoadEvent = DSLEvent.event<PlayerChunkLoadEvent>{ e ->
         blockGenerationModule.validateChunk(e.chunk, false)
     }
 }

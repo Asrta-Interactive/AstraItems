@@ -2,10 +2,10 @@ package com.astrainteractive.empire_items.events.genericevents
 
 import com.astrainteractive.empire_items.di.empireItemsApiModule
 import com.astrainteractive.empire_items.di.empireModelEngineApiModule
-import ru.astrainteractive.astralibs.events.DSLEvent
-import com.astrainteractive.empire_itemss.api.models_ext.generateItem
 import com.astrainteractive.empire_itemss.api.items.BlockParser
+import com.astrainteractive.empire_itemss.api.models_ext.generateItem
 import com.astrainteractive.empire_itemss.api.models_ext.performDrop
+import com.atrainteractive.empire_items.models.Loot
 import com.atrainteractive.empire_items.models.yml_item.YmlItem
 import org.bukkit.Location
 import org.bukkit.block.Block
@@ -17,6 +17,7 @@ import org.bukkit.event.player.PlayerFishEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.loot.Lootable
 import ru.astrainteractive.astralibs.di.getValue
+import ru.astrainteractive.astralibs.events.DSLEvent
 
 class ItemDropEvent() {
     private val empireItemsAPI by empireItemsApiModule
@@ -36,14 +37,14 @@ class ItemDropEvent() {
     }
 
 
-    val onFishingEvent = DSLEvent.event(PlayerFishEvent::class.java) { e ->
+    val onFishingEvent = DSLEvent.event<PlayerFishEvent> { e ->
         val caught = e.caught ?: return@event
         this.empireItemsAPI.dropByDropFrom["PlayerFishEvent"]?.forEach {
             it.performDrop(caught.location)
         }
     }
 
-    val onBlockBreak = DSLEvent.event(BlockBreakEvent::class.java) { e ->
+    val onBlockBreak = DSLEvent.event<BlockBreakEvent> { e ->
 
         if (e.isCancelled) return@event
 //        if (!KProtectionLib.canBuild(e.player, e.block.location)) return@event
@@ -62,21 +63,19 @@ class ItemDropEvent() {
     }
 
 
-    val inventoryOpenEvent = DSLEvent.event(PlayerInteractEvent::class.java) { e ->
+    val inventoryOpenEvent = DSLEvent.event<PlayerInteractEvent> { e ->
         if (e.action != Action.RIGHT_CLICK_BLOCK)
             return@event
         val block = e.clickedBlock ?: return@event
-        if (block.state !is Chest)
-            return@event
-        val chest = block.state as Chest
-        val lootable = chest as Lootable
+        val chest = block.state as? Chest ?: return@event
+        val lootable = chest as? Lootable ?: return@event
         lootable.lootTable ?: return@event
-        empireItemsAPI.dropByDropFrom["PlayerInteractEvent"]?.forEach {
-            it.generateItem()?.let { chest.blockInventory.addItem(it) }
-        }
+        val items = empireItemsAPI.dropByDropFrom["PlayerInteractEvent"]?.mapNotNull(Loot::generateItem)?:return@event
+
+        chest.blockInventory.addItem(*items.toTypedArray())
     }
 
-    val onMobDeath = DSLEvent.event(EntityDeathEvent::class.java) { e ->
+    val onMobDeath = DSLEvent.event<EntityDeathEvent> { e ->
         val entityInfo = empireModelEngineAPI.entityTagHolder.get(e.entity)
 
         val dropFrom = entityInfo?.empireID ?: e.entity.type.name

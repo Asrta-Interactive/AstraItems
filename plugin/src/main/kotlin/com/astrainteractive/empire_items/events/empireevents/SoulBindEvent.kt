@@ -1,13 +1,12 @@
 package com.astrainteractive.empire_items.events.empireevents
 
-import ru.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.empire_itemss.api.utils.BukkitConstants
-
 import org.bukkit.Location
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.event.player.PlayerRespawnEvent
 import org.bukkit.inventory.ItemStack
+import ru.astrainteractive.astralibs.events.DSLEvent
 import ru.astrainteractive.astralibs.utils.AstraLibsExtensions.hasPersistentData
 
 class SoulBindEvent{
@@ -16,7 +15,7 @@ class SoulBindEvent{
     val playerDiedMap= mutableMapOf<String,MutableList<ItemStack>>()
     val playerDiedLocationMap = mutableMapOf<String,Location>()
 
-    val playerDieEvent = DSLEvent.event(PlayerDeathEvent::class.java)  { e ->
+    val playerDieEvent = DSLEvent.event<PlayerDeathEvent>  { e ->
         val player = e.entity
         playerDiedMap[player.uniqueId.toString()] = mutableListOf()
         for (item in e.drops.toList()){
@@ -31,7 +30,7 @@ class SoulBindEvent{
             playerDiedLocationMap[player.uniqueId.toString()] = player.location
     }
 
-    val playerRespawnEvent = DSLEvent.event(PlayerRespawnEvent::class.java)  { e ->
+    val playerRespawnEvent = DSLEvent.event<PlayerRespawnEvent>  { e ->
         val player = e.player
         for (item in playerDiedMap[player.uniqueId.toString()]?: mutableListOf()){
             player.inventory.addItem(item)
@@ -39,7 +38,7 @@ class SoulBindEvent{
         playerDiedMap.remove(e.player.uniqueId.toString())
         playerDiedLocationMap.remove(e.player.uniqueId.toString())
     }
-    val playerDisconnectEvent = DSLEvent.event(PlayerQuitEvent::class.java)  { e ->
+    val playerDisconnectEvent = DSLEvent.event<PlayerQuitEvent>  { e ->
         val location = playerDiedLocationMap[e.player.uniqueId.toString()]?:return@event
         for (item in playerDiedMap[e.player.uniqueId.toString()]?: mutableListOf())
             location.world?.dropItem(location,item)?:continue

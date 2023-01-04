@@ -1,11 +1,8 @@
 package com.astrainteractive.empire_items.util.resource_pack
 import com.astrainteractive.empire_items.di.empireItemsApiModule
-import ru.astrainteractive.astralibs.AstraLibs
-import ru.astrainteractive.astralibs.Logger
-import com.astrainteractive.empire_itemss.api.EmpireItemsAPI
-import com.astrainteractive.empire_itemss.api.items.BlockParser
 import com.astrainteractive.empire_items.util.Timer
 import com.astrainteractive.empire_items.util.resource_pack.data.*
+import com.astrainteractive.empire_itemss.api.items.BlockParser
 import com.atrainteractive.empire_items.models.YmlSound
 import com.atrainteractive.empire_items.models.yml_item.YmlItem
 import com.google.gson.Gson
@@ -13,6 +10,8 @@ import com.google.gson.GsonBuilder
 import com.google.gson.JsonParser
 import kotlinx.coroutines.runBlocking
 import org.bukkit.Material
+import ru.astrainteractive.astralibs.AstraLibs
+import ru.astrainteractive.astralibs.Logger
 import ru.astrainteractive.astralibs.di.getValue
 import java.io.File
 import java.io.InputStreamReader
@@ -323,29 +322,29 @@ class ResourcePack {
         Timer().calculate {
             generateFont()
         }.also {
-            Logger.log("generateFont completed it ${it}")
+            Logger.log("LOG","generateFont completed it ${it}")
         }
         Timer().calculate {
             generateSounds()
         }.also {
-            Logger.log("generateSounds completed it ${it}")
+            Logger.log("LOG","generateSounds completed it ${it}")
         }
         Timer().calculate {
             runBlocking {
                 generateItems()
             }
         }.also {
-            Logger.log("generateItems completed it ${it}")
+            Logger.log("LOG","generateItems completed it ${it}")
         }
         Timer().calculate {
             sortItems()
         }.also {
-            Logger.log("sortItems completed it ${it}")
+            Logger.log("LOG","sortItems completed it ${it}")
         }
         Timer().calculate {
             generateBlocks()
         }.also {
-            Logger.log("generateBlocks completed it ${it}")
+            Logger.log("LOG","generateBlocks completed it ${it}")
         }
 
     }

@@ -1,9 +1,6 @@
 package com.astrainteractive.empire_items.gui
 
 import com.astrainteractive.empire_items.di.GuiConfigModule
-import ru.astrainteractive.astralibs.async.PluginScope
-import ru.astrainteractive.astralibs.menu.AstraMenuSize
-import ru.astrainteractive.astralibs.utils.convertHex
 import com.astrainteractive.empire_items.gui.crafting.GuiCrafting
 import com.astrainteractive.empire_items.util.EmpireItemsAPIExt.toAstraItemOrItem
 import com.astrainteractive.empire_itemss.api.emoji
@@ -11,8 +8,10 @@ import com.atrainteractive.empire_items.models.config.GuiConfig
 import kotlinx.coroutines.launch
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
-import ru.astrainteractive.astralibs.di.getValue
+import ru.astrainteractive.astralibs.async.PluginScope
+import ru.astrainteractive.astralibs.menu.AstraMenuSize
 import ru.astrainteractive.astralibs.menu.PaginatedMenu
+import ru.astrainteractive.astralibs.utils.convertHex
 
 class GuiCategory(override val playerMenuUtility: PlayerMenuUtility, private val guiConfig: GuiConfig) : PaginatedMenu() {
 
@@ -35,8 +34,8 @@ class GuiCategory(override val playerMenuUtility: PlayerMenuUtility, private val
     }
 
     override fun onInventoryClicked(e: InventoryClickEvent) {
-        super.onInventoryClicked(e)
         e.isCancelled = true
+        handleChangePageClick(e.slot)
         when (e.slot) {
             backPageButton.index -> {
                 PluginScope.launch {
@@ -49,8 +48,9 @@ class GuiCategory(override val playerMenuUtility: PlayerMenuUtility, private val
             }
 
             else -> {
-                PluginScope.launch {
-                    playerMenuUtility.prevItems.add(category.items[getIndex(e.slot)])
+                val index = getIndex(e.slot)
+                PluginScope.launch() {
+                    playerMenuUtility.prevItems.add(category.items.getOrNull(index)?:return@launch)
                     GuiCrafting(playerMenuUtility, GuiConfigModule.value).open()
                 }
             }

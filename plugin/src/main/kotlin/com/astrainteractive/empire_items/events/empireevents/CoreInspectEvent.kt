@@ -1,16 +1,16 @@
 package com.astrainteractive.empire_items.events.empireevents
 
-import ru.astrainteractive.astralibs.AstraLibs
-import ru.astrainteractive.astralibs.events.DSLEvent
-import ru.astrainteractive.astralibs.utils.HEX
 import com.astrainteractive.empire_itemss.api.utils.BukkitConstants
 import net.coreprotect.CoreProtect
 import net.coreprotect.CoreProtectAPI
 import org.bukkit.ChatColor
 import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEvent
+import ru.astrainteractive.astralibs.AstraLibs
+import ru.astrainteractive.astralibs.events.DSLEvent
 import ru.astrainteractive.astralibs.utils.AstraLibsExtensions.getPersistentData
 import ru.astrainteractive.astralibs.utils.AstraLibsExtensions.setPersistentDataType
+import ru.astrainteractive.astralibs.utils.HEX
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -29,7 +29,7 @@ class CoreInspectEvent{
 
 
 
-    val onPlayerInteract = DSLEvent.event(PlayerInteractEvent::class.java)  { e ->
+    val onPlayerInteract = DSLEvent.event<PlayerInteractEvent>  { e ->
         coreProtect ?: return@event
         val itemStack = e.item?:return@event
         val itemMeta = itemStack.itemMeta?:return@event

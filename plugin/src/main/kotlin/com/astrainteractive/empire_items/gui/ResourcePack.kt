@@ -1,17 +1,17 @@
 package com.astrainteractive.empire_items.gui
 
 import com.atrainteractive.empire_items.models.config.Config
-import ru.astrainteractive.astralibs.Logger
-import ru.astrainteractive.astralibs.menu.AstraMenuSize
-import ru.astrainteractive.astralibs.menu.Menu
-import ru.astrainteractive.astralibs.utils.HEX
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.ItemStack
+import ru.astrainteractive.astralibs.Logger
+import ru.astrainteractive.astralibs.menu.AstraMenuSize
 import ru.astrainteractive.astralibs.menu.DefaultPlayerHolder
 import ru.astrainteractive.astralibs.menu.IPlayerHolder
+import ru.astrainteractive.astralibs.menu.Menu
+import ru.astrainteractive.astralibs.utils.HEX
 
 class ResourcePack(val player: Player,val config:Config) : Menu() {
     override var menuTitle: String = "Принять ресурс-пак?"
@@ -60,21 +60,22 @@ class ResourcePack(val player: Player,val config:Config) : Menu() {
     }
 
     override fun onInventoryClicked(e: InventoryClickEvent) {
+        e.isCancelled = true
         when (e.slot) {
             acceptButtonIndex -> {
+                playerMenuUtility.player.closeInventory()
                 player.setResourcePack(config.resourcePack.link)
                 Logger.log("Игрок ${player.name} согласился скачать ресурс-пак", "ResourcePackMenu")
             }
 
             backButtonIndex, denyButtonIndex -> {
-                inventory.close()
+                playerMenuUtility.player.closeInventory()
                 Logger.log("Игрок ${player.name} отказался скачать ресурс-пак", "ResourcePackMenu")
             }
         }
     }
 
-    override fun onInventoryClose(it: InventoryCloseEvent) {
-    }
+    override fun onInventoryClose(it: InventoryCloseEvent) = Unit
 
     override fun onCreated() {
         inventory.setItem(acceptButtonIndex, acceptButton)
