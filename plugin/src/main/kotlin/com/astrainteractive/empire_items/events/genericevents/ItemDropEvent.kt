@@ -10,6 +10,7 @@ import com.atrainteractive.empire_items.models.yml_item.YmlItem
 import org.bukkit.Location
 import org.bukkit.block.Block
 import org.bukkit.block.Chest
+import org.bukkit.event.EventPriority
 import org.bukkit.event.block.Action
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.entity.EntityDeathEvent
@@ -44,9 +45,8 @@ class ItemDropEvent() {
         }
     }
 
-    val onBlockBreak = DSLEvent.event<BlockBreakEvent> { e ->
+    val onBlockBreak = DSLEvent.event<BlockBreakEvent>(eventPriority = EventPriority.HIGHEST) { e ->
 
-        if (e.isCancelled) return@event
 //        if (!KProtectionLib.canBuild(e.player, e.block.location)) return@event
 
 //        if (!KProtectionLib.canBreak(e.player, e.block.location)) return@event
@@ -56,6 +56,7 @@ class ItemDropEvent() {
         val customBlockId = customBlock?.id
         if (isDropHereAbused(customBlock, block)) return@event
         val dropFrom = customBlockId ?: block.blockData.material.name
+        if (e.isCancelled) return@event
         empireItemsAPI.dropByDropFrom[dropFrom]?.forEach {
             it.performDrop(block.location)
         } ?: return@event
