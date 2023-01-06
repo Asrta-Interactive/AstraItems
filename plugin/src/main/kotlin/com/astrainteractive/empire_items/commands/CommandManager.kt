@@ -5,6 +5,7 @@ import com.astrainteractive.empire_items.di.GuiConfigModule
 import com.astrainteractive.empire_items.di.empireUtilsModule
 import com.astrainteractive.empire_items.di.fontApiModule
 import com.astrainteractive.empire_items.gui.GuiCategories
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.bukkit.entity.Player
 import ru.astrainteractive.astralibs.AstraLibs
@@ -48,9 +49,7 @@ fun CommandManager.emgui() = AstraLibs.instance.registerCommand("emgui") {
         Logger.warn(message="Player only command", tag = CommandManager.TAG)
         return@registerCommand
     }
-    PluginScope.launch {
-        GuiCategories(sender, guiConfig = guiConfig).open()
-    }
+    PluginScope.launch(Dispatchers.IO) { GuiCategories(sender, guiConfig = guiConfig).open() }
 }
 
 fun CommandManager.emojiBook() = AstraLibs.instance.registerCommand("emojis") {

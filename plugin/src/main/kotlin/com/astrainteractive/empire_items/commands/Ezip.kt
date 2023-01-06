@@ -4,6 +4,7 @@ import com.astrainteractive.empire_items.di.TranslationModule
 import com.astrainteractive.empire_items.util.EmpirePermissions
 import com.astrainteractive.empire_items.util.resource_pack.ResourcePack
 import com.astrainteractive.empire_items.util.resource_pack.Zipper
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import ru.astrainteractive.astralibs.AstraLibs
 import ru.astrainteractive.astralibs.async.PluginScope
@@ -14,7 +15,7 @@ private val translations by TranslationModule
 class Ezip {
     val ezip = AstraLibs.instance.registerCommand("ezip") {
         if (!sender.hasPermission(EmpirePermissions.EZIP)) return@registerCommand
-        PluginScope.launch {
+        PluginScope.launch(Dispatchers.IO) {
             sender.sendMessage(translations.zipStarted)
             ResourcePack.generate()
             if (Zipper.zipAll(

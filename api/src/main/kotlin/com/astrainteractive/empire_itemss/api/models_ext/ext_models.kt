@@ -6,8 +6,6 @@ import com.atrainteractive.empire_items.models.Loot
 import com.atrainteractive.empire_items.models.VillagerTradeInfo
 import com.atrainteractive.empire_items.models.yml_item.Interact
 import com.destroystokyo.paper.ParticleBuilder
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import org.bukkit.Color
 import org.bukkit.Location
 import org.bukkit.Particle
@@ -19,8 +17,6 @@ import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import ru.astrainteractive.astralibs.AstraLibs
 import ru.astrainteractive.astralibs.Logger
-import ru.astrainteractive.astralibs.async.BukkitMain
-import ru.astrainteractive.astralibs.async.PluginScope
 import ru.astrainteractive.astralibs.utils.valueOfOrNull
 import kotlin.random.Random
 private val empireItemsAPI: EmpireItemsAPI
@@ -71,9 +67,7 @@ fun Interact.PlayParticle.play(location: Location) {
 }
 
 fun Interact.PlaySound.play(l: Location) {
-    PluginScope.launch(Dispatchers.BukkitMain) {
-        l.world.playSound(l, name, volume, pitch)
-    }
+    l.world.playSound(l, name, volume, pitch)
 }
 
 fun Interact.PlayCommand.play(player: Player?) {

@@ -27,8 +27,7 @@ abstract class AbstractPotionEnchant : EmpireEnchantEvent() {
             val inv = player.inventory
             listOfNotNull(inv.helmet, inv.chestplate, inv.leggings, inv.boots,inv.itemInMainHand,inv.itemInOffHand).forEach items@{
                 val level = getEnchantLevel(it) ?: return@items
-
-                PluginScope.launch(Dispatchers.BukkitMain) {
+                Bukkit.getScheduler().callSyncMethod(AstraLibs.instance){
                     player.addPotionEffect(
                         PotionEffect(
                             potionEffectType,

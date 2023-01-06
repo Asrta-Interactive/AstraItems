@@ -4,6 +4,7 @@ import com.astrainteractive.empire_items.di.craftingApiModule
 import com.astrainteractive.empire_itemss.api.empireID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.bukkit.entity.Player
 import org.bukkit.event.entity.EntityPickupItemEvent
 import org.bukkit.event.inventory.CraftItemEvent
@@ -51,12 +52,12 @@ class PlayerShowRecipeKeyEvent {
         itemStack: ItemStack,
         player: Player
     ) {
-        PluginScope.launch {
+        PluginScope.launch(Dispatchers.IO) {
             val mainItemId = itemStack.empireID ?: itemStack.type.name
             val ids = mutableListOf(mainItemId).apply { addAll(craftingApi.usedInCraft(mainItemId)) }
             val toDiscover =
                 ids.flatMap { craftingApi.getKeysById(it) ?: listOf() }.filter { !player.hasDiscoveredRecipe(it) }
-            PluginScope.launch(Dispatchers.BukkitMain) {
+            withContext(Dispatchers.BukkitMain) {
                 toDiscover.forEach {
                     player.discoverRecipe(it)
                 }

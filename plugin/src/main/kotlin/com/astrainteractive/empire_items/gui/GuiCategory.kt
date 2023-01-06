@@ -5,6 +5,7 @@ import com.astrainteractive.empire_items.gui.crafting.GuiCrafting
 import com.astrainteractive.empire_items.util.EmpireItemsAPIExt.toAstraItemOrItem
 import com.astrainteractive.empire_itemss.api.emoji
 import com.atrainteractive.empire_items.models.config.GuiConfig
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
@@ -38,7 +39,7 @@ class GuiCategory(override val playerMenuUtility: PlayerMenuUtility, private val
         handleChangePageClick(e.slot)
         when (e.slot) {
             backPageButton.index -> {
-                PluginScope.launch {
+                PluginScope.launch(Dispatchers.IO) {
                     GuiCategories(playerMenuUtility.player, guiConfig = GuiConfigModule.value).open()
                 }
             }
@@ -49,7 +50,7 @@ class GuiCategory(override val playerMenuUtility: PlayerMenuUtility, private val
 
             else -> {
                 val index = getIndex(e.slot)
-                PluginScope.launch() {
+                PluginScope.launch(Dispatchers.IO) {
                     playerMenuUtility.prevItems.add(category.items.getOrNull(index)?:return@launch)
                     GuiCrafting(playerMenuUtility, GuiConfigModule.value).open()
                 }

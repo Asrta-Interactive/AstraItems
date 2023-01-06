@@ -3,11 +3,9 @@ package com.astrainteractive.empire_items.enchants.enchants
 import com.astrainteractive.empire_items.enchants.core.EmpireEnchantApi
 import com.astrainteractive.empire_items.enchants.core.EmpireEnchantEvent
 import com.astrainteractive.empire_items.enchants.core.EmpireEnchants
-import ru.astrainteractive.astralibs.async.PluginScope
 import com.atrainteractive.empire_items.models.enchants.EmpireEnchantsConfig
 import com.atrainteractive.empire_items.models.enchants.GenericValueEnchant
 import com.destroystokyo.paper.event.player.PlayerJumpEvent
-import kotlinx.coroutines.launch
 import org.bukkit.Material
 import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.EntityDamageByEntityEvent
@@ -29,11 +27,9 @@ class MegaJump(configModule: IDependency<EmpireEnchantsConfig>): EmpireEnchantEv
         val sum = e.player.inventory.armorContents?.mapNotNull {
             it?.let { getEnchantLevel(it) }?.times(empireEnchant.value)
         }?.sum()?:return
-        PluginScope.launch {
-            val total = empireEnchant.value
-            if (e.player.isSneaking)
-                e.player.velocity = e.to.subtract(e.from).toVector().multiply(sum)
-        }
+        val total = empireEnchant.value
+        if (e.player.isSneaking)
+            e.player.velocity = e.to.subtract(e.from).toVector().multiply(sum)
     }
     override fun onDisable() {
         EntityDamageByEntityEvent.getHandlerList().unregister(this)

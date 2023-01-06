@@ -4,6 +4,7 @@ import com.astrainteractive.empire_items.util.EmpireItemsAPIExt.toAstraItemOrIte
 import com.astrainteractive.empire_itemss.api.emoji
 import com.astrainteractive.empire_itemss.api.setDisplayName
 import com.atrainteractive.empire_items.models.config.GuiConfig
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
@@ -35,7 +36,7 @@ class GuiCategories(player: Player, override val playerMenuUtility: PlayerMenuUt
             }
 
             else -> {
-                PluginScope.launch {
+                PluginScope.launch(Dispatchers.IO) {
                     playerMenuUtility.categoriesPage = page
                     playerMenuUtility.categoryPage = 0
                     playerMenuUtility.categoryId =

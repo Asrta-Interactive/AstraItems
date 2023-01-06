@@ -62,7 +62,7 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility,private val guiConfig: Gu
         handleChangePageClick(e.slot)
         when (e.slot) {
             backPageButton.index -> {
-                PluginScope.launch {
+                PluginScope.launch(Dispatchers.IO) {
                     playerMenuUtility.prevItems.removeLast()
                     if (playerMenuUtility.prevItems.isEmpty())
                         GuiCategory(playerMenuUtility,guiConfig).open()

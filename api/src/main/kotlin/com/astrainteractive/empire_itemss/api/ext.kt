@@ -3,8 +3,6 @@ package com.astrainteractive.empire_itemss.api
 import com.astrainteractive.empire_itemss.api.utils.BukkitConstants
 import com.astrainteractive.empire_itemss.api.utils.EmpireUtils
 import com.google.common.io.Files
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.attribute.Attribute
@@ -15,8 +13,6 @@ import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 import ru.astrainteractive.astralibs.AstraLibs
-import ru.astrainteractive.astralibs.async.BukkitMain
-import ru.astrainteractive.astralibs.async.PluginScope
 import ru.astrainteractive.astralibs.file_manager.FileManager
 import ru.astrainteractive.astralibs.utils.HEX
 import ru.astrainteractive.astralibs.utils.persistence.Persistence.getPersistentData
@@ -70,10 +66,7 @@ fun calcChance(chance: Double) = chance >= Random.nextDouble(0.0, 100.0)
 fun calcChance(chance: Float) = calcChance(chance.toDouble())
 
 fun Location.playSound(name: String?) {
-    PluginScope.launch(Dispatchers.BukkitMain) {
-        this@playSound.world.playSound(this@playSound, name ?: return@launch, 2f, 1f)
-    }
-
+    this@playSound.world.playSound(this@playSound, name ?: return@playSound, 2f, 1f)
 }
 
 fun Location.getBiome() = world.getBiome(this)

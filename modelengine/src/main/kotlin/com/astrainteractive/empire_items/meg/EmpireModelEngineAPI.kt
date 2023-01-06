@@ -154,7 +154,7 @@ class EmpireModelEngineAPI(
                 damage / max(1.0, distance)
             else damage
 
-            PluginScope.launch(Dispatchers.BukkitMain) {
+            withContext(Dispatchers.BukkitMain) {
                 if ((damager as LivingEntity).health > 0)
                     (entity as LivingEntity).damage(calculatedDamage, damager)
                 empireEntity.ymlMob.events["onDamage"]?.playSound?.play(damager.location)
