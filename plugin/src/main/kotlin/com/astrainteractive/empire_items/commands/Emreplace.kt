@@ -6,10 +6,10 @@ import com.astrainteractive.empire_itemss.api.empireID
 import org.bukkit.entity.Player
 import ru.astrainteractive.astralibs.AstraLibs
 import ru.astrainteractive.astralibs.Logger
+import ru.astrainteractive.astralibs.commands.registerCommand
 import ru.astrainteractive.astralibs.di.getValue
-import ru.astrainteractive.astralibs.utils.registerCommand
 
-fun CommandManager.emReplace() = AstraLibs.registerCommand("emreplace") {sender,args->
+fun CommandManager.emReplace() = AstraLibs.instance.registerCommand("emreplace") {
     val translation by TranslationModule
     if (sender !is Player) {
         Logger.warn(message="Player only command", tag = CommandManager.TAG)

@@ -18,10 +18,10 @@ import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.inventory.meta.LeatherArmorMeta
 import org.bukkit.inventory.meta.PotionMeta
 import org.bukkit.persistence.PersistentDataType
-import ru.astrainteractive.astralibs.utils.AstraLibsExtensions.setPersistentDataType
-import ru.astrainteractive.astralibs.utils.BukkitConstant
 import ru.astrainteractive.astralibs.utils.HEX
 import ru.astrainteractive.astralibs.utils.convertHex
+import ru.astrainteractive.astralibs.utils.persistence.BukkitConstant
+import ru.astrainteractive.astralibs.utils.persistence.Persistence.setPersistentDataType
 import ru.astrainteractive.astralibs.utils.valueOfOrNull
 
 fun YmlItem.toItemStack(amount: Int = 1) = ItemStackBuilder(this,amount).build()

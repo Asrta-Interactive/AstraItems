@@ -8,9 +8,9 @@ import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEvent
 import ru.astrainteractive.astralibs.AstraLibs
 import ru.astrainteractive.astralibs.events.DSLEvent
-import ru.astrainteractive.astralibs.utils.AstraLibsExtensions.getPersistentData
-import ru.astrainteractive.astralibs.utils.AstraLibsExtensions.setPersistentDataType
 import ru.astrainteractive.astralibs.utils.HEX
+import ru.astrainteractive.astralibs.utils.persistence.Persistence.getPersistentData
+import ru.astrainteractive.astralibs.utils.persistence.Persistence.setPersistentDataType
 import java.text.SimpleDateFormat
 import java.util.*
 

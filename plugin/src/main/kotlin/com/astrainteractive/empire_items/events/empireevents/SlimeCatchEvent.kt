@@ -6,7 +6,7 @@ import org.bukkit.entity.EntityType
 import org.bukkit.entity.Slime
 import org.bukkit.event.player.PlayerInteractEntityEvent
 import ru.astrainteractive.astralibs.events.DSLEvent
-import ru.astrainteractive.astralibs.utils.AstraLibsExtensions.getPersistentData
+import ru.astrainteractive.astralibs.utils.persistence.Persistence.getPersistentData
 
 class SlimeCatchEvent {
 

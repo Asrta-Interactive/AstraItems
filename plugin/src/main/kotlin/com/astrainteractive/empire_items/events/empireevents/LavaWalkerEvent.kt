@@ -15,7 +15,7 @@ import org.bukkit.inventory.meta.ItemMeta
 import ru.astrainteractive.astralibs.async.PluginScope
 import ru.astrainteractive.astralibs.di.getValue
 import ru.astrainteractive.astralibs.events.DSLEvent
-import ru.astrainteractive.astralibs.utils.AstraLibsExtensions.hasPersistentData
+import ru.astrainteractive.astralibs.utils.persistence.Persistence.hasPersistentData
 
 class LavaWalkerEvent{
     private val blockPlacer by blockPlacerModule

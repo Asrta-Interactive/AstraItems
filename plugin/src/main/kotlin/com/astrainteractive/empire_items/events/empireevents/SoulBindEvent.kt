@@ -7,7 +7,7 @@ import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.event.player.PlayerRespawnEvent
 import org.bukkit.inventory.ItemStack
 import ru.astrainteractive.astralibs.events.DSLEvent
-import ru.astrainteractive.astralibs.utils.AstraLibsExtensions.hasPersistentData
+import ru.astrainteractive.astralibs.utils.persistence.Persistence.hasPersistentData
 
 class SoulBindEvent{
 

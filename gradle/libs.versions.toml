@@ -1,5 +1,5 @@
 [versions]
-plugin = "4.3.1"
+plugin = "4.3.3"
 name = "EmpireItems"
 group = "com.astrainteractive"
 description = "Custom items plugin for EmpireProjekt"
@@ -13,7 +13,7 @@ json = "1.3.3"
 kaml = "0.46.0"
 exposed = "0.38.1"
 jdbc = "3.36.0.3"
-astraLibs = "2.0.16-4"
+astraLibs = "2.1.0-local1"
 shadow = "7.1.2"
 mysqlDriver = "8.0.20"
 orgTesting = "7.1.0"
@@ -45,8 +45,10 @@ coroutines-coreJvm = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core-j
 kotlin-serialization = { module = "org.jetbrains.kotlin:kotlin-serialization", version.ref = "kotlin" }
 kotlin-serializationJson = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "json" }
 kotlin-serializationKaml = { module = "com.charleskorn.kaml:kaml", version.ref = "kaml" }
+astralibs-orm = { module = "ru.astrainteractive.astralibs:orm", version.ref = "astraLibs" }
 astralibs-ktxCore = { module = "ru.astrainteractive.astralibs:ktx-core", version.ref = "astraLibs" }
 astralibs-spigotCore = { module = "ru.astrainteractive.astralibs:spigot-core", version.ref = "astraLibs" }
+astralibs-spigotGui= { module = "ru.astrainteractive.astralibs:spigot-gui", version.ref = "astraLibs" }
 xerial-sqlite-jdbc = { module = "org.xerial:sqlite-jdbc", version.ref = "jdbc" }
 exposed-java-time = { module = "org.jetbrains.exposed:exposed-java-time", version.ref = "exposed" }
 exposed-jdbc = { module = "org.jetbrains.exposed:exposed-jdbc", version.ref = "exposed" }

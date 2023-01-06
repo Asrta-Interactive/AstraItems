@@ -8,7 +8,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.entity.ProjectileHitEvent
 import ru.astrainteractive.astralibs.Logger
 import ru.astrainteractive.astralibs.events.DSLEvent
-import ru.astrainteractive.astralibs.utils.AstraLibsExtensions.getPersistentData
+import ru.astrainteractive.astralibs.utils.persistence.Persistence.getPersistentData
 
 class GrenadeEvent{
 

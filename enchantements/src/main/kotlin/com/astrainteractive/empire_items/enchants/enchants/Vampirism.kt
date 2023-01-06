@@ -10,7 +10,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import ru.astrainteractive.astralibs.di.IDependency
 import ru.astrainteractive.astralibs.di.getValue
-import ru.astrainteractive.astralibs.utils.AstraLibsExtensions.getPersistentData
+import ru.astrainteractive.astralibs.utils.persistence.Persistence.getPersistentData
 
 
 class Vampirism(configModule: IDependency<EmpireEnchantsConfig>): EmpireEnchantEvent() {

@@ -1,19 +1,18 @@
 package com.astrainteractive.empire_items.commands
 
 import com.astrainteractive.empire_items.di.empireItemsApiModule
-import ru.astrainteractive.astralibs.utils.HEX
-import com.astrainteractive.empire_itemss.api.EmpireItemsAPI
 import com.astrainteractive.empire_itemss.api.emoji
 import com.astrainteractive.empire_itemss.api.models_ext.toMerchantRecipe
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import ru.astrainteractive.astralibs.AstraLibs
+import ru.astrainteractive.astralibs.commands.registerCommand
+import ru.astrainteractive.astralibs.commands.registerTabCompleter
 import ru.astrainteractive.astralibs.di.getValue
-import ru.astrainteractive.astralibs.utils.registerCommand
-import ru.astrainteractive.astralibs.utils.registerTabCompleter
+import ru.astrainteractive.astralibs.utils.HEX
 
 private val empireItemsApi by empireItemsApiModule
-fun CommandManager.villagerInventoryAutoComplete() = AstraLibs.registerTabCompleter("villager_inventory") {sender,args->
+fun CommandManager.villagerInventoryAutoComplete() = AstraLibs.instance.registerTabCompleter("villager_inventory") {
     return@registerTabCompleter empireItemsApi.itemYamlFiles
         .mapNotNull { it.merchant_recipes }
         .flatMap { it.values.map { it.id } }
@@ -21,7 +20,7 @@ fun CommandManager.villagerInventoryAutoComplete() = AstraLibs.registerTabComple
         .toList()
 }
 
-fun CommandManager.villagerInventory() = AstraLibs.registerCommand("villager_inventory") {sender,args->
+fun CommandManager.villagerInventory() = AstraLibs.instance.registerCommand("villager_inventory") {
     val trades = empireItemsApi.itemYamlFiles.mapNotNull { it.merchant_recipes }
     val id = args.getOrNull(0) ?: kotlin.run {
         sender.sendMessage("Wrong arguments. Avaliable trades: ${trades.flatMap { it.keys }.toSet()}")

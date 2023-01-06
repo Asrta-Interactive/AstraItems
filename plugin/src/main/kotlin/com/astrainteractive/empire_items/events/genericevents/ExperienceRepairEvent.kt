@@ -10,8 +10,8 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 import ru.astrainteractive.astralibs.di.getValue
 import ru.astrainteractive.astralibs.events.DSLEvent
-import ru.astrainteractive.astralibs.utils.AstraLibsExtensions.getPersistentData
-import ru.astrainteractive.astralibs.utils.AstraLibsExtensions.setPersistentDataType
+import ru.astrainteractive.astralibs.utils.persistence.Persistence.getPersistentData
+import ru.astrainteractive.astralibs.utils.persistence.Persistence.setPersistentDataType
 
 class ExperienceRepairEvent{
     private val empireItemsAPI by empireItemsApiModule

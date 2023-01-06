@@ -16,7 +16,7 @@ import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import ru.astrainteractive.astralibs.di.getValue
 import ru.astrainteractive.astralibs.events.DSLEvent
-import ru.astrainteractive.astralibs.utils.AstraLibsExtensions.getPersistentData
+import ru.astrainteractive.astralibs.utils.persistence.Persistence.getPersistentData
 
 class GrapplingHook {
     private val empireItemsAPI by empireItemsApiModule

@@ -1,29 +1,16 @@
 package com.astrainteractive.empire_itemss.api.utils
 
-import ru.astrainteractive.astralibs.AstraLibs
-import ru.astrainteractive.astralibs.async.PluginScope
-import ru.astrainteractive.astralibs.async.BukkitMain
-import ru.astrainteractive.astralibs.utils.convertHex
 import com.astrainteractive.empire_itemss.api.EmpireItemsAPI
 import com.astrainteractive.empire_itemss.api.FontApi
 import com.astrainteractive.empire_itemss.api.HudOffset
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import org.bukkit.Bukkit
-import org.bukkit.Location
 import org.bukkit.Material
-import org.bukkit.attribute.Attribute
-import org.bukkit.attribute.AttributeModifier
-import org.bukkit.boss.KeyedBossBar
-import org.bukkit.entity.LivingEntity
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.BookMeta
 import ru.astrainteractive.astralibs.di.IDependency
 import ru.astrainteractive.astralibs.di.getValue
-import java.util.*
+import ru.astrainteractive.astralibs.utils.convertHex
 import java.util.regex.Matcher
 import java.util.regex.Pattern
-import kotlin.random.Random
 
 
 
@@ -34,6 +21,14 @@ class EmpireUtils(
     empireItemsAPi: IDependency<EmpireItemsAPI>,
     fontAPI: IDependency<FontApi>
 ) {
+    companion object {
+        lateinit var instance: EmpireUtils
+            private set
+    }
+
+    init {
+        instance = this
+    }
     private val empireItemsAPi by empireItemsAPi
     private val fontAPI by fontAPI
     private val emojiPattern = Pattern.compile(":([a-zA-Z0-9_]*):")

@@ -7,17 +7,16 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.ItemStack
 import ru.astrainteractive.astralibs.Logger
-import ru.astrainteractive.astralibs.menu.AstraMenuSize
-import ru.astrainteractive.astralibs.menu.DefaultPlayerHolder
 import ru.astrainteractive.astralibs.menu.IPlayerHolder
 import ru.astrainteractive.astralibs.menu.Menu
+import ru.astrainteractive.astralibs.menu.MenuSize
+import ru.astrainteractive.astralibs.menu.PlayerHolder
 import ru.astrainteractive.astralibs.utils.HEX
 
 class ResourcePack(val player: Player,val config:Config) : Menu() {
     override var menuTitle: String = "Принять ресурс-пак?"
-    override val menuSize: AstraMenuSize
-        get() = AstraMenuSize.XXS
-    override val playerMenuUtility: IPlayerHolder = DefaultPlayerHolder(player)
+    override val menuSize: MenuSize = MenuSize.XXS
+    override val playerMenuUtility: IPlayerHolder = PlayerHolder(player)
     private val backButtonIndex: Int = 8
     private val backButton = ItemStack(Material.COMPASS).apply {
         editMeta {

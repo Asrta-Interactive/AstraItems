@@ -9,7 +9,6 @@ import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.attribute.Attribute
 import org.bukkit.attribute.AttributeModifier
-import org.bukkit.boss.KeyedBossBar
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.entity.LivingEntity
 import org.bukkit.inventory.EquipmentSlot
@@ -18,11 +17,9 @@ import org.bukkit.inventory.meta.ItemMeta
 import ru.astrainteractive.astralibs.AstraLibs
 import ru.astrainteractive.astralibs.async.BukkitMain
 import ru.astrainteractive.astralibs.async.PluginScope
-import ru.astrainteractive.astralibs.di.IDependency
-import ru.astrainteractive.astralibs.di.Injector
 import ru.astrainteractive.astralibs.file_manager.FileManager
-import ru.astrainteractive.astralibs.utils.AstraLibsExtensions.getPersistentData
 import ru.astrainteractive.astralibs.utils.HEX
+import ru.astrainteractive.astralibs.utils.persistence.Persistence.getPersistentData
 import java.io.File
 import java.util.*
 import kotlin.random.Random
@@ -64,7 +61,7 @@ fun getCustomItemsSections(section: String) = getFilesList()?.filter { it.isYml(
     FileManager("items" + File.separator + it.name).fileConfiguration.getConfigurationSection(section)
 }
 val empireUtils:EmpireUtils
-    get() = Injector.inject()
+    get() = EmpireUtils.instance
 fun String.emoji() = empireUtils.emojiPattern(this)
 fun List<String>.emoji() = empireUtils.emojiPattern(this)
 

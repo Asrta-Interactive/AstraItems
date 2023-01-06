@@ -1,19 +1,19 @@
 package com.astrainteractive.empire_items.commands
 
 import com.astrainteractive.empire_items.di.TranslationModule
-import ru.astrainteractive.astralibs.AstraLibs
-import ru.astrainteractive.astralibs.async.PluginScope
-import ru.astrainteractive.astralibs.utils.registerCommand
 import com.astrainteractive.empire_items.util.EmpirePermissions
-import com.astrainteractive.empire_items.util.Translations
 import com.astrainteractive.empire_items.util.resource_pack.ResourcePack
 import com.astrainteractive.empire_items.util.resource_pack.Zipper
 import kotlinx.coroutines.launch
+import ru.astrainteractive.astralibs.AstraLibs
+import ru.astrainteractive.astralibs.async.PluginScope
+import ru.astrainteractive.astralibs.commands.registerCommand
 import ru.astrainteractive.astralibs.di.getValue
 import java.io.File
 private val translations by TranslationModule
 class Ezip {
-    val ezip = AstraLibs.registerCommand("ezip", permission = EmpirePermissions.EZIP) { sender, args ->
+    val ezip = AstraLibs.instance.registerCommand("ezip") {
+        if (!sender.hasPermission(EmpirePermissions.EZIP)) return@registerCommand
         PluginScope.launch {
             sender.sendMessage(translations.zipStarted)
             ResourcePack.generate()

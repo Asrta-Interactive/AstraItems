@@ -3,26 +3,24 @@ package com.astrainteractive.empire_items.commands
 import com.astrainteractive.empire_items.di.TranslationModule
 import com.astrainteractive.empire_items.di.empireItemsApiModule
 import com.astrainteractive.empire_items.util.EmpireItemsAPIExt.toAstraItemOrItem
-import ru.astrainteractive.astralibs.AstraLibs
-import ru.astrainteractive.astralibs.utils.registerCommand
-import ru.astrainteractive.astralibs.utils.registerTabCompleter
-import ru.astrainteractive.astralibs.utils.withEntry
-import com.astrainteractive.empire_itemss.api.EmpireItemsAPI
 import com.astrainteractive.empire_items.util.EmpirePermissions
-import com.astrainteractive.empire_items.util.Translations
 import com.astrainteractive.empire_items.util.Translations.Companion.argumentMessage
 import com.astrainteractive.empire_items.util.Translations.Companion.sendTo
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
+import ru.astrainteractive.astralibs.AstraLibs
+import ru.astrainteractive.astralibs.commands.registerCommand
+import ru.astrainteractive.astralibs.commands.registerTabCompleter
 import ru.astrainteractive.astralibs.di.getValue
+import ru.astrainteractive.astralibs.utils.withEntry
 
 class AstraItemCommand {
 
     private val translations by TranslationModule
     private val empireItemsAPI by empireItemsApiModule
 
-    private val commandExecutor = AstraLibs.registerCommand("emp") { sender, args ->
-
+    private val commandExecutor = AstraLibs.instance.registerCommand("emp") {
+        val sender = this.sender
         if (!sender.hasPermission(EmpirePermissions.EMPGIVE)) {
             sender.sendMessage(translations.noPerms)
             return@registerCommand
@@ -56,7 +54,7 @@ class AstraItemCommand {
             player.inventory.addItem(itemStack)
         }
     }
-    private val tabCompleter = AstraLibs.registerTabCompleter("emp") { _, args ->
+    private val tabCompleter = AstraLibs.instance.registerTabCompleter("emp") {
         when (args.size) {
             1 -> return@registerTabCompleter listOf("give").withEntry(args[0])
             2 -> return@registerTabCompleter Bukkit.getOnlinePlayers().map { it.name }.withEntry(args[1])

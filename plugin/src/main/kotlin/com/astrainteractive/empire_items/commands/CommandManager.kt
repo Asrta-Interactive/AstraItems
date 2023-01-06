@@ -10,10 +10,9 @@ import org.bukkit.entity.Player
 import ru.astrainteractive.astralibs.AstraLibs
 import ru.astrainteractive.astralibs.Logger
 import ru.astrainteractive.astralibs.async.PluginScope
+import ru.astrainteractive.astralibs.commands.registerCommand
 import ru.astrainteractive.astralibs.di.getValue
 import ru.astrainteractive.astralibs.utils.convertHex
-import ru.astrainteractive.astralibs.utils.registerCommand
-import ru.astrainteractive.astralibs.utils.then
 
 class CommandManager {
     companion object {
@@ -32,7 +31,7 @@ class CommandManager {
         ModelEngine()
         villagerInventory()
         villagerInventoryAutoComplete()
-        AstraLibs.registerCommand("edisable") { sender, args ->
+        AstraLibs.instance.registerCommand("edisable") {
             EmpirePlugin.instance.apply {
                 onDisable()
             }
@@ -42,7 +41,8 @@ class CommandManager {
     }
 }
 
-fun CommandManager.emgui() = AstraLibs.registerCommand("emgui") {sender,args->
+fun CommandManager.emgui() = AstraLibs.instance.registerCommand("emgui") {
+    val sender = this.sender
     val guiConfig by GuiConfigModule
     if (sender !is Player) {
         Logger.warn(message="Player only command", tag = CommandManager.TAG)
@@ -53,7 +53,7 @@ fun CommandManager.emgui() = AstraLibs.registerCommand("emgui") {sender,args->
     }
 }
 
-fun CommandManager.emojiBook() = AstraLibs.registerCommand("emojis") {sender,args->
+fun CommandManager.emojiBook() = AstraLibs.instance.registerCommand("emojis") {
     val fontApi by fontApiModule
     val empireUtils by empireUtilsModule
     if (sender !is Player) {
@@ -61,7 +61,7 @@ fun CommandManager.emojiBook() = AstraLibs.registerCommand("emojis") {sender,arg
         return@registerCommand
     }
     val list = fontApi.playerFonts().mapNotNull { (id, font) ->
-        font.blockSend.then(null as String?) ?: convertHex("&r${font.id}\n&r&f${font.char}&r\n")
+        if (font.blockSend) null as String? else convertHex("&r${font.id}\n&r&f${font.char}&r\n")
     }
     val book = empireUtils.getBook("RomaRoman", convertHex("&fЭмодзи"), listOf(list.joinToString(" ")), false)
     (sender as Player).openBook(book)

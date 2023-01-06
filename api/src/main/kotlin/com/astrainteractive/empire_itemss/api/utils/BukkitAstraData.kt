@@ -1,10 +1,10 @@
 package com.astrainteractive.empire_itemss.api.utils
 
-import ru.astrainteractive.astralibs.AstraLibs
 import org.bukkit.NamespacedKey
 import org.bukkit.attribute.Attribute
 import org.bukkit.persistence.PersistentDataType
-import ru.astrainteractive.astralibs.utils.BukkitConstant
+import ru.astrainteractive.astralibs.AstraLibs
+import ru.astrainteractive.astralibs.utils.persistence.BukkitConstant
 
 
 object BukkitConstants {

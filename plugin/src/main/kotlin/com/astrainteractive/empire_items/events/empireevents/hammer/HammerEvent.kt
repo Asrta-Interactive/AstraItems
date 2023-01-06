@@ -7,7 +7,7 @@ import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import ru.astrainteractive.astralibs.events.DSLEvent
-import ru.astrainteractive.astralibs.utils.AstraLibsExtensions.hasPersistentData
+import ru.astrainteractive.astralibs.utils.persistence.Persistence.hasPersistentData
 import java.util.*
 
 class HammerEvent {

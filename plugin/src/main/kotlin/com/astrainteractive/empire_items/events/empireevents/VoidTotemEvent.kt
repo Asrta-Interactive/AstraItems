@@ -5,7 +5,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.inventory.ItemStack
 import ru.astrainteractive.astralibs.events.DSLEvent
-import ru.astrainteractive.astralibs.utils.AstraLibsExtensions.hasPersistentData
+import ru.astrainteractive.astralibs.utils.persistence.Persistence.hasPersistentData
 
 class VoidTotemEvent {
 

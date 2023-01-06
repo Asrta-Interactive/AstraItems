@@ -1,7 +1,6 @@
 package com.astrainteractive.empire_itemss.api
 
 import com.astrainteractive.empire_itemss.api.models_ext.toItemStack
-import ru.astrainteractive.astralibs.EmpireSerializer
 import com.atrainteractive.empire_items.models.FontImage
 import com.atrainteractive.empire_items.models.ItemYamlFile
 import com.atrainteractive.empire_items.models.Loot
@@ -13,9 +12,17 @@ import com.atrainteractive.empire_items.models.recipies.Shapeless
 import com.atrainteractive.empire_items.models.yml_item.YmlItem
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
-import ru.astrainteractive.astralibs.utils.AstraLibsExtensions.getPersistentData
+import ru.astrainteractive.astralibs.EmpireSerializer
 
 class EmpireItemsAPI {
+    companion object {
+        lateinit var instance: EmpireItemsAPI
+            private set
+    }
+
+    init {
+        instance = this
+    }
     val itemYamlFiles: List<ItemYamlFile> = getCustomItemsFiles()?.mapNotNull {
         println("File ${it.configFile.name}")
         EmpireSerializer.toClass<ItemYamlFile>(it.configFile)

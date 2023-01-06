@@ -21,7 +21,6 @@ import com.atrainteractive.empire_items.models.config.Config
 import com.atrainteractive.empire_items.models.config.GuiConfig
 import com.atrainteractive.empire_items.models.enchants.EmpireEnchantsConfig
 import ru.astrainteractive.astralibs.EmpireSerializer
-import ru.astrainteractive.astralibs.di.Injector
 import ru.astrainteractive.astralibs.di.module
 import ru.astrainteractive.astralibs.di.reloadable
 import ru.astrainteractive.astralibs.utils.toClass
@@ -51,10 +50,7 @@ val genericListenerModule = reloadable {
 }
 
 val empireItemsApiModule = reloadable {
-    EmpireItemsAPI().also {
-        Injector.forget(it)
-        Injector.remember(it)
-    }
+    EmpireItemsAPI()
 }
 
 val craftingApiModule = module {
@@ -98,10 +94,7 @@ val empireUtilsModule = module {
     EmpireUtils(
         empireItemsApiModule,
         fontApiModule
-    ).also {
-        Injector.forget(it)
-        Injector.remember(it)
-    }
+    )
 }
 val blockPlacerModule = module {
     V1_19_3_FastBlockPlacer as IFastBlockPlacer

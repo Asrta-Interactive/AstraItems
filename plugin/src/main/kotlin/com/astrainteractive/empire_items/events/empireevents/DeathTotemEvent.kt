@@ -8,8 +8,8 @@ import org.bukkit.event.player.PlayerItemHeldEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.PlayerInventory
 import ru.astrainteractive.astralibs.events.DSLEvent
-import ru.astrainteractive.astralibs.utils.AstraLibsExtensions.hasPersistentData
 import ru.astrainteractive.astralibs.utils.HEX
+import ru.astrainteractive.astralibs.utils.persistence.Persistence.hasPersistentData
 
 class DeathTotemEvent{
 

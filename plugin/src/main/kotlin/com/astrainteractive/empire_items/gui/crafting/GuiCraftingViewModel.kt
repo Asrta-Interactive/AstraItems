@@ -14,7 +14,6 @@ import org.bukkit.inventory.ShapedRecipe
 import org.bukkit.inventory.ShapelessRecipe
 import ru.astrainteractive.astralibs.di.getValue
 import ru.astrainteractive.astralibs.utils.HEX
-import ru.astrainteractive.astralibs.utils.catching
 
 class GuiCraftingViewModel(val playerMenuUtility: PlayerMenuUtility, val itemID: String) {
     private val translations by TranslationModule
@@ -88,7 +87,7 @@ class GuiCraftingViewModel(val playerMenuUtility: PlayerMenuUtility, val itemID:
     }
 
     val index: Int
-        get() = catching { recipeInfoIndex % recipesInfo.size } ?: 0
+        get() = kotlin.runCatching { recipeInfoIndex % recipesInfo.size }.getOrNull() ?: 0
 
     val currentRecipeInfo: RecipeInfo?
         get() = recipesInfo.getOrNull(index)

@@ -5,13 +5,13 @@ import com.astrainteractive.empire_items.util.EmpirePermissions
 import org.bukkit.entity.Player
 import ru.astrainteractive.astralibs.AstraLibs
 import ru.astrainteractive.astralibs.Logger
+import ru.astrainteractive.astralibs.commands.registerCommand
 import ru.astrainteractive.astralibs.di.getValue
-import ru.astrainteractive.astralibs.utils.registerCommand
 
 /**
  * Reload command handler
  */
-fun CommandManager.espeed() = AstraLibs.registerCommand("espeed") { sender, args ->
+fun CommandManager.espeed() = AstraLibs.instance.registerCommand("espeed") {
     val translation by TranslationModule
     if (!sender.hasPermission(EmpirePermissions.RELOAD)) {
         sender.sendMessage(translation.noPerms)

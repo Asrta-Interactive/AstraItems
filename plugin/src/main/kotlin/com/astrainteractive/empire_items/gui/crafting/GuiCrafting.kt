@@ -14,7 +14,7 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.ItemStack
 import ru.astrainteractive.astralibs.async.PluginScope
-import ru.astrainteractive.astralibs.menu.AstraMenuSize
+import ru.astrainteractive.astralibs.menu.MenuSize
 import ru.astrainteractive.astralibs.menu.PaginatedMenu
 import ru.astrainteractive.astralibs.utils.convertHex
 
@@ -38,7 +38,7 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility,private val guiConfig: Gu
     ).emoji()
 
 
-    override val menuSize: AstraMenuSize = AstraMenuSize.XL
+    override val menuSize: MenuSize = MenuSize.XL
     override val playerMenuUtility: PlayerMenuUtility = playerMenuUtility
     override val backPageButton = guiConfig.settings.buttons.backButton.toAstraItemOrItem()!!.toInventoryButton(49)
     override val maxItemsPerPage = 9
@@ -78,13 +78,13 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility,private val guiConfig: Gu
             11, 12, 13, 20, 21, 22, 29, 30, 31 -> {
                 val itemStack = inventory.getItem(e.slot)
                 playerMenuUtility.prevItems.add(itemStack?.empireID ?: itemStack?.type?.name ?: return)
-                lifecycleScope.launch(Dispatchers.IO) { GuiCrafting(playerMenuUtility,guiConfig).open() }
+                componentScope.launch(Dispatchers.IO) { GuiCrafting(playerMenuUtility,guiConfig).open() }
             }
 
             36, 37, 38, 39, 40, 41, 42, 43, 44 -> {
                 val itemStack = inventory.getItem(e.slot)
                 playerMenuUtility.prevItems.add(itemStack?.empireID ?: itemStack?.type?.name ?: return)
-                lifecycleScope.launch(Dispatchers.IO) { GuiCrafting(playerMenuUtility,guiConfig).open() }
+                componentScope.launch(Dispatchers.IO) { GuiCrafting(playerMenuUtility,guiConfig).open() }
             }
 
             giveButtonIndex -> {

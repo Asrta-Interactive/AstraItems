@@ -2,8 +2,6 @@ package com.astrainteractive.empire_items.enchants
 
 import com.astrainteractive.empire_items.enchants.core.AbstractPotionEnchant
 import com.astrainteractive.empire_items.enchants.core.EmpireEnchantApi
-import ru.astrainteractive.astralibs.events.EventListener
-import ru.astrainteractive.astralibs.events.EventManager
 import com.astrainteractive.empire_items.enchants.enchants.*
 import com.atrainteractive.empire_items.models.enchants.EmpireEnchantsConfig
 import org.bukkit.Material
@@ -11,7 +9,9 @@ import org.bukkit.persistence.PersistentDataType
 import org.bukkit.potion.PotionEffectType
 import ru.astrainteractive.astralibs.di.IDependency
 import ru.astrainteractive.astralibs.di.getValue
-import ru.astrainteractive.astralibs.utils.BukkitConstant
+import ru.astrainteractive.astralibs.events.EventListener
+import ru.astrainteractive.astralibs.events.EventManager
+import ru.astrainteractive.astralibs.utils.persistence.BukkitConstant
 import kotlin.random.Random
 
 fun calcChance(chance: Int) = calcChance(chance.toDouble())

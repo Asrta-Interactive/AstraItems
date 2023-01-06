@@ -32,9 +32,8 @@ import ru.astrainteractive.astralibs.async.BukkitMain
 import ru.astrainteractive.astralibs.async.PluginScope
 import ru.astrainteractive.astralibs.di.getValue
 import ru.astrainteractive.astralibs.events.DSLEvent
-import ru.astrainteractive.astralibs.utils.AstraLibsExtensions.getPersistentData
-import ru.astrainteractive.astralibs.utils.AstraLibsExtensions.setPersistentDataType
-import ru.astrainteractive.astralibs.utils.catching
+import ru.astrainteractive.astralibs.utils.persistence.Persistence.getPersistentData
+import ru.astrainteractive.astralibs.utils.persistence.Persistence.setPersistentDataType
 import ru.astrainteractive.astralibs.utils.valueOfOrNull
 
 class GunEvent {
@@ -126,7 +125,7 @@ class GunEvent {
 
     //#FFFFFF
     private fun rgbToColor(color: String): Color =
-        catching { Color.fromRGB(Integer.decode(color.replace("#", "0x"))) } ?: Color.BLACK
+        kotlin.runCatching { Color.fromRGB(Integer.decode(color.replace("#", "0x"))) }.getOrNull() ?: Color.BLACK
 
     val playerInteractEvent = DSLEvent.event<PlayerInteractEvent> { e ->
         PluginScope.launch(Dispatchers.IO) event@{

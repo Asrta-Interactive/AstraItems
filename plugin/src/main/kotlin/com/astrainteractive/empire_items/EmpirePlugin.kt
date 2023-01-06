@@ -1,15 +1,15 @@
 package com.astrainteractive.empire_items
 
-import ru.astrainteractive.astralibs.AstraLibs
-import ru.astrainteractive.astralibs.Logger
-import ru.astrainteractive.astralibs.async.PluginScope
-import ru.astrainteractive.astralibs.events.GlobalEventManager
-import com.astrainteractive.empire_items.commands.CommandManager
 import com.astrainteractive.empire_items.di.*
 import kotlinx.coroutines.cancel
 import org.bukkit.Bukkit
 import org.bukkit.event.HandlerList
 import org.bukkit.plugin.java.JavaPlugin
+import ru.astrainteractive.astralibs.AstraLibs
+import ru.astrainteractive.astralibs.Logger
+import ru.astrainteractive.astralibs.async.PluginScope
+import ru.astrainteractive.astralibs.events.GlobalEventManager
+import ru.astrainteractive.astralibs.menu.SharedInventoryClickEvent
 
 
 class EmpirePlugin : JavaPlugin() {
@@ -58,6 +58,7 @@ class EmpirePlugin : JavaPlugin() {
         commandManagerModule.value
         enchantMangerModule.value
         genericListenerModule.value
+        SharedInventoryClickEvent.onEnable(GlobalEventManager)
     }
 
 

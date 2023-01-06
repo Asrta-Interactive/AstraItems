@@ -1,7 +1,7 @@
 package com.astrainteractive.empire_items.enchants.core
 
 import org.bukkit.persistence.PersistentDataType
-import ru.astrainteractive.astralibs.utils.BukkitConstant
+import ru.astrainteractive.astralibs.utils.persistence.BukkitConstant
 
 object EmpireEnchants {
     val EMPIRE_ENCHANT

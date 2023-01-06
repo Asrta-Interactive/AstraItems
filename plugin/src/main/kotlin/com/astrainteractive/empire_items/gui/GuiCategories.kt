@@ -9,7 +9,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import ru.astrainteractive.astralibs.async.PluginScope
-import ru.astrainteractive.astralibs.menu.AstraMenuSize
+import ru.astrainteractive.astralibs.menu.MenuSize
 import ru.astrainteractive.astralibs.menu.PaginatedMenu
 import ru.astrainteractive.astralibs.utils.convertHex
 
@@ -19,7 +19,7 @@ class GuiCategories(player: Player, override val playerMenuUtility: PlayerMenuUt
 
     override var menuTitle: String = convertHex(guiConfig.settings.titles.categoriesText).emoji()
 
-    override val menuSize: AstraMenuSize = AstraMenuSize.XL
+    override val menuSize: MenuSize = MenuSize.XL
     override val backPageButton = guiConfig.settings.buttons.backButton.toAstraItemOrItem()!!.toInventoryButton(49)
     override val maxItemsAmount: Int = guiConfig.categories.size ?: 0
     override val nextPageButton = guiConfig.settings.buttons.nextButton.toAstraItemOrItem()!!.toInventoryButton(53)
@@ -51,7 +51,9 @@ class GuiCategories(player: Player, override val playerMenuUtility: PlayerMenuUt
         playerMenuUtility.categoriesPage += next
     }
 
-    override fun onInventoryClose(it: InventoryCloseEvent) {}
+    override fun onInventoryClose(it: InventoryCloseEvent) {
+        close()
+    }
     override fun onPageChanged() {
         setMenuItems()
     }
