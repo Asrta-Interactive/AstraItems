@@ -1,7 +1,6 @@
 package com.astrainteractive.empire_items.events.api_events
 
 import com.astrainteractive.empire_items.di.empireUtilsModule
-import com.astrainteractive.empire_itemss.api.utils.EmpireUtils
 import com.comphenix.protocol.PacketType
 import com.comphenix.protocol.events.ListenerPriority
 import com.comphenix.protocol.events.PacketContainer

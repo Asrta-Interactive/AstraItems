@@ -1,6 +1,6 @@
 package com.astrainteractive.empire_items.events.empireevents
 
-import com.astrainteractive.empire_itemss.api.utils.BukkitConstants
+import com.astrainteractive.empire_items.models.bukkit.BukkitConstants
 import net.coreprotect.CoreProtect
 import net.coreprotect.CoreProtectAPI
 import org.bukkit.ChatColor

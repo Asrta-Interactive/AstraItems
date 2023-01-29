@@ -1,7 +1,7 @@
 package com.astrainteractive.empire_items.events.empireevents
 
-import com.astrainteractive.empire_items.util.EmpireItemsAPIExt.toAstraItemOrItem
-import com.astrainteractive.empire_itemss.api.utils.BukkitConstants
+import com.astrainteractive.empire_items.models.bukkit.BukkitConstants
+import com.astrainteractive.empire_items.util.ext_api.toAstraItemOrItem
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Slime
 import org.bukkit.event.player.PlayerInteractEntityEvent

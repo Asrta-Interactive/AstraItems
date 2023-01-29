@@ -1,8 +1,8 @@
 package com.astrainteractive.empire_items.commands
 
 import com.astrainteractive.empire_items.di.empireItemsApiModule
-import com.astrainteractive.empire_itemss.api.emoji
-import com.astrainteractive.empire_itemss.api.models_ext.toMerchantRecipe
+import com.astrainteractive.empire_items.api.utils.emoji
+import com.astrainteractive.empire_items.api.models_ext.toMerchantRecipe
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import ru.astrainteractive.astralibs.AstraLibs

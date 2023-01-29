@@ -1,7 +1,7 @@
 package com.astrainteractive.empire_items.events.empireevents
 
 import com.astrainteractive.empire_items.di.blockPlacerModule
-import com.astrainteractive.empire_items.enchants.core.EmpireEnchants
+import com.astrainteractive.empire_items.models.bukkit.EmpireEnchants
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.bukkit.Material

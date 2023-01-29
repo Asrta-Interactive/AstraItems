@@ -40,9 +40,11 @@ dependencies {
     implementation(project(":enchantements"))
     implementation(project(":modelengine"))
     implementation(project(":api"))
-    implementation(project(":models"))
+    implementation(project(":models:shared"))
+    implementation(project(":models:bukkit"))
     implementation(project(":block-generation:1-19-2"))
     implementation(project(":block-generation:1-19-3"))
     implementation(project(":block-generation:core"))
+    implementation(project(":zipper"))
 }
 

@@ -1,8 +1,6 @@
 package com.astrainteractive.empire_items.enchants.core
 
 import com.atrainteractive.empire_items.models.enchants.EmpireEnchantsConfig
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.event.entity.EntityDamageByEntityEvent
@@ -10,8 +8,6 @@ import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import ru.astrainteractive.astralibs.AstraLibs
 import ru.astrainteractive.astralibs.Logger
-import ru.astrainteractive.astralibs.async.BukkitMain
-import ru.astrainteractive.astralibs.async.PluginScope
 
 
 abstract class AbstractPotionEnchant : EmpireEnchantEvent() {

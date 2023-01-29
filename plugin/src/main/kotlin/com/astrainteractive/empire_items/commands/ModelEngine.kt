@@ -3,7 +3,7 @@ package com.astrainteractive.empire_items.commands
 import com.astrainteractive.empire_items.di.TranslationModule
 import com.astrainteractive.empire_items.di.empireItemsApiModule
 import com.astrainteractive.empire_items.di.empireModelEngineApiModule
-import com.astrainteractive.empire_items.util.EmpirePermissions
+import com.astrainteractive.empire_items.plugin.Permission
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Material
@@ -23,7 +23,7 @@ class ModelEngine {
 
     val spawnmodel =
         AstraLibs.instance.registerCommand("spawnmodel") {
-            if (!sender.hasPermission(EmpirePermissions.spawnModel)) return@registerCommand
+            if (!Permission.SpawnModel.hasPermission(sender)) return@registerCommand
 
             val id = args.firstOrNull() ?: run {
                 sender.sendMessage(translations.wrongArgs)

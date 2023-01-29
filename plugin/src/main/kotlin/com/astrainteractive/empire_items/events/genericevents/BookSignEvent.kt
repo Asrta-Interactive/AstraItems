@@ -3,7 +3,6 @@ package com.astrainteractive.empire_items.events.genericevents
 import com.astrainteractive.empire_items.di.empireUtilsModule
 import ru.astrainteractive.astralibs.events.EventListener
 import ru.astrainteractive.astralibs.utils.convertHex
-import com.astrainteractive.empire_itemss.api.utils.EmpireUtils
 import org.bukkit.event.EventHandler
 import org.bukkit.event.block.SignChangeEvent
 import org.bukkit.event.player.PlayerEditBookEvent

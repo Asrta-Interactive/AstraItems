@@ -2,9 +2,9 @@ package com.astrainteractive.empire_items.events.genericevents
 
 import com.astrainteractive.empire_items.di.craftingApiModule
 import com.astrainteractive.empire_items.di.empireItemsApiModule
-import com.astrainteractive.empire_items.util.EmpireItemsAPIExt.toAstraItemOrItem
-import com.astrainteractive.empire_itemss.api.empireID
-import com.astrainteractive.empire_itemss.api.models_ext.play
+import com.astrainteractive.empire_items.util.ext_api.toAstraItemOrItem
+import com.astrainteractive.empire_items.api.utils.empireID
+import com.astrainteractive.empire_items.api.models_ext.play
 import org.bukkit.Material
 import org.bukkit.block.Furnace
 import org.bukkit.entity.Player

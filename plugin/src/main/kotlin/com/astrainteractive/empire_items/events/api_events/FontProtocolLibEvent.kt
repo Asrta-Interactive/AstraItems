@@ -1,7 +1,6 @@
 package com.astrainteractive.empire_items.events.api_events
 
 import ru.astrainteractive.astralibs.events.EventListener
-import ru.astrainteractive.astralibs.utils.AstraPacketReader
 import ru.astrainteractive.astralibs.utils.convertHex
 import com.comphenix.protocol.PacketType
 import com.comphenix.protocol.ProtocolLibrary
@@ -10,9 +9,6 @@ import com.comphenix.protocol.events.*
 import com.astrainteractive.empire_items.EmpirePlugin
 import com.astrainteractive.empire_items.di.configModule
 import com.astrainteractive.empire_items.di.empireUtilsModule
-import com.astrainteractive.empire_itemss.api.utils.EmpireUtils
-import com.atrainteractive.empire_items.models.config.Config
-import io.netty.channel.Channel
 
 
 import me.clip.placeholderapi.PlaceholderAPI
@@ -21,11 +17,9 @@ import net.kyori.adventure.text.TextComponent
 import net.kyori.adventure.text.TranslatableComponent
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import org.bukkit.Bukkit
-import org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerJoinEvent
-import org.bukkit.plugin.Plugin
 import ru.astrainteractive.astralibs.di.getValue
 
 

@@ -1,8 +1,8 @@
 package com.astrainteractive.empire_items.events.genericevents
 
 import com.astrainteractive.empire_items.di.empireItemsApiModule
-import com.astrainteractive.empire_itemss.api.empireID
-import com.astrainteractive.empire_itemss.api.utils.BukkitConstants
+import com.astrainteractive.empire_items.models.bukkit.BukkitConstants
+import com.astrainteractive.empire_items.api.utils.empireID
 import org.bukkit.event.inventory.PrepareAnvilEvent
 import org.bukkit.event.player.PlayerItemDamageEvent
 import org.bukkit.event.player.PlayerItemMendEvent

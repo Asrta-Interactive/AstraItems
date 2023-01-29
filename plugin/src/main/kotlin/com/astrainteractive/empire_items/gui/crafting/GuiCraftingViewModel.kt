@@ -5,7 +5,7 @@ import com.astrainteractive.empire_items.di.TranslationModule
 import com.astrainteractive.empire_items.di.craftingApiModule
 import com.astrainteractive.empire_items.di.empireItemsApiModule
 import com.astrainteractive.empire_items.gui.PlayerMenuUtility
-import com.astrainteractive.empire_items.util.EmpireItemsAPIExt.toAstraItemOrItem
+import com.astrainteractive.empire_items.util.ext_api.toAstraItemOrItem
 import com.atrainteractive.empire_items.models.VillagerTradeInfo
 import org.bukkit.ChatColor
 import org.bukkit.inventory.FurnaceRecipe

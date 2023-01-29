@@ -3,7 +3,7 @@ package com.astrainteractive.empire_items.commands
 import com.astrainteractive.empire_items.di.TranslationModule
 import com.astrainteractive.empire_items.di.configModule
 import com.astrainteractive.empire_items.di.fontApiModule
-import com.astrainteractive.empire_items.gui.ResourcePack
+import com.astrainteractive.empire_items.gui.resource_pack.ResourcePack
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.bukkit.Bukkit

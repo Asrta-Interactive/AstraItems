@@ -1,6 +1,6 @@
 package com.astrainteractive.empire_items.events.blocks
 
-import com.astrainteractive.empire_itemss.api.items.BlockParser
+import com.astrainteractive.empire_items.api.items.BlockParser
 import org.bukkit.event.block.BlockPhysicsEvent
 import ru.astrainteractive.astralibs.events.DSLEvent
 

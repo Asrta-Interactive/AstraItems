@@ -1,12 +1,12 @@
 package com.astrainteractive.empire_items.gui.crafting
 
-import com.astrainteractive.empire_items.gui.GuiCategory
+import com.astrainteractive.empire_items.gui.category.GuiCategory
 import com.astrainteractive.empire_items.gui.PlayerMenuUtility
-import com.astrainteractive.empire_items.gui.toInventoryButton
-import com.astrainteractive.empire_items.util.EmpireItemsAPIExt.toAstraItemOrItem
-import com.astrainteractive.empire_items.util.EmpirePermissions
-import com.astrainteractive.empire_itemss.api.emoji
-import com.astrainteractive.empire_itemss.api.empireID
+import com.astrainteractive.empire_items.util.ext_api.toAstraItemOrItem
+import com.astrainteractive.empire_items.plugin.Permission
+import com.astrainteractive.empire_items.api.utils.emoji
+import com.astrainteractive.empire_items.api.utils.empireID
+import com.astrainteractive.empire_items.util.toInventoryButton
 import com.atrainteractive.empire_items.models.config.GuiConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -88,7 +88,7 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility,private val guiConfig: Gu
             }
 
             giveButtonIndex -> {
-                if (playerMenuUtility.player.hasPermission(EmpirePermissions.EMPGIVE))
+                if (Permission.GiveCustomItem.hasPermission(playerMenuUtility.player))
                     playerMenuUtility.player.inventory.addItem(viewModel.itemID.toAstraItemOrItem() ?: return)
             }
         }

@@ -4,7 +4,7 @@ import com.astrainteractive.empire_items.EmpirePlugin
 import com.astrainteractive.empire_items.di.GuiConfigModule
 import com.astrainteractive.empire_items.di.empireUtilsModule
 import com.astrainteractive.empire_items.di.fontApiModule
-import com.astrainteractive.empire_items.gui.GuiCategories
+import com.astrainteractive.empire_items.gui.categories.GuiCategories
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.bukkit.entity.Player

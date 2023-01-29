@@ -1,11 +1,11 @@
 package com.astrainteractive.empire_items.events.empireevents
 
 import com.astrainteractive.empire_items.di.empireItemsApiModule
-import com.astrainteractive.empire_items.util.EmpireItemsAPIExt.toAstraItemOrItem
-import com.astrainteractive.empire_itemss.api.empireID
-import com.astrainteractive.empire_itemss.api.explode
-import com.astrainteractive.empire_itemss.api.models_ext.play
-import com.astrainteractive.empire_itemss.api.utils.BukkitConstants
+import com.astrainteractive.empire_items.models.bukkit.BukkitConstants
+import com.astrainteractive.empire_items.util.ext_api.toAstraItemOrItem
+import com.astrainteractive.empire_items.api.utils.empireID
+import com.astrainteractive.empire_items.api.utils.explode
+import com.astrainteractive.empire_items.api.models_ext.play
 import com.atrainteractive.empire_items.models.yml_item.Gun
 import com.atrainteractive.empire_items.models.yml_item.Interact
 import com.comphenix.protocol.PacketType

@@ -2,10 +2,8 @@ package com.astrainteractive.empire_items.commands
 
 import com.astrainteractive.empire_items.di.TranslationModule
 import com.astrainteractive.empire_items.di.empireItemsApiModule
-import com.astrainteractive.empire_items.util.EmpireItemsAPIExt.toAstraItemOrItem
-import com.astrainteractive.empire_items.util.EmpirePermissions
-import com.astrainteractive.empire_items.util.Translations.Companion.argumentMessage
-import com.astrainteractive.empire_items.util.Translations.Companion.sendTo
+import com.astrainteractive.empire_items.util.ext_api.toAstraItemOrItem
+import com.astrainteractive.empire_items.plugin.Permission
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import ru.astrainteractive.astralibs.AstraLibs
@@ -21,7 +19,7 @@ class AstraItemCommand {
 
     private val commandExecutor = AstraLibs.instance.registerCommand("emp") {
         val sender = this.sender
-        if (!sender.hasPermission(EmpirePermissions.EMPGIVE)) {
+        if (!Permission.GiveCustomItem.hasPermission(sender)) {
             sender.sendMessage(translations.noPerms)
             return@registerCommand
         }
@@ -41,15 +39,11 @@ class AstraItemCommand {
                 sender.sendMessage(translations.playerNotFound)
                 return@registerCommand
             }
-            translations.itemGave
-                .argumentMessage("%player%" to player.name)
-                .argumentMessage("%item%" to itemStack.itemMeta.displayName)
-                .sendTo(sender)
+            translations.itemGave(itemStack.itemMeta.displayName,player.name)
+                .also(sender::sendMessage)
 
-            translations.itemGained
-                .argumentMessage("%player%" to player.name)
-                .argumentMessage("%item%" to itemStack.itemMeta.displayName)
-                .sendTo(sender)
+            translations.itemGained(itemStack.itemMeta.displayName)
+                .also(sender::sendMessage)
 
             player.inventory.addItem(itemStack)
         }

@@ -2,8 +2,8 @@ package com.astrainteractive.empire_items.events.blocks
 
 import com.astrainteractive.empire_items.di.blockPlacerModule
 import com.astrainteractive.empire_items.di.empireItemsApiModule
-import com.astrainteractive.empire_itemss.api.empireID
-import com.astrainteractive.empire_itemss.api.items.BlockParser
+import com.astrainteractive.empire_items.api.utils.empireID
+import com.astrainteractive.empire_items.api.items.BlockParser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.bukkit.event.block.BlockPlaceEvent

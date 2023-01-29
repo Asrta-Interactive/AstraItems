@@ -1,8 +1,8 @@
 package com.astrainteractive.empire_items.events.empireevents
 
 import com.astrainteractive.empire_items.di.empireItemsApiModule
-import com.astrainteractive.empire_itemss.api.empireID
-import com.astrainteractive.empire_itemss.api.utils.BukkitConstants
+import com.astrainteractive.empire_items.models.bukkit.BukkitConstants
+import com.astrainteractive.empire_items.api.utils.empireID
 import com.destroystokyo.paper.ParticleBuilder
 import org.bukkit.*
 import org.bukkit.entity.HumanEntity

@@ -33,5 +33,6 @@ dependencies {
     compileOnly(libs.vaultapi)
     compileOnly(libs.coreprotect)
     // Local
-    implementation(project(":models"))
+    implementation(project(":models:shared"))
+    implementation(project(":models:bukkit"))
 }

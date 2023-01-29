@@ -1,7 +1,7 @@
 package com.astrainteractive.empire_items.events.blocks
 
 import com.astrainteractive.empire_items.di.empireItemsApiModule
-import com.astrainteractive.empire_itemss.api.items.BlockParser
+import com.astrainteractive.empire_items.api.items.BlockParser
 import net.minecraft.core.BlockPosition
 import net.minecraft.network.protocol.game.PacketPlayOutBlockBreakAnimation
 import org.bukkit.block.Block

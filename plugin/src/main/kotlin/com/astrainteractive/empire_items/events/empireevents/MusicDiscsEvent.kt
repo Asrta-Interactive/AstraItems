@@ -1,8 +1,8 @@
 package com.astrainteractive.empire_items.events.empireevents
 
 import com.astrainteractive.empire_items.di.empireItemsApiModule
-import com.astrainteractive.empire_items.util.EmpireItemsAPIExt.toAstraItemOrItem
-import com.astrainteractive.empire_itemss.api.empireID
+import com.astrainteractive.empire_items.util.ext_api.toAstraItemOrItem
+import com.astrainteractive.empire_items.api.utils.empireID
 import com.atrainteractive.empire_items.models.yml_item.YmlItem
 import net.md_5.bungee.api.ChatMessageType
 import net.md_5.bungee.api.chat.TextComponent

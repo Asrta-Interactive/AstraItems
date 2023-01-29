@@ -2,7 +2,7 @@ package com.astrainteractive.empire_items.events.api_events
 
 import com.astrainteractive.empire_items.di.bossBarControllerModule
 import com.astrainteractive.empire_items.di.empireModelEngineApiModule
-import com.astrainteractive.empire_itemss.api.models_ext.play
+import com.astrainteractive.empire_items.api.models_ext.play
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDeathEvent
 import org.bukkit.event.entity.EntitySpawnEvent

@@ -1,7 +1,7 @@
 package com.astrainteractive.empire_items.events.api_events
 
-import com.astrainteractive.empire_itemss.api.empireID
-import com.astrainteractive.empire_itemss.api.items.DecorationBlockAPI
+import com.astrainteractive.empire_items.api.utils.empireID
+import com.astrainteractive.empire_items.api.items.DecorationBlockAPI
 import org.bukkit.Material
 import org.bukkit.entity.ItemFrame
 import org.bukkit.event.block.Action

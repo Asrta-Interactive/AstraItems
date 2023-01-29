@@ -38,5 +38,6 @@ dependencies {
     compileOnly(libs.coreprotect)
     // Local
     implementation(project(":enchantements"))
-    implementation(project(":models"))
+    implementation(project(":models:shared"))
+    implementation(project(":models:bukkit"))
 }

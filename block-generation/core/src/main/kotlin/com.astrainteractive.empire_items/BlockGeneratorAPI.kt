@@ -1,7 +1,7 @@
 package com.astrainteractive.empire_items
 
-import com.astrainteractive.empire_itemss.api.EmpireItemsAPI
-import com.astrainteractive.empire_itemss.api.items.BlockParser
+import com.astrainteractive.empire_items.api.EmpireItemsAPI
+import com.astrainteractive.empire_items.api.items.BlockParser
 import com.atrainteractive.empire_items.models.config.Config
 import com.atrainteractive.empire_items.models.yml_item.YmlItem
 import kotlinx.coroutines.launch

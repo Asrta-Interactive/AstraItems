@@ -1,8 +1,8 @@
 package com.astrainteractive.empire_items.commands
 
 import com.astrainteractive.empire_items.di.TranslationModule
-import com.astrainteractive.empire_items.util.EmpireItemsAPIExt.toAstraItem
-import com.astrainteractive.empire_itemss.api.empireID
+import com.astrainteractive.empire_items.util.ext_api.toAstraItem
+import com.astrainteractive.empire_items.api.utils.empireID
 import org.bukkit.entity.Player
 import ru.astrainteractive.astralibs.AstraLibs
 import ru.astrainteractive.astralibs.Logger

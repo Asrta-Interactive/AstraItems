@@ -2,9 +2,9 @@ package com.astrainteractive.empire_items.events.genericevents
 
 import com.astrainteractive.empire_items.di.empireItemsApiModule
 import com.astrainteractive.empire_items.di.empireModelEngineApiModule
-import com.astrainteractive.empire_itemss.api.items.BlockParser
-import com.astrainteractive.empire_itemss.api.models_ext.generateItem
-import com.astrainteractive.empire_itemss.api.models_ext.performDrop
+import com.astrainteractive.empire_items.api.items.BlockParser
+import com.astrainteractive.empire_items.api.models_ext.generateItem
+import com.astrainteractive.empire_items.api.models_ext.performDrop
 import com.atrainteractive.empire_items.models.Loot
 import com.atrainteractive.empire_items.models.yml_item.YmlItem
 import org.bukkit.Location

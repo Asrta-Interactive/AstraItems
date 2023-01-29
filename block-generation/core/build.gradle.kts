@@ -27,6 +27,7 @@ dependencies {
     compileOnly(libs.spigot)
     // Local
     implementation(project(":api"))
-    implementation(project(":models"))
+    implementation(project(":models:shared"))
+    implementation(project(":models:bukkit"))
 }
 

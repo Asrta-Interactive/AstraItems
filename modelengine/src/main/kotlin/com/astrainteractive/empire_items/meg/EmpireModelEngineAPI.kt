@@ -6,11 +6,11 @@ import com.astrainteractive.empire_items.meg.wrapper.core.IEmpireActiveModel
 import com.astrainteractive.empire_items.meg.wrapper.core.IEmpireModeledEntity
 import com.astrainteractive.empire_items.meg.wrapper.data.EmpireEntity
 import com.astrainteractive.empire_items.meg.wrapper.data.EntityInfo
-import com.astrainteractive.empire_itemss.api.EmpireItemsAPI
-import com.astrainteractive.empire_itemss.api.addAttribute
-import com.astrainteractive.empire_itemss.api.calcChance
-import com.astrainteractive.empire_itemss.api.getBiome
-import com.astrainteractive.empire_itemss.api.models_ext.play
+import com.astrainteractive.empire_items.api.EmpireItemsAPI
+import com.astrainteractive.empire_items.api.utils.addAttribute
+import com.astrainteractive.empire_items.api.utils.calcChance
+import com.astrainteractive.empire_items.api.utils.getBiome
+import com.astrainteractive.empire_items.api.models_ext.play
 import com.atrainteractive.empire_items.models.mob.YmlMob
 import com.ticxo.modelengine.api.ModelEngineAPI
 import kotlinx.coroutines.Dispatchers

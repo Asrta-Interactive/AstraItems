@@ -41,7 +41,10 @@ include(
     "plugin",
     "enchantements",
     "modelengine",
-    "models"
+)
+include(
+    "models:shared",
+    "models:bukkit"
 )
 
 include(
@@ -50,3 +53,4 @@ include(
     "block-generation:core"
 )
 include("desktop")
+include("zipper")
