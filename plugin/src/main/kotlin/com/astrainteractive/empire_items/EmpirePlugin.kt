@@ -77,7 +77,7 @@ class EmpirePlugin : JavaPlugin() {
         GlobalEventManager.onDisable()
         HandlerList.unregisterAll(this)
         Bukkit.getScheduler().cancelTasks(this)
-        PluginScope.cancel()
+        PluginScope.close()
         BlockGenerationDispatchers.blockGenerationPool.cancel()
         BlockGenerationDispatchers.blockParsingPool.cancel()
         BlockGenerationDispatchers.fileHistoryScope.cancel()

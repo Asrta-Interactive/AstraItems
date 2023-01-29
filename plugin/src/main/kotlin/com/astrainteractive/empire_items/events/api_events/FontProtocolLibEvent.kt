@@ -20,7 +20,6 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
 import net.kyori.adventure.text.TranslatableComponent
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
-import net.minecraft.network.protocol.Packet
 import org.bukkit.Bukkit
 import org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer
 import org.bukkit.entity.Player
@@ -63,24 +62,6 @@ class FontProtocolLibEvent() : EventListener {
         })
 
     }
-
-    private fun <T : Packet<*>> createPacketListener(clazz: Class<out T>, block: (player: Player, packet: T) -> Unit) =
-        object : AstraPacketReader<T>() {
-            override val clazz: Class<out T> = clazz
-            override val Player.provideChannel: Channel
-                get() = (this as CraftPlayer).handle.b.b.m
-
-            override fun readPacket(player: Player, packet: T) = block(player, packet)
-
-        }
-
-    private inline fun <reified T : Packet<*>> createPacketListener(noinline block: (player: Player, packet: T) -> Unit) =
-        createPacketListener(T::class.java, block)
-
-//    val ChatPacketListener = createPacketListener<PacketPlayInChat> { player, packet ->
-//        val converted = EmpireUtils.emojiPattern(packet.b())
-//        ReflectionUtil.setDeclaredField(PacketPlayInChat::class.java, packet, "b", converted)
-//    }
 
     private fun initPackerListener() {
 //        ChatPacketListener.onEnable()
