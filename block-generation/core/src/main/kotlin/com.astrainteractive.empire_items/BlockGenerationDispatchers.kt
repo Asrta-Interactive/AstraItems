@@ -6,7 +6,7 @@ import kotlinx.coroutines.newFixedThreadPoolContext
 
 object BlockGenerationDispatchers {
     val fileHistoryScope = CoroutineScope(Dispatchers.IO.limitedParallelism(1))
-    val blockGenerationPool = Dispatchers.IO.limitedParallelism(1.coerceAtLeast(Runtime.getRuntime().availableProcessors()))
-    val blockParsingPool = Dispatchers.IO.limitedParallelism(1.coerceAtLeast(Runtime.getRuntime().availableProcessors()))
+    val blockGenerationPool = Dispatchers.IO.limitedParallelism(1)
+    val blockParsingPool = Dispatchers.IO.limitedParallelism(1)
     val generatorLauncherDispatcher = Dispatchers.IO.limitedParallelism(1)
 }

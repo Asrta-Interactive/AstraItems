@@ -113,6 +113,7 @@ class GrapplingHook {
         for (i in 0 until 200) {
             traceEffect(l).spawn()
             l = l.add(l.direction.x, l.direction.y - i / (350 * 0.9), l.direction.z)
+            if (!l.chunk.isLoaded) return@event
             if (!l.block.isPassable) {
                 activeHooks[player.name] = l.add(0.0, 1.0, 0.0)
                 bumpEffect(l).spawn()

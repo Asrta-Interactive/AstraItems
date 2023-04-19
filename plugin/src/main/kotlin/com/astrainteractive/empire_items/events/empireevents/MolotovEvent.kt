@@ -15,6 +15,7 @@ class MolotovEvent{
 
 
     val onProjectileHit = DSLEvent.event<ProjectileHitEvent>  { e ->
+        return@event
         if (e.entity.shooter !is Player) return@event
         val player = e.entity.shooter as Player
         val itemStack = player.inventory.itemInMainHand

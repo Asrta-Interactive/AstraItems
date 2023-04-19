@@ -17,13 +17,13 @@ class MushroomBlockPlaceEvent {
     val blockPlace = DSLEvent.event<BlockPlaceEvent> { e ->
 
         if (e.isCancelled) return@event
-        val player = e.player
-        val block = e.block
-        val id = player.inventory.itemInMainHand.empireID ?: return@event
-        val empireBlock = empireItemsAPI.itemYamlFilesByID[id]?.block ?: return@event
-        val facing = BlockParser.getFacingByData(empireBlock.data)
-        val type = BlockParser.getMaterialByData(empireBlock.data)
         PluginScope.launch(Dispatchers.IO) {
+            val player = e.player
+            val block = e.block
+            val id = player.inventory.itemInMainHand.empireID ?: return@launch
+            val empireBlock = empireItemsAPI.itemYamlFilesByID[id]?.block ?: return@launch
+            val facing = BlockParser.getFacingByData(empireBlock.data)
+            val type = BlockParser.getMaterialByData(empireBlock.data)
             blockPlacer.setTypeFast(type, facing, empireBlock.data, block)
         }
     }
