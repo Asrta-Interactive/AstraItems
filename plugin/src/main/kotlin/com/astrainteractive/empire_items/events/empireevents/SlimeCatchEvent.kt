@@ -1,16 +1,16 @@
 package com.astrainteractive.empire_items.events.empireevents
 
-import com.astrainteractive.empire_items.util.EmpireItemsAPIExt.toAstraItemOrItem
-import ru.astrainteractive.astralibs.events.DSLEvent
-import com.astrainteractive.empire_itemss.api.utils.BukkitConstants
+import com.astrainteractive.empire_items.models.bukkit.BukkitConstants
+import com.astrainteractive.empire_items.util.ext_api.toAstraItemOrItem
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Slime
 import org.bukkit.event.player.PlayerInteractEntityEvent
-import ru.astrainteractive.astralibs.utils.AstraLibsExtensions.getPersistentData
+import ru.astrainteractive.astralibs.events.DSLEvent
+import ru.astrainteractive.astralibs.utils.persistence.Persistence.getPersistentData
 
 class SlimeCatchEvent {
 
-    val onSlimeClick = DSLEvent.event(PlayerInteractEntityEvent::class.java)  { e ->
+    val onSlimeClick = DSLEvent.event<PlayerInteractEntityEvent>  { e ->
         val player = e.player
         val entity = e.rightClicked
         if (entity.type!=EntityType.SLIME)

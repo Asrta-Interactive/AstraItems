@@ -1,15 +1,15 @@
 package com.astrainteractive.empire_items.enchants.core
 
 import com.astrainteractive.empire_items.enchants.calcChance
-import ru.astrainteractive.astralibs.events.EventListener
 import com.atrainteractive.empire_items.models.enchants.GenericEnchant
 import org.bukkit.Material
 import org.bukkit.event.EventHandler
 import org.bukkit.event.enchantment.EnchantItemEvent
 import org.bukkit.event.inventory.PrepareAnvilEvent
 import org.bukkit.inventory.ItemStack
-import ru.astrainteractive.astralibs.utils.AstraLibsExtensions.getPersistentData
-import ru.astrainteractive.astralibs.utils.BukkitConstant
+import ru.astrainteractive.astralibs.events.EventListener
+import ru.astrainteractive.astralibs.utils.persistence.BukkitConstant
+import ru.astrainteractive.astralibs.utils.persistence.Persistence.getPersistentData
 
 abstract class EmpireEnchantEvent : EventListener {
     abstract val enchant: BukkitConstant<Int, Int>

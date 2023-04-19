@@ -1,18 +1,16 @@
 package com.astrainteractive.empire_items.events.genericevents
 
 import com.astrainteractive.empire_items.di.empireItemsApiModule
-import com.astrainteractive.empire_items.util.EmpireItemsAPIExt.toAstraItemOrItem
-import ru.astrainteractive.astralibs.events.DSLEvent
-import com.astrainteractive.empire_itemss.api.EmpireItemsAPI
-import com.astrainteractive.empire_itemss.api.empireID
+import com.astrainteractive.empire_items.util.ext_api.toAstraItemOrItem
+import com.astrainteractive.empire_items.api.utils.empireID
 import com.atrainteractive.empire_items.models.VillagerTradeInfo
 import org.bukkit.entity.Villager
 import org.bukkit.event.entity.VillagerAcquireTradeEvent
 import org.bukkit.event.player.PlayerInteractEntityEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.MerchantRecipe
-import ru.astrainteractive.astralibs.di.IDependency
 import ru.astrainteractive.astralibs.di.getValue
+import ru.astrainteractive.astralibs.events.DSLEvent
 import kotlin.random.Random
 
 class VillagerEvent() {
@@ -22,7 +20,7 @@ class VillagerEvent() {
     /**
      * У жителя создается трейд
      */
-    val villagerAcquireTradeEvent = DSLEvent.event(VillagerAcquireTradeEvent::class.java) { e ->
+    val villagerAcquireTradeEvent = DSLEvent.event<VillagerAcquireTradeEvent> { e ->
         if (e.entity !is Villager)
             return@event
         val villager = e.entity as Villager
@@ -46,7 +44,7 @@ class VillagerEvent() {
     /**
      * Эвент взаимодействия с жителем - необходим для замены предметов
      */
-    val villagerInteractEvent = DSLEvent.event(PlayerInteractEntityEvent::class.java) { e ->
+    val villagerInteractEvent = DSLEvent.event<PlayerInteractEntityEvent> { e ->
         if (e.rightClicked !is Villager)
             return@event
         if (!e.player.isSneaking)

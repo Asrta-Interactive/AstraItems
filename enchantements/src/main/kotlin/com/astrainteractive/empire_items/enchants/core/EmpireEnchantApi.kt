@@ -5,9 +5,9 @@ import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.event.inventory.PrepareAnvilEvent
 import org.bukkit.inventory.ItemStack
-import ru.astrainteractive.astralibs.utils.AstraLibsExtensions.getPersistentData
-import ru.astrainteractive.astralibs.utils.AstraLibsExtensions.setPersistentDataType
-import ru.astrainteractive.astralibs.utils.BukkitConstant
+import ru.astrainteractive.astralibs.utils.persistence.BukkitConstant
+import ru.astrainteractive.astralibs.utils.persistence.Persistence.getPersistentData
+import ru.astrainteractive.astralibs.utils.persistence.Persistence.setPersistentDataType
 import kotlin.random.Random
 
 

@@ -1,15 +1,16 @@
 package com.astrainteractive.empire_items
 
+import com.astrainteractive.empire_items.di.*
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelChildren
+import org.bukkit.Bukkit
+import org.bukkit.event.HandlerList
+import org.bukkit.plugin.java.JavaPlugin
 import ru.astrainteractive.astralibs.AstraLibs
 import ru.astrainteractive.astralibs.Logger
 import ru.astrainteractive.astralibs.async.PluginScope
 import ru.astrainteractive.astralibs.events.GlobalEventManager
-import com.astrainteractive.empire_items.commands.CommandManager
-import com.astrainteractive.empire_items.di.*
-import kotlinx.coroutines.cancel
-import org.bukkit.Bukkit
-import org.bukkit.event.HandlerList
-import org.bukkit.plugin.java.JavaPlugin
+import ru.astrainteractive.astralibs.menu.SharedInventoryClickEvent
 
 
 class EmpirePlugin : JavaPlugin() {
@@ -25,17 +26,7 @@ class EmpirePlugin : JavaPlugin() {
         AstraLibs.rememberPlugin(this)
     }
 
-    fun reload(){
-        TranslationModule.reload()
-        enchantsConfigModule.reload()
-        GuiConfigModule.reload()
-        configModule.reload()
-        empireItemsApiModule.reload()
-        empireModelEngineApiModule.reload()
-        enchantMangerModule.reload()
-        genericListenerModule.reload()
 
-    }
 
     /**
      * This function called when server starts
@@ -58,6 +49,7 @@ class EmpirePlugin : JavaPlugin() {
         commandManagerModule.value
         enchantMangerModule.value
         genericListenerModule.value
+        SharedInventoryClickEvent.onEnable(GlobalEventManager)
     }
 
 
@@ -76,9 +68,33 @@ class EmpirePlugin : JavaPlugin() {
         GlobalEventManager.onDisable()
         HandlerList.unregisterAll(this)
         Bukkit.getScheduler().cancelTasks(this)
-        PluginScope.cancel()
+        PluginScope.close()
         BlockGenerationDispatchers.blockGenerationPool.cancel()
         BlockGenerationDispatchers.blockParsingPool.cancel()
         BlockGenerationDispatchers.fileHistoryScope.cancel()
+    }
+
+    fun reload(){
+        TranslationModule.reload()
+        enchantsConfigModule.reload()
+        GuiConfigModule.reload()
+        configModule.reload()
+        empireItemsApiModule.reload()
+        empireModelEngineApiModule.reload()
+        enchantMangerModule.reload()
+        genericListenerModule.reload()
+
+        craftingControllerModule.apply {
+            value.clear()
+            value.create()
+            value
+        }
+        for (p in server.onlinePlayers)
+            p.closeInventory()
+//        Bukkit.getScheduler().cancelTasks(this)
+        PluginScope.cancelChildren()
+        BlockGenerationDispatchers.blockGenerationPool.cancelChildren()
+        BlockGenerationDispatchers.blockParsingPool.cancelChildren()
+
     }
 }

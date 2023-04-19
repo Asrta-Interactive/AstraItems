@@ -2,7 +2,6 @@ package com.astrainteractive.empire_items.events.genericevents
 
 import ru.astrainteractive.astralibs.events.EventListener
 import ru.astrainteractive.astralibs.utils.uuid
-import com.astrainteractive.empire_items.util.Timer
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Material
@@ -16,7 +15,6 @@ import kotlin.math.*
 class QuakeMovementEvent : EventListener {
     val MIN = 50
     val MAX = 250
-    val times = mutableMapOf<String, Timer>()
 
     private fun sendActionBar(player: Player, playerSpeed: Int) {
         val text3 = "☄${playerSpeed} "

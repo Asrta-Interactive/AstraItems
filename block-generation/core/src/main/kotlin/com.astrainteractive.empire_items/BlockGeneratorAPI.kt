@@ -1,21 +1,14 @@
 package com.astrainteractive.empire_items
 
-import com.astrainteractive.empire_itemss.api.EmpireItemsAPI
-import com.astrainteractive.empire_itemss.api.calcChance
-import com.astrainteractive.empire_itemss.api.items.BlockParser
+import com.astrainteractive.empire_items.api.EmpireItemsAPI
+import com.astrainteractive.empire_items.api.items.BlockParser
 import com.atrainteractive.empire_items.models.config.Config
 import com.atrainteractive.empire_items.models.yml_item.YmlItem
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import net.minecraft.core.BlockPosition
 import org.bukkit.Chunk
-import org.bukkit.Location
 import org.bukkit.Material
-import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
-import org.bukkit.craftbukkit.v1_19_R1.CraftChunk
-import org.bukkit.craftbukkit.v1_19_R1.block.CraftBlock
-import ru.astrainteractive.astralibs.Logger
 import ru.astrainteractive.astralibs.async.PluginScope
 import ru.astrainteractive.astralibs.di.IDependency
 import ru.astrainteractive.astralibs.di.getValue
@@ -122,7 +115,7 @@ class BlockGeneratorAPI(
         }
     }
 
-    suspend fun validateChunk(chunk: Chunk, isNewChunk: Boolean) {
+    fun validateChunk(chunk: Chunk, isNewChunk: Boolean) {
         if (!isNewChunk && config.generation.onlyOnNewChunks)
             return
 
@@ -133,7 +126,7 @@ class BlockGeneratorAPI(
         if (currentChunkProcessing >= config.generation.generateChunksAtOnce)
             if (config.generation.generateChunksAtOnce > 0)
                 return
-        withContext(dispatchers.blockParsingPool) {
+        PluginScope.launch (dispatchers.blockParsingPool) {
             withContext(dispatchers.generatorLauncherDispatcher) { currentChunkProcessing++ }
 //            Logger.log(tag = "BlockGeneratorAPI", message = "generateChunk ${chunk}")
             generateChunk(chunk)

@@ -1,24 +1,24 @@
 package com.astrainteractive.empire_items.commands
 
 import com.astrainteractive.empire_items.di.TranslationModule
+import com.astrainteractive.empire_items.plugin.Permission
+import org.bukkit.entity.Player
 import ru.astrainteractive.astralibs.AstraLibs
 import ru.astrainteractive.astralibs.Logger
-import ru.astrainteractive.astralibs.utils.registerCommand
-import com.astrainteractive.empire_items.util.EmpirePermissions
-import org.bukkit.entity.Player
+import ru.astrainteractive.astralibs.commands.registerCommand
 import ru.astrainteractive.astralibs.di.getValue
 
 /**
  * Reload command handler
  */
-fun CommandManager.espeed() = AstraLibs.registerCommand("espeed") { sender, args ->
+fun CommandManager.espeed() = AstraLibs.instance.registerCommand("espeed") {
     val translation by TranslationModule
-    if (!sender.hasPermission(EmpirePermissions.RELOAD)) {
+    if (!Permission.ChangeFlySpeed.hasPermission(sender)) {
         sender.sendMessage(translation.noPerms)
         return@registerCommand
     }
     if (sender!is Player) {
-        Logger.warn("Player only command", tag = CommandManager.TAG)
+        Logger.warn(message="Player only command", tag = CommandManager.TAG)
         return@registerCommand
     }
     val p = sender as Player

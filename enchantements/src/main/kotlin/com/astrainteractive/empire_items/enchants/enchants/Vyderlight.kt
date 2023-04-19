@@ -2,7 +2,7 @@ package com.astrainteractive.empire_items.enchants.enchants
 
 import com.astrainteractive.empire_items.enchants.calcChance
 import com.astrainteractive.empire_items.enchants.core.EmpireEnchantEvent
-import com.astrainteractive.empire_items.enchants.core.EmpireEnchants
+import com.astrainteractive.empire_items.models.bukkit.EmpireEnchants
 import com.atrainteractive.empire_items.models.enchants.EmpireEnchantsConfig
 import com.atrainteractive.empire_items.models.enchants.GenericValueEnchant
 import org.bukkit.Material

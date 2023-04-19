@@ -1,7 +1,6 @@
 package com.astrainteractive.empire_items
 
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.minecraft.world.level.GeneratorAccess
 import net.minecraft.world.level.block.state.IBlockData
@@ -15,7 +14,6 @@ import org.bukkit.craftbukkit.v1_19_R1.block.CraftBlock
 import org.bukkit.craftbukkit.v1_19_R1.block.data.CraftBlockData
 import org.bukkit.craftbukkit.v1_19_R1.block.impl.CraftHugeMushroom
 import ru.astrainteractive.astralibs.async.BukkitMain
-import ru.astrainteractive.astralibs.async.PluginScope
 import ru.astrainteractive.astralibs.utils.ReflectionUtil
 
 object V1_19_2_FastBlockPlacer : IFastBlockPlacer {
@@ -23,7 +21,7 @@ object V1_19_2_FastBlockPlacer : IFastBlockPlacer {
         val newData = type.createBlockData().apply {
             val craftBlockData = this as CraftBlockData
             val craftHugeMushroom = craftBlockData as MultipleFacing as CraftHugeMushroom
-            val FACES: Array<BlockStateBoolean> = ReflectionUtil.getDeclaredField(craftHugeMushroom::class.java, "FACES")!!
+            val FACES: Result<Array<BlockStateBoolean>?> = ReflectionUtil.getDeclaredField(craftHugeMushroom::class.java, "FACES")
             ReflectionUtil.setDeclaredField(
                 craftHugeMushroom.javaClass.superclass,
                 craftHugeMushroom,
@@ -32,7 +30,7 @@ object V1_19_2_FastBlockPlacer : IFastBlockPlacer {
             )
             for (f in facing) {
                 val face = BlockFace.valueOf(f.key.uppercase())
-                val state = FACES[face.ordinal]
+                val state = FACES.getOrNull()?.get(face.ordinal)
                 val newState = (craftHugeMushroom.state as IBlockData).a(state, f.value)
                 ReflectionUtil.setDeclaredField(
                     craftHugeMushroom.javaClass.superclass,

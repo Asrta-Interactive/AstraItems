@@ -16,6 +16,8 @@ dependencies {
     // AstraLibs
     implementation(libs.astralibs.ktxCore)
     implementation(libs.astralibs.spigotCore)
+    implementation(libs.astralibs.spigotGui)
+    implementation(libs.astralibs.orm)
     // Test
     testImplementation(kotlin("test"))
     testImplementation(libs.orgTesting)
@@ -31,5 +33,6 @@ dependencies {
     compileOnly(libs.vaultapi)
     compileOnly(libs.coreprotect)
     // Local
-    implementation(project(":models"))
+    implementation(project(":models:shared"))
+    implementation(project(":models:bukkit"))
 }

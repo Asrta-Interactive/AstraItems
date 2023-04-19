@@ -1,8 +1,6 @@
 package com.astrainteractive.empire_items.events.empireevents
 
-import ru.astrainteractive.astralibs.Logger
-import ru.astrainteractive.astralibs.events.DSLEvent
-import com.astrainteractive.empire_itemss.api.utils.BukkitConstants
+import com.astrainteractive.empire_items.models.bukkit.BukkitConstants
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.Particle
@@ -10,11 +8,14 @@ import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
 import org.bukkit.entity.Player
 import org.bukkit.event.entity.ProjectileHitEvent
+import ru.astrainteractive.astralibs.Logger
+import ru.astrainteractive.astralibs.events.DSLEvent
 
 class MolotovEvent{
 
 
-    val onProjectileHit = DSLEvent.event(ProjectileHitEvent::class.java)  { e ->
+    val onProjectileHit = DSLEvent.event<ProjectileHitEvent>  { e ->
+        return@event
         if (e.entity.shooter !is Player) return@event
         val player = e.entity.shooter as Player
         val itemStack = player.inventory.itemInMainHand

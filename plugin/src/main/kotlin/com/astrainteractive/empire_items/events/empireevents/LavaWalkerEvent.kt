@@ -1,10 +1,7 @@
 package com.astrainteractive.empire_items.events.empireevents
 
 import com.astrainteractive.empire_items.di.blockPlacerModule
-import com.astrainteractive.empire_items.enchants.core.EmpireEnchants
-import ru.astrainteractive.astralibs.async.PluginScope
-import ru.astrainteractive.astralibs.events.DSLEvent
-import com.astrainteractive.empire_itemss.api.items.BlockParser
+import com.astrainteractive.empire_items.models.bukkit.EmpireEnchants
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.bukkit.Material
@@ -15,8 +12,10 @@ import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
+import ru.astrainteractive.astralibs.async.PluginScope
 import ru.astrainteractive.astralibs.di.getValue
-import ru.astrainteractive.astralibs.utils.AstraLibsExtensions.hasPersistentData
+import ru.astrainteractive.astralibs.events.DSLEvent
+import ru.astrainteractive.astralibs.utils.persistence.Persistence.hasPersistentData
 
 class LavaWalkerEvent{
     private val blockPlacer by blockPlacerModule
@@ -39,7 +38,7 @@ class LavaWalkerEvent{
         block.getRelative(BlockFace.NORTH_WEST).lavaOrNull()?.setTypeFast(Material.COBBLESTONE)
     }
 
-    val playerFireEvent = DSLEvent.event(EntityDamageEvent::class.java)  { e ->
+    val playerFireEvent = DSLEvent.event<EntityDamageEvent>  { e ->
         if (e.cause != EntityDamageEvent.DamageCause.FIRE && e.cause != EntityDamageEvent.DamageCause.FIRE_TICK && e.cause != EntityDamageEvent.DamageCause.LAVA)
             return@event
         if (e.entity !is Player)
@@ -69,7 +68,7 @@ class LavaWalkerEvent{
         meta?.hasPersistentData(EmpireEnchants.LAVA_WALKER_ENCHANT) == true
 
 
-    val playerMoveEvent = DSLEvent.event(PlayerMoveEvent::class.java)  { e ->
+    val playerMoveEvent = DSLEvent.event<PlayerMoveEvent>  { e ->
         val itemStack = e.player.inventory.boots ?: return@event
         val itemMeta = itemStack.itemMeta ?: return@event
         PluginScope.launch(limitedIO) {

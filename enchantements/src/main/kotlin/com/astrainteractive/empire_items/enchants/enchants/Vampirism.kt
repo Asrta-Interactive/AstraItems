@@ -1,7 +1,7 @@
 package com.astrainteractive.empire_items.enchants.enchants
 
 import com.astrainteractive.empire_items.enchants.core.EmpireEnchantEvent
-import com.astrainteractive.empire_items.enchants.core.EmpireEnchants
+import com.astrainteractive.empire_items.models.bukkit.EmpireEnchants
 import com.atrainteractive.empire_items.models.enchants.EmpireEnchantsConfig
 import com.atrainteractive.empire_items.models.enchants.GenericValueEnchant
 import org.bukkit.Material
@@ -10,7 +10,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import ru.astrainteractive.astralibs.di.IDependency
 import ru.astrainteractive.astralibs.di.getValue
-import ru.astrainteractive.astralibs.utils.AstraLibsExtensions.getPersistentData
+import ru.astrainteractive.astralibs.utils.persistence.Persistence.getPersistentData
 
 
 class Vampirism(configModule: IDependency<EmpireEnchantsConfig>): EmpireEnchantEvent() {

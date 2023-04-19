@@ -1,22 +1,22 @@
 package com.astrainteractive.empire_items.gui.crafting
 
-import ru.astrainteractive.astralibs.async.PluginScope
-import ru.astrainteractive.astralibs.menu.AstraMenuSize
-import ru.astrainteractive.astralibs.utils.convertHex
-import com.astrainteractive.empire_items.gui.GuiCategory
+import com.astrainteractive.empire_items.gui.category.GuiCategory
 import com.astrainteractive.empire_items.gui.PlayerMenuUtility
-import com.astrainteractive.empire_items.gui.toInventoryButton
-import com.astrainteractive.empire_items.util.EmpireItemsAPIExt.toAstraItemOrItem
-import com.astrainteractive.empire_items.util.EmpirePermissions
-import com.astrainteractive.empire_itemss.api.emoji
-import com.astrainteractive.empire_itemss.api.empireID
+import com.astrainteractive.empire_items.util.ext_api.toAstraItemOrItem
+import com.astrainteractive.empire_items.plugin.Permission
+import com.astrainteractive.empire_items.api.utils.emoji
+import com.astrainteractive.empire_items.api.utils.empireID
+import com.astrainteractive.empire_items.util.toInventoryButton
 import com.atrainteractive.empire_items.models.config.GuiConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
-import org.bukkit.inventory.*
+import org.bukkit.inventory.ItemStack
+import ru.astrainteractive.astralibs.async.PluginScope
+import ru.astrainteractive.astralibs.menu.MenuSize
 import ru.astrainteractive.astralibs.menu.PaginatedMenu
+import ru.astrainteractive.astralibs.utils.convertHex
 
 class GuiCrafting(playerMenuUtility: PlayerMenuUtility,private val guiConfig: GuiConfig) : PaginatedMenu() {
     val viewModel = GuiCraftingViewModel(playerMenuUtility, playerMenuUtility.prevItems.last())
@@ -38,7 +38,7 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility,private val guiConfig: Gu
     ).emoji()
 
 
-    override val menuSize: AstraMenuSize = AstraMenuSize.XL
+    override val menuSize: MenuSize = MenuSize.XL
     override val playerMenuUtility: PlayerMenuUtility = playerMenuUtility
     override val backPageButton = guiConfig.settings.buttons.backButton.toAstraItemOrItem()!!.toInventoryButton(49)
     override val maxItemsPerPage = 9
@@ -58,11 +58,11 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility,private val guiConfig: Gu
 
 
     override fun onInventoryClicked(e: InventoryClickEvent) {
-        super.onInventoryClicked(e)
         e.isCancelled = true
+        handleChangePageClick(e.slot)
         when (e.slot) {
             backPageButton.index -> {
-                PluginScope.launch {
+                PluginScope.launch(Dispatchers.IO) {
                     playerMenuUtility.prevItems.removeLast()
                     if (playerMenuUtility.prevItems.isEmpty())
                         GuiCategory(playerMenuUtility,guiConfig).open()
@@ -78,17 +78,17 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility,private val guiConfig: Gu
             11, 12, 13, 20, 21, 22, 29, 30, 31 -> {
                 val itemStack = inventory.getItem(e.slot)
                 playerMenuUtility.prevItems.add(itemStack?.empireID ?: itemStack?.type?.name ?: return)
-                lifecycleScope.launch(Dispatchers.IO) { GuiCrafting(playerMenuUtility,guiConfig).open() }
+                componentScope.launch(Dispatchers.IO) { GuiCrafting(playerMenuUtility,guiConfig).open() }
             }
 
             36, 37, 38, 39, 40, 41, 42, 43, 44 -> {
                 val itemStack = inventory.getItem(e.slot)
                 playerMenuUtility.prevItems.add(itemStack?.empireID ?: itemStack?.type?.name ?: return)
-                lifecycleScope.launch(Dispatchers.IO) { GuiCrafting(playerMenuUtility,guiConfig).open() }
+                componentScope.launch(Dispatchers.IO) { GuiCrafting(playerMenuUtility,guiConfig).open() }
             }
 
             giveButtonIndex -> {
-                if (playerMenuUtility.player.hasPermission(EmpirePermissions.EMPGIVE))
+                if (Permission.GiveCustomItem.hasPermission(playerMenuUtility.player))
                     playerMenuUtility.player.inventory.addItem(viewModel.itemID.toAstraItemOrItem() ?: return)
             }
         }
@@ -103,6 +103,7 @@ class GuiCrafting(playerMenuUtility: PlayerMenuUtility,private val guiConfig: Gu
     }
 
     fun setMenuItems() {
+        inventory.clear()
         setManageButtons()
         inventory.setItem(backPageButton.index - 1, viewModel.dropInfo)
         inventory.setItem(backPageButton.index + 1, viewModel.blockInfo)

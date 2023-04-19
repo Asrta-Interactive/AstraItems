@@ -3,17 +3,17 @@ package com.astrainteractive.empire_items.commands
 import com.astrainteractive.empire_items.di.TranslationModule
 import com.astrainteractive.empire_items.di.empireItemsApiModule
 import com.astrainteractive.empire_items.di.empireModelEngineApiModule
-import ru.astrainteractive.astralibs.AstraLibs
-import ru.astrainteractive.astralibs.utils.registerCommand
-import ru.astrainteractive.astralibs.utils.registerTabCompleter
-import ru.astrainteractive.astralibs.utils.withEntry
-import com.astrainteractive.empire_items.util.EmpirePermissions
+import com.astrainteractive.empire_items.plugin.Permission
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.BlockFace
 import org.bukkit.entity.Player
+import ru.astrainteractive.astralibs.AstraLibs
+import ru.astrainteractive.astralibs.commands.registerCommand
+import ru.astrainteractive.astralibs.commands.registerTabCompleter
 import ru.astrainteractive.astralibs.di.getValue
+import ru.astrainteractive.astralibs.utils.withEntry
 
 class ModelEngine {
     private val transparent: Set<Material> = setOf(Material.AIR, Material.CAVE_AIR, Material.TALL_GRASS)
@@ -22,7 +22,8 @@ class ModelEngine {
     private val empireModelEngineAPI by empireModelEngineApiModule
 
     val spawnmodel =
-        AstraLibs.registerCommand("spawnmodel", permission = EmpirePermissions.spawnModel) { sender, args ->
+        AstraLibs.instance.registerCommand("spawnmodel") {
+            if (!Permission.SpawnModel.hasPermission(sender)) return@registerCommand
 
             val id = args.firstOrNull() ?: run {
                 sender.sendMessage(translations.wrongArgs)
@@ -47,7 +48,7 @@ class ModelEngine {
             }
 
         }
-    val tabCompleter = AstraLibs.registerTabCompleter("spawnmodel") { sender, args ->
+    val tabCompleter = AstraLibs.instance.registerTabCompleter("spawnmodel") {
         val models = empireItemsAPI.ymlMobById.keys
         return@registerTabCompleter models.toList().withEntry(args.firstOrNull() ?: "")
     }

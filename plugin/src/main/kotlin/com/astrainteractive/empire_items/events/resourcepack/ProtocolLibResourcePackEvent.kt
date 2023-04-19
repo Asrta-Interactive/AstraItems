@@ -3,7 +3,6 @@ package com.astrainteractive.empire_items.events.resourcepack
 import com.astrainteractive.empire_items.di.TranslationModule
 import ru.astrainteractive.astralibs.AstraLibs
 import ru.astrainteractive.astralibs.events.EventListener
-import com.astrainteractive.empire_items.util.Translations
 import com.comphenix.protocol.PacketType
 import com.comphenix.protocol.ProtocolLibrary
 import com.comphenix.protocol.ProtocolManager

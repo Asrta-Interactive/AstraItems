@@ -5,7 +5,7 @@ import com.astrainteractive.empire_items.di.TranslationModule
 import com.astrainteractive.empire_items.di.craftingApiModule
 import com.astrainteractive.empire_items.di.empireItemsApiModule
 import com.astrainteractive.empire_items.gui.PlayerMenuUtility
-import com.astrainteractive.empire_items.util.EmpireItemsAPIExt.toAstraItemOrItem
+import com.astrainteractive.empire_items.util.ext_api.toAstraItemOrItem
 import com.atrainteractive.empire_items.models.VillagerTradeInfo
 import org.bukkit.ChatColor
 import org.bukkit.inventory.FurnaceRecipe
@@ -14,7 +14,6 @@ import org.bukkit.inventory.ShapedRecipe
 import org.bukkit.inventory.ShapelessRecipe
 import ru.astrainteractive.astralibs.di.getValue
 import ru.astrainteractive.astralibs.utils.HEX
-import ru.astrainteractive.astralibs.utils.catching
 
 class GuiCraftingViewModel(val playerMenuUtility: PlayerMenuUtility, val itemID: String) {
     private val translations by TranslationModule
@@ -88,7 +87,7 @@ class GuiCraftingViewModel(val playerMenuUtility: PlayerMenuUtility, val itemID:
     }
 
     val index: Int
-        get() = catching { recipeInfoIndex % recipesInfo.size } ?: 0
+        get() = kotlin.runCatching { recipeInfoIndex % recipesInfo.size }.getOrNull() ?: 0
 
     val currentRecipeInfo: RecipeInfo?
         get() = recipesInfo.getOrNull(index)

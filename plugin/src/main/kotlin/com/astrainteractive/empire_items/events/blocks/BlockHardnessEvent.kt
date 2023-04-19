@@ -1,14 +1,11 @@
 package com.astrainteractive.empire_items.events.blocks
 
 import com.astrainteractive.empire_items.di.empireItemsApiModule
-import ru.astrainteractive.astralibs.events.DSLEvent
-import com.astrainteractive.empire_itemss.api.EmpireItemsAPI
-import com.astrainteractive.empire_itemss.api.items.BlockParser
-import com.astrainteractive.empire_items.util.CleanerTask
+import com.astrainteractive.empire_items.api.items.BlockParser
 import net.minecraft.core.BlockPosition
 import net.minecraft.network.protocol.game.PacketPlayOutBlockBreakAnimation
 import org.bukkit.block.Block
-import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer
+import org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.event.block.BlockBreakEvent
@@ -18,6 +15,7 @@ import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import ru.astrainteractive.astralibs.di.getValue
+import ru.astrainteractive.astralibs.events.DSLEvent
 import kotlin.random.Random
 
 
@@ -28,23 +26,19 @@ class BlockHardnessEvent {
         val id: Int = Random.nextInt(Int.MAX_VALUE),
     )
 
-    val cleaner = CleanerTask(50000) {
-        blockDamageMap.clear()
-    }
-
     private val blockDamageMap = mutableMapOf<String, BreakTimeID>()
 
-    val playerQuitEvent = DSLEvent.event(PlayerQuitEvent::class.java) { e ->
+    val playerQuitEvent = DSLEvent.event<PlayerQuitEvent> { e ->
         blockDamageMap.remove(e.player.name)
     }
 
-    val blockDamageEvent = DSLEvent.event(BlockDamageEvent::class.java) { e ->
+    val blockDamageEvent = DSLEvent.event<BlockDamageEvent> { e ->
         BlockParser.getBlockData(e.block) ?: return@event
         blockDamageMap[e.player.name] = BreakTimeID()
         e.player.sendBlockBreakPacket(e.block, 100)
     }
 
-    val blockBreakEvent = DSLEvent.event(BlockBreakEvent::class.java) { e ->
+    val blockBreakEvent = DSLEvent.event<BlockBreakEvent> { e ->
         e.player.sendBlockBreakPacket(e.block, 100)
         blockDamageMap.remove(e.player.name)
     }
@@ -59,7 +53,7 @@ class BlockHardnessEvent {
     }
 
 
-    val playerBreakingEvent = DSLEvent.event(PlayerAnimationEvent::class.java) { e ->
+    val playerBreakingEvent = DSLEvent.event<PlayerAnimationEvent> { e ->
         val block = e.player.getTargetBlock(null, 10)
         val player = e.player
         val data = BlockParser.getBlockData(block) ?: return@event

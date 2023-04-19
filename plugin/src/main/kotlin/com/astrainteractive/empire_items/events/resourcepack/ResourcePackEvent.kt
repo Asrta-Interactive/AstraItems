@@ -1,23 +1,21 @@
 package com.astrainteractive.empire_items.events.resourcepack
 
-import ru.astrainteractive.astralibs.Logger
-import ru.astrainteractive.astralibs.events.DSLEvent
 import com.astrainteractive.empire_items.EmpirePlugin
 import com.astrainteractive.empire_items.di.TranslationModule
 import com.astrainteractive.empire_items.di.configModule
-import com.astrainteractive.empire_items.util.Translations
-import com.atrainteractive.empire_items.models.config.Config
 import org.bukkit.Bukkit
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerResourcePackStatusEvent
+import ru.astrainteractive.astralibs.Logger
 import ru.astrainteractive.astralibs.di.getValue
+import ru.astrainteractive.astralibs.events.DSLEvent
 
 class ResourcePackEvent {
     private val translations by TranslationModule
     private val config by configModule
     val TAG = "ResourcePack"
 
-    val onJoin = DSLEvent.event(PlayerJoinEvent::class.java) { e ->
+    val onJoin = DSLEvent.event<PlayerJoinEvent> { e ->
         val p = e.player
         val timeSinceFirstPlay = System.currentTimeMillis() - p.firstPlayed < 30 * 60 * 1000
         if (config.resourcePack.requestOnJoin && timeSinceFirstPlay) {
@@ -34,7 +32,7 @@ class ResourcePackEvent {
     }
 
 
-    val onResourcePack = DSLEvent.event(PlayerResourcePackStatusEvent::class.java) { e ->
+    val onResourcePack = DSLEvent.event<PlayerResourcePackStatusEvent> { e ->
         val p = e.player
         when (e.status) {
             PlayerResourcePackStatusEvent.Status.DECLINED -> {
